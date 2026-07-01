@@ -27,7 +27,7 @@ jobs:
         run: |
           mkdir -p _site
           cp index.html _site/index.html
-      - uses: actions/configure-pages@v5
+      - uses: actions/configure-pages@v6
       - uses: actions/upload-pages-artifact@v5
         with:
           path: _site
