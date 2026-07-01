@@ -35,6 +35,7 @@
   --bad-wash:   oklch(0.95 0.04 25);
   --good-solid: oklch(0.52 0.14 155);   /* darker green: AA (>=4.5:1) for white text on a solid fill */
   --bad-solid:  oklch(0.55 0.19 25);    /* darker red:   AA (>=4.5:1) for white text on a solid fill */
+  --bad-ink:    oklch(0.48 0.19 25);    /* darker red:   AA (>=4.5:1) as text on a light --bad-wash */
   --grid-line:  oklch(0.55 0.04 258 / 0.05);
 
   /* ---- type scale: base 16px × 1.25 (major third) ---- */
@@ -246,7 +247,7 @@ select{ font-family:var(--sans); font-size:14px; padding:8px 10px; border:1px so
 .cc-badges{ display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
 .cc-badge{ font-family:var(--mono); font-size:11px; font-weight:600; padding:3px 8px; border-radius:6px; }
 .cc-pass{ background:var(--good-wash); color:oklch(0.40 0.14 155); }
-.cc-fail{ background:var(--bad-wash); color:var(--bad); }
+.cc-fail{ background:var(--bad-wash); color:var(--bad-ink); }
 
 /* gauges (Core Web Vitals) */
 .gauge{ margin-bottom:var(--s-4); }
@@ -287,7 +288,7 @@ select{ font-family:var(--sans); font-size:14px; padding:8px 10px; border:1px so
   background:var(--azure); }
 
 /* =================== §14 anti-pattern components =================== */
-.badge.viol{ color:var(--bad); background:var(--bad-wash); border-color:oklch(0.82 0.10 25); }
+.badge.viol{ color:var(--bad-ink); background:var(--bad-wash); border-color:oklch(0.82 0.10 25); }
 .badge.tell{ color:var(--amber-ink); background:var(--warn-wash); border-color:oklch(0.85 0.10 82); }
 
 /* focus-appearance compare demo (pure CSS, keyboard-driven) */
@@ -295,6 +296,7 @@ select{ font-family:var(--sans); font-size:14px; padding:8px 10px; border:1px so
 .fd-btn{ font-family:var(--sans); font-size:14px; font-weight:600; padding:0 18px; min-height:44px;
   border-radius:8px; cursor:pointer; background:var(--surface); color:var(--ink); }
 .fd-bad{ border:2px solid var(--line-2); }
+/* norma-disable a11y.focus-ring-single -- intentional VIOLATION demo (the anti-pattern this widget teaches) */
 .fd-bad:focus-visible{ outline:3px solid var(--azure); outline-offset:3px; border-radius:8px;
   border-color:var(--bad); box-shadow:0 0 0 6px var(--bad-wash); }   /* 3 competing rings — the anti-pattern */
 .fd-good{ border:1px solid var(--line-2); }
@@ -316,6 +318,7 @@ select{ font-family:var(--sans); font-size:14px; padding:8px 10px; border:1px so
 .tell-bars{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
 .tell-bar{ height:52px; border-radius:8px; display:flex; align-items:flex-end; padding:6px 8px;
   font-family:var(--mono); font-size:10px; color:#fff; }
+/* norma-disable antipattern.indigo-default -- intentional TELL demo (shows the AI default cliché) */
 .tell-purple{ background:linear-gradient(135deg,#667eea,#764ba2); }  /* the AI default cliché */
 .tell-brand{ background:var(--azure-ink); }
 

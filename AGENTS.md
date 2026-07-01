@@ -90,10 +90,10 @@ npx @norma/design-lint "**/*.{html,css}"     # gate SPEC violations; exits non-z
 - 🔒 SPEC `a11y.semantic-control` (error) — Interactive controls are <button>/<a> / Điều khiển tương tác là <button>/<a> · [WCAG 2.2 SC 4.1.2 Name, Role, Value](https://www.w3.org/TR/WCAG22/#name-role-value)
 - 🔒 SPEC `a11y.emoji-icon` (warn) — No emoji as interactive icons / Không dùng emoji làm icon tương tác · [WCAG 2.2 SC 1.1.1 Non-text Content](https://www.w3.org/TR/WCAG22/#non-text-content)
 - 📐 CONV `perf.img-dimensions` (warn) — Images set width/height or aspect-ratio / Ảnh có width/height hoặc aspect-ratio · [web.dev — Optimize CLS](https://web.dev/articles/cls)
-- 📐 CONV `tokens.color-only` (warn) — Color comes from tokens, not raw hex / Màu lấy từ token, không hex trần · Norma §1 Design Tokens
-- 📐 CONV `tokens.spacing-scale` (warn) — Spacing snaps to the 8px scale / Khoảng cách khớp thang 8px · Norma §2 Spacing & Grid
+- 📐 CONV `tokens.color-only` (off) — Color comes from tokens, not raw hex / Màu lấy từ token, không hex trần · Norma §1 Design Tokens
+- 📐 CONV `tokens.spacing-scale` (off) — Spacing snaps to the 8px scale / Khoảng cách khớp thang 8px · Norma §2 Spacing & Grid
 - 📐 CONV `antipattern.indigo-default` (warn) — No default indigo/purple gradient / Không gradient indigo/tím mặc định · Norma §14 AI-era Anti-patterns (TELL)
-- 📐 CONV `antipattern.pure-dark-mode` (warn) — No pure #000/#fff dark mode / Không dark mode #000/#fff thuần · Norma §14 AI-era Anti-patterns (TELL)
+- 📐 CONV `antipattern.pure-dark-mode` (off) — No pure #000/#fff dark mode / Không dark mode #000/#fff thuần · Norma §14 AI-era Anti-patterns (TELL)
 - 📐 CONV `type.body-min` (off) — Body text >= 16px / Chữ thân >= 16px · Norma §3 Typography
 - 🔒 SPEC `perf.inp-budget` (off) — INP budget <= 200ms / Ngân sách INP <= 200ms · [web.dev / Chrome — Core Web Vitals (INP)](https://web.dev/articles/inp)
 

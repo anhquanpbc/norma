@@ -1,0 +1,29 @@
+{
+  "name": "@norma/design-lint",
+  "version": "0.1.0",
+  "description": "Lint HTML/CSS against the Norma web design standard — contrast, focus rings, semantic HTML, labels, reduced-motion, and the common AI-generated design tells.",
+  "type": "module",
+  "license": "MIT",
+  "homepage": "https://github.com/anhquanpbc/norma/tree/main/packages/design-lint",
+  "repository": { "type": "git", "url": "git+https://github.com/anhquanpbc/norma.git", "directory": "packages/design-lint" },
+  "keywords": ["design", "linter", "accessibility", "wcag", "a11y", "design-tokens", "ai", "css", "html"],
+  "bin": { "norma-design-lint": "dist/cli.js" },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": ["dist", "README.md"],
+  "scripts": {
+    "build": "tsc -p tsconfig.json && node copy-rules.mjs",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "culori": "^4.0.1",
+    "node-html-parser": "^6.1.13",
+    "postcss": "^8.4.49"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  },
+  "engines": { "node": ">=20" }
+}

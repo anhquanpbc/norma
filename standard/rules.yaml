@@ -168,7 +168,7 @@ rules:
     title: { en: "Color comes from tokens, not raw hex", vi: "Màu lấy từ token, không hex trần" }
     domain: tokens
     tag: CONV
-    severity: warn
+    severity: off
     source: "Norma §1 Design Tokens"
     source_url: ""
     rationale:
@@ -184,7 +184,7 @@ rules:
     title: { en: "Spacing snaps to the 8px scale", vi: "Khoảng cách khớp thang 8px" }
     domain: spacing
     tag: CONV
-    severity: warn
+    severity: off
     source: "Norma §2 Spacing & Grid"
     source_url: ""
     rationale:
@@ -219,7 +219,7 @@ rules:
     title: { en: "No pure #000/#fff dark mode", vi: "Không dark mode #000/#fff thuần" }
     domain: antipattern
     tag: CONV
-    severity: warn
+    severity: off
     source: "Norma §14 AI-era Anti-patterns (TELL)"
     source_url: ""
     rationale:

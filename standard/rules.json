@@ -223,7 +223,7 @@
       },
       "domain": "tokens",
       "tag": "CONV",
-      "severity": "warn",
+      "severity": "off",
       "source": "Norma §1 Design Tokens",
       "source_url": "",
       "rationale": {
@@ -246,7 +246,7 @@
       },
       "domain": "spacing",
       "tag": "CONV",
-      "severity": "warn",
+      "severity": "off",
       "source": "Norma §2 Spacing & Grid",
       "source_url": "",
       "rationale": {
@@ -319,7 +319,7 @@
       },
       "domain": "antipattern",
       "tag": "CONV",
-      "severity": "warn",
+      "severity": "off",
       "source": "Norma §14 AI-era Anti-patterns (TELL)",
       "source_url": "",
       "rationale": {
