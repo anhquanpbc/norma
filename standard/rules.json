@@ -1,0 +1,391 @@
+{
+  "$generated": "Do not edit. Generated from standard/rules.yaml by scripts/build-rules.ts.",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "color.contrast.text",
+      "title": {
+        "en": "Body text contrast >= 4.5:1",
+        "vi": "Tương phản chữ thân >= 4.5:1"
+      },
+      "domain": "color",
+      "tag": "SPEC",
+      "severity": "error",
+      "source": "WCAG 2.2 SC 1.4.3 Contrast (Minimum)",
+      "source_url": "https://www.w3.org/TR/WCAG22/#contrast-minimum",
+      "rationale": {
+        "en": "Normal-size text must reach a 4.5:1 luminance contrast ratio against its background to remain legible for low-vision users.",
+        "vi": "Chữ cỡ thường phải đạt tỷ lệ tương phản 4.5:1 so với nền để người thị lực kém vẫn đọc được."
+      },
+      "check": {
+        "type": "contrast",
+        "min": 4.5,
+        "applies_to": "text < 18pt (24px) and < 14pt (18.66px) bold"
+      },
+      "remediation": {
+        "en": "Pick a token pair that computes >= 4.5:1 (use --ink/--ink-2/--ink-3 on light, or a *-solid fill behind white text).",
+        "vi": "Chọn cặp token đạt >= 4.5:1 (dùng --ink/--ink-2/--ink-3 trên nền sáng, hoặc nền *-solid cho chữ trắng)."
+      }
+    },
+    {
+      "id": "color.contrast.large-ui",
+      "title": {
+        "en": "Large text & UI contrast >= 3:1",
+        "vi": "Tương phản chữ lớn & UI >= 3:1"
+      },
+      "domain": "color",
+      "tag": "SPEC",
+      "severity": "error",
+      "source": "WCAG 2.2 SC 1.4.3 / 1.4.11 Non-text Contrast",
+      "source_url": "https://www.w3.org/TR/WCAG22/#non-text-contrast",
+      "rationale": {
+        "en": "Large text (>=24px, or >=18.66px bold), UI component boundaries and meaningful graphics need at least 3:1.",
+        "vi": "Chữ lớn (>=24px, hoặc >=18.66px đậm), ranh giới thành phần UI và đồ hoạ có nghĩa cần ít nhất 3:1."
+      },
+      "check": {
+        "type": "contrast",
+        "min": 3,
+        "applies_to": "text >= 18pt / >= 14pt bold, and UI components"
+      },
+      "remediation": {
+        "en": "Increase lightness delta between the element and its background to >= 3:1.",
+        "vi": "Tăng chênh lệch độ sáng giữa phần tử và nền lên >= 3:1."
+      }
+    },
+    {
+      "id": "a11y.target-size",
+      "title": {
+        "en": "Touch target >= 24x24 CSS px (native 44/48)",
+        "vi": "Vùng chạm >= 24x24 CSS px (native 44/48)"
+      },
+      "domain": "a11y",
+      "tag": "SPEC",
+      "severity": "error",
+      "source": "WCAG 2.2 SC 2.5.8 Target Size (Minimum)",
+      "source_url": "https://www.w3.org/TR/WCAG22/#target-size-minimum",
+      "rationale": {
+        "en": "Pointer targets below 24x24 CSS px (with exceptions) are hard to hit; native platforms require 44pt (iOS) / 48dp (Android).",
+        "vi": "Vùng chạm dưới 24x24 CSS px (trừ ngoại lệ) khó bấm; native yêu cầu 44pt (iOS) / 48dp (Android)."
+      },
+      "check": {
+        "type": "targetSize",
+        "min_px": 24,
+        "native_warn_px": 44
+      },
+      "remediation": {
+        "en": "Set min-height/min-width >= 24px (>= 44/48 for native) or add adequate spacing.",
+        "vi": "Đặt min-height/min-width >= 24px (>= 44/48 cho native) hoặc thêm khoảng cách đủ."
+      }
+    },
+    {
+      "id": "a11y.focus-ring-single",
+      "title": {
+        "en": "Exactly one focus-visible ring",
+        "vi": "Đúng một vòng focus-visible"
+      },
+      "domain": "a11y",
+      "tag": "SPEC",
+      "severity": "error",
+      "source": "WCAG 2.2 SC 2.4.7 / 2.4.11 / 2.4.13",
+      "source_url": "https://www.w3.org/TR/WCAG22/#focus-appearance",
+      "rationale": {
+        "en": "A focus indicator must exist, be >= 2px and >= 3:1, and be a SINGLE clean ring. Stacking border + outline + box-shadow (an AI habit) muddies it; outline:none with no replacement removes it.",
+        "vi": "Chỉ báo focus phải có, >= 2px và >= 3:1, và là MỘT vòng sạch. Chồng border + outline + box-shadow (thói quen AI) làm rối; outline:none không thay thế là xoá mất."
+      },
+      "check": {
+        "type": "focusRing"
+      },
+      "remediation": {
+        "en": "Use :focus-visible { outline: 2px solid <token>; outline-offset: 2px } and nothing else.",
+        "vi": "Dùng :focus-visible { outline: 2px solid <token>; outline-offset: 2px } và không gì khác."
+      }
+    },
+    {
+      "id": "a11y.reduced-motion",
+      "title": {
+        "en": "Honor prefers-reduced-motion",
+        "vi": "Tôn trọng prefers-reduced-motion"
+      },
+      "domain": "a11y",
+      "tag": "SPEC",
+      "severity": "error",
+      "source": "WCAG 2.2 SC 2.3.3 Animation from Interactions",
+      "source_url": "https://www.w3.org/TR/WCAG22/#animation-from-interactions",
+      "rationale": {
+        "en": "Any file that animates must provide an @media (prefers-reduced-motion: reduce) block that neutralizes non-essential motion.",
+        "vi": "File nào có animation phải có khối @media (prefers-reduced-motion: reduce) vô hiệu hoá chuyển động không thiết yếu."
+      },
+      "check": {
+        "type": "reducedMotion"
+      },
+      "remediation": {
+        "en": "Add @media (prefers-reduced-motion: reduce) { *{ animation-duration:.001ms!important; transition-duration:.001ms!important } }.",
+        "vi": "Thêm @media (prefers-reduced-motion: reduce) { *{ animation-duration:.001ms!important; transition-duration:.001ms!important } }."
+      }
+    },
+    {
+      "id": "a11y.form-label",
+      "title": {
+        "en": "Every input has a real label",
+        "vi": "Mọi input có nhãn thật"
+      },
+      "domain": "forms",
+      "tag": "SPEC",
+      "severity": "error",
+      "source": "WCAG 2.2 SC 3.3.2 / 1.3.1 / 4.1.2",
+      "source_url": "https://www.w3.org/TR/WCAG22/#labels-or-instructions",
+      "rationale": {
+        "en": "Inputs need a programmatically associated <label> (for/id) or aria-label. A placeholder is not a label — it vanishes on input and often fails contrast.",
+        "vi": "Input cần <label> liên kết theo mã (for/id) hoặc aria-label. Placeholder không phải nhãn — biến mất khi gõ và thường thiếu tương phản."
+      },
+      "check": {
+        "type": "formLabel"
+      },
+      "remediation": {
+        "en": "Add <label for=id> or aria-label; keep the label persistently visible above the field.",
+        "vi": "Thêm <label for=id> hoặc aria-label; giữ nhãn hiển thị cố định phía trên trường."
+      }
+    },
+    {
+      "id": "a11y.semantic-control",
+      "title": {
+        "en": "Interactive controls are <button>/<a>",
+        "vi": "Điều khiển tương tác là <button>/<a>"
+      },
+      "domain": "antipattern",
+      "tag": "SPEC",
+      "severity": "error",
+      "source": "WCAG 2.2 SC 4.1.2 Name, Role, Value",
+      "source_url": "https://www.w3.org/TR/WCAG22/#name-role-value",
+      "rationale": {
+        "en": "A <div onclick> is not keyboard-operable and exposes no role. Use real semantic elements so keyboard, focus and screen readers work by default.",
+        "vi": "<div onclick> không thao tác được bằng bàn phím và không có role. Dùng phần tử ngữ nghĩa thật để bàn phím, focus và trình đọc màn hình chạy mặc định."
+      },
+      "check": {
+        "type": "semanticControl"
+      },
+      "remediation": {
+        "en": "Replace clickable <div>/<span> with <button> or <a>.",
+        "vi": "Thay <div>/<span> có onclick bằng <button> hoặc <a>."
+      }
+    },
+    {
+      "id": "a11y.emoji-icon",
+      "title": {
+        "en": "No emoji as interactive icons",
+        "vi": "Không dùng emoji làm icon tương tác"
+      },
+      "domain": "antipattern",
+      "tag": "SPEC",
+      "severity": "warn",
+      "source": "WCAG 2.2 SC 1.1.1 Non-text Content",
+      "source_url": "https://www.w3.org/TR/WCAG22/#non-text-content",
+      "rationale": {
+        "en": "Emoji render inconsistently and their screen-reader name is unpredictable. Used as a control without a text label they break 1.1.1.",
+        "vi": "Emoji hiển thị không nhất quán và tên đọc màn hình khó đoán. Dùng làm nút mà không có nhãn chữ là vi phạm 1.1.1."
+      },
+      "check": {
+        "type": "emojiIcon"
+      },
+      "remediation": {
+        "en": "Use an inline SVG icon plus a real text/aria label.",
+        "vi": "Dùng SVG inline kèm nhãn chữ/aria thật."
+      }
+    },
+    {
+      "id": "perf.img-dimensions",
+      "title": {
+        "en": "Images set width/height or aspect-ratio",
+        "vi": "Ảnh có width/height hoặc aspect-ratio"
+      },
+      "domain": "perf",
+      "tag": "CONV",
+      "severity": "warn",
+      "source": "web.dev — Optimize CLS",
+      "source_url": "https://web.dev/articles/cls",
+      "rationale": {
+        "en": "Reserving image space prevents Cumulative Layout Shift as media loads.",
+        "vi": "Đặt sẵn kích thước ảnh chống Cumulative Layout Shift khi media tải."
+      },
+      "check": {
+        "type": "imgDimensions"
+      },
+      "remediation": {
+        "en": "Add width and height attributes (or an aspect-ratio) to every <img>.",
+        "vi": "Thêm thuộc tính width và height (hoặc aspect-ratio) cho mọi <img>."
+      }
+    },
+    {
+      "id": "tokens.color-only",
+      "title": {
+        "en": "Color comes from tokens, not raw hex",
+        "vi": "Màu lấy từ token, không hex trần"
+      },
+      "domain": "tokens",
+      "tag": "CONV",
+      "severity": "warn",
+      "source": "Norma §1 Design Tokens",
+      "source_url": "",
+      "rationale": {
+        "en": "Hard-coded hex/rgb outside the token definitions defeats theming and drifts from the palette.",
+        "vi": "Hex/rgb cứng ngoài phần định nghĩa token phá vỡ theming và lệch khỏi palette."
+      },
+      "check": {
+        "type": "colorTokenOnly"
+      },
+      "remediation": {
+        "en": "Reference a CSS custom property / token instead of a literal color.",
+        "vi": "Tham chiếu CSS custom property / token thay vì màu cố định."
+      }
+    },
+    {
+      "id": "tokens.spacing-scale",
+      "title": {
+        "en": "Spacing snaps to the 8px scale",
+        "vi": "Khoảng cách khớp thang 8px"
+      },
+      "domain": "spacing",
+      "tag": "CONV",
+      "severity": "warn",
+      "source": "Norma §2 Spacing & Grid",
+      "source_url": "",
+      "rationale": {
+        "en": "Arbitrary px values (mt-[13px]) break rhythm; use the 0·4·8·12·16·24·32·48·64·96·128 scale.",
+        "vi": "Giá trị px tuỳ tiện (mt-[13px]) phá nhịp; dùng thang 0·4·8·12·16·24·32·48·64·96·128."
+      },
+      "check": {
+        "type": "spacingScale",
+        "scale": [
+          0,
+          4,
+          8,
+          12,
+          16,
+          24,
+          32,
+          48,
+          64,
+          96,
+          128
+        ],
+        "properties": [
+          "margin",
+          "padding",
+          "gap",
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ]
+      },
+      "remediation": {
+        "en": "Round the value to the nearest scale step or use a space token.",
+        "vi": "Làm tròn về bước thang gần nhất hoặc dùng token khoảng cách."
+      }
+    },
+    {
+      "id": "antipattern.indigo-default",
+      "title": {
+        "en": "No default indigo/purple gradient",
+        "vi": "Không gradient indigo/tím mặc định"
+      },
+      "domain": "antipattern",
+      "tag": "CONV",
+      "severity": "warn",
+      "source": "Norma §14 AI-era Anti-patterns (TELL)",
+      "source_url": "",
+      "rationale": {
+        "en": "The #667eea->#764ba2 indigo gradient is the AI default 'tell' that erases brand distinctiveness. Define brand tokens instead.",
+        "vi": "Gradient indigo #667eea->#764ba2 là 'dấu hiệu' mặc định của AI, xoá bản sắc thương hiệu. Hãy định nghĩa token thương hiệu."
+      },
+      "check": {
+        "type": "forbiddenValue",
+        "patterns": [
+          "#667eea",
+          "#764ba2",
+          "indigo-500"
+        ]
+      },
+      "remediation": {
+        "en": "Use a chosen brand token (e.g. the azure token) instead of the indigo default.",
+        "vi": "Dùng token thương hiệu (vd token azure) thay cho indigo mặc định."
+      }
+    },
+    {
+      "id": "antipattern.pure-dark-mode",
+      "title": {
+        "en": "No pure #000/#fff dark mode",
+        "vi": "Không dark mode #000/#fff thuần"
+      },
+      "domain": "antipattern",
+      "tag": "CONV",
+      "severity": "warn",
+      "source": "Norma §14 AI-era Anti-patterns (TELL)",
+      "source_url": "",
+      "rationale": {
+        "en": "Pure black surfaces with pure white text cause halation for astigmatic readers. Use near-black surfaces + off-white text.",
+        "vi": "Nền đen thuần với chữ trắng thuần gây chói (halation) cho người loạn thị. Dùng nền gần-đen + chữ hơi-ngà."
+      },
+      "check": {
+        "type": "forbiddenValue",
+        "patterns": [
+          "#000000",
+          "#000;",
+          "#fff;",
+          "#ffffff"
+        ],
+        "context": "dark-surface"
+      },
+      "remediation": {
+        "en": "Use e.g. #121212 surface and #E4E4E7 text.",
+        "vi": "Dùng vd nền #121212 và chữ #E4E4E7."
+      }
+    },
+    {
+      "id": "type.body-min",
+      "title": {
+        "en": "Body text >= 16px",
+        "vi": "Chữ thân >= 16px"
+      },
+      "domain": "type",
+      "tag": "CONV",
+      "severity": "off",
+      "source": "Norma §3 Typography",
+      "source_url": "",
+      "rationale": {
+        "en": "16px is the practical floor for long-form body text; 12px is for captions only.",
+        "vi": "16px là sàn thực tế cho văn bản dài; 12px chỉ cho chú thích."
+      },
+      "check": {
+        "type": "manual"
+      },
+      "remediation": {
+        "en": "Set body font-size to 1rem (16px) or larger.",
+        "vi": "Đặt cỡ chữ thân 1rem (16px) trở lên."
+      }
+    },
+    {
+      "id": "perf.inp-budget",
+      "title": {
+        "en": "INP budget <= 200ms",
+        "vi": "Ngân sách INP <= 200ms"
+      },
+      "domain": "perf",
+      "tag": "SPEC",
+      "severity": "off",
+      "source": "web.dev / Chrome — Core Web Vitals (INP)",
+      "source_url": "https://web.dev/articles/inp",
+      "rationale": {
+        "en": "Interaction to Next Paint at the 75th percentile should stay under 200ms; a field/runtime metric, not statically lintable.",
+        "vi": "Interaction to Next Paint ở phân vị 75 nên dưới 200ms; là chỉ số runtime, không lint tĩnh được."
+      },
+      "check": {
+        "type": "manual"
+      },
+      "remediation": {
+        "en": "Cut long tasks (>50ms) and heavy JS before optimizing images.",
+        "vi": "Cắt tác vụ dài (>50ms) và JS nặng trước khi tối ưu ảnh."
+      }
+    }
+  ]
+}

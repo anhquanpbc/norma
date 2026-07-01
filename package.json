@@ -1,0 +1,30 @@
+{
+  "name": "norma",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Norma — an enforceable, bilingual web design standard for humans and AI agents.",
+  "homepage": "https://github.com/anhquanpbc/norma",
+  "license": "MIT",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build:rules": "tsx scripts/build-rules.ts",
+    "gen": "tsx scripts/gen-agents.ts",
+    "check:drift": "tsx scripts/check-drift.ts",
+    "build": "npm run build:rules && npm run build --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "lint:self": "npm run build --workspace @norma/design-lint && node packages/design-lint/dist/cli.js index.html"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "ajv": "^8.17.1",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "yaml": "^2.6.1"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

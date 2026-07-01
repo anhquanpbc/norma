@@ -6,5 +6,11 @@ Thumbs.db
 .vscode/
 .idea/
 
-# dependencies (not used here, but just in case)
+# dependencies
 node_modules/
+
+# build artifacts
+dist/
+coverage/
+*.tsbuildinfo
+.norma-drift-tmp/

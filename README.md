@@ -13,7 +13,7 @@ A consolidated, **bilingual (English + Tiếng Việt)** technical reference for
 
 ## Covers · Bao gồm
 
-14 domains · 14 mảng: design tokens (W3C DTCG 2025.10) · spacing & the 8px grid · typography (incl. Vietnamese & CJK) · color (OKLCH, WCAG/APCA contrast) · accessibility (WCAG 2.2 AA) · Core Web Vitals (INP) · motion (Material 3 tokens) · platform guidelines (iOS HIG vs Material 3) · components & states · forms · responsive design · HCI mathematical laws (Fitts, Hick, Miller…) · **AI-era design anti-patterns** (tagged VIOLATION vs TELL).
+13 domains · 13 mảng: design tokens (W3C DTCG 2025.10) · spacing & the 8px grid · typography (incl. Vietnamese & CJK) · color (OKLCH, WCAG/APCA contrast) · accessibility (WCAG 2.2 AA) · Core Web Vitals (INP) · motion (Material 3 tokens) · platform guidelines (iOS HIG vs Material 3) · components & states · forms · responsive design · HCI mathematical laws (Fitts, Hick, Miller…) · **AI-era design anti-patterns** (tagged VIOLATION vs TELL).
 
 ## View it · Xem
 
