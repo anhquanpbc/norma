@@ -26,6 +26,16 @@ All notable changes to this project are documented here. The format is based on
   GitHub Pages deploy, Dependabot.
 - Dual license: MIT (code) + CC BY 4.0 (content).
 
+### Changed
+
+- **Language structure**: English is now the primary language. Each human-facing document is split into
+  an English canonical file plus a Vietnamese `*.vi.md` sibling — `README` / `REFERENCE` / `CONTRIBUTING`
+  / `packages/design-lint/README` — instead of inline EN+VI mixing. The generated agent-surface files
+  (`AGENTS.md`, `CLAUDE.md`, Cursor, Copilot, `.github/instructions/*`) are now **English-only**, and
+  `index.html` now **defaults to English** (the in-page EN/VI toggle stays). The rule catalog
+  (`standard/rules.yaml`) keeps bilingual `title` / `rationale` / `remediation` for the linter's
+  `--lang en|vi`.
+
 ### Fixed
 
 - Six real WCAG AA contrast self-violations in the reference site's own chrome (gauge labels, target

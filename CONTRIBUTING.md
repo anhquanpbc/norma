@@ -1,12 +1,11 @@
-# Contributing to Norma · Đóng góp cho Norma
+**English** · [Tiếng Việt](CONTRIBUTING.vi.md)
+
+# Contributing to Norma
 
 Thanks for helping make Norma better. This project is a **standard**, a **design agent**, and a
 **linter** kept in sync from one source of truth — so the golden rule is about *where* you edit.
 
-> *Cảm ơn bạn giúp Norma tốt hơn. Dự án gồm **chuẩn**, **agent thiết kế**, và **linter** được đồng bộ từ
-> một nguồn duy nhất — nên quy tắc vàng là về *chỗ* bạn sửa.*
-
-## The golden rule · Quy tắc vàng
+## The golden rule
 
 **Never hand-edit a generated file.** The only hand-authored rule sources are:
 
@@ -27,7 +26,7 @@ npm run check:drift   # must pass before you commit
 CI runs `check:drift` and will fail the build if generated files are stale, if the brand color diverges
 across files, if the domain count is inconsistent, or if a rule isn't covered by the agent spec.
 
-## Adding or changing a rule · Thêm/đổi một rule
+## Adding or changing a rule
 
 Edit `standard/rules.yaml`. Each rule needs: a stable `id`, EN + VI `title`, a `domain`, a `tag`
 (`SPEC` for a published mandate — **must** include a primary-source `source_url`; `CONV` for a
@@ -39,18 +38,26 @@ Prefer `off` for anything a static linter can't verify soundly (e.g. rendered ta
 agent enforces those instead. Soundness over coverage: a false positive on the reference site breaks
 `npm test`.
 
-## Bilingual policy · Chính sách song ngữ
+## Language policy
 
-Docs and rule descriptions are **bilingual (EN + VI)**. Code identifiers are English; linter messages
-are bilingual. Keep the two languages at parity — don't let one drift.
+**English is the canonical language.** Each human-facing document has an English version at its canonical
+path (`README.md`, `REFERENCE.md`, `CONTRIBUTING.md`, `packages/design-lint/README.md`) and a Vietnamese
+sibling with a `.vi.md` suffix (`README.vi.md`, `REFERENCE.vi.md`, …). The generated agent-surface files
+(`AGENTS.md`, `CLAUDE.md`, `.cursor/rules/*`, `.github/copilot-instructions.md`,
+`.github/instructions/*`) are **English-only**, since AI tools consume them in English.
 
-## Commit & PR · Commit & PR
+The rule catalog (`standard/rules.yaml`) keeps bilingual `title` / `rationale` / `remediation`, because
+the linter emits findings in both languages via `--lang en|vi`; `index.html` keeps its in-page EN/VI
+toggle (defaulting to English). When you change an English doc, update its `.vi.md` sibling in the same
+PR — don't let the two drift.
+
+## Commit & PR
 
 - Run `npm ci && npm run build && npm test && npm run check:drift` locally; all must pass.
 - Keep the site (`index.html`) **zero-dependency and offline** — no CDNs, fonts, or network requests.
 - Fill in the PR template checklist (regenerated? lint:self green?).
 
-## Versioning · Đánh phiên bản
+## Versioning
 
 The **standard** is versioned in `standard/VERSION` (SemVer), independently of the CLI:
 MAJOR = a mandate is added/removed or a severity tightens; MINOR = a new convention or token;

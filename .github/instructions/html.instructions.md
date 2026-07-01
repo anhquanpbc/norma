@@ -10,11 +10,11 @@ real `<label>`. Touch targets ≥ 24 CSS px. Set `width`/`height` on images. No 
 
 ## Applicable rules
 
-- 🔒 SPEC `color.contrast.text` (error) — Body text contrast >= 4.5:1 / Tương phản chữ thân >= 4.5:1 · [WCAG 2.2 SC 1.4.3 Contrast (Minimum)](https://www.w3.org/TR/WCAG22/#contrast-minimum)
-- 🔒 SPEC `color.contrast.large-ui` (error) — Large text & UI contrast >= 3:1 / Tương phản chữ lớn & UI >= 3:1 · [WCAG 2.2 SC 1.4.3 / 1.4.11 Non-text Contrast](https://www.w3.org/TR/WCAG22/#non-text-contrast)
-- 🔒 SPEC `a11y.target-size` (error) — Touch target >= 24x24 CSS px (native 44/48) / Vùng chạm >= 24x24 CSS px (native 44/48) · [WCAG 2.2 SC 2.5.8 Target Size (Minimum)](https://www.w3.org/TR/WCAG22/#target-size-minimum)
-- 🔒 SPEC `a11y.focus-ring-single` (error) — Exactly one focus-visible ring / Đúng một vòng focus-visible · [WCAG 2.2 SC 2.4.7 / 2.4.11 / 2.4.13](https://www.w3.org/TR/WCAG22/#focus-appearance)
-- 🔒 SPEC `a11y.form-label` (error) — Every input has a real label / Mọi input có nhãn thật · [WCAG 2.2 SC 3.3.2 / 1.3.1 / 4.1.2](https://www.w3.org/TR/WCAG22/#labels-or-instructions)
-- 🔒 SPEC `a11y.semantic-control` (error) — Interactive controls are <button>/<a> / Điều khiển tương tác là <button>/<a> · [WCAG 2.2 SC 4.1.2 Name, Role, Value](https://www.w3.org/TR/WCAG22/#name-role-value)
-- 🔒 SPEC `a11y.emoji-icon` (warn) — No emoji as interactive icons / Không dùng emoji làm icon tương tác · [WCAG 2.2 SC 1.1.1 Non-text Content](https://www.w3.org/TR/WCAG22/#non-text-content)
-- 📐 CONV `perf.img-dimensions` (warn) — Images set width/height or aspect-ratio / Ảnh có width/height hoặc aspect-ratio · [web.dev — Optimize CLS](https://web.dev/articles/cls)
+- 🔒 SPEC `color.contrast.text` (error) — Body text contrast >= 4.5:1 · [WCAG 2.2 SC 1.4.3 Contrast (Minimum)](https://www.w3.org/TR/WCAG22/#contrast-minimum)
+- 🔒 SPEC `color.contrast.large-ui` (error) — Large text & UI contrast >= 3:1 · [WCAG 2.2 SC 1.4.3 / 1.4.11 Non-text Contrast](https://www.w3.org/TR/WCAG22/#non-text-contrast)
+- 🔒 SPEC `a11y.target-size` (error) — Touch target >= 24x24 CSS px (native 44/48) · [WCAG 2.2 SC 2.5.8 Target Size (Minimum)](https://www.w3.org/TR/WCAG22/#target-size-minimum)
+- 🔒 SPEC `a11y.focus-ring-single` (error) — Exactly one focus-visible ring · [WCAG 2.2 SC 2.4.7 / 2.4.11 / 2.4.13](https://www.w3.org/TR/WCAG22/#focus-appearance)
+- 🔒 SPEC `a11y.form-label` (error) — Every input has a real label · [WCAG 2.2 SC 3.3.2 / 1.3.1 / 4.1.2](https://www.w3.org/TR/WCAG22/#labels-or-instructions)
+- 🔒 SPEC `a11y.semantic-control` (error) — Interactive controls are <button>/<a> · [WCAG 2.2 SC 4.1.2 Name, Role, Value](https://www.w3.org/TR/WCAG22/#name-role-value)
+- 🔒 SPEC `a11y.emoji-icon` (warn) — No emoji as interactive icons · [WCAG 2.2 SC 1.1.1 Non-text Content](https://www.w3.org/TR/WCAG22/#non-text-content)
+- 📐 CONV `perf.img-dimensions` (warn) — Images set width/height or aspect-ratio · [web.dev — Optimize CLS](https://web.dev/articles/cls)

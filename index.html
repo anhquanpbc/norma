@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="vi" data-lang="vi">
+<html lang="en" data-lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -398,8 +398,8 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
       <a href="#s14">AI Traps</a>
     </nav>
     <div class="lang-toggle" role="group" aria-label="Language">
-      <button id="btn-en" onclick="setLang('en')" aria-pressed="false">EN</button>
-      <button id="btn-vi" onclick="setLang('vi')" aria-pressed="true">VI</button>
+      <button id="btn-en" onclick="setLang('en')" aria-pressed="true">EN</button>
+      <button id="btn-vi" onclick="setLang('vi')" aria-pressed="false">VI</button>
     </div>
   </div>
 </header>
@@ -1093,7 +1093,7 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
 "use strict";
 var SVGNS = "http://www.w3.org/2000/svg";
 function $(id){ return document.getElementById(id); }
-function lang(){ return document.documentElement.dataset.lang || "vi"; }
+function lang(){ return document.documentElement.dataset.lang || "en"; }
 function t(en, vi){ return lang() === "en" ? en : vi; }
 function el(tag, attrs){ var e = document.createElementNS(SVGNS, tag); for(var k in attrs){ e.setAttribute(k, attrs[k]); } return e; }
 

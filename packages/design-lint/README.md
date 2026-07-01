@@ -1,11 +1,10 @@
+**English** · [Tiếng Việt](README.vi.md)
+
 # @norma/design-lint
 
 Lint HTML/CSS against the [Norma](https://github.com/anhquanpbc/norma) web design standard —
 contrast, focus rings, semantic HTML, form labels, reduced-motion, and the common
-AI-generated design "tells". Bilingual (EN/VI) messages, SARIF output for GitHub.
-
-> *Kiểm HTML/CSS theo chuẩn thiết kế Norma — tương phản, vòng focus, HTML ngữ nghĩa, nhãn biểu mẫu,
-> reduced-motion, và các "dấu hiệu" thiết kế do AI sinh. Thông báo song ngữ Anh–Việt, xuất SARIF.*
+AI-generated design "tells". Bilingual (EN/VI) messages via `--lang`, SARIF output for GitHub.
 
 ## Usage
 
