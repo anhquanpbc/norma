@@ -1,0 +1,59 @@
+name: "📐 Rule proposal"
+description: Propose adding or changing a Norma standard rule
+labels: ["rule"]
+body:
+  - type: input
+    id: rule-id
+    attributes:
+      label: Proposed rule id
+      description: Stable, dotted id, e.g. color.contrast.text
+      placeholder: domain.short-name
+    validations:
+      required: true
+  - type: input
+    id: title-en
+    attributes:
+      label: Title (English)
+    validations:
+      required: true
+  - type: input
+    id: title-vi
+    attributes:
+      label: Title (Tiếng Việt)
+    validations:
+      required: true
+  - type: dropdown
+    id: tag
+    attributes:
+      label: Tag
+      options:
+        - "SPEC — a published mandate (WCAG / platform HIG)"
+        - "CONV — an industry convention"
+    validations:
+      required: true
+  - type: input
+    id: source
+    attributes:
+      label: Primary source URL
+      description: Required for SPEC rules — link the spec section.
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Suggested severity
+      options: ["error", "warn", "off"]
+    validations:
+      required: true
+  - type: textarea
+    id: rationale
+    attributes:
+      label: Rationale (EN + VI)
+      description: Why the rule exists and what it prevents.
+    validations:
+      required: true
+  - type: textarea
+    id: check
+    attributes:
+      label: How should it be verified?
+      description: A static linter check, or agent-enforced only? Describe the assertion and give a pass/fail example.
+    validations:
+      required: true

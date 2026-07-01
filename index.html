@@ -33,6 +33,9 @@
   --warn-wash:  oklch(0.96 0.06 88);
   --bad:        oklch(0.60 0.20 25);
   --bad-wash:   oklch(0.95 0.04 25);
+  --good-solid: oklch(0.52 0.14 155);   /* darker green: AA (>=4.5:1) for white text on a solid fill */
+  --bad-solid:  oklch(0.55 0.19 25);    /* darker red:   AA (>=4.5:1) for white text on a solid fill */
+  --bad-ink:    oklch(0.48 0.19 25);    /* darker red:   AA (>=4.5:1) as text on a light --bad-wash */
   --grid-line:  oklch(0.55 0.04 258 / 0.05);
 
   /* ---- type scale: base 16px × 1.25 (major third) ---- */
@@ -244,7 +247,7 @@ select{ font-family:var(--sans); font-size:14px; padding:8px 10px; border:1px so
 .cc-badges{ display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
 .cc-badge{ font-family:var(--mono); font-size:11px; font-weight:600; padding:3px 8px; border-radius:6px; }
 .cc-pass{ background:var(--good-wash); color:oklch(0.40 0.14 155); }
-.cc-fail{ background:var(--bad-wash); color:var(--bad); }
+.cc-fail{ background:var(--bad-wash); color:var(--bad-ink); }
 
 /* gauges (Core Web Vitals) */
 .gauge{ margin-bottom:var(--s-4); }
@@ -255,7 +258,7 @@ select{ font-family:var(--sans); font-size:14px; padding:8px 10px; border:1px so
 .gauge-bar{ display:flex; height:26px; border-radius:6px; overflow:hidden; font-family:var(--mono);
   font-size:11px; color:#fff; font-weight:600; }
 .gauge-bar > div{ display:flex; align-items:center; padding-left:8px; white-space:nowrap; }
-.gz-good{ background:var(--good); } .gz-ni{ background:var(--warn); color:oklch(0.30 0.05 80); } .gz-bad{ background:var(--bad); }
+.gz-good{ background:var(--good-solid); } .gz-ni{ background:var(--warn); color:oklch(0.30 0.05 80); } .gz-bad{ background:var(--bad-solid); }
 
 /* target size demo */
 .ts-stage{ display:flex; align-items:flex-end; gap:20px; flex-wrap:wrap; padding:var(--s-4);
@@ -285,7 +288,7 @@ select{ font-family:var(--sans); font-size:14px; padding:8px 10px; border:1px so
   background:var(--azure); }
 
 /* =================== §14 anti-pattern components =================== */
-.badge.viol{ color:var(--bad); background:var(--bad-wash); border-color:oklch(0.82 0.10 25); }
+.badge.viol{ color:var(--bad-ink); background:var(--bad-wash); border-color:oklch(0.82 0.10 25); }
 .badge.tell{ color:var(--amber-ink); background:var(--warn-wash); border-color:oklch(0.85 0.10 82); }
 
 /* focus-appearance compare demo (pure CSS, keyboard-driven) */
@@ -293,6 +296,7 @@ select{ font-family:var(--sans); font-size:14px; padding:8px 10px; border:1px so
 .fd-btn{ font-family:var(--sans); font-size:14px; font-weight:600; padding:0 18px; min-height:44px;
   border-radius:8px; cursor:pointer; background:var(--surface); color:var(--ink); }
 .fd-bad{ border:2px solid var(--line-2); }
+/* norma-disable a11y.focus-ring-single -- intentional VIOLATION demo (the anti-pattern this widget teaches) */
 .fd-bad:focus-visible{ outline:3px solid var(--azure); outline-offset:3px; border-radius:8px;
   border-color:var(--bad); box-shadow:0 0 0 6px var(--bad-wash); }   /* 3 competing rings — the anti-pattern */
 .fd-good{ border:1px solid var(--line-2); }
@@ -314,6 +318,7 @@ select{ font-family:var(--sans); font-size:14px; padding:8px 10px; border:1px so
 .tell-bars{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
 .tell-bar{ height:52px; border-radius:8px; display:flex; align-items:flex-end; padding:6px 8px;
   font-family:var(--mono); font-size:10px; color:#fff; }
+/* norma-disable antipattern.indigo-default -- intentional TELL demo (shows the AI default cliché) */
 .tell-purple{ background:linear-gradient(135deg,#667eea,#764ba2); }  /* the AI default cliché */
 .tell-brand{ background:var(--azure-ink); }
 
@@ -363,9 +368,10 @@ footer .fin{ max-width:var(--maxw); margin:0 auto; }
 footer h4{ color:var(--paper); font-family:var(--mono); font-size:12px; text-transform:uppercase;
   letter-spacing:0.06em; margin-bottom:var(--s-4); }
 footer a{ color:oklch(0.80 0.08 252); }
+footer .src{ color:oklch(0.66 0.02 250); }   /* lift source labels to AA (>=4.5:1) on the dark footer */
 footer .srcgrid{ display:grid; grid-template-columns:repeat(2,1fr); gap:6px 24px; font-size:13px; line-height:1.7; }
 @media (max-width:640px){ footer .srcgrid{ grid-template-columns:1fr; } }
-footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.58 0.01 250); line-height:1.6; max-width:80ch; }
+footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250); line-height:1.6; max-width:80ch; }
 
 .skip{ position:absolute; left:-9999px; top:0; background:var(--ink); color:#fff; padding:10px 16px;
   border-radius:0 0 8px 0; z-index:100; }
@@ -599,7 +605,7 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.58 0.01 250);
   <div class="grid g2" style="margin-top:var(--s-5)">
     <div class="card" style="border-left:3px solid var(--amber)">
       <h4>🇻🇳 <span class="en">Vietnamese</span><span class="vi">Tiếng Việt</span> <span class="badge conv">CONV</span></h4>
-      <p><span class="en">The most demanding Latin script: <b>134+ accented characters</b> needing the <b>Latin Extended Additional</b> Unicode block (stacked tonal + vowel diacritics). Budget fonts often skip it — <b>verify glyph coverage</b> (Noto Sans/Serif, Be Vietnam Pro are safe). Give a little extra line-height so stacked marks don't collide.</span><span class="vi">Chữ Latin khó nhất: <b>134+ ký tự có dấu</b> cần khối Unicode <b>Latin Extended Additional</b> (dấu thanh + dấu nguyên âm chồng nhau). Font giá rẻ hay thiếu — <b>kiểm tra độ phủ glyph</b> (Noto Sans/Serif, Be Vietnam Pro an toàn). Cho line-height nhỉnh hơn để dấu chồng không dính.</span></p>
+      <p><span class="en">The most demanding Latin script: <b>134+ accented characters</b> whose precomposed forms span <b>four Unicode blocks</b> — Latin-1 Supplement, Latin Extended-A/B, and <b>Latin Extended Additional</b> (which holds the largest share). Budget fonts often skip Extended-A/B/Additional — <b>verify glyph coverage</b> (Noto Sans/Serif, Be Vietnam Pro are safe). Give a little extra line-height so stacked marks don't collide.</span><span class="vi">Chữ Latin khó nhất: <b>134+ ký tự có dấu</b> với dạng dựng sẵn trải trên <b>bốn khối Unicode</b> — Latin-1 Supplement, Latin Extended-A/B, và <b>Latin Extended Additional</b> (chứa phần lớn nhất). Font giá rẻ hay thiếu Extended-A/B/Additional — <b>kiểm tra độ phủ glyph</b> (Noto Sans/Serif, Be Vietnam Pro an toàn). Cho line-height nhỉnh hơn để dấu chồng không dính.</span></p>
     </div>
     <div class="card" style="border-left:3px solid oklch(0.6 0.16 20)">
       <h4>🇹🇼 <span class="en">Traditional Chinese / CJK</span><span class="vi">Trung Phồn thể / CJK</span> <span class="badge conv">CONV</span></h4>
@@ -674,9 +680,9 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.58 0.01 250);
     <div class="widget">
       <div class="widget-title"><span class="en">Target sizes · drawn to scale (CSS px)</span><span class="vi">Kích thước vùng chạm · vẽ đúng tỷ lệ (CSS px)</span></div>
       <div class="ts-stage">
-        <div class="ts-box" style="width:24px;height:24px;background:var(--bad)">24</div>
+        <div class="ts-box" style="width:24px;height:24px;background:var(--bad-solid)">24</div>
         <div class="ts-box" style="width:44px;height:44px;background:var(--amber);color:oklch(0.3 0.05 80)">44</div>
-        <div class="ts-box" style="width:48px;height:48px;background:var(--good)">48</div>
+        <div class="ts-box" style="width:48px;height:48px;background:var(--good-solid)">48</div>
       </div>
       <ul class="spec" style="margin-top:16px">
         <li><span class="k">24×24</span><span><b>WCAG 2.5.8 (AA)</b> <span class="badge spec">SPEC</span> — <span class="en">floor, with 5 exceptions (spacing / equivalent / inline / UA / essential)</span><span class="vi">mức sàn, 5 ngoại lệ (khoảng cách / tương đương / inline / UA / thiết yếu)</span></span></li>
@@ -1053,7 +1059,7 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.58 0.01 250);
   <!-- remediation -->
   <div class="grid g3" style="margin-top:var(--s-5)">
     <div class="card"><div class="eyebrow">01 · <span class="en">Gate violations in CI</span><span class="vi">Chặn vi phạm ở CI</span></div><p style="margin-top:8px"><span class="en">Automated checks for contrast (1.4.3), focus (2.4.7/2.4.11), labels (3.3.2/4.1.2), reduced-motion &amp; semantic roles — build-breaking. Tools catch only ~57% of issues, so add a manual keyboard + screen-reader pass.</span><span class="vi">Kiểm tra tự động tương phản (1.4.3), focus (2.4.7/2.4.11), nhãn (3.3.2/4.1.2), reduced-motion &amp; vai trò ngữ nghĩa — fail thì chặn build. Công cụ chỉ bắt ~57% lỗi, nên thêm lượt kiểm bằng bàn phím + trình đọc màn hình.</span></p></div>
-    <div class="card"><div class="eyebrow">02 · <span class="en">Systematize inputs</span><span class="vi">Hệ thống hóa đầu vào</span></div><p style="margin-top:8px"><span class="en">Feed a 3-tier token file + <code>.cursorrules</code>/<code>copilot-instructions</code> mandating semantic HTML, one focus ring, token-only color/spacing, and explicit anti-defaults ("no indigo gradients, no Inter-only, no arbitrary px, no glass by default").</span><span class="vi">Cấp file token 3 tầng + <code>.cursorrules</code>/<code>copilot-instructions</code> bắt buộc HTML ngữ nghĩa, một vòng focus, chỉ dùng token cho màu/khoảng cách, và anti-default rõ ràng ("không gradient indigo, không chỉ Inter, không px tùy tiện, không glass mặc định").</span></p></div>
+    <div class="card"><div class="eyebrow">02 · <span class="en">Systematize inputs</span><span class="vi">Hệ thống hóa đầu vào</span></div><p style="margin-top:8px"><span class="en">Feed a 3-tier token file + agent rule files (<code>AGENTS.md</code>, <code>.cursor/rules/*.mdc</code>, <code>.github/copilot-instructions.md</code>) mandating semantic HTML, one focus ring, token-only color/spacing, and explicit anti-defaults ("no indigo gradients, no Inter-only, no arbitrary px, no glass by default").</span><span class="vi">Cấp file token 3 tầng + các file rule cho agent (<code>AGENTS.md</code>, <code>.cursor/rules/*.mdc</code>, <code>.github/copilot-instructions.md</code>) bắt buộc HTML ngữ nghĩa, một vòng focus, chỉ dùng token cho màu/khoảng cách, và anti-default rõ ràng ("không gradient indigo, không chỉ Inter, không px tùy tiện, không glass mặc định").</span></p></div>
     <div class="card"><div class="eyebrow">03 · <span class="en">Govern the product layer</span><span class="vi">Quản trị tầng sản phẩm</span></div><p style="margin-top:8px"><span class="en">Justify each AI feature (user-need × AI-strength); require disclosure + confidence + undo/oversight (MS HAX, PAIR, HIG); audit commerce/forms against a dark-pattern taxonomy; ban fabricated content.</span><span class="vi">Biện minh mỗi tính năng AI (nhu cầu × thế mạnh AI); bắt buộc tiết lộ + độ tin cậy + undo/giám sát (MS HAX, PAIR, HIG); kiểm toán TMĐT/biểu mẫu theo phân loại dark pattern; cấm nội dung bịa.</span></p></div>
   </div>
 
@@ -1312,6 +1318,7 @@ function initScrollSpy(){
     if(current){ current.link.classList.add("active"); }
   }
   window.addEventListener("scroll", onScroll, { passive:true });
+  window.addEventListener("resize", onScroll, { passive:true });   // recompute active section on reflow
   onScroll();
 }
 

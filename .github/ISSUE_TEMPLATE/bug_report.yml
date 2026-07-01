@@ -1,0 +1,29 @@
+name: "🐞 Bug report"
+description: Report a problem with the linter, the standard, or the reference site
+labels: ["bug"]
+body:
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options: ["@norma/design-lint (CLI)", "standard / rules", "reference site (index.html)", "agent files", "docs"]
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: For a linter bug, include the input HTML/CSS, the command, and the output.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: "@norma/design-lint version and/or commit SHA"

@@ -35,7 +35,7 @@ This layering lets you re-theme (light/dark, brand A/B) by remapping the semanti
 {
   "color": {
     "brand": {
-      "primary": { "$value": "oklch(0.58 0.18 250)", "$type": "color", "$description": "Primary brand color" }
+      "primary": { "$value": "oklch(0.58 0.16 252)", "$type": "color", "$description": "Primary brand color" }
     },
     "text": {
       "primary": { "$value": "{color.brand.primary}", "$type": "color" }
@@ -119,7 +119,7 @@ Use `rem` (not `px`) so type respects user font-size. Typically 6–8 steps; neg
 
 **CJK / Traditional Chinese 📐:** CJK fonts hold 20,000–80,000+ glyphs (5–20MB) vs ~200 for Latin — delivery is the core problem. Google Fonts splits CJK into 100+ `unicode-range` subsets; subset per script. **Raise line-height to ~1.7** (denser glyphs) vs ~1.2 Latin. When mixing scripts, the Latin often needs optical scaling up (CJK sits in a square em-box). **Ship region-specific fonts (Traditional TC vs Simplified SC)** — pan-CJK localized variants are unreliable; Taiwan/Hong Kong readers reject Simplified. Traditional Chinese also commonly uses vertical layouts.
 
-**Vietnamese 📐:** the most demanding Latin script — 134+ accented characters needing the **Latin Extended Additional** Unicode block (stacked tonal + vowel diacritics). Budget fonts often skip Extended-A/B/Additional — **verify glyph coverage before deploying** (Noto Sans/Serif and Be Vietnam Pro are safe). Give Vietnamese slightly more line-height so stacked diacritics don't collide.
+**Vietnamese 📐:** the most demanding Latin script — 134+ accented characters whose precomposed forms are spread across **four Unicode blocks**: Latin-1 Supplement, Latin Extended-A, Latin Extended-B, and **Latin Extended Additional** (U+1E00–U+1EFF, which holds the largest single share, ~90). A font that covers only Latin Extended Additional will still miss Vietnamese glyphs — budget fonts often skip Extended-A/B/Additional, so **verify glyph coverage before deploying** (Noto Sans/Serif and Be Vietnam Pro are safe). Give Vietnamese slightly more line-height so stacked diacritics don't collide.
 
 **VI.** **Thang modular 📐:** `cỡ = gốc × tỷ_lệ^bước`. Gốc gần như luôn là **16px** (1rem; dùng 18px cho nội dung đọc nhiều). Các tỷ lệ phổ biến: xem bảng ở khối tiếng Anh — đáng nhớ nhất là **1.250 (major third)** cho UI ứng dụng và **1.333 (perfect fourth)** cho báo chí/thoáng. Dùng `rem` chứ không `px` để chữ tôn trọng thiết lập cỡ chữ của người dùng. Thường 6–8 bước; bước âm (gốc ÷ tỷ lệ) cho chú thích ≈ 12–13px.
 
@@ -131,7 +131,7 @@ Use `rem` (not `px`) so type respects user font-size. Typically 6–8 steps; neg
 
 **CJK / Tiếng Trung Phồn thể 📐:** font CJK chứa 20.000–80.000+ glyph (5–20MB) so với ~200 của Latin — cốt lõi là bài toán phân phối. Chia CJK thành 100+ subset `unicode-range`. **Tăng line-height lên ~1.7** (glyph dày đặc). Khi trộn với Latin, phần Latin thường phải phóng to quang học. **Dùng font theo vùng (Phồn thể TC vs Giản thể SC)** — biến thể pan-CJK không đáng tin; độc giả Đài Loan/Hồng Kông không chấp nhận Giản thể. Phồn thể còn hay dùng bố cục dọc.
 
-**Tiếng Việt 📐:** chữ Latin khó nhất — 134+ ký tự có dấu, cần khối Unicode **Latin Extended Additional** (dấu thanh + dấu nguyên âm chồng nhau). Font giá rẻ thường thiếu Extended-A/B/Additional — **kiểm tra độ phủ glyph trước khi triển khai** (Noto Sans/Serif và Be Vietnam Pro an toàn). Cho tiếng Việt line-height nhỉnh hơn để dấu chồng không dính nhau.
+**Tiếng Việt 📐:** chữ Latin khó nhất — 134+ ký tự có dấu, với dạng dựng sẵn (precomposed) trải trên **bốn khối Unicode**: Latin-1 Supplement, Latin Extended-A, Latin Extended-B, và **Latin Extended Additional** (U+1E00–U+1EFF, chứa phần lớn nhất, ~90 ký tự). Font chỉ phủ Latin Extended Additional vẫn thiếu glyph tiếng Việt — font giá rẻ thường thiếu Extended-A/B/Additional, nên **kiểm tra độ phủ glyph trước khi triển khai** (Noto Sans/Serif và Be Vietnam Pro an toàn). Cho tiếng Việt line-height nhỉnh hơn để dấu chồng không dính nhau.
 
 ---
 
@@ -331,7 +331,7 @@ Ratio = (L1 + 0.05)/(L2 + 0.05), range 1:1–21:1.
 - **Required fields:** mark clearly; ask only for what's necessary.
 - **Mobile input:** set correct `type`/`inputmode` (email/tel/number/url) to summon the right keyboard; enable `autocomplete`/autofill; support one-time-code autofill. WCAG 3.3.7 Redundant Entry 🔒 — don't force re-entry of provided info.
 
-**VI. 📐** Bố cục một cột, nhãn căn trên (dễ quét + full-width mobile); tránh nhãn căn trái và placeholder làm nhãn. Mỗi input có `<label>` liên kết theo mã (`for`/`id`) 🔒. Kiểm tra hợp lệ **khi rời trường (on blur)**, không phải mỗi lần gõ; hiện xác nhận tích cực khi hữu ích. Thông báo lỗi: đặt ngay dưới trường, cụ thể và hành động được ("Nhập số điện thoại 10 chữ số, ví dụ 0123-456-789" — không phải "Dữ liệu không hợp lệ"); không chỉ dựa vào màu (màu + icon + chữ) 🔒; thông báo qua `aria-live`. Đánh dấu trường bắt buộc rõ ràng; chỉ hỏi thông tin cần thiết. Mobile: đặt đúng `type`/`inputmode` để gọi đúng bàn phím; bật `autocomplete`/tự điền; hỗ trợ tự điền mã OTP. WCAG 3.3.7 🔒 — đừng bắt nhập lại thông tin đã cung cấp.
+**VI. 📐** Bố cục một cột, nhãn căn trên (dễ quét + full-width mobile); tránh nhãn căn trái và placeholder làm nhãn. Mỗi input có `<label>` liên kết theo mã (`for`/`id`) 🔒. Kiểm tra hợp lệ **khi rời trường (on blur)**, không phải mỗi lần gõ; hiện xác nhận tích cực khi hữu ích. Thông báo lỗi: đặt ngay dưới trường, cụ thể và hành động được ("Nhập số điện thoại 10 chữ số, ví dụ 0912 345 678" — không phải "Dữ liệu không hợp lệ"); không chỉ dựa vào màu (màu + icon + chữ) 🔒; thông báo qua `aria-live`. Đánh dấu trường bắt buộc rõ ràng; chỉ hỏi thông tin cần thiết. Mobile: đặt đúng `type`/`inputmode` để gọi đúng bàn phím; bật `autocomplete`/tự điền; hỗ trợ tự điền mã OTP. WCAG 3.3.7 🔒 — đừng bắt nhập lại thông tin đã cung cấp.
 
 ---
 
@@ -403,6 +403,82 @@ Ratio = (L1 + 0.05)/(L2 + 0.05), range 1:1–21:1.
 - APCA là mục tiêu di động (bị đưa về "Placeholder" trong nháp WCAG 3.0 06/2023); ngưỡng Lc từ tài liệu APCA/ARC; vai trò cuối trong WCAG 3.0 chưa chốt (~2030).
 - Material 3 đang chuyển tiếp từ token easing/duration sang hệ spring (mặc định trong Jetpack Compose) — kiểm tra bộ công cụ của bạn dùng loại nào.
 - Giá trị breakpoint khác nhau theo framework/phiên bản — xác nhận theo bản bạn triển khai.
+
+---
+
+## 14. AI-era Design Anti-patterns / Phản mẫu Thiết kế thời đại AI
+
+**EN.** AI coding tools reliably emit two kinds of defect, and it matters which one you are fighting:
+
+- **VIOLATION** 🔒 — an objective, testable failure against a named WCAG 2.2 / platform-HIG rule. These are gate-in-CI material.
+- **TELL** 📐 — a subjective aesthetic signal that screams "machine-generated." Not a compliance failure, but it erodes brand distinctiveness and can *induce* a violation.
+
+**Level 1 — visual & CSS defects:**
+
+| Item | Type | Fix |
+|---|---|---|
+| **Nested focus rings** — `border` + `outline` + `box-shadow` stacked | VIOLATION (2.4.11/2.4.13) | one `:focus-visible` ring, ≥2px, ≥3:1 |
+| **Low-contrast gray text** — `#999` on `#fff`; ~84% of home pages (WebAIM Million) | VIOLATION (1.4.3) | ≥4.5:1 (3:1 large/UI) |
+| **Gratuitous animation** — everything animates, ignores reduced-motion | VIOLATION (2.3.3) | animate for meaning; honor `prefers-reduced-motion` |
+| **Emoji as icons** — 🚀🔥 as controls; render + SR-name vary | VIOLATION (1.1.1) | inline SVG + a real label |
+| **Placeholder-as-label** — hint disappears on input | VIOLATION (3.3.2/4.1.2) | persistent associated `<label>` |
+| **Halo / glow overuse** — stacked colored shadows | TELL | neutral elevation scale, one light source |
+| **Purple→violet gradient** — `#667eea → #764ba2` indigo default | TELL | brand tokens (Tailwind's creator publicly apologized in 2025 for "every AI-generated UI being indigo") |
+| **Glassmorphism everywhere** — `backdrop-filter` spam, dynamic-contrast fails, GPU cost | TELL | 2–3 glass surfaces + a scrim, never by default |
+| **Arbitrary spacing / over-rounding** — `mt-[13px]`, mixed radii | TELL | token scales |
+| **Pure `#000`/`#fff` dark mode** — halation for astigmatism | TELL | `#121212` surface + `#E4E4E7` text |
+
+**Level 2 — UX & product diseases:**
+
+- **Inaccessible by default** 🔒 — `<div onClick>` instead of `<button>`, no ARIA/keyboard → semantic HTML (4.1.2).
+- **AI slop / sameness** 📐 — apply the "logo-removed test": is it mistakable for a competitor? → build a brand system first.
+- **Chatbot shoehorning** 📐 — chat bolted where direct manipulation is faster → task UI; chat only to help formulate intent.
+- **AI feature bolt-on** 📐 — ✨ buttons as marketing → gate on user-need × AI-strength (Google PAIR).
+- **Over-automation / lost control** 🔒 — no undo/oversight, automation bias → human-in-the-loop, global controls (MS HAX, HIG).
+- **Dark patterns, unprompted** 🔒 — fake urgency / hidden costs; ~37% of AI-generated commerce components (arXiv 2502.13499) → audit + prohibit.
+- **Hallucinated content shipped** 📐 — lorem ipsum, fabricated stats/terms → never ship placeholder; fact-check.
+- **No AI transparency** 🔒 — no disclosure / confidence / verify path → label AI, show sources + undo (HIG, PAIR, MS G11).
+
+**Remediation (three layers):**
+1. **Gate VIOLATIONs in CI** — automated checks for contrast (1.4.3), focus (2.4.7/2.4.11), labels (3.3.2/4.1.2), reduced-motion and semantic roles, build-breaking. Tools catch only ~57% of issues, so add a manual keyboard + screen-reader pass. *(This is exactly what `@norma/design-lint` does — see the repo.)*
+2. **Systematize inputs** — feed agents a 3-tier token file plus rule files (`AGENTS.md`, `.cursor/rules/*.mdc`, `.github/copilot-instructions.md`) mandating semantic HTML, one focus ring, token-only color/spacing, and explicit anti-defaults ("no indigo gradients, no Inter-only, no arbitrary px, no glass by default").
+3. **Govern the product layer** — justify each AI feature (user-need × AI-strength); require disclosure + confidence + undo/oversight; audit commerce/forms against a dark-pattern taxonomy; ban fabricated content.
+
+**VI.** Công cụ AI thường sinh hai loại lỗi, và cần biết bạn đang xử lý loại nào:
+
+- **VIOLATION (Vi phạm)** 🔒 — lỗi khách quan, kiểm chứng được theo một quy tắc WCAG 2.2 / HIG cụ thể. Đáng để chặn ở CI.
+- **TELL (Dấu hiệu)** 📐 — tín hiệu thẩm mỹ chủ quan lộ rõ "do máy tạo." Không phải lỗi tuân thủ, nhưng làm mất bản sắc thương hiệu và có thể *kéo theo* một vi phạm.
+
+**Cấp 1 — lỗi thị giác & CSS:**
+
+| Mục | Loại | Sửa |
+|---|---|---|
+| **Vòng focus chồng** — `border` + `outline` + `box-shadow` chồng nhau | VIOLATION (2.4.11/2.4.13) | một vòng `:focus-visible`, ≥2px, ≥3:1 |
+| **Chữ xám thiếu tương phản** — `#999` trên `#fff`; ~84% trang chủ (WebAIM Million) | VIOLATION (1.4.3) | ≥4.5:1 (3:1 chữ lớn/UI) |
+| **Animation vô tội vạ** — cái gì cũng động, bỏ qua reduced-motion | VIOLATION (2.3.3) | chỉ animate khi có nghĩa; tôn trọng `prefers-reduced-motion` |
+| **Emoji làm icon** — 🚀🔥 làm nút; hiển thị + tên đọc màn hình khác nhau | VIOLATION (1.1.1) | SVG inline + nhãn thật |
+| **Placeholder làm nhãn** — gợi ý biến mất khi gõ | VIOLATION (3.3.2/4.1.2) | `<label>` cố định, liên kết theo mã |
+| **Lạm dụng halo / glow** — nhiều bóng màu chồng | TELL | thang độ nổi trung tính, một nguồn sáng |
+| **Gradient tím→chàm** — `#667eea → #764ba2` indigo mặc định | TELL | token thương hiệu (tác giả Tailwind đã công khai xin lỗi năm 2025 vì "mọi UI do AI tạo đều tím indigo") |
+| **Glassmorphism khắp nơi** — `backdrop-filter` tràn lan, tương phản động fail, tốn GPU | TELL | 2–3 bề mặt kính + lớp phủ, không mặc định |
+| **Spacing tùy tiện / bo góc quá đà** — `mt-[13px]`, bo góc lẫn lộn | TELL | thang token |
+| **Dark mode `#000`/`#fff` thuần** — chói (halation) với loạn thị | TELL | nền `#121212` + chữ `#E4E4E7` |
+
+**Cấp 2 — bệnh UX & sản phẩm:**
+
+- **Mặc định bất khả tiếp cận** 🔒 — `<div onClick>` thay vì `<button>`, thiếu ARIA/bàn phím → HTML ngữ nghĩa (4.1.2).
+- **"AI slop" / na ná nhau** 📐 — áp "thử bỏ logo": có bị nhầm với đối thủ? → dựng hệ thương hiệu trước.
+- **Nhồi chatbot** 📐 — gắn chat vào nơi thao tác trực tiếp nhanh hơn → UI tác vụ; chỉ dùng chat khi giúp diễn đạt ý định.
+- **Gắn tính năng AI cho có** 📐 — nút ✨ để tiếp thị → chỉ làm khi nhu cầu người dùng × thế mạnh AI (Google PAIR).
+- **Tự động hóa quá / mất kiểm soát** 🔒 — không undo/giám sát, thiên kiến tự động → giữ người trong vòng lặp, điều khiển toàn cục (MS HAX, HIG).
+- **Dark pattern tự phát** 🔒 — khẩn cấp giả / phí ẩn; ~37% thành phần TMĐT do AI tạo (arXiv 2502.13499) → kiểm toán + cấm.
+- **Nội dung bịa bị phát hành** 📐 — lorem ipsum, số liệu/thuật ngữ bịa → không phát hành placeholder; kiểm chứng.
+- **Thiếu minh bạch AI** 🔒 — không tiết lộ / độ tin cậy / cách kiểm chứng → gắn nhãn AI, hiện nguồn + undo (HIG, PAIR, MS G11).
+
+**Khắc phục (ba tầng):**
+1. **Chặn VIOLATION ở CI** — kiểm tra tự động tương phản (1.4.3), focus (2.4.7/2.4.11), nhãn (3.3.2/4.1.2), reduced-motion và vai trò ngữ nghĩa — fail thì chặn build. Công cụ chỉ bắt ~57% lỗi, nên thêm lượt kiểm bằng bàn phím + trình đọc màn hình. *(Đây chính là việc `@norma/design-lint` làm — xem repo.)*
+2. **Hệ thống hóa đầu vào** — cấp cho agent file token 3 tầng cùng các file rule (`AGENTS.md`, `.cursor/rules/*.mdc`, `.github/copilot-instructions.md`) bắt buộc HTML ngữ nghĩa, một vòng focus, chỉ dùng token cho màu/khoảng cách, và anti-default rõ ràng ("không gradient indigo, không chỉ Inter, không px tùy tiện, không glass mặc định").
+3. **Quản trị tầng sản phẩm** — biện minh mỗi tính năng AI (nhu cầu × thế mạnh AI); bắt buộc tiết lộ + độ tin cậy + undo/giám sát; kiểm toán TMĐT/biểu mẫu theo phân loại dark pattern; cấm nội dung bịa.
 
 ---
 

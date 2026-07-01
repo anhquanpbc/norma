@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches: [main, "claude/**"]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build-test:
+    name: Build, test & dogfood
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Build (rules + linter)
+        run: npm run build
+      - name: Unit tests
+        run: npm test
+      - name: Anti-drift (regenerate + diff + invariants)
+        run: npm run check:drift
+      - name: Dogfood — lint the reference site against its own standard
+        run: |
+          node packages/design-lint/dist/cli.js index.html --format sarif > design-lint.sarif
+          node packages/design-lint/dist/cli.js index.html
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: design-lint-sarif
+          path: design-lint.sarif
+
+  a11y:
+    name: Independent WCAG cross-check (advisory)
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: pa11y WCAG 2 AA on index.html
+        run: npx --yes pa11y@8 --standard WCAG2AA --runner axe --runner htmlcs index.html

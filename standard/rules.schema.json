@@ -1,0 +1,62 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/anhquanpbc/norma/standard/rules.schema.json",
+  "title": "Norma rule catalog",
+  "type": "object",
+  "required": ["version", "rules"],
+  "additionalProperties": false,
+  "properties": {
+    "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+    "rules": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/definitions/rule" }
+    }
+  },
+  "definitions": {
+    "i18n": {
+      "type": "object",
+      "required": ["en", "vi"],
+      "additionalProperties": false,
+      "properties": {
+        "en": { "type": "string", "minLength": 1 },
+        "vi": { "type": "string", "minLength": 1 }
+      }
+    },
+    "rule": {
+      "type": "object",
+      "required": ["id", "title", "domain", "tag", "severity", "source", "rationale", "check", "remediation"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z][a-z0-9]*(\\.[a-z0-9-]+)+$" },
+        "title": { "$ref": "#/definitions/i18n" },
+        "domain": {
+          "type": "string",
+          "enum": ["tokens", "spacing", "type", "color", "a11y", "perf", "motion", "platform", "components", "forms", "responsive", "hci", "antipattern"]
+        },
+        "tag": { "type": "string", "enum": ["SPEC", "CONV"] },
+        "severity": { "type": "string", "enum": ["error", "warn", "off"] },
+        "source": { "type": "string", "minLength": 1 },
+        "source_url": { "type": "string" },
+        "rationale": { "$ref": "#/definitions/i18n" },
+        "remediation": { "$ref": "#/definitions/i18n" },
+        "check": {
+          "type": "object",
+          "required": ["type"],
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": ["contrast", "targetSize", "focusRing", "reducedMotion", "formLabel", "semanticControl", "emojiIcon", "imgDimensions", "colorTokenOnly", "spacingScale", "forbiddenValue", "manual"]
+            }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "tag": { "const": "SPEC" } } },
+          "then": { "properties": { "source_url": { "type": "string", "minLength": 8 } }, "required": ["source_url"] }
+        }
+      ]
+    }
+  }
+}

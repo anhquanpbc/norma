@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Read the standard
+    url: https://github.com/anhquanpbc/norma/blob/main/REFERENCE.md
+    about: The full written reference (bilingual, primary-source cited).
