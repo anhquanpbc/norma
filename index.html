@@ -1,0 +1,1386 @@
+<!DOCTYPE html>
+<html lang="vi" data-lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UX/UI Technical Standards 2025 — Bilingual Reference</title>
+<script>document.documentElement.classList.add('js');</script>
+<style>
+/* =================================================================
+   SELF-CONTAINED DESIGN SYSTEM — no external fonts, no CDN, offline-safe.
+   This page is a reference implementation of its own content:
+   8px grid · 1.25 modular scale · OKLCH palette · AA contrast ·
+   focus ≥2px/≥3:1 · reduced-motion respected · 0 network requests.
+   ================================================================= */
+:root{
+  /* ---- primitive color tokens (OKLCH) ---- */
+  --ink:        oklch(0.20 0.028 258);
+  --ink-2:      oklch(0.40 0.022 258);
+  --ink-3:      oklch(0.52 0.018 258);
+  --paper:      oklch(0.983 0.004 250);
+  --surface:    oklch(1 0 0);
+  --surface-2:  oklch(0.975 0.006 255);
+  --line:       oklch(0.90 0.008 258);
+  --line-2:     oklch(0.84 0.010 258);
+  --azure:      oklch(0.58 0.16 252);
+  --azure-ink:  oklch(0.45 0.15 258);   /* darker: AA text on paper */
+  --azure-wash: oklch(0.96 0.03 252);
+  --amber:      oklch(0.70 0.14 66);
+  --amber-ink:  oklch(0.52 0.12 60);
+  --good:       oklch(0.66 0.15 155);
+  --good-wash:  oklch(0.95 0.05 155);
+  --warn:       oklch(0.80 0.15 82);
+  --warn-wash:  oklch(0.96 0.06 88);
+  --bad:        oklch(0.60 0.20 25);
+  --bad-wash:   oklch(0.95 0.04 25);
+  --grid-line:  oklch(0.55 0.04 258 / 0.05);
+
+  /* ---- type scale: base 16px × 1.25 (major third) ---- */
+  --t--1: 0.8rem;      /* 12.8 */
+  --t-0:  1rem;        /* 16   */
+  --t-1:  1.25rem;     /* 20   */
+  --t-2:  1.5625rem;   /* 25   */
+  --t-3:  1.953rem;    /* 31.25*/
+  --t-4:  2.441rem;    /* 39   */
+  --t-5:  3.052rem;    /* 48.8 */
+
+  /* ---- 8px spacing scale ---- */
+  --s-1: 4px;  --s-2: 8px;  --s-3: 12px; --s-4: 16px; --s-5: 24px;
+  --s-6: 32px; --s-7: 48px; --s-8: 64px; --s-9: 96px;
+
+  --radius: 10px;
+  --radius-sm: 6px;
+  --maxw: 1120px;
+  --mono: ui-monospace, "SF Mono", "JetBrains Mono", "Cascadia Code", Menlo, Consolas, "Liberation Mono", monospace;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Be Vietnam Pro", Arial, sans-serif;
+  --ease: cubic-bezier(0.2, 0, 0, 1);      /* Material 3 "standard" */
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} }
+
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:var(--sans); font-size:var(--t-0); line-height:1.6;
+  -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+}
+
+/* ---- bilingual toggle mechanism ---- */
+.en,.vi{ display:none; }
+html[data-lang="en"] .en{ display:revert; }
+html[data-lang="vi"] .vi{ display:revert; }
+
+/* ---- typography ---- */
+h1,h2,h3,h4{ font-weight:750; line-height:1.12; letter-spacing:-0.02em; margin:0; color:var(--ink); }
+h2{ font-size:var(--t-3); letter-spacing:-0.025em; }
+h3{ font-size:var(--t-1); letter-spacing:-0.015em; }
+h4{ font-size:var(--t-0); }
+p{ margin:0 0 var(--s-3); color:var(--ink-2); max-width:70ch; }
+strong{ color:var(--ink); font-weight:650; }
+code{ font-family:var(--mono); font-size:0.9em; background:var(--surface-2);
+  border:1px solid var(--line); border-radius:4px; padding:0.08em 0.34em; color:var(--azure-ink); }
+a{ color:var(--azure-ink); text-underline-offset:3px; }
+
+/* ---- accessible focus (the doc obeys 2.4.13) ---- */
+a:focus-visible, button:focus-visible, select:focus-visible,
+input:focus-visible, [tabindex]:focus-visible{
+  outline:3px solid var(--azure); outline-offset:2px; border-radius:3px;
+}
+
+/* ---- eyebrow / mono labels (the signature device) ---- */
+.eyebrow{ font-family:var(--mono); font-size:var(--t--1); letter-spacing:0.08em;
+  text-transform:uppercase; color:var(--ink-3); }
+
+/* ---- badges: SPEC (mandate) vs CONV (convention) ---- */
+.badge{ display:inline-block; font-family:var(--mono); font-size:11px; font-weight:600;
+  letter-spacing:0.04em; padding:1px 6px; border-radius:5px; vertical-align:middle;
+  border:1px solid transparent; white-space:nowrap; }
+.badge.spec{ color:var(--azure-ink); background:var(--azure-wash); border-color:oklch(0.85 0.05 252); }
+.badge.conv{ color:var(--ink-3); background:var(--surface-2); border-color:var(--line-2); }
+.badge.good{ color:oklch(0.42 0.14 155); background:var(--good-wash); border-color:oklch(0.82 0.08 155); }
+.src{ font-family:var(--mono); font-size:11px; color:var(--ink-3); }
+
+/* =================== HEADER / NAV =================== */
+header.bar{ position:sticky; top:0; z-index:50; background:oklch(0.983 0.004 250 / 0.82);
+  backdrop-filter:blur(10px) saturate(1.1); border-bottom:1px solid var(--line); }
+.bar-inner{ max-width:var(--maxw); margin:0 auto; padding:10px var(--s-5);
+  display:flex; align-items:center; gap:var(--s-5); }
+.brand{ font-family:var(--mono); font-weight:700; font-size:14px; letter-spacing:-0.01em;
+  color:var(--ink); display:flex; align-items:center; gap:8px; flex-shrink:0; }
+.brand .dot{ width:9px; height:9px; border-radius:2px; background:var(--azure);
+  box-shadow:0 0 0 3px var(--azure-wash); }
+nav.sections{ display:flex; gap:2px; margin-left:auto; overflow-x:auto; }
+nav.sections a{ font-family:var(--mono); font-size:12px; letter-spacing:0.03em; text-transform:uppercase;
+  color:var(--ink-3); text-decoration:none; padding:8px 9px; border-radius:6px; white-space:nowrap;
+  min-height:34px; display:flex; align-items:center; transition:color .15s var(--ease), background .15s var(--ease); }
+nav.sections a:hover{ color:var(--ink); background:var(--surface-2); }
+nav.sections a.active{ color:var(--azure-ink); background:var(--azure-wash); }
+@media (max-width:900px){ nav.sections{ display:none; } }
+
+.lang-toggle{ display:flex; border:1px solid var(--line-2); border-radius:7px; overflow:hidden; flex-shrink:0; }
+.lang-toggle button{ font-family:var(--mono); font-size:12px; font-weight:600; letter-spacing:0.04em;
+  border:0; background:var(--surface); color:var(--ink-3); padding:0 12px; min-height:34px; cursor:pointer;
+  transition:background .15s var(--ease), color .15s var(--ease); }
+.lang-toggle button[aria-pressed="true"]{ background:var(--ink); color:var(--paper); }
+
+/* =================== LAYOUT =================== */
+main{ max-width:var(--maxw); margin:0 auto; padding:0 var(--s-5); }
+section{ padding:var(--s-9) 0 var(--s-8); border-top:1px solid var(--line); scroll-margin-top:70px; }
+section:first-of-type{ border-top:0; }
+
+.sec-head{ display:flex; align-items:baseline; gap:var(--s-4); margin-bottom:var(--s-6); flex-wrap:wrap; }
+.sec-num{ font-family:var(--mono); font-size:var(--t-1); font-weight:700; color:var(--azure);
+  letter-spacing:-0.02em; }
+.sec-tick{ width:4px; align-self:stretch; border-radius:2px; }
+.sec-head .titles{ flex:1; min-width:260px; }
+.sec-head h2 .vi, .sec-head h2 .en{ }
+.sec-sub{ font-size:var(--t-0); color:var(--ink-3); margin-top:6px; max-width:64ch; }
+
+/* ---- cards / grid ---- */
+.grid{ display:grid; gap:var(--s-5); }
+.g2{ grid-template-columns:1fr 1fr; }
+.g3{ grid-template-columns:repeat(3,1fr); }
+@media (max-width:820px){ .g2,.g3{ grid-template-columns:1fr; } }
+.card{ background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+  padding:var(--s-5); }
+.card.tint{ background:var(--surface-2); }
+.card h4{ margin-bottom:var(--s-2); }
+.card p{ font-size:var(--t-0); margin-bottom:0; }
+.card p + p{ margin-top:var(--s-3); }
+
+.note{ font-size:var(--t--1); color:var(--ink-3); margin-top:var(--s-3); line-height:1.5; }
+
+/* ---- spec list ---- */
+ul.spec{ list-style:none; margin:0; padding:0; }
+ul.spec li{ padding:var(--s-3) 0; border-bottom:1px solid var(--line); display:flex;
+  gap:var(--s-3); align-items:baseline; font-size:var(--t-0); color:var(--ink-2); }
+ul.spec li:last-child{ border-bottom:0; }
+ul.spec li b{ color:var(--ink); }
+.k{ font-family:var(--mono); font-size:13px; color:var(--azure-ink); background:var(--azure-wash);
+  padding:1px 6px; border-radius:5px; flex-shrink:0; }
+
+/* ---- tables ---- */
+.tbl-wrap{ overflow-x:auto; border:1px solid var(--line); border-radius:var(--radius); }
+table{ width:100%; border-collapse:collapse; font-size:14px; }
+thead th{ text-align:left; background:var(--surface-2); color:var(--ink); font-weight:650;
+  padding:var(--s-3) var(--s-4); border-bottom:1px solid var(--line-2); font-family:var(--mono);
+  font-size:12px; letter-spacing:0.03em; text-transform:uppercase; white-space:nowrap; }
+tbody td{ padding:var(--s-3) var(--s-4); border-bottom:1px solid var(--line); color:var(--ink-2); vertical-align:top; }
+tbody tr:last-child td{ border-bottom:0; }
+td.mono, .mono-cell{ font-family:var(--mono); color:var(--ink); }
+td b{ color:var(--ink); }
+
+/* ---- code block ---- */
+pre{ background:oklch(0.20 0.028 258); color:oklch(0.92 0.01 250); font-family:var(--mono);
+  font-size:12.5px; line-height:1.6; padding:var(--s-4); border-radius:var(--radius);
+  overflow-x:auto; margin:0; }
+pre code{ background:none; border:0; padding:0; border-radius:0; font-size:inherit; color:inherit; white-space:pre; }
+pre .c-key{ color:oklch(0.78 0.13 60); }   /* amber */
+pre .c-str{ color:oklch(0.78 0.12 155); }  /* green */
+pre .c-mut{ color:oklch(0.62 0.02 258); }  /* comment */
+
+/* =================== HERO =================== */
+.hero{ position:relative; padding:var(--s-9) 0 var(--s-8); overflow:hidden; border-top:0; }
+.hero-grid{ position:absolute; inset:0; z-index:0; pointer-events:none;
+  background-image:
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size:32px 32px;
+  -webkit-mask-image:radial-gradient(120% 90% at 20% 0%, #000 40%, transparent 78%);
+          mask-image:radial-gradient(120% 90% at 20% 0%, #000 40%, transparent 78%); }
+.hero-inner{ position:relative; z-index:1; }
+.hero h1{ font-size:clamp(2rem, 1.2rem + 4vw, 3.4rem); max-width:20ch; margin-top:var(--s-4); }
+.hero h1 .accent{ color:var(--azure); }
+.hero-lead{ font-size:clamp(1.05rem, 1rem + 0.4vw, 1.25rem); color:var(--ink-2); max-width:60ch;
+  margin-top:var(--s-4); }
+.chips{ display:flex; gap:var(--s-3); flex-wrap:wrap; margin-top:var(--s-6); }
+.chip{ background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+  padding:var(--s-3) var(--s-4); min-width:170px; }
+.chip .c-when{ font-family:var(--mono); font-size:11px; color:var(--azure-ink); letter-spacing:0.04em; }
+.chip .c-what{ font-size:14px; font-weight:600; color:var(--ink); margin-top:2px; }
+.chip .c-desc{ font-size:12.5px; color:var(--ink-3); margin-top:2px; line-height:1.45; }
+
+/* ---- self-audit strip ---- */
+.audit{ display:flex; flex-wrap:wrap; gap:8px; margin-top:var(--s-6); align-items:center; }
+.audit .lbl{ font-family:var(--mono); font-size:11px; text-transform:uppercase; letter-spacing:0.06em;
+  color:var(--ink-3); margin-right:4px; }
+.audit .item{ font-family:var(--mono); font-size:11.5px; color:var(--ink-2); background:var(--surface);
+  border:1px solid var(--line); border-radius:20px; padding:4px 10px; display:inline-flex; align-items:center; gap:5px; }
+.audit .item::before{ content:""; width:6px; height:6px; border-radius:50%; background:var(--good); }
+
+/* =================== interactive widgets =================== */
+.widget{ background:var(--surface); border:1px solid var(--line-2); border-radius:var(--radius); padding:var(--s-5); }
+.widget-title{ font-family:var(--mono); font-size:12px; text-transform:uppercase; letter-spacing:0.05em;
+  color:var(--ink-3); margin-bottom:var(--s-4); display:flex; align-items:center; gap:8px; }
+.widget-title::before{ content:"▸"; color:var(--azure); }
+label.ctrl{ display:block; font-size:13px; font-weight:600; color:var(--ink); margin-bottom:8px; }
+label.ctrl output{ font-family:var(--mono); color:var(--azure-ink); }
+input[type=range]{ width:100%; accent-color:var(--azure); height:34px; }
+input[type=color]{ width:52px; height:40px; border:1px solid var(--line-2); border-radius:8px;
+  background:var(--surface); cursor:pointer; padding:3px; }
+select{ font-family:var(--sans); font-size:14px; padding:8px 10px; border:1px solid var(--line-2);
+  border-radius:8px; background:var(--surface); color:var(--ink); min-height:40px; cursor:pointer; }
+.demo-btn{ font-family:var(--sans); font-size:14px; font-weight:600; color:var(--paper);
+  background:var(--azure-ink); border:0; border-radius:8px; padding:0 16px; min-height:44px; cursor:pointer; }
+
+/* type preview */
+#typePreview > *{ margin:0 0 6px; line-height:1.15; color:var(--ink); letter-spacing:-0.02em; font-weight:750; }
+#typePreview .body{ font-weight:400; line-height:1.5; color:var(--ink-2); letter-spacing:0; }
+
+/* color ramp */
+.ramp{ display:grid; grid-template-columns:repeat(11,1fr); gap:4px; }
+.ramp .sw{ aspect-ratio:1/1.3; border-radius:6px; display:flex; align-items:flex-end; justify-content:center;
+  padding-bottom:4px; font-family:var(--mono); font-size:9px; }
+.cmp{ display:grid; grid-template-columns:repeat(9,1fr); gap:3px; height:34px; margin-top:6px; }
+.cmp .sw{ border-radius:4px; }
+
+/* contrast checker */
+.cc-preview{ border-radius:8px; padding:18px; text-align:center; border:1px solid var(--line);
+  transition:background .2s var(--ease), color .2s var(--ease); }
+.cc-preview .big{ font-size:20px; font-weight:700; }
+.cc-preview .small{ font-size:13px; }
+.cc-result{ font-family:var(--mono); font-size:26px; font-weight:700; color:var(--ink); }
+.cc-badges{ display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
+.cc-badge{ font-family:var(--mono); font-size:11px; font-weight:600; padding:3px 8px; border-radius:6px; }
+.cc-pass{ background:var(--good-wash); color:oklch(0.40 0.14 155); }
+.cc-fail{ background:var(--bad-wash); color:var(--bad); }
+
+/* gauges (Core Web Vitals) */
+.gauge{ margin-bottom:var(--s-4); }
+.gauge:last-child{ margin-bottom:0; }
+.gauge-top{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px; }
+.gauge-name{ font-weight:650; color:var(--ink); font-size:14px; }
+.gauge-name span{ font-weight:400; color:var(--ink-3); font-size:12px; }
+.gauge-bar{ display:flex; height:26px; border-radius:6px; overflow:hidden; font-family:var(--mono);
+  font-size:11px; color:#fff; font-weight:600; }
+.gauge-bar > div{ display:flex; align-items:center; padding-left:8px; white-space:nowrap; }
+.gz-good{ background:var(--good); } .gz-ni{ background:var(--warn); color:oklch(0.30 0.05 80); } .gz-bad{ background:var(--bad); }
+
+/* target size demo */
+.ts-stage{ display:flex; align-items:flex-end; gap:20px; flex-wrap:wrap; padding:var(--s-4);
+  background:var(--surface-2); border-radius:8px; }
+.ts-box{ display:flex; align-items:center; justify-content:center; border-radius:8px; color:#fff;
+  font-family:var(--mono); font-size:10px; font-weight:600; text-align:center; }
+
+/* svg charts */
+.chart svg{ width:100%; height:auto; display:block; }
+.chart .axis{ stroke:var(--line-2); stroke-width:1; }
+.chart .grid{ stroke:var(--line); stroke-width:1; }
+.chart .curve{ fill:none; stroke:var(--azure); stroke-width:2.5; stroke-linecap:round; }
+.chart .curve-2{ fill:none; stroke:var(--amber-ink); stroke-width:2.5; stroke-dasharray:5 4; }
+.chart .lbl{ font-family:var(--mono); font-size:10px; fill:var(--ink-3); }
+.chart .fill{ fill:var(--azure); opacity:0.08; }
+
+/* fitts demo */
+.fitts-stage{ position:relative; height:150px; border:1px dashed var(--line-2); border-radius:8px;
+  background:var(--surface-2); overflow:hidden; }
+.fitts-target{ position:absolute; background:var(--azure-ink); color:#fff; border-radius:8px;
+  display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:600; cursor:pointer;
+  transition:all .35s var(--ease); user-select:none; }
+
+/* easing demo */
+.ease-track{ height:44px; background:var(--surface-2); border-radius:8px; position:relative; margin-top:12px; }
+.ease-ball{ position:absolute; top:8px; left:8px; width:28px; height:28px; border-radius:50%;
+  background:var(--azure); }
+
+/* =================== §14 anti-pattern components =================== */
+.badge.viol{ color:var(--bad); background:var(--bad-wash); border-color:oklch(0.82 0.10 25); }
+.badge.tell{ color:var(--amber-ink); background:var(--warn-wash); border-color:oklch(0.85 0.10 82); }
+
+/* focus-appearance compare demo (pure CSS, keyboard-driven) */
+.focus-demo{ display:flex; gap:16px; flex-wrap:wrap; }
+.fd-btn{ font-family:var(--sans); font-size:14px; font-weight:600; padding:0 18px; min-height:44px;
+  border-radius:8px; cursor:pointer; background:var(--surface); color:var(--ink); }
+.fd-bad{ border:2px solid var(--line-2); }
+.fd-bad:focus-visible{ outline:3px solid var(--azure); outline-offset:3px; border-radius:8px;
+  border-color:var(--bad); box-shadow:0 0 0 6px var(--bad-wash); }   /* 3 competing rings — the anti-pattern */
+.fd-good{ border:1px solid var(--line-2); }
+.fd-good:focus-visible{ outline:2px solid var(--azure-ink); outline-offset:2px; box-shadow:none;
+  border-color:var(--line-2); border-radius:8px; }                    /* one clean ring */
+
+/* halo / glow overload demo */
+.halo-card{ background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:18px;
+  transition:box-shadow .3s var(--ease), border-color .3s var(--ease); }
+.halo-card:not(.glow){ box-shadow:0 1px 2px oklch(0.4 0.03 258 / .06), 0 3px 10px oklch(0.4 0.03 258 / .07); }
+.halo-card.glow{ border-color:transparent;
+  box-shadow:0 0 0 1px oklch(0.58 0.16 252 / .55), 0 0 22px oklch(0.58 0.16 252 / .55),
+             0 8px 30px oklch(0.55 0.20 300 / .45), 0 0 56px oklch(0.70 0.15 320 / .35); }
+.cap-glow{ display:none; }
+.halo-widget.is-glow .cap-clean{ display:none; }
+.halo-widget.is-glow .cap-glow{ display:inline; }
+
+/* the "purple tell" bars */
+.tell-bars{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.tell-bar{ height:52px; border-radius:8px; display:flex; align-items:flex-end; padding:6px 8px;
+  font-family:var(--mono); font-size:10px; color:#fff; }
+.tell-purple{ background:linear-gradient(135deg,#667eea,#764ba2); }  /* the AI default cliché */
+.tell-brand{ background:var(--azure-ink); }
+
+/* =================== ANIMATION (progressive, reduced-motion safe) ===================
+   Gated on html.js so non-JS users never see hidden content.
+   The reduced-motion block below neutralizes all of it. */
+@keyframes rise{ from{ opacity:0; transform:translateY(14px); } to{ opacity:1; transform:none; } }
+@keyframes fadein{ from{ opacity:0; } to{ opacity:1; } }
+
+/* hero entrance cascade */
+html.js .hero-grid{ animation:fadein 1.3s ease .1s both; }
+html.js .hero .eyebrow{ animation:rise .6s var(--ease) both; }
+html.js .hero h1{ animation:rise .7s var(--ease) .07s both; }
+html.js .hero-lead{ animation:rise .7s var(--ease) .15s both; }
+html.js .hero .chips{ animation:rise .7s var(--ease) .23s both; }
+html.js .hero .audit{ animation:rise .7s var(--ease) .31s both; }
+
+/* scroll reveal (class + pending toggled by JS) */
+.reveal{ transition:opacity .55s var(--ease), transform .55s var(--ease); }
+.reveal.pending{ opacity:0; transform:translateY(18px); transition:none; }
+
+/* hover micro-interactions */
+.card, .chip{ transition:transform .2s var(--ease), box-shadow .2s var(--ease), border-color .2s var(--ease); }
+.card:hover, .chip:hover{ transform:translateY(-3px);
+  box-shadow:0 10px 28px oklch(0.45 0.06 258 / 0.10); border-color:var(--line-2); }
+.audit .item{ transition:transform .2s var(--ease), border-color .2s var(--ease); }
+.audit .item:hover{ transform:translateY(-2px); border-color:var(--azure); }
+.k, .badge{ transition:transform .15s var(--ease); }
+nav.sections a{ position:relative; }
+.demo-btn{ transition:transform .12s var(--ease), background .15s var(--ease); }
+.demo-btn:active{ transform:scale(0.97); }
+.ramp .sw{ transition:transform .15s var(--ease); }
+.ramp .sw:hover{ transform:scale(1.12); z-index:1; }
+
+/* CWV gauge bars animate width on reveal (set to 0 → target by JS) */
+.gauge-bar > div{ transition:width .85s var(--ease); }
+
+@media (prefers-reduced-motion: reduce){
+  *{ transition-duration:0.001ms !important; animation-duration:0.001ms !important; }
+  .reveal.pending{ opacity:1 !important; transform:none !important; }
+}
+
+/* footer */
+footer{ background:var(--ink); color:oklch(0.72 0.01 250); margin-top:var(--s-9);
+  padding:var(--s-8) var(--s-5); }
+footer .fin{ max-width:var(--maxw); margin:0 auto; }
+footer h4{ color:var(--paper); font-family:var(--mono); font-size:12px; text-transform:uppercase;
+  letter-spacing:0.06em; margin-bottom:var(--s-4); }
+footer a{ color:oklch(0.80 0.08 252); }
+footer .srcgrid{ display:grid; grid-template-columns:repeat(2,1fr); gap:6px 24px; font-size:13px; line-height:1.7; }
+@media (max-width:640px){ footer .srcgrid{ grid-template-columns:1fr; } }
+footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.58 0.01 250); line-height:1.6; max-width:80ch; }
+
+.skip{ position:absolute; left:-9999px; top:0; background:var(--ink); color:#fff; padding:10px 16px;
+  border-radius:0 0 8px 0; z-index:100; }
+.skip:focus{ left:0; }
+</style>
+</head>
+<body>
+<a href="#s1" class="skip"><span class="en">Skip to content</span><span class="vi">Tới nội dung</span></a>
+
+<header class="bar">
+  <div class="bar-inner">
+    <div class="brand"><span class="dot"></span>UX/UI&nbsp;<span style="color:var(--azure-ink)">STANDARDS</span>&nbsp;’25</div>
+    <nav class="sections" aria-label="Sections">
+      <a href="#s1">Tokens</a>
+      <a href="#s2">Grid</a>
+      <a href="#s3">Type</a>
+      <a href="#s4">Color</a>
+      <a href="#s5">A11y</a>
+      <a href="#s6">Perf</a>
+      <a href="#s7">Motion</a>
+      <a href="#s8">Platform</a>
+      <a href="#s9">Components</a>
+      <a href="#s12">HCI</a>
+      <a href="#s14">AI Traps</a>
+    </nav>
+    <div class="lang-toggle" role="group" aria-label="Language">
+      <button id="btn-en" onclick="setLang('en')" aria-pressed="false">EN</button>
+      <button id="btn-vi" onclick="setLang('vi')" aria-pressed="true">VI</button>
+    </div>
+  </div>
+</header>
+
+<main>
+<section class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="hero-inner">
+    <div class="eyebrow"><span class="en">Consolidated technical reference · 13 domains · primary-source cited</span><span class="vi">Tài liệu kỹ thuật hợp nhất · 13 mảng · trích dẫn nguồn gốc</span></div>
+    <h1>
+      <span class="en">A design reference that <span class="accent">obeys its own rules</span>.</span>
+      <span class="vi">Một tài liệu chuẩn thiết kế <span class="accent">tự tuân thủ chính nó</span>.</span>
+    </h1>
+    <p class="hero-lead">
+      <span class="en">Concrete numbers you can drop into an acceptance ticket — spacing, contrast, target sizes, Core Web Vitals, motion tokens — with every value tagged as a published mandate or an industry convention. This page is built on the same standards it documents.</span>
+      <span class="vi">Những con số cụ thể có thể đưa thẳng vào tiêu chí nghiệm thu — khoảng cách, tương phản, vùng chạm, Core Web Vitals, token chuyển động — mỗi giá trị đều được gắn nhãn "bắt buộc theo chuẩn" hay "quy ước ngành". Trang này được dựng trên chính các chuẩn nó trình bày.</span>
+    </p>
+
+    <div class="chips">
+      <div class="chip">
+        <div class="c-when">2024-03-12</div>
+        <div class="c-what"><span class="en">INP replaced FID</span><span class="vi">INP thay thế FID</span></div>
+        <div class="c-desc"><span class="en">New Core Web Vital · good ≤200ms</span><span class="vi">Core Web Vital mới · tốt ≤200ms</span></div>
+      </div>
+      <div class="chip">
+        <div class="c-when">2023-10-05</div>
+        <div class="c-what"><span class="en">WCAG 2.2 published</span><span class="vi">WCAG 2.2 ban hành</span></div>
+        <div class="c-desc"><span class="en">+9 criteria · target size, focus appearance</span><span class="vi">+9 tiêu chí · vùng chạm, focus</span></div>
+      </div>
+      <div class="chip">
+        <div class="c-when">2025-10-28</div>
+        <div class="c-what"><span class="en">DTCG tokens v2025.10</span><span class="vi">Token DTCG v2025.10</span></div>
+        <div class="c-desc"><span class="en">First stable format · OKLCH, theming</span><span class="vi">Định dạng ổn định đầu tiên · OKLCH</span></div>
+      </div>
+    </div>
+
+    <div class="audit" aria-label="This page's self-audit">
+      <span class="lbl"><span class="en">This page:</span><span class="vi">Trang này:</span></span>
+      <span class="item">8px grid</span>
+      <span class="item">1.25 scale</span>
+      <span class="item">OKLCH palette</span>
+      <span class="item">AA contrast</span>
+      <span class="item">focus ≥2px</span>
+      <span class="item">reduced-motion ✓</span>
+      <span class="item">0 network requests</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 1. DESIGN TOKENS ============ -->
+<section id="s1">
+  <div class="sec-head">
+    <span class="sec-num">§01</span>
+    <div class="sec-tick" style="background:var(--azure)"></div>
+    <div class="titles">
+      <h2><span class="en">Design Tokens &amp; Systems</span><span class="vi">Design Tokens &amp; Hệ thống</span></h2>
+      <div class="sec-sub"><span class="en">The vendor-neutral data layer that syncs one design decision from Figma to Web, iOS and Android.</span><span class="vi">Tầng dữ liệu trung lập giúp đồng bộ một quyết định thiết kế từ Figma tới Web, iOS và Android.</span></div>
+    </div>
+  </div>
+
+  <div class="grid g2">
+    <div class="widget">
+      <div class="widget-title">W3C DTCG · v2025.10 <span class="badge spec">SPEC</span></div>
+      <pre><code>{
+  <span class="c-key">"color"</span>: {
+    <span class="c-key">"brand"</span>: {
+      <span class="c-key">"primary"</span>: {
+        <span class="c-key">"$value"</span>: <span class="c-str">"oklch(0.58 0.16 252)"</span>,
+        <span class="c-key">"$type"</span>:  <span class="c-str">"color"</span>
+      }
+    },
+    <span class="c-key">"text"</span>: {
+      <span class="c-key">"primary"</span>: {
+        <span class="c-key">"$value"</span>: <span class="c-str">"{color.brand.primary}"</span>,
+        <span class="c-key">"$type"</span>:  <span class="c-str">"color"</span>   <span class="c-mut">// alias →</span>
+      }
+    }
+  },
+  <span class="c-key">"spacing"</span>: {
+    <span class="c-key">"md"</span>: {
+      <span class="c-key">"$value"</span>: { <span class="c-key">"value"</span>: 16, <span class="c-key">"unit"</span>: <span class="c-str">"px"</span> },
+      <span class="c-key">"$type"</span>:  <span class="c-str">"dimension"</span>
+    }
+  }
+}</code></pre>
+      <p class="note"><span class="en"><code>$value</code>, <code>$type</code>, <code>$description</code> are the reserved keys. <code>$type</code> is case-sensitive, inherited from the group, and tools <b>must not</b> infer it from the value. Aliases use <code>{group.token}</code>.</span><span class="vi"><code>$value</code>, <code>$type</code>, <code>$description</code> là khóa dành riêng. <code>$type</code> phân biệt hoa/thường, kế thừa từ nhóm, và công cụ <b>không được</b> đoán từ giá trị. Alias dùng <code>{group.token}</code>.</span></p>
+    </div>
+
+    <div>
+      <div class="card" style="margin-bottom:var(--s-5)">
+        <h4><span class="en">Three-tier taxonomy</span><span class="vi">Phân loại ba tầng</span></h4>
+        <ul class="spec">
+          <li><span class="k">1 · primitive</span> <span><b><span class="en">Raw values, no meaning.</span><span class="vi">Giá trị thô, vô nghĩa.</span></b> <code>blue.500 = #3b82f6</code></span></li>
+          <li><span class="k">2 · semantic</span> <span><b><span class="en">Intent, references primitives.</span><span class="vi">Ý nghĩa, trỏ primitive.</span></b> <code>action.primary → blue.500</code></span></li>
+          <li><span class="k">3 · component</span> <span><b><span class="en">Scoped to a component.</span><span class="vi">Bó hẹp trong 1 thành phần.</span></b> <code>button.bg → action.primary</code></span></li>
+        </ul>
+        <p class="note"><span class="en">Re-theme (light/dark, brand A/B) by remapping the <b>semantic</b> tier only — never touch every call site.</span><span class="vi">Đổi theme (sáng/tối, thương hiệu A/B) chỉ bằng cách ánh xạ lại tầng <b>semantic</b> — không đụng mọi nơi sử dụng.</span></p>
+      </div>
+      <div class="card tint">
+        <h4><span class="en">Toolchain</span><span class="vi">Bộ công cụ</span> <span class="badge conv">CONV</span></h4>
+        <p><span class="en"><b>Style Dictionary</b> (DTCG since v4) · <b>Tokens Studio</b> for Figma (toggle "W3C DTCG") · Terrazzo · Figma Variables · Supernova · zeroheight. Validate against the DTCG JSON Schema before shipping.</span><span class="vi"><b>Style Dictionary</b> (DTCG từ v4) · <b>Tokens Studio</b> cho Figma (bật "W3C DTCG") · Terrazzo · Figma Variables · Supernova · zeroheight. Kiểm tra bằng DTCG JSON Schema trước khi phát hành.</span></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 2. SPACING / GRID ============ -->
+<section id="s2">
+  <div class="sec-head">
+    <span class="sec-num">§02</span>
+    <div class="sec-tick" style="background:var(--amber)"></div>
+    <div class="titles">
+      <h2><span class="en">Spacing, Grid &amp; Layout</span><span class="vi">Khoảng cách, Lưới &amp; Bố cục</span></h2>
+      <div class="sec-sub"><span class="en">An 8px grid removes sub-pixel guesswork; breakpoints differ per framework — build to the one you deploy.</span><span class="vi">Lưới 8px loại bỏ phỏng đoán sub-pixel; breakpoint khác nhau theo framework — xây theo bản bạn triển khai.</span></div>
+    </div>
+  </div>
+
+  <div class="grid g2">
+    <div class="card">
+      <h4><span class="en">8px spacing scale</span><span class="vi">Thang khoảng cách 8px</span> <span class="badge conv">CONV</span></h4>
+      <div style="display:flex; align-items:flex-end; gap:6px; margin:14px 0; height:70px">
+        <div style="width:4px;height:4px;background:var(--azure);border-radius:2px"></div>
+        <div style="width:8px;height:8px;background:var(--azure);border-radius:2px"></div>
+        <div style="width:12px;height:12px;background:var(--azure);border-radius:2px"></div>
+        <div style="width:16px;height:16px;background:var(--azure);border-radius:2px"></div>
+        <div style="width:24px;height:24px;background:var(--azure);border-radius:2px"></div>
+        <div style="width:32px;height:32px;background:var(--azure);border-radius:2px"></div>
+        <div style="width:48px;height:48px;background:var(--azure);border-radius:2px"></div>
+        <div style="width:64px;height:64px;background:var(--azure);border-radius:2px"></div>
+      </div>
+      <p class="mono-cell" style="font-family:var(--mono);font-size:13px;color:var(--ink)">0 · 4 · 8 · 12 · 16 · 24 · 32 · 48 · 64 · 96 · 128</p>
+      <p class="note"><span class="en"><b>Rule 1 — internal ≤ external:</b> padding inside a group ≤ margin around it. <b>Rule 2:</b> font sizes do <i>not</i> follow this grid (use §03), but snap line-height to it (16px text → 24px line-height).</span><span class="vi"><b>Quy tắc 1 — trong ≤ ngoài:</b> padding bên trong nhóm ≤ margin bao quanh. <b>Quy tắc 2:</b> cỡ chữ <i>không</i> theo lưới này (dùng §03), nhưng line-height thì khớp (chữ 16px → line-height 24px).</span></p>
+    </div>
+
+    <div class="card">
+      <h4><span class="en">Responsive breakpoints</span><span class="vi">Breakpoint đáp ứng</span> <span class="badge spec">SPEC</span></h4>
+      <div class="tbl-wrap" style="border:0">
+        <table>
+          <thead><tr><th><span class="en">Framework</span><span class="vi">Framework</span></th><th>sm</th><th>md</th><th>lg</th><th>xl</th><th>2xl</th></tr></thead>
+          <tbody>
+            <tr><td><b>Tailwind</b></td><td class="mono-cell">640</td><td class="mono-cell">768</td><td class="mono-cell">1024</td><td class="mono-cell">1280</td><td class="mono-cell">1536</td></tr>
+            <tr><td><b>Bootstrap 5</b></td><td class="mono-cell">576</td><td class="mono-cell">768</td><td class="mono-cell">992</td><td class="mono-cell">1200</td><td class="mono-cell">1400</td></tr>
+            <tr><td><b>Material</b></td><td class="mono-cell">600</td><td class="mono-cell">—</td><td class="mono-cell">840</td><td class="mono-cell">1240</td><td class="mono-cell">1440</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note"><span class="en">Values are <code>min-width</code>, px (Material = dp window classes: compact / medium / expanded / large / xlarge). 12-column grid + 24px gutter is the common desktop convention. Use <code>max-width</code>, not fixed <code>width</code>.</span><span class="vi">Giá trị là <code>min-width</code>, px (Material = lớp cửa sổ dp: compact / medium / expanded / large / xlarge). Lưới 12 cột + gutter 24px là quy ước desktop phổ biến. Dùng <code>max-width</code>, không phải <code>width</code> cố định.</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 3. TYPOGRAPHY ============ -->
+<section id="s3">
+  <div class="sec-head">
+    <span class="sec-num">§03</span>
+    <div class="sec-tick" style="background:oklch(0.55 0.16 300)"></div>
+    <div class="titles">
+      <h2><span class="en">Typography</span><span class="vi">Kiểu chữ</span></h2>
+      <div class="sec-sub"><span class="en">Sizes come from a ratio, not from taste. Try it live — drag the ratio and watch the scale rebuild.</span><span class="vi">Cỡ chữ đến từ tỷ lệ, không từ cảm tính. Thử trực tiếp — kéo tỷ lệ và xem thang tự dựng lại.</span></div>
+    </div>
+  </div>
+
+  <div class="grid g2" style="align-items:start">
+    <div class="widget">
+      <div class="widget-title"><span class="en">Modular scale · interactive</span><span class="vi">Thang modular · tương tác</span></div>
+      <label class="ctrl" for="ratioSlider"><span class="en">Ratio</span><span class="vi">Tỷ lệ</span>: <output id="ratioOut">1.250</output> · <span id="ratioName" style="color:var(--ink-3);font-weight:400">Major third</span></label>
+      <input type="range" id="ratioSlider" min="1.067" max="1.618" step="0.001" value="1.25"
+             aria-label="Type scale ratio">
+      <p class="note" style="margin-top:4px"><span class="en">base 16px · <code>sizeₙ = 16 × ratioⁿ</code></span><span class="vi">gốc 16px · <code>cỡₙ = 16 × tỷ_lệⁿ</code></span></p>
+      <div id="typePreview" style="margin-top:16px; border-top:1px solid var(--line); padding-top:16px">
+        <div class="s4" id="tp4">Display</div>
+        <div class="s3" id="tp3">Heading 1</div>
+        <div class="s2" id="tp2">Heading 2</div>
+        <div class="s1" id="tp1">Heading 3</div>
+        <div class="body" id="tp0"><span class="en">Body text — the reading baseline at 16px.</span><span class="vi">Chữ thân bài — chuẩn đọc ở 16px.</span></div>
+      </div>
+      <div class="chart" style="margin-top:16px" aria-hidden="true"><svg id="typeChart" viewBox="0 0 320 120"></svg></div>
+    </div>
+
+    <div>
+      <div class="card" style="margin-bottom:var(--s-5)">
+        <h4><span class="en">Ratios &amp; when to use</span><span class="vi">Tỷ lệ &amp; khi nào dùng</span> <span class="badge conv">CONV</span></h4>
+        <ul class="spec">
+          <li><span class="k">1.200</span><span><span class="en">Minor third — text-heavy, compact UI</span><span class="vi">Minor third — UI nhiều chữ, chật</span></span></li>
+          <li><span class="k">1.250</span><span><b><span class="en">Major third — general app UI (Material)</span><span class="vi">Major third — UI ứng dụng (Material)</span></b></span></li>
+          <li><span class="k">1.333</span><span><b><span class="en">Perfect fourth — editorial / spacious</span><span class="vi">Perfect fourth — báo chí / thoáng</span></b></span></li>
+          <li><span class="k">1.618</span><span><span class="en">Golden — display / art-directed</span><span class="vi">Vàng — hiển thị / nghệ thuật</span></span></li>
+        </ul>
+      </div>
+      <div class="card tint">
+        <h4><span class="en">Rules that always hold</span><span class="vi">Quy tắc luôn đúng</span></h4>
+        <ul class="spec">
+          <li><span class="en"><b>Line-height</b> body ~1.5 <span class="badge spec">SPEC 1.5×</span>, headings 1.1–1.25.</span><span class="vi"><b>Line-height</b> thân ~1.5 <span class="badge spec">SPEC 1.5×</span>, tiêu đề 1.1–1.25.</span></li>
+          <li><span class="en"><b>Measure</b> 45–75 chars/line (~66 ideal).</span><span class="vi"><b>Độ dài dòng</b> 45–75 ký tự (~66 lý tưởng).</span></li>
+          <li><span class="en"><b>Units:</b> <code>rem</code> not <code>px</code> — respect user zoom.</span><span class="vi"><b>Đơn vị:</b> <code>rem</code> chứ không <code>px</code> — tôn trọng zoom.</span></li>
+          <li><span class="en"><b>Fluid:</b> <code>clamp(min, vw-based, max)</code>.</span><span class="vi"><b>Co giãn:</b> <code>clamp(min, theo-vw, max)</code>.</span></li>
+          <li><span class="en"><b>Loading:</b> <code>font-display:swap</code> + metric fallback + WOFF2.</span><span class="vi"><b>Tải font:</b> <code>font-display:swap</code> + font dự phòng + WOFF2.</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid g2" style="margin-top:var(--s-5)">
+    <div class="card" style="border-left:3px solid var(--amber)">
+      <h4>🇻🇳 <span class="en">Vietnamese</span><span class="vi">Tiếng Việt</span> <span class="badge conv">CONV</span></h4>
+      <p><span class="en">The most demanding Latin script: <b>134+ accented characters</b> needing the <b>Latin Extended Additional</b> Unicode block (stacked tonal + vowel diacritics). Budget fonts often skip it — <b>verify glyph coverage</b> (Noto Sans/Serif, Be Vietnam Pro are safe). Give a little extra line-height so stacked marks don't collide.</span><span class="vi">Chữ Latin khó nhất: <b>134+ ký tự có dấu</b> cần khối Unicode <b>Latin Extended Additional</b> (dấu thanh + dấu nguyên âm chồng nhau). Font giá rẻ hay thiếu — <b>kiểm tra độ phủ glyph</b> (Noto Sans/Serif, Be Vietnam Pro an toàn). Cho line-height nhỉnh hơn để dấu chồng không dính.</span></p>
+    </div>
+    <div class="card" style="border-left:3px solid oklch(0.6 0.16 20)">
+      <h4>🇹🇼 <span class="en">Traditional Chinese / CJK</span><span class="vi">Trung Phồn thể / CJK</span> <span class="badge conv">CONV</span></h4>
+      <p><span class="en">CJK fonts hold <b>20,000–80,000+ glyphs (5–20MB)</b> — delivery is the problem; subset via <code>unicode-range</code> (100+ subsets). <b>Raise line-height to ~1.7.</b> Ship <b>region-specific fonts (TC ≠ SC)</b> — Taiwan/HK readers reject Simplified; pan-CJK variants are unreliable.</span><span class="vi">Font CJK chứa <b>20.000–80.000+ glyph (5–20MB)</b> — cốt lõi là phân phối; subset bằng <code>unicode-range</code> (100+ subset). <b>Tăng line-height ~1.7.</b> Dùng <b>font theo vùng (TC ≠ SC)</b> — độc giả Đài Loan/HK không chấp nhận Giản thể; biến thể pan-CJK không đáng tin.</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 4. COLOR ============ -->
+<section id="s4">
+  <div class="sec-head">
+    <span class="sec-num">§04</span>
+    <div class="sec-tick" style="background:oklch(0.66 0.15 155)"></div>
+    <div class="titles">
+      <h2><span class="en">Color</span><span class="vi">Màu sắc</span></h2>
+      <div class="sec-sub"><span class="en">OKLCH makes tonal ramps predictable; WCAG contrast keeps text legible. Both are live below.</span><span class="vi">OKLCH khiến dải tông có quy luật; tương phản WCAG giữ chữ dễ đọc. Cả hai đều tương tác bên dưới.</span></div>
+    </div>
+  </div>
+
+  <div class="grid g2" style="align-items:start">
+    <div class="widget">
+      <div class="widget-title"><span class="en">OKLCH ramp · perceptually uniform</span><span class="vi">Dải OKLCH · đồng nhất tri giác</span></div>
+      <div style="display:flex; gap:16px; margin-bottom:14px; flex-wrap:wrap">
+        <label class="ctrl" style="flex:1" for="hueSlider"><span class="en">Hue</span><span class="vi">Tông (H)</span>: <output id="hueOut">252</output>°<br>
+          <input type="range" id="hueSlider" min="0" max="360" value="252" aria-label="Hue"></label>
+        <label class="ctrl" style="flex:1" for="chromaSlider">Chroma (C): <output id="chromaOut">0.15</output><br>
+          <input type="range" id="chromaSlider" min="0" max="0.30" step="0.01" value="0.15" aria-label="Chroma"></label>
+      </div>
+      <div class="ramp" id="oklchRamp"></div>
+      <p class="note"><span class="en">Fix H + C, step <b>L</b> in equal increments → perceptually even steps. HSL can't do this — compare the same-lightness HSL strip:</span><span class="vi">Giữ H + C, bước <b>L</b> đều → các bước cảm nhận đều nhau. HSL không làm được — so với dải HSL cùng độ sáng:</span></p>
+      <div class="cmp" id="hslCompare"></div>
+      <p class="note" style="margin-top:4px"><span class="en">Same HSL lightness (50%), varied hue — brightness visibly jumps.</span><span class="vi">Cùng độ sáng HSL (50%), đổi tông — độ sáng nhảy rõ rệt.</span></p>
+    </div>
+
+    <div class="widget">
+      <div class="widget-title"><span class="en">Contrast checker · WCAG 2.x</span><span class="vi">Kiểm tra tương phản · WCAG 2.x</span> <span class="badge spec">SPEC</span></div>
+      <div style="display:flex; gap:16px; margin-bottom:14px; align-items:center; flex-wrap:wrap">
+        <label class="ctrl" style="margin:0"><span class="en">Text</span><span class="vi">Chữ</span><br><input type="color" id="fgColor" value="#5b6472"></label>
+        <label class="ctrl" style="margin:0"><span class="en">Background</span><span class="vi">Nền</span><br><input type="color" id="bgColor" value="#ffffff"></label>
+        <div style="flex:1; text-align:right">
+          <div class="cc-result" id="ccRatio">—</div>
+          <div class="note" style="margin:0"><span class="en">contrast ratio</span><span class="vi">tỷ lệ tương phản</span></div>
+        </div>
+      </div>
+      <div class="cc-preview" id="ccPreview">
+        <div class="big">Aa <span class="en">Sample</span><span class="vi">Mẫu chữ</span></div>
+        <div class="small"><span class="en">The quick brown fox — 16px body text</span><span class="vi">Chữ thân bài 16px — kiểm tra khả năng đọc</span></div>
+      </div>
+      <div class="cc-badges" id="ccBadges"></div>
+      <p class="note" style="margin-top:10px"><span class="en"><b>4.5:1</b> normal text · <b>3:1</b> large (≥18pt/≥14pt bold) &amp; UI components · <b>7:1</b> AAA. Formula: (L1+0.05)/(L2+0.05).</span><span class="vi"><b>4.5:1</b> chữ thường · <b>3:1</b> chữ lớn (≥18pt/≥14pt đậm) &amp; thành phần UI · <b>7:1</b> AAA. Công thức: (L1+0.05)/(L2+0.05).</span></p>
+    </div>
+  </div>
+
+  <div class="card tint" style="margin-top:var(--s-5)">
+    <h4>APCA <span class="en">&amp; the WCAG 3.0 direction</span><span class="vi">&amp; hướng WCAG 3.0</span> <span class="badge conv">CONV</span></h4>
+    <p><span class="en">The Accessible Perceptual Contrast Algorithm outputs a polarity- and weight-aware <b>Lc</b> value (≈−108…+106): <b>Lc 90 preferred / 75 min</b> for body text, <b>~60</b> for large/bold. Crucially, WCAG 2.x overstates contrast for near-black colors, so it <b>can't reliably guide dark mode</b> — APCA can. <b>But keep WCAG 2.x</b>: APCA reverted to "Placeholder" in the 2023-06 WCAG 3.0 draft; no release date (~2030). For dark UIs, show elevation with progressively <b>lighter surfaces</b>, not just shadows, and avoid pure black/white pairings.</span><span class="vi">Thuật toán APCA cho ra giá trị <b>Lc</b> có xét cực tính và độ đậm (≈−108…+106): <b>Lc 90 nên có / 75 tối thiểu</b> cho thân bài, <b>~60</b> cho chữ lớn/đậm. Quan trọng: WCAG 2.x phóng đại tương phản với màu gần đen nên <b>không dẫn hướng tốt cho dark mode</b> — APCA thì có. <b>Nhưng giữ WCAG 2.x</b>: APCA bị đưa về "Placeholder" trong nháp WCAG 3.0 06/2023; chưa có ngày phát hành (~2030). Với UI tối, thể hiện độ nổi bằng <b>bề mặt sáng dần</b>, không chỉ đổ bóng, và tránh cặp đen/trắng thuần.</span></p>
+  </div>
+</section>
+
+<!-- ============ 5. ACCESSIBILITY ============ -->
+<section id="s5">
+  <div class="sec-head">
+    <span class="sec-num">§05</span>
+    <div class="sec-tick" style="background:oklch(0.60 0.20 25)"></div>
+    <div class="titles">
+      <h2><span class="en">Accessibility (measurable)</span><span class="vi">Khả năng tiếp cận (đo được)</span></h2>
+      <div class="sec-sub"><span class="en">WCAG 2.2 AA is the near-universal legal target. These are hard numbers, not aspirations.</span><span class="vi">WCAG 2.2 mức AA là mục tiêu pháp lý gần như phổ quát. Đây là con số cứng, không phải khẩu hiệu.</span></div>
+    </div>
+  </div>
+
+  <div class="grid g2" style="align-items:start">
+    <div class="widget">
+      <div class="widget-title"><span class="en">Target sizes · drawn to scale (CSS px)</span><span class="vi">Kích thước vùng chạm · vẽ đúng tỷ lệ (CSS px)</span></div>
+      <div class="ts-stage">
+        <div class="ts-box" style="width:24px;height:24px;background:var(--bad)">24</div>
+        <div class="ts-box" style="width:44px;height:44px;background:var(--amber);color:oklch(0.3 0.05 80)">44</div>
+        <div class="ts-box" style="width:48px;height:48px;background:var(--good)">48</div>
+      </div>
+      <ul class="spec" style="margin-top:16px">
+        <li><span class="k">24×24</span><span><b>WCAG 2.5.8 (AA)</b> <span class="badge spec">SPEC</span> — <span class="en">floor, with 5 exceptions (spacing / equivalent / inline / UA / essential)</span><span class="vi">mức sàn, 5 ngoại lệ (khoảng cách / tương đương / inline / UA / thiết yếu)</span></span></li>
+        <li><span class="k">44×44</span><span><b>Apple HIG (pt)</b> <span class="badge spec">SPEC</span> · <span class="en">also WCAG 2.5.5 AAA</span><span class="vi">cũng là WCAG 2.5.5 AAA</span></span></li>
+        <li><span class="k">48×48</span><span><b>Material (dp)</b> <span class="badge conv">CONV</span> — <span class="en">≥8dp separation</span><span class="vi">cách nhau ≥8dp</span></span></li>
+      </ul>
+      <p class="note"><span class="en"><b>Build to the strictest relevant platform</b> — for native, 44pt/48dp, not the 24px floor.</span><span class="vi"><b>Xây theo nền nghiêm ngặt nhất</b> — với native là 44pt/48dp, không phải sàn 24px.</span></p>
+    </div>
+
+    <div>
+      <div class="card" style="margin-bottom:var(--s-5)">
+        <h4><span class="en">Focus appearance</span><span class="vi">Hình thức focus</span> <span class="badge spec">SPEC</span></h4>
+        <ul class="spec">
+          <li><span class="en"><b>2.4.7</b> Focus Visible (AA) — an indicator must exist.</span><span class="vi"><b>2.4.7</b> Focus nhìn thấy (AA) — phải có chỉ báo.</span></li>
+          <li><span class="en"><b>2.4.11</b> Not Obscured (AA) — not fully hidden by sticky bars.</span><span class="vi"><b>2.4.11</b> Không bị che (AA) — không bị thanh dính che hết.</span></li>
+          <li><span class="en"><b>2.4.13</b> Focus Appearance (AAA) — ≥ <b>2px perimeter</b>, <b>≥3:1</b> vs unfocused &amp; adjacent.</span><span class="vi"><b>2.4.13</b> Hình thức focus (AAA) — viền ≥ <b>2px</b>, <b>≥3:1</b> so với lúc không focus &amp; màu kề.</span></li>
+        </ul>
+        <p class="note"><span class="en">Use <code>:focus-visible</code> + ≥2px outline + <code>outline-offset</code>. Never <code>outline:none</code> without a compliant replacement. <b>Try it: press Tab through this page.</b></span><span class="vi">Dùng <code>:focus-visible</code> + outline ≥2px + <code>outline-offset</code>. Đừng bao giờ <code>outline:none</code> mà không thay thế hợp chuẩn. <b>Thử: nhấn Tab qua trang này.</b></span></p>
+      </div>
+      <div class="card tint">
+        <h4><span class="en">Text spacing · reflow · resize</span><span class="vi">Giãn chữ · reflow · phóng to</span> <span class="badge spec">SPEC</span></h4>
+        <ul class="spec">
+          <li><span class="k">1.4.12</span><span><span class="en">line-height <b>1.5×</b> · paragraph <b>2×</b> · letter <b>0.12×</b> · word <b>0.16×</b>, no loss</span><span class="vi">line-height <b>1.5×</b> · đoạn <b>2×</b> · chữ <b>0.12×</b> · từ <b>0.16×</b>, không mất nội dung</span></span></li>
+          <li><span class="k">1.4.10</span><span><span class="en">Reflow — no 2-D scroll at <b>320px</b> (≈1280px @ 400% zoom)</span><span class="vi">Reflow — không cuộn 2 chiều ở <b>320px</b> (≈1280px @ zoom 400%)</span></span></li>
+          <li><span class="k">1.4.4</span><span><span class="en">Resize text to <b>200%</b> without loss (no px minimum)</span><span class="vi">Phóng chữ tới <b>200%</b> không mất nội dung (không có sàn px)</span></span></li>
+        </ul>
+        <p class="note"><span class="en"><b>New in WCAG 2.2</b> (2023-10-05): dragging alternatives (2.5.7), consistent help (3.2.6), redundant-entry (3.3.7), accessible authentication (3.3.8/9). Honor <code>prefers-reduced-motion</code>; no flashing &gt;3×/s.</span><span class="vi"><b>Mới trong WCAG 2.2</b> (05/10/2023): phương án thay kéo (2.5.7), trợ giúp nhất quán (3.2.6), không nhập lại (3.3.7), xác thực tiếp cận (3.3.8/9). Tôn trọng <code>prefers-reduced-motion</code>; không chớp &gt;3 lần/giây.</span></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 6. PERFORMANCE ============ -->
+<section id="s6">
+  <div class="sec-head">
+    <span class="sec-num">§06</span>
+    <div class="sec-tick" style="background:var(--good)"></div>
+    <div class="titles">
+      <h2><span class="en">Performance &amp; Core Web Vitals</span><span class="vi">Hiệu năng &amp; Core Web Vitals</span></h2>
+      <div class="sec-sub"><span class="en">The metrics Google ranks on are the ones users feel. Thresholds are measured at the 75th percentile.</span><span class="vi">Chỉ số Google xếp hạng cũng là chỉ số người dùng cảm nhận. Ngưỡng đo ở phân vị 75.</span></div>
+    </div>
+  </div>
+
+  <div class="grid g2" style="align-items:start">
+    <div class="widget">
+      <div class="widget-title"><span class="en">Thresholds · p75 field data</span><span class="vi">Ngưỡng · dữ liệu thực p75</span> <span class="badge spec">SPEC</span></div>
+      <div class="gauge">
+        <div class="gauge-top"><span class="gauge-name">LCP <span>· <span class="en">loading</span><span class="vi">tải</span></span></span><span class="src">good ≤ 2.5s</span></div>
+        <div class="gauge-bar"><div class="gz-good" style="width:41.7%">≤2.5s</div><div class="gz-ni" style="width:25%">4s</div><div class="gz-bad" style="width:33.3%">&gt;4s</div></div>
+      </div>
+      <div class="gauge">
+        <div class="gauge-top"><span class="gauge-name">INP <span>· <span class="en">responsiveness</span><span class="vi">phản hồi</span></span></span><span class="src">good ≤ 200ms</span></div>
+        <div class="gauge-bar"><div class="gz-good" style="width:33.3%">≤200ms</div><div class="gz-ni" style="width:50%">500ms</div><div class="gz-bad" style="width:16.7%">&gt;500</div></div>
+      </div>
+      <div class="gauge">
+        <div class="gauge-top"><span class="gauge-name">CLS <span>· <span class="en">stability</span><span class="vi">ổn định</span></span></span><span class="src">good ≤ 0.1</span></div>
+        <div class="gauge-bar"><div class="gz-good" style="width:28.6%">≤0.1</div><div class="gz-ni" style="width:42.9%">0.25</div><div class="gz-bad" style="width:28.6%">&gt;0.25</div></div>
+      </div>
+      <p class="note"><span class="en"><b>INP replaced FID on 2024-03-12.</b> It measures every interaction's full latency (input → next paint) and reports the worst — markedly stricter (≈65% of mobile sites pass INP vs ≈93% for FID). TTFB (&lt;800ms) &amp; TBT are diagnostics, not Core Web Vitals.</span><span class="vi"><b>INP thay FID từ 12/03/2024.</b> Nó đo toàn bộ độ trễ của MỌI tương tác (input → vẽ kế tiếp) và báo giá trị tệ nhất — khó hơn hẳn (≈65% site mobile đạt INP so với ≈93% đạt FID). TTFB (&lt;800ms) &amp; TBT là chỉ số chẩn đoán, không phải Core Web Vitals.</span></p>
+    </div>
+
+    <div>
+      <div class="card" style="margin-bottom:var(--s-5)">
+        <h4><span class="en">Image optimization</span><span class="vi">Tối ưu ảnh</span> <span class="badge conv">CONV</span></h4>
+        <ul class="spec">
+          <li><span class="en"><b>Format:</b> AVIF → WebP → JPEG via <code>&lt;picture&gt;</code>. AVIF's edge over WebP ~10–12%; big wins vs legacy JPEG/PNG.</span><span class="vi"><b>Định dạng:</b> AVIF → WebP → JPEG qua <code>&lt;picture&gt;</code>. Lợi thế AVIF so WebP ~10–12%; lợi lớn so JPEG/PNG cũ.</span></li>
+          <li><span class="en"><b>Responsive:</b> <code>srcset</code>+<code>sizes</code>, 3–5 widths.</span><span class="vi"><b>Responsive:</b> <code>srcset</code>+<code>sizes</code>, 3–5 cỡ rộng.</span></li>
+          <li><span class="en"><b>Always</b> set <code>width</code>/<code>height</code> → prevents CLS.</span><span class="vi"><b>Luôn</b> đặt <code>width</code>/<code>height</code> → chống CLS.</span></li>
+          <li><span class="en"><b>Lazy-load</b> below fold, but <b>never</b> the LCP image (<code>fetchpriority="high"</code>).</span><span class="vi"><b>Lazy-load</b> phần dưới, nhưng <b>đừng</b> lazy ảnh LCP (<code>fetchpriority="high"</code>).</span></li>
+        </ul>
+      </div>
+      <div class="card tint">
+        <h4><span class="en">Perceived performance</span><span class="vi">Hiệu năng cảm nhận</span> <span class="badge conv">CONV</span></h4>
+        <p><span class="en">Skeleton screens, <b>optimistic UI</b> (reflect the action before the server confirms), streaming/progressive loading, and prioritizing above-the-fold all make a page <i>feel</i> faster than its raw numbers. These are UX <b>and</b> ranking signals — a tiebreaker, not a substitute for relevance.</span><span class="vi">Skeleton screen, <b>optimistic UI</b> (phản ánh hành động trước khi server xác nhận), tải streaming/tuần tự, và ưu tiên phần trên màn hình khiến trang <i>cảm thấy</i> nhanh hơn con số thô. Đây là tín hiệu UX <b>và</b> xếp hạng — yếu tố phân định, không thay thế độ liên quan.</span></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 7. MOTION ============ -->
+<section id="s7">
+  <div class="sec-head">
+    <span class="sec-num">§07</span>
+    <div class="sec-tick" style="background:oklch(0.55 0.16 300)"></div>
+    <div class="titles">
+      <h2><span class="en">Motion &amp; Interaction</span><span class="vi">Chuyển động &amp; Tương tác</span></h2>
+      <div class="sec-sub"><span class="en">Duration and easing are tokens, not vibes. Pick an easing curve and watch it move.</span><span class="vi">Thời lượng và easing là token, không phải cảm hứng. Chọn đường easing và xem nó chuyển động.</span></div>
+    </div>
+  </div>
+
+  <div class="grid g2" style="align-items:start">
+    <div class="widget">
+      <div class="widget-title"><span class="en">Easing visualizer · Material 3</span><span class="vi">Trực quan hóa easing · Material 3</span> <span class="badge spec">SPEC</span></div>
+      <label class="ctrl" for="easingSelect"><span class="en">Easing token</span><span class="vi">Token easing</span></label>
+      <select id="easingSelect" style="width:100%">
+        <option value="0.2,0,0,1">standard — cubic-bezier(0.2, 0, 0, 1)</option>
+        <option value="0,0,0,1">standard-decelerate — (0, 0, 0, 1)</option>
+        <option value="0.3,0,1,1">standard-accelerate — (0.3, 0, 1, 1)</option>
+        <option value="0.05,0.7,0.1,1">emphasized-decelerate — (0.05, 0.7, 0.1, 1)</option>
+        <option value="0.3,0,0.8,0.15">emphasized-accelerate — (0.3, 0, 0.8, 0.15)</option>
+        <option value="0.4,0,0.2,1">legacy M2 standard — (0.4, 0, 0.2, 1)</option>
+        <option value="0,0,1,1">linear — (0, 0, 1, 1)</option>
+      </select>
+      <div class="chart" style="margin-top:16px"><svg id="easingCurve" viewBox="0 0 220 160" aria-hidden="true"></svg></div>
+      <div class="ease-track"><div class="ease-ball" id="easeBall"></div></div>
+      <button class="demo-btn" id="easePlay" style="margin-top:12px"><span class="en">▸ Play (600ms)</span><span class="vi">▸ Chạy (600ms)</span></button>
+      <p class="note"><span class="en">The <b>emphasized</b> token is a two-segment path — it <b>cannot</b> be a single cubic-bezier. Reduced-motion collapses all of this to an instant swap.</span><span class="vi">Token <b>emphasized</b> là đường hai đoạn — <b>không thể</b> là một cubic-bezier duy nhất. Reduced-motion sẽ rút gọn tất cả thành hoán đổi tức thì.</span></p>
+    </div>
+
+    <div>
+      <div class="card" style="margin-bottom:var(--s-5)">
+        <h4><span class="en">Duration tokens (ms)</span><span class="vi">Token thời lượng (ms)</span> <span class="badge spec">SPEC</span></h4>
+        <p style="font-family:var(--mono);font-size:12.5px;color:var(--ink);line-height:1.9">
+          short 50·100·150·200 &nbsp; medium 250·300·350·400<br>long 450·500·550·600 &nbsp; x-long 700·800·900·1000</p>
+        <p class="note"><span class="en"><b>Micro-interactions 100–300ms</b> · optimal perceived 200–500ms · &lt;100ms = instant, &gt;1s = laggy. Desktop faster (150–200ms); exit &lt; entrance; larger travel → longer.</span><span class="vi"><b>Vi tương tác 100–300ms</b> · cảm nhận tối ưu 200–500ms · &lt;100ms = tức thì, &gt;1s = ì. Desktop nhanh hơn (150–200ms); thoát &lt; vào; di chuyển xa hơn → lâu hơn.</span></p>
+      </div>
+      <div class="card tint">
+        <h4><span class="en">When NOT to animate + gestures</span><span class="vi">Khi nào KHÔNG animate + cử chỉ</span> <span class="badge conv">CONV</span></h4>
+        <p><span class="en">Skip motion on high-frequency repeated actions (it adds latency) and decorative bounce/stretch in utility contexts. For mobile, use the standard gesture vocabulary and give every custom gesture a visible alternative <span class="badge spec">SPEC 2.5.7</span>; never override system-reserved edge swipes.</span><span class="vi">Bỏ chuyển động ở hành động lặp tần suất cao (thêm độ trễ) và bounce/stretch trang trí trong ngữ cảnh công cụ. Với mobile, dùng bộ cử chỉ chuẩn và cho mỗi cử chỉ tùy biến một phương án thay thế nhìn thấy được <span class="badge spec">SPEC 2.5.7</span>; đừng ghi đè cử chỉ vuốt mép của hệ thống.</span></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 8. PLATFORM ============ -->
+<section id="s8">
+  <div class="sec-head">
+    <span class="sec-num">§08</span>
+    <div class="sec-tick" style="background:var(--ink-2)"></div>
+    <div class="titles">
+      <h2><span class="en">Platform Guidelines</span><span class="vi">Quy chuẩn Nền tảng</span></h2>
+      <div class="sec-sub"><span class="en">iOS and Android disagree on purpose. Respect each platform rather than cloning one onto the other.</span><span class="vi">iOS và Android khác nhau có chủ đích. Tôn trọng từng nền tảng thay vì bê nguyên nền này sang nền kia.</span></div>
+    </div>
+  </div>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr>
+        <th><span class="en">Criterion</span><span class="vi">Tiêu chí</span></th>
+        <th>Apple HIG · iOS</th>
+        <th>Material Design 3 · Android</th>
+      </tr></thead>
+      <tbody>
+        <tr><td><b><span class="en">Min touch target</span><span class="vi">Vùng chạm tối thiểu</span></b></td><td class="mono-cell">44 × 44 pt</td><td class="mono-cell">48 × 48 dp</td></tr>
+        <tr><td><b><span class="en">System font</span><span class="vi">Font hệ thống</span></b></td><td>SF Pro <span class="src">(Body 17pt, Large Title 34pt)</span></td><td>Roboto <span class="src">(scale 1.25)</span></td></tr>
+        <tr><td><b>Grid</b></td><td><span class="en">8pt grid</span><span class="vi">Lưới 8pt</span> <span class="badge conv">CONV</span></td><td><span class="en">4dp base, ×8 components</span><span class="vi">Nền 4dp, thành phần ×8</span></td></tr>
+        <tr><td><b><span class="en">Color</span><span class="vi">Màu</span></b></td><td><span class="en">Semantic system colors (adaptive)</span><span class="vi">Màu hệ thống semantic (thích ứng)</span></td><td><span class="en">Dynamic color, tonal palettes</span><span class="vi">Dynamic color, dải tông</span></td></tr>
+        <tr><td><b><span class="en">Elevation</span><span class="vi">Độ nổi</span></b></td><td><span class="en">Blur / translucency / layering</span><span class="vi">Blur / trong mờ / xếp lớp</span></td><td><span class="en">Tonal surface + shadow</span><span class="vi">Bề mặt tông + bóng</span></td></tr>
+        <tr><td><b><span class="en">Primary nav</span><span class="vi">Điều hướng chính</span></b></td><td><span class="en">Bottom tab bar (3–5 max)</span><span class="vi">Tab bar đáy (tối đa 3–5)</span></td><td><span class="en">Navigation bar / rail</span><span class="vi">Navigation bar / rail</span></td></tr>
+        <tr><td><b>Back</b></td><td><span class="en">Top-left + edge swipe</span><span class="vi">Góc trên trái + vuốt mép</span></td><td><span class="en">Global system Back</span><span class="vi">Nút Back hệ thống toàn cục</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="grid g2" style="margin-top:var(--s-5)">
+    <div class="card"><h4>iOS <span class="en">safe areas</span><span class="vi">vùng an toàn</span> <span class="badge spec">SPEC</span></h4><p><span class="en">Keep interactive/essential content out of the status bar, Dynamic Island, notch and home indicator via <code>safeAreaLayoutGuide</code>. Design to semantic colors (<code>label</code>, <code>systemBackground</code>) so light/dark/contrast come free. 2025's "Liquid Glass" (iOS 26) adds a translucent material layer.</span><span class="vi">Né status bar, Dynamic Island, tai thỏ và home indicator bằng <code>safeAreaLayoutGuide</code>. Thiết kế theo màu semantic (<code>label</code>, <code>systemBackground</code>) để sáng/tối/tương phản tự có. "Liquid Glass" (iOS 26, 2025) thêm lớp vật liệu trong mờ.</span></p></div>
+    <div class="card"><h4>Material <span class="en">components</span><span class="vi">thành phần</span> <span class="badge conv">CONV</span></h4><p><span class="en">Button ~40dp visual / 48dp target / 16dp padding · text field 56dp outlined / 48dp filled · checkbox·radio 40dp in 48dp target · chip ≥32dp (40 rec.) · FAB 40 / 56 / 96dp. Elevation via tonal overlays, not just shadow.</span><span class="vi">Nút ~40dp thị giác / 48dp vùng chạm / 16dp padding · text field 56dp outlined / 48dp filled · checkbox·radio 40dp trong 48dp · chip ≥32dp (khuyến nghị 40) · FAB 40 / 56 / 96dp. Độ nổi bằng lớp phủ tông, không chỉ bóng.</span></p></div>
+  </div>
+</section>
+
+<!-- ============ 9. COMPONENTS & STATES ============ -->
+<section id="s9">
+  <div class="sec-head">
+    <span class="sec-num">§09</span>
+    <div class="sec-tick" style="background:var(--azure)"></div>
+    <div class="titles">
+      <h2><span class="en">Components &amp; States</span><span class="vi">Thành phần &amp; Trạng thái</span></h2>
+      <div class="sec-sub"><span class="en">A component isn't done until every state is designed. Missing states are where UIs break.</span><span class="vi">Một thành phần chưa xong cho tới khi mọi trạng thái được thiết kế. Trạng thái thiếu là nơi UI vỡ.</span></div>
+    </div>
+  </div>
+  <div class="grid g2" style="align-items:start">
+    <div class="card">
+      <h4><span class="en">States to design for every interactive element</span><span class="vi">Trạng thái cần thiết kế cho mọi phần tử tương tác</span> <span class="badge spec">SPEC</span></h4>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin:14px 0">
+        <span class="k">default</span><span class="k">hover</span><span class="k">focus-visible</span><span class="k">active</span><span class="k">disabled</span><span class="k">loading</span><span class="k">error</span><span class="k">selected</span><span class="k">read-only</span>
+      </div>
+      <p class="note"><span class="en">Material adds <b>state layers</b> (overlay tints) filling the full 48dp target. <code>hover</code> is pointer-only — never gate essential info behind it.</span><span class="vi">Material thêm <b>state layer</b> (lớp phủ tông) phủ trọn vùng chạm 48dp. <code>hover</code> chỉ dành cho chuột — đừng giấu thông tin thiết yếu sau nó.</span></p>
+    </div>
+    <div class="card tint">
+      <h4><span class="en">Common specs</span><span class="vi">Thông số phổ biến</span> <span class="badge conv">CONV</span></h4>
+      <ul class="spec">
+        <li><span class="en"><b>Buttons</b> 40–48px tall · ~16px padding · min-width 64–88px · action-specific labels ("Create account", not "Submit").</span><span class="vi"><b>Nút</b> cao 40–48px · padding ~16px · rộng tối thiểu 64–88px · nhãn theo hành động ("Tạo tài khoản", không phải "Gửi").</span></li>
+        <li><span class="en"><b>Inputs</b> ≥44–56px · persistent label above · helper/error below · never placeholder-as-label.</span><span class="vi"><b>Input</b> ≥44–56px · nhãn cố định phía trên · trợ giúp/lỗi phía dưới · không dùng placeholder làm nhãn.</span></li>
+        <li><span class="en"><b>Modals</b> trap + restore focus · <code>Esc</code> to close · one dismissal path · don't stack.</span><span class="vi"><b>Modal</b> bẫy + khôi phục focus · <code>Esc</code> để đóng · một lối đóng · không chồng.</span></li>
+        <li><span class="en"><b>Cards</b> 16–24px padding · 16–24px gaps from the scale.</span><span class="vi"><b>Card</b> padding 16–24px · khoảng cách 16–24px theo thang.</span></li>
+      </ul>
+      <p class="note"><span class="en"><b>Reference systems:</b> Material 3, Apple HIG, IBM Carbon, Shopify Polaris, Ant Design, Atlassian. <b>Atomic Design:</b> atoms → molecules → organisms → templates → pages (maps to the token tiers).</span><span class="vi"><b>Hệ tham khảo:</b> Material 3, Apple HIG, IBM Carbon, Shopify Polaris, Ant Design, Atlassian. <b>Atomic Design:</b> atom → molecule → organism → template → page (khớp các tầng token).</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 10. FORMS + 11. RESPONSIVE ============ -->
+<section id="s10">
+  <div class="sec-head">
+    <span class="sec-num">§10–11</span>
+    <div class="sec-tick" style="background:var(--amber)"></div>
+    <div class="titles">
+      <h2><span class="en">Forms &amp; Responsive</span><span class="vi">Biểu mẫu &amp; Đáp ứng</span></h2>
+      <div class="sec-sub"><span class="en">Forms are where users quit; responsive layout is where components must travel.</span><span class="vi">Biểu mẫu là nơi người dùng bỏ cuộc; bố cục đáp ứng là nơi thành phần phải "di chuyển".</span></div>
+    </div>
+  </div>
+  <div class="grid g2" style="align-items:start">
+    <div class="card">
+      <h4><span class="en">Forms &amp; input</span><span class="vi">Biểu mẫu &amp; nhập liệu</span> <span class="badge conv">CONV</span></h4>
+      <ul class="spec">
+        <li><span class="en"><b>Layout:</b> single column, top-aligned labels. Avoid placeholder-as-label.</span><span class="vi"><b>Bố cục:</b> một cột, nhãn căn trên. Tránh placeholder làm nhãn.</span></li>
+        <li><span class="en"><b>Labels</b> programmatically tied (<code>for</code>/<code>id</code>) <span class="badge spec">SPEC</span> — enlarges tap target.</span><span class="vi"><b>Nhãn</b> liên kết theo mã (<code>for</code>/<code>id</code>) <span class="badge spec">SPEC</span> — mở rộng vùng chạm.</span></li>
+        <li><span class="en"><b>Validation</b> on blur, not per keystroke.</span><span class="vi"><b>Kiểm tra</b> khi rời trường, không phải mỗi lần gõ.</span></li>
+        <li><span class="en"><b>Errors</b> inline below field, specific &amp; actionable; color + icon + text <span class="badge spec">SPEC</span>; announce via <code>aria-live</code>.</span><span class="vi"><b>Lỗi</b> ngay dưới trường, cụ thể &amp; hành động được; màu + icon + chữ <span class="badge spec">SPEC</span>; báo qua <code>aria-live</code>.</span></li>
+        <li><span class="en"><b>Mobile:</b> correct <code>inputmode</code>/<code>type</code> · <code>autocomplete</code> · OTP autofill · don't force redundant entry <span class="badge spec">3.3.7</span>.</span><span class="vi"><b>Mobile:</b> đúng <code>inputmode</code>/<code>type</code> · <code>autocomplete</code> · tự điền OTP · đừng bắt nhập lại <span class="badge spec">3.3.7</span>.</span></li>
+      </ul>
+    </div>
+    <div class="card tint">
+      <h4><span class="en">Responsive &amp; adaptive</span><span class="vi">Đáp ứng &amp; thích ứng</span> <span class="badge conv">CONV</span></h4>
+      <ul class="spec">
+        <li><span class="en"><b>Mobile-first:</b> base styles smallest, layer <code>min-width</code> up. Include the viewport meta tag.</span><span class="vi"><b>Mobile-first:</b> style nền nhỏ nhất, thêm <code>min-width</code> lên. Nhớ thẻ meta viewport.</span></li>
+        <li><span class="en"><b>Fluid:</b> <code>max-width</code>, Flex/Grid, <code>clamp()</code>.</span><span class="vi"><b>Co giãn:</b> <code>max-width</code>, Flex/Grid, <code>clamp()</code>.</span></li>
+        <li><span class="en"><b>Container queries</b> — style by the container's size, not the viewport (reusable components).</span><span class="vi"><b>Container query</b> — tạo kiểu theo kích thước container, không phải khung nhìn (thành phần tái dùng).</span></li>
+        <li><span class="en"><b>Responsive</b> = continuously fluid · <b>adaptive</b> = discrete breakpoint layouts. Modern products blend both.</span><span class="vi"><b>Responsive</b> = co giãn liên tục · <b>adaptive</b> = bố cục rời theo breakpoint. Sản phẩm hiện đại trộn cả hai.</span></li>
+        <li><span class="en"><b>Test widths:</b> 320 · 360–414 · 768 · 1024 · 1280–1440 · 1536+</span><span class="vi"><b>Bề rộng test:</b> 320 · 360–414 · 768 · 1024 · 1280–1440 · 1536+</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 12. HCI LAWS ============ -->
+<section id="s12">
+  <div class="sec-head">
+    <span class="sec-num">§12</span>
+    <div class="sec-tick" style="background:oklch(0.70 0.14 66)"></div>
+    <div class="titles">
+      <h2><span class="en">HCI Mathematical Laws</span><span class="vi">Định luật Toán học Tương tác (HCI)</span></h2>
+      <div class="sec-sub"><span class="en">Empirical models that turn "feel" into estimates. Not spec mandates — but foundational and battle-tested.</span><span class="vi">Mô hình thực nghiệm biến "cảm giác" thành ước lượng. Không phải quy chuẩn bắt buộc — nhưng nền tảng và đã kiểm chứng.</span></div>
+    </div>
+  </div>
+
+  <div class="grid g2" style="align-items:start">
+    <div class="widget">
+      <div class="widget-title">Fitts's Law · <span style="font-family:var(--mono);text-transform:none;letter-spacing:0">MT = a + b·log₂(D/W + 1)</span></div>
+      <div class="chart"><svg id="fittsChart" viewBox="0 0 320 150" aria-hidden="true"></svg></div>
+      <p class="note"><span class="en">Time to hit a target grows with distance <b>D</b>, shrinks with width <b>W</b>. Make primary actions <b>large and close</b>; screen edges/corners act "infinitely large" (the pointer stops) — ideal for CTAs and menus.</span><span class="vi">Thời gian chạm mục tiêu tăng theo khoảng cách <b>D</b>, giảm theo bề rộng <b>W</b>. Đặt hành động chính <b>to và gần</b>; cạnh/góc màn hình "lớn vô hạn" (con trỏ dừng lại) — lý tưởng cho CTA và menu.</span></p>
+      <div class="fitts-stage" id="fittsStage">
+        <div class="fitts-target" id="fittsTarget" style="left:16px;top:55px;width:120px;height:40px" role="button" tabindex="0">
+          <span class="en">Tap me</span><span class="vi">Chạm tôi</span>
+        </div>
+      </div>
+      <p class="note" style="margin-top:8px"><span class="en">↑ Tap the target — it shrinks and jumps. Feel the difficulty (Index of Difficulty) rise as it gets smaller and farther.</span><span class="vi">↑ Chạm mục tiêu — nó co lại và nhảy. Cảm nhận độ khó (Index of Difficulty) tăng khi nó nhỏ và xa dần.</span></p>
+    </div>
+
+    <div>
+      <div class="widget" style="margin-bottom:var(--s-5)">
+        <div class="widget-title">Hick's Law · <span style="font-family:var(--mono);text-transform:none;letter-spacing:0">T = a + b·log₂(n + 1)</span></div>
+        <div class="chart"><svg id="hickChart" viewBox="0 0 320 140" aria-hidden="true"></svg></div>
+        <p class="note"><span class="en">Decision time grows <b>logarithmically</b> with the number of equal choices <b>n</b>. Split large menus into tiers; reduce simultaneous options; use progressive disclosure.</span><span class="vi">Thời gian quyết định tăng theo <b>logarit</b> số lựa chọn <b>n</b>. Chia menu lớn thành tầng; giảm lựa chọn cùng lúc; hé lộ dần.</span></p>
+      </div>
+      <div class="card tint">
+        <h4><span class="en">Four more laws worth knowing</span><span class="vi">Bốn định luật nữa nên biết</span></h4>
+        <ul class="spec">
+          <li><b>Miller</b><span><span class="en">working memory ≈ <b>7±2</b> chunks — chunk content; it's about grouping, not a hard cap.</span><span class="vi">trí nhớ làm việc ≈ <b>7±2</b> khối — chia khối; là về nhóm gộp, không phải giới hạn cứng.</span></span></li>
+          <li><b>Doherty</b><span><span class="en">keep response <b>&lt;400ms</b> to sustain flow — ties to INP &lt;200ms.</span><span class="vi">giữ phản hồi <b>&lt;400ms</b> để duy trì dòng chảy — gắn với INP &lt;200ms.</span></span></li>
+          <li><b>Jakob</b><span><span class="en">users expect your site to work like the others they know — honor conventions.</span><span class="vi">người dùng kỳ vọng site của bạn giống các site họ biết — tôn trọng quy ước.</span></span></li>
+          <li><b>Tesler</b><span><span class="en">complexity is conserved — absorb it in the system (smart defaults), not the user.</span><span class="vi">độ phức tạp được bảo toàn — để hệ thống gánh (mặc định thông minh), không phải người dùng.</span></span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 13. ROADMAP ============ -->
+<section id="s13">
+  <div class="sec-head">
+    <span class="sec-num">§13</span>
+    <div class="sec-tick" style="background:var(--good)"></div>
+    <div class="titles">
+      <h2><span class="en">Implementation Roadmap &amp; Caveats</span><span class="vi">Lộ trình Triển khai &amp; Lưu ý</span></h2>
+      <div class="sec-sub"><span class="en">Order of operations — each stage has an exit criterion before the next.</span><span class="vi">Thứ tự thực hiện — mỗi giai đoạn có tiêu chí hoàn thành trước khi sang bước kế.</span></div>
+    </div>
+  </div>
+  <div class="grid g3">
+    <div class="card"><div class="eyebrow">01 · <span class="en">Foundation</span><span class="vi">Nền tảng</span></div><p style="margin-top:8px"><span class="en">DTCG tokens (3 tiers) · 8px scale · 16px modular (1.25/1.333) · OKLCH ramp · framework breakpoints. <b>Exit:</b> one source → CSS + native, zero hardcoded values.</span><span class="vi">Token DTCG (3 tầng) · thang 8px · modular 16px (1.25/1.333) · dải OKLCH · breakpoint framework. <b>Xong khi:</b> một nguồn → CSS + native, không giá trị cứng.</span></p></div>
+    <div class="card"><div class="eyebrow">02 · <span class="en">Accessibility</span><span class="vi">Tiếp cận</span></div><p style="margin-top:8px"><span class="en">WCAG 2.2 AA: 4.5:1/3:1 · targets 24→44/48 · focus ≥2px/≥3:1 · keyboard · reduced-motion · reflow@320. <b>Exit:</b> native uses 44pt/48dp floor.</span><span class="vi">WCAG 2.2 AA: 4.5:1/3:1 · vùng chạm 24→44/48 · focus ≥2px/≥3:1 · bàn phím · reduced-motion · reflow@320. <b>Xong khi:</b> native dùng sàn 44pt/48dp.</span></p></div>
+    <div class="card"><div class="eyebrow">03 · <span class="en">Performance</span><span class="vi">Hiệu năng</span></div><p style="margin-top:8px"><span class="en">LCP ≤2.5 · INP ≤200 · CLS ≤0.1 @p75; alert at 80%. AVIF+WebP + dims · eager LCP · swap+WOFF2. <b>If INP fails:</b> cut JS before images.</span><span class="vi">LCP ≤2.5 · INP ≤200 · CLS ≤0.1 @p75; cảnh báo ở 80%. AVIF+WebP + kích thước · eager LCP · swap+WOFF2. <b>Nếu INP trượt:</b> cắt JS trước ảnh.</span></p></div>
+    <div class="card"><div class="eyebrow">04 · <span class="en">Motion &amp; components</span><span class="vi">Chuyển động</span></div><p style="margin-top:8px"><span class="en">Tokenize motion (50–1000ms, standard curve) + reduced-motion scalar · specify all states · document in Storybook.</span><span class="vi">Token hóa motion (50–1000ms, đường standard) + hệ số reduced-motion · đặc tả đủ trạng thái · ghi trong Storybook.</span></p></div>
+    <div class="card"><div class="eyebrow">05 · <span class="en">Internationalization</span><span class="vi">Đa ngôn ngữ</span></div><p style="margin-top:8px"><span class="en">VI: Latin Extended Additional coverage + line-height for diacritics. TC: region-specific fonts, line-height ~1.7, <code>unicode-range</code> subsetting.</span><span class="vi">VI: phủ Latin Extended Additional + line-height cho dấu. TC: font theo vùng, line-height ~1.7, subset <code>unicode-range</code>.</span></p></div>
+    <div class="card" style="background:var(--warn-wash);border-color:oklch(0.85 0.08 88)"><div class="eyebrow" style="color:var(--amber-ink)">⚠ <span class="en">Caveats</span><span class="vi">Lưu ý</span></div><p style="margin-top:8px"><span class="en">8pt grid = Material mandate but Apple <i>convention</i>. AVIF edge ~10–12% (not dramatic). CWV conversion stats are vendor-directional. APCA reverted to "Placeholder" (~2030). Material 3 mid-transition to spring motion. Breakpoints vary by framework/version.</span><span class="vi">Lưới 8pt = bắt buộc ở Material nhưng chỉ <i>quy ước</i> ở Apple. Lợi thế AVIF ~10–12% (không lớn). Thống kê chuyển đổi CWV mang tính định hướng. APCA về "Placeholder" (~2030). Material 3 đang chuyển sang spring motion. Breakpoint khác theo framework/phiên bản.</span></p></div>
+  </div>
+</section>
+
+<!-- ============ 14. AI-ERA DESIGN ANTI-PATTERNS ============ -->
+<section id="s14">
+  <div class="sec-head">
+    <span class="sec-num">§14</span>
+    <div class="sec-tick" style="background:var(--bad)"></div>
+    <div class="titles">
+      <h2><span class="en">AI-era Design Anti-patterns</span><span class="vi">Phản mẫu Thiết kế thời đại AI</span></h2>
+      <div class="sec-sub"><span class="en">AI tools reliably emit two kinds of defect: objective standard violations, and aesthetic "tells" that scream machine-generated. Each item is tagged so you know which battle you're fighting.</span><span class="vi">Công cụ AI thường sinh hai loại lỗi: vi phạm chuẩn kiểm chứng được, và "dấu hiệu" thẩm mỹ lộ rõ do máy tạo. Mỗi mục được gắn nhãn để biết bạn đang xử lý loại nào.</span></div>
+    </div>
+  </div>
+
+  <div class="card tint" style="margin-bottom:var(--s-5)">
+    <p style="margin:0"><span class="badge viol">VIOLATION</span> <span class="en">= objective, testable against a named WCAG 2.2 / platform-HIG rule.</span><span class="vi">= vi phạm khách quan, kiểm chứng được theo một quy tắc WCAG 2.2 / HIG cụ thể.</span> &nbsp;&nbsp; <span class="badge tell">TELL</span> <span class="en">= subjective aesthetic signal — not a compliance failure, but it erodes brand distinctiveness and can <i>induce</i> a violation.</span><span class="vi">= dấu hiệu thẩm mỹ chủ quan — không phải lỗi tuân thủ, nhưng làm mất khác biệt thương hiệu và có thể <i>kéo theo</i> một vi phạm.</span></p>
+  </div>
+
+  <!-- interactive demos -->
+  <div class="grid g2" style="align-items:start">
+    <div class="widget">
+      <div class="widget-title"><span class="en">Focus rings · Tab to compare</span><span class="vi">Vòng focus · nhấn Tab để so sánh</span> <span class="badge viol">VIOLATION</span></div>
+      <div class="focus-demo">
+        <button class="fd-btn fd-bad"><span class="en">✕ Nested rings</span><span class="vi">✕ Vòng chồng</span></button>
+        <button class="fd-btn fd-good"><span class="en">✓ Single ring</span><span class="vi">✓ Một vòng</span></button>
+      </div>
+      <p class="note"><span class="en"><b>Press Tab</b> (or click) each button. The left stacks <code>border</code> + <code>outline</code> + <code>box-shadow</code> → 2–3 competing rings, an AI habit that muddies WCAG 2.4.13's "≥2px perimeter, ≥3:1" rule. The right is the correct single <code>:focus-visible</code> ring.</span><span class="vi"><b>Nhấn Tab</b> (hoặc bấm) từng nút. Nút trái chồng <code>border</code> + <code>outline</code> + <code>box-shadow</code> → 2–3 vòng đua nhau, thói quen của AI làm rối yêu cầu "viền ≥2px, ≥3:1" của WCAG 2.4.13. Nút phải là một vòng <code>:focus-visible</code> đúng chuẩn.</span></p>
+      <pre><code><span class="c-mut">/* ✓ one clean ring — never border+outline+shadow */</span>
+<span class="c-key">:focus-visible</span> {
+  <span class="c-key">outline</span>: 2px solid #0066cc;
+  <span class="c-key">outline-offset</span>: 2px;
+}</code></pre>
+    </div>
+
+    <div class="widget halo-widget" id="haloWidget">
+      <div class="widget-title"><span class="en">The most common visual tells</span><span class="vi">Những dấu hiệu thị giác phổ biến nhất</span> <span class="badge tell">TELL</span></div>
+      <div class="halo-card" id="haloCard">
+        <div style="font-weight:650;color:var(--ink)"><span class="en">Sample card</span><span class="vi">Thẻ mẫu</span></div>
+        <div class="note" style="margin:4px 0 0">
+          <span class="cap-clean"><span class="en">Clean elevation — one neutral shadow, one light source.</span><span class="vi">Độ nổi tiết chế — một bóng trung tính, một nguồn sáng.</span></span>
+          <span class="cap-glow"><span class="en">Halo overload — stacked colored glows (an AI habit).</span><span class="vi">Quầng sáng quá đà — nhiều glow màu chồng (thói quen AI).</span></span>
+        </div>
+      </div>
+      <button class="demo-btn" id="haloToggle" aria-pressed="false" style="margin-top:12px"><span class="en">Toggle halo overload</span><span class="vi">Bật/tắt quầng sáng quá đà</span></button>
+
+      <div style="margin-top:18px">
+        <div class="note" style="margin-bottom:6px"><span class="en"><b>The "purple tell":</b> AI's default gradient vs a chosen brand color.</span><span class="vi"><b>"Dấu hiệu tím":</b> gradient mặc định của AI so với màu thương hiệu có chủ đích.</span></div>
+        <div class="tell-bars">
+          <div class="tell-bar tell-purple">#667eea → #764ba2</div>
+          <div class="tell-bar tell-brand">oklch(0.45 0.15 258)</div>
+        </div>
+        <p class="note"><span class="en">Tailwind UI defaulted buttons to <code>indigo-500</code>; its creator publicly apologized in 2025 for "every AI-generated UI being indigo." Define brand tokens instead.</span><span class="vi">Tailwind UI mặc định nút màu <code>indigo-500</code>; tác giả đã công khai xin lỗi năm 2025 vì "mọi UI do AI tạo đều tím indigo." Hãy định nghĩa token thương hiệu riêng.</span></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- catalogs -->
+  <div class="grid g2" style="margin-top:var(--s-5); align-items:start">
+    <div class="card">
+      <h4><span class="en">Level 1 — Visual &amp; CSS defects</span><span class="vi">Cấp 1 — Lỗi thị giác &amp; CSS</span></h4>
+      <ul class="spec">
+        <li><span class="badge viol">VIOL</span><span><b><span class="en">Nested focus rings.</span><span class="vi">Vòng focus chồng.</span></b> <span class="en">border+outline+shadow → one <code>:focus-visible</code> ring.</span><span class="vi">border+outline+shadow → một vòng <code>:focus-visible</code>.</span> <span class="src">2.4.11 / 2.4.13</span></span></li>
+        <li><span class="badge tell">TELL</span><span><b><span class="en">Halo / glow overuse.</span><span class="vi">Lạm dụng halo / glow.</span></b> <span class="en">Stacked colored shadows → neutral elevation scale, one light source.</span><span class="vi">Nhiều bóng màu chồng → thang độ nổi trung tính, một nguồn sáng.</span></span></li>
+        <li><span class="badge tell">TELL</span><span><b><span class="en">Purple→violet gradient.</span><span class="vi">Gradient tím→chàm.</span></b> <span class="en"><code>#667eea→#764ba2</code> indigo default → brand tokens.</span><span class="vi"><code>#667eea→#764ba2</code> indigo mặc định → token thương hiệu.</span></span></li>
+        <li><span class="badge viol">VIOL</span><span><b><span class="en">Low-contrast gray text.</span><span class="vi">Chữ xám thiếu tương phản.</span></b> <span class="en">#999 on #fff; found on ~84% of home pages (WebAIM) → 4.5:1.</span><span class="vi">#999 trên #fff; ~84% trang chủ mắc (WebAIM) → 4.5:1.</span> <span class="src">1.4.3</span></span></li>
+        <li><span class="badge tell">TELL</span><span><b><span class="en">Glassmorphism everywhere.</span><span class="vi">Glassmorphism khắp nơi.</span></b> <span class="en"><code>backdrop-filter</code> spam; dynamic contrast fails; GPU cost → 2–3 surfaces + scrim.</span><span class="vi"><code>backdrop-filter</code> tràn lan; tương phản động fail; tốn GPU → 2–3 bề mặt + lớp phủ.</span></span></li>
+        <li><span class="badge viol">VIOL</span><span><b><span class="en">Gratuitous animation.</span><span class="vi">Animation vô tội vạ.</span></b> <span class="en">Everything animates; ignores reduced-motion → animate for meaning.</span><span class="vi">Cái gì cũng động; bỏ qua reduced-motion → chỉ animate khi có nghĩa.</span> <span class="src">2.3.3</span></span></li>
+        <li><span class="badge viol">VIOL</span><span><b><span class="en">Emoji as icons.</span><span class="vi">Emoji làm icon.</span></b> <span class="en">🚀🔥 as controls; render + SR-name vary → SVG + real label.</span><span class="vi">🚀🔥 làm nút; hiển thị + tên đọc màn hình khác nhau → SVG + nhãn thật.</span> <span class="src">1.1.1</span></span></li>
+        <li><span class="badge viol">VIOL</span><span><b><span class="en">Placeholder-as-label.</span><span class="vi">Placeholder làm nhãn.</span></b> <span class="en">No <code>&lt;label&gt;</code>; hint disappears on input → persistent label.</span><span class="vi">Không <code>&lt;label&gt;</code>; gợi ý biến mất khi gõ → nhãn cố định.</span> <span class="src">3.3.2 / 4.1.2</span></span></li>
+        <li><span class="badge tell">TELL</span><span><b><span class="en">Arbitrary spacing / over-rounding.</span><span class="vi">Spacing tùy tiện / bo góc quá đà.</span></b> <span class="en"><code>mt-[13px]</code>, mixed radii → token scales.</span><span class="vi"><code>mt-[13px]</code>, bo góc lẫn lộn → thang token.</span></span></li>
+        <li><span class="badge tell">TELL</span><span><b><span class="en">Pure #000/#fff dark mode.</span><span class="vi">Dark mode #000/#fff thuần.</span></b> <span class="en">Halation for astigmatism → #121212 surface + #E4E4E7 text.</span><span class="vi">Chói (halation) với loạn thị → nền #121212 + chữ #E4E4E7.</span></span></li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h4><span class="en">Level 2 — UX &amp; product diseases</span><span class="vi">Cấp 2 — Bệnh UX &amp; sản phẩm</span></h4>
+      <ul class="spec">
+        <li><span class="badge viol">VIOL</span><span><b><span class="en">"Inaccessible by default."</span><span class="vi">"Mặc định bất khả tiếp cận."</span></b> <span class="en"><code>&lt;div onClick&gt;</code> not <code>&lt;button&gt;</code>; no ARIA / keyboard → semantic HTML.</span><span class="vi"><code>&lt;div onClick&gt;</code> thay vì <code>&lt;button&gt;</code>; thiếu ARIA / bàn phím → HTML ngữ nghĩa.</span></span></li>
+        <li><span class="badge tell">TELL</span><span><b><span class="en">AI slop / sameness.</span><span class="vi">"AI slop" / na ná nhau.</span></b> <span class="en">"Logo-removed test" — mistakable for a competitor? → brand system first.</span><span class="vi">"Thử bỏ logo" — có bị nhầm với đối thủ? → hệ thương hiệu trước.</span></span></li>
+        <li><span class="badge tell">TELL</span><span><b><span class="en">Chatbot shoehorning.</span><span class="vi">Nhồi chatbot.</span></b> <span class="en">Chat bolted where direct manipulation is faster → task UI; chat only to help formulate intent.</span><span class="vi">Gắn chat vào nơi thao tác trực tiếp nhanh hơn → UI tác vụ; chỉ dùng chat khi giúp diễn đạt ý định.</span></span></li>
+        <li><span class="badge tell">TELL</span><span><b><span class="en">AI feature bolt-on.</span><span class="vi">Gắn tính năng AI cho có.</span></b> <span class="en">✨ buttons as marketing → gate on user-need × AI-strength (PAIR).</span><span class="vi">Nút ✨ để tiếp thị → chỉ làm khi nhu cầu người dùng × thế mạnh AI (PAIR).</span></span></li>
+        <li><span class="badge viol">VIOL</span><span><b><span class="en">Over-automation / lost control.</span><span class="vi">Tự động hóa quá / mất kiểm soát.</span></b> <span class="en">No undo/oversight; automation bias → human-in-the-loop, global controls.</span><span class="vi">Không undo/giám sát; thiên kiến tự động → giữ người trong vòng lặp, điều khiển toàn cục.</span> <span class="src">MS HAX · HIG</span></span></li>
+        <li><span class="badge viol">VIOL</span><span><b><span class="en">Dark patterns, unprompted.</span><span class="vi">Dark pattern tự phát.</span></b> <span class="en">Fake urgency / hidden costs; ~37% of AI commerce components (arXiv) → audit + prohibit.</span><span class="vi">Khẩn cấp giả / phí ẩn; ~37% thành phần TMĐT do AI (arXiv) → kiểm toán + cấm.</span></span></li>
+        <li><span class="badge tell">TELL</span><span><b><span class="en">Hallucinated content shipped.</span><span class="vi">Nội dung bịa bị phát hành.</span></b> <span class="en">Lorem ipsum, fake stats/terms → never ship placeholder; fact-check.</span><span class="vi">Lorem ipsum, số liệu/thuật ngữ bịa → không phát hành placeholder; kiểm chứng.</span></span></li>
+        <li><span class="badge viol">VIOL</span><span><b><span class="en">No AI transparency.</span><span class="vi">Thiếu minh bạch AI.</span></b> <span class="en">No disclosure / confidence / verify path → label AI, show sources + undo.</span><span class="vi">Không tiết lộ / độ tin cậy / cách kiểm chứng → gắn nhãn AI, hiện nguồn + undo.</span> <span class="src">HIG · PAIR · MS G11</span></span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- remediation -->
+  <div class="grid g3" style="margin-top:var(--s-5)">
+    <div class="card"><div class="eyebrow">01 · <span class="en">Gate violations in CI</span><span class="vi">Chặn vi phạm ở CI</span></div><p style="margin-top:8px"><span class="en">Automated checks for contrast (1.4.3), focus (2.4.7/2.4.11), labels (3.3.2/4.1.2), reduced-motion &amp; semantic roles — build-breaking. Tools catch only ~57% of issues, so add a manual keyboard + screen-reader pass.</span><span class="vi">Kiểm tra tự động tương phản (1.4.3), focus (2.4.7/2.4.11), nhãn (3.3.2/4.1.2), reduced-motion &amp; vai trò ngữ nghĩa — fail thì chặn build. Công cụ chỉ bắt ~57% lỗi, nên thêm lượt kiểm bằng bàn phím + trình đọc màn hình.</span></p></div>
+    <div class="card"><div class="eyebrow">02 · <span class="en">Systematize inputs</span><span class="vi">Hệ thống hóa đầu vào</span></div><p style="margin-top:8px"><span class="en">Feed a 3-tier token file + <code>.cursorrules</code>/<code>copilot-instructions</code> mandating semantic HTML, one focus ring, token-only color/spacing, and explicit anti-defaults ("no indigo gradients, no Inter-only, no arbitrary px, no glass by default").</span><span class="vi">Cấp file token 3 tầng + <code>.cursorrules</code>/<code>copilot-instructions</code> bắt buộc HTML ngữ nghĩa, một vòng focus, chỉ dùng token cho màu/khoảng cách, và anti-default rõ ràng ("không gradient indigo, không chỉ Inter, không px tùy tiện, không glass mặc định").</span></p></div>
+    <div class="card"><div class="eyebrow">03 · <span class="en">Govern the product layer</span><span class="vi">Quản trị tầng sản phẩm</span></div><p style="margin-top:8px"><span class="en">Justify each AI feature (user-need × AI-strength); require disclosure + confidence + undo/oversight (MS HAX, PAIR, HIG); audit commerce/forms against a dark-pattern taxonomy; ban fabricated content.</span><span class="vi">Biện minh mỗi tính năng AI (nhu cầu × thế mạnh AI); bắt buộc tiết lộ + độ tin cậy + undo/giám sát (MS HAX, PAIR, HIG); kiểm toán TMĐT/biểu mẫu theo phân loại dark pattern; cấm nội dung bịa.</span></p></div>
+  </div>
+
+  <div class="card" style="margin-top:var(--s-5); border-left:3px solid var(--good)">
+    <p style="margin:0"><span class="en"><b>This page's stance:</b> a single <code>:focus-visible</code> ring, no glow spam, an OKLCH palette (not the indigo default), <code>prefers-reduced-motion</code> respected, semantic landmarks, AA contrast, and zero fabricated data — the self-audit strip up top is the short version.</span><span class="vi"><b>Lập trường của trang này:</b> một vòng <code>:focus-visible</code>, không spam glow, palette OKLCH (không phải indigo mặc định), tôn trọng <code>prefers-reduced-motion</code>, landmark ngữ nghĩa, tương phản AA, và không dữ liệu bịa — dải self-audit ở đầu trang là bản tóm tắt.</span></p>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="fin">
+    <h4><span class="en">Authoritative primary sources</span><span class="vi">Nguồn gốc có thẩm quyền</span></h4>
+    <div class="srcgrid">
+      <div>W3C WCAG 2.2 — <span class="src">Recommendation 2023-10-05</span> · w3.org/TR/WCAG22</div>
+      <div>W3C Design Tokens (DTCG) — <span class="src">v2025.10</span> · tr.designtokens.org</div>
+      <div>Apple Human Interface Guidelines · developer.apple.com/design</div>
+      <div>Google Material Design 3 · m3.material.io</div>
+      <div>web.dev / Chrome — Core Web Vitals &amp; INP · web.dev/vitals</div>
+      <div>HTTP Archive Web Almanac 2024 · almanac.httparchive.org</div>
+      <div>OKLCH — Björn Ottosson (2020) · APCA · git.apcacontrast.com</div>
+      <div>Laws of UX (Fitts, Hick, Miller…) · lawsofux.com</div>
+    </div>
+    <p class="fine"><span class="en"><b>On the numbers:</b> mandates (WCAG ratios, CWV thresholds, target sizes, Material motion tokens, DTCG keys) trace to the specs above and are tagged <span class="badge spec">SPEC</span>. Conventions (spacing scales, type ratios, "optimal" motion ranges, characters-per-line) have no single canonical authority and are tagged <span class="badge conv">CONV</span>. This page is self-contained: no external fonts, no CDN, no network requests, no tracking — view source to verify.</span><span class="vi"><b>Về các con số:</b> mục bắt buộc (tỷ lệ WCAG, ngưỡng CWV, vùng chạm, token motion Material, khóa DTCG) truy về các chuẩn trên và gắn nhãn <span class="badge spec">SPEC</span>. Quy ước (thang khoảng cách, tỷ lệ chữ, dải motion "tối ưu", ký tự/dòng) không có nguồn chuẩn duy nhất và gắn nhãn <span class="badge conv">CONV</span>. Trang này tự chứa: không font ngoài, không CDN, không request mạng, không theo dõi — xem mã nguồn để kiểm chứng.</span></p>
+  </div>
+</footer>
+
+<script>
+/* ============================================================
+   All interactivity — vanilla JS, no dependencies, no network.
+   ============================================================ */
+"use strict";
+var SVGNS = "http://www.w3.org/2000/svg";
+function $(id){ return document.getElementById(id); }
+function lang(){ return document.documentElement.dataset.lang || "vi"; }
+function t(en, vi){ return lang() === "en" ? en : vi; }
+function el(tag, attrs){ var e = document.createElementNS(SVGNS, tag); for(var k in attrs){ e.setAttribute(k, attrs[k]); } return e; }
+
+/* ---------- language toggle ---------- */
+function setLang(l){
+  document.documentElement.dataset.lang = l;
+  document.documentElement.lang = l;
+  $("btn-en").setAttribute("aria-pressed", l === "en");
+  $("btn-vi").setAttribute("aria-pressed", l === "vi");
+  updateType();          // refresh ratio name
+  drawContrast();        // refresh badge words
+}
+
+/* ---------- §03 modular type scale ---------- */
+var RATIO_NAMES = [
+  [1.067, "Minor second"], [1.125, "Major second"], [1.20, "Minor third"],
+  [1.25, "Major third"], [1.333, "Perfect fourth"], [1.414, "Augmented fourth"],
+  [1.50, "Perfect fifth"], [1.618, "Golden ratio"]
+];
+function ratioName(r){
+  var best = RATIO_NAMES[0], d = 99;
+  for(var i=0;i<RATIO_NAMES.length;i++){ var diff = Math.abs(RATIO_NAMES[i][0]-r); if(diff<d){ d=diff; best=RATIO_NAMES[i]; } }
+  return best[1];
+}
+function updateType(){
+  var r = parseFloat($("ratioSlider").value);
+  $("ratioOut").textContent = r.toFixed(3);
+  $("ratioName").textContent = ratioName(r);
+  var base = 16;
+  var steps = { tp0:0, tp1:1, tp2:2, tp3:3, tp4:4 };
+  for(var id in steps){ $(id).style.fontSize = (base * Math.pow(r, steps[id])).toFixed(1) + "px"; }
+  drawTypeChart(r, base);
+}
+function drawTypeChart(r, base){
+  var svg = $("typeChart"); svg.innerHTML = "";
+  var W=320, H=120, pad=14, n=5;
+  var maxSize = base * Math.pow(1.618, 4);           // fixed scale → steeper ratio reads as steeper
+  var pts = [];
+  for(var s=0;s<n;s++){
+    var size = base * Math.pow(r, s);
+    var x = pad + (W-2*pad) * (s/(n-1));
+    var y = (H-pad) - (H-2*pad) * Math.min(size/maxSize, 1);
+    pts.push([x,y]);
+  }
+  // grid baseline
+  svg.appendChild(el("line",{x1:pad,y1:H-pad,x2:W-pad,y2:H-pad,class:"axis"}));
+  // area
+  var dPath = "M"+pad+","+(H-pad);
+  for(var i=0;i<pts.length;i++){ dPath += " L"+pts[i][0].toFixed(1)+","+pts[i][1].toFixed(1); }
+  dPath += " L"+(W-pad)+","+(H-pad)+" Z";
+  svg.appendChild(el("path",{d:dPath, class:"fill"}));
+  // curve
+  var dLine = "M"+pts[0][0].toFixed(1)+","+pts[0][1].toFixed(1);
+  for(var j=1;j<pts.length;j++){ dLine += " L"+pts[j][0].toFixed(1)+","+pts[j][1].toFixed(1); }
+  svg.appendChild(el("path",{d:dLine, class:"curve"}));
+  for(var p=0;p<pts.length;p++){
+    svg.appendChild(el("circle",{cx:pts[p][0].toFixed(1), cy:pts[p][1].toFixed(1), r:3, fill:"var(--azure)"}));
+    var lab = el("text",{x:pts[p][0].toFixed(1), y:H-3, class:"lbl", "text-anchor":"middle"});
+    lab.textContent = (base*Math.pow(r,p)).toFixed(0);
+    svg.appendChild(lab);
+  }
+}
+
+/* ---------- §04 OKLCH ramp + HSL compare ---------- */
+function drawRamp(){
+  var h = parseFloat($("hueSlider").value);
+  var c = parseFloat($("chromaSlider").value);
+  $("hueOut").textContent = h.toFixed(0);
+  $("chromaOut").textContent = c.toFixed(2);
+  var ramp = $("oklchRamp"); ramp.innerHTML = "";
+  for(var i=0;i<11;i++){
+    var L = 0.96 - i*0.078;                 // 0.96 → ~0.18, equal steps
+    var d = document.createElement("div");
+    d.className = "sw";
+    d.style.background = "oklch("+L.toFixed(3)+" "+c+" "+h+")";
+    d.style.color = L < 0.62 ? "rgba(255,255,255,.9)" : "rgba(0,0,0,.6)";
+    d.textContent = (L*100).toFixed(0);
+    ramp.appendChild(d);
+  }
+}
+function drawHSL(){
+  var strip = $("hslCompare"); strip.innerHTML = "";
+  for(var i=0;i<9;i++){
+    var hue = i*40;
+    var d = document.createElement("div");
+    d.className = "sw";
+    d.style.background = "hsl("+hue+" 100% 50%)";   // same L, varied hue → uneven brightness
+    strip.appendChild(d);
+  }
+}
+
+/* ---------- §04 contrast checker (WCAG relative luminance) ---------- */
+function hexToRgb(hex){
+  hex = hex.replace("#","");
+  if(hex.length===3){ hex = hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2]; }
+  return [parseInt(hex.substr(0,2),16), parseInt(hex.substr(2,2),16), parseInt(hex.substr(4,2),16)];
+}
+function srgbToLin(v){ v/=255; return v<=0.03928 ? v/12.92 : Math.pow((v+0.055)/1.055, 2.4); }
+function relLum(rgb){ return 0.2126*srgbToLin(rgb[0]) + 0.7152*srgbToLin(rgb[1]) + 0.0722*srgbToLin(rgb[2]); }
+function contrastRatio(a,b){ var L1=relLum(a), L2=relLum(b); var hi=Math.max(L1,L2), lo=Math.min(L1,L2); return (hi+0.05)/(lo+0.05); }
+function drawContrast(){
+  var fg = $("fgColor").value, bg = $("bgColor").value;
+  var ratio = contrastRatio(hexToRgb(fg), hexToRgb(bg));
+  $("ccRatio").textContent = ratio.toFixed(2) + ":1";
+  var prev = $("ccPreview");
+  prev.style.background = bg; prev.style.color = fg;
+  var checks = [
+    [t("AA normal","AA thường"), 4.5],
+    [t("AA large","AA lớn"), 3.0],
+    [t("UI 3:1","UI 3:1"), 3.0],
+    ["AAA", 7.0]
+  ];
+  var box = $("ccBadges"); box.innerHTML = "";
+  for(var i=0;i<checks.length;i++){
+    var pass = ratio >= checks[i][1];
+    var s = document.createElement("span");
+    s.className = "cc-badge " + (pass ? "cc-pass" : "cc-fail");
+    s.textContent = (pass ? "✓ " : "✕ ") + checks[i][0];
+    box.appendChild(s);
+  }
+}
+
+/* ---------- §07 easing visualizer ---------- */
+function cubicBezierPoint(t, p1x, p1y, p2x, p2y){
+  var mt = 1-t;
+  var x = 3*mt*mt*t*p1x + 3*mt*t*t*p2x + t*t*t;   // P0=(0,0), P3=(1,1)
+  var y = 3*mt*mt*t*p1y + 3*mt*t*t*p2y + t*t*t;
+  return [x,y];
+}
+function drawEasing(){
+  var v = $("easingSelect").value.split(",").map(parseFloat);
+  var svg = $("easingCurve"); svg.innerHTML = "";
+  var W=220, H=160, pad=22;
+  function mx(x){ return pad + (W-2*pad)*x; }
+  function my(y){ return (H-pad) - (H-2*pad)*y; }
+  // unit box + diagonal
+  svg.appendChild(el("rect",{x:pad,y:pad,width:W-2*pad,height:H-2*pad,fill:"none",stroke:"var(--line)","stroke-width":1}));
+  svg.appendChild(el("line",{x1:mx(0),y1:my(0),x2:mx(1),y2:my(1),stroke:"var(--line-2)","stroke-width":1,"stroke-dasharray":"3 3"}));
+  // curve
+  var d = "M"+mx(0)+","+my(0);
+  for(var i=1;i<=40;i++){ var pt=cubicBezierPoint(i/40, v[0],v[1],v[2],v[3]); d += " L"+mx(pt[0]).toFixed(1)+","+my(pt[1]).toFixed(1); }
+  svg.appendChild(el("path",{d:d, class:"curve"}));
+  // axis labels
+  var t1=el("text",{x:pad,y:H-6,class:"lbl"}); t1.textContent="t=0"; svg.appendChild(t1);
+  var t2=el("text",{x:W-pad-18,y:H-6,class:"lbl"}); t2.textContent="t=1"; svg.appendChild(t2);
+}
+function playEase(){
+  var v = $("easingSelect").value.split(",").map(parseFloat);
+  var ball = $("easeBall");
+  var track = ball.parentElement;
+  var dist = track.clientWidth - ball.clientWidth - 16;
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  ball.style.transition = "none";
+  ball.style.transform = "translateX(0)";
+  // force reflow
+  void ball.offsetWidth;
+  if(reduce){ ball.style.transform = "translateX("+dist+"px)"; return; }
+  ball.style.transition = "transform 600ms cubic-bezier("+v.join(",")+")";
+  ball.style.transform = "translateX("+dist+"px)";
+}
+
+/* ---------- §12 Hick + Fitts charts ---------- */
+function logCurve(svgId, xLabelFn, fn, xmin, xmax){
+  var svg = $(svgId); svg.innerHTML = "";
+  var W = svg.viewBox.baseVal.width, H = svg.viewBox.baseVal.height, pad=24;
+  var N = 40, pts = [], ymin=Infinity, ymax=-Infinity, xs=[];
+  for(var i=0;i<=N;i++){ var x = xmin + (xmax-xmin)*i/N; var y = fn(x); xs.push(x); pts.push(y); if(y<ymin)ymin=y; if(y>ymax)ymax=y; }
+  function mx(i){ return pad + (W-2*pad)*i/N; }
+  function my(y){ return (H-pad) - (H-2*pad)*((y-ymin)/(ymax-ymin||1)); }
+  // axes
+  svg.appendChild(el("line",{x1:pad,y1:H-pad,x2:W-pad,y2:H-pad,class:"axis"}));
+  svg.appendChild(el("line",{x1:pad,y1:pad,x2:pad,y2:H-pad,class:"axis"}));
+  // area + curve
+  var area = "M"+pad+","+(H-pad);
+  for(var a=0;a<=N;a++){ area += " L"+mx(a).toFixed(1)+","+my(pts[a]).toFixed(1); }
+  area += " L"+(W-pad)+","+(H-pad)+" Z";
+  svg.appendChild(el("path",{d:area, class:"fill"}));
+  var d = "M"+mx(0).toFixed(1)+","+my(pts[0]).toFixed(1);
+  for(var b=1;b<=N;b++){ d += " L"+mx(b).toFixed(1)+","+my(pts[b]).toFixed(1); }
+  svg.appendChild(el("path",{d:d, class:"curve"}));
+  // x labels (a few)
+  [0,0.5,1].forEach(function(f){
+    var idx = Math.round(f*N);
+    var lab = el("text",{x:mx(idx), y:H-8, class:"lbl", "text-anchor": f===0?"start":(f===1?"end":"middle")});
+    lab.textContent = xLabelFn(xs[idx]);
+    svg.appendChild(lab);
+  });
+}
+function drawHick(){
+  logCurve("hickChart", function(x){ return "n="+x.toFixed(0); }, function(n){ return Math.log2(n+1); }, 1, 15);
+}
+function drawFitts(){
+  // MT ∝ log2(D/W + 1), fixed D, x = target width W → decreasing curve ("bigger = faster")
+  var D = 300;
+  logCurve("fittsChart", function(x){ return "W="+x.toFixed(0); }, function(W){ return Math.log2(D/W + 1); }, 20, 200);
+}
+
+/* ---------- §12 Fitts interactive ---------- */
+function moveFitts(){
+  var tgt = $("fittsTarget"), stage = $("fittsStage");
+  var w = parseFloat(tgt.style.width);
+  w = w > 48 ? w * 0.72 : 120;                       // shrink, then reset when too small
+  var h = Math.max(32, w/3);
+  var maxX = stage.clientWidth - w - 8;
+  var maxY = stage.clientHeight - h - 8;
+  tgt.style.width = w + "px";
+  tgt.style.height = h + "px";
+  tgt.style.left = (8 + Math.random()*Math.max(0,maxX)).toFixed(0) + "px";
+  tgt.style.top = (8 + Math.random()*Math.max(0,maxY)).toFixed(0) + "px";
+}
+
+/* ---------- scroll-spy nav ---------- */
+function initScrollSpy(){
+  var links = Array.prototype.slice.call(document.querySelectorAll("nav.sections a"));
+  var targets = links.map(function(a){ return { link:a, el: document.querySelector(a.getAttribute("href")) }; })
+                     .filter(function(o){ return o.el; });
+  function onScroll(){
+    var y = window.scrollY + 90;
+    var current = null;
+    targets.forEach(function(o){ if(o.el.offsetTop <= y){ current = o; } });
+    links.forEach(function(a){ a.classList.remove("active"); });
+    if(current){ current.link.classList.add("active"); }
+  }
+  window.addEventListener("scroll", onScroll, { passive:true });
+  onScroll();
+}
+
+/* ---------- init ---------- */
+document.addEventListener("DOMContentLoaded", function(){
+  // listeners
+  $("ratioSlider").addEventListener("input", updateType);
+  $("hueSlider").addEventListener("input", drawRamp);
+  $("chromaSlider").addEventListener("input", drawRamp);
+  $("fgColor").addEventListener("input", drawContrast);
+  $("bgColor").addEventListener("input", drawContrast);
+  $("easingSelect").addEventListener("change", drawEasing);
+  $("easePlay").addEventListener("click", playEase);
+  $("fittsTarget").addEventListener("click", moveFitts);
+  $("fittsTarget").addEventListener("keydown", function(e){ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); moveFitts(); } });
+  var halo = $("haloToggle");
+  if(halo){ halo.addEventListener("click", function(){
+    var on = $("haloWidget").classList.toggle("is-glow");
+    $("haloCard").classList.toggle("glow", on);
+    halo.setAttribute("aria-pressed", on ? "true" : "false");
+  }); }
+  // first render
+  updateType();
+  drawRamp();
+  drawHSL();
+  drawContrast();
+  drawEasing();
+  drawHick();
+  drawFitts();
+  initScrollSpy();
+  initReveal();
+});
+
+/* ---------- scroll reveal + gauge grow (reduced-motion safe) ---------- */
+function animateGauges(root){
+  var bars = root.querySelectorAll(".gauge-bar > div");
+  Array.prototype.forEach.call(bars, function(b){
+    var target = b.style.width;          // e.g. "41.7%"
+    b.style.transition = "none";
+    b.style.width = "0%";
+    void b.offsetWidth;                   // reflow
+    b.style.transition = "";              // revert to stylesheet transition
+    requestAnimationFrame(function(){ b.style.width = target; });
+  });
+}
+function initReveal(){
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if(reduce || !("IntersectionObserver" in window)) return;   // no anim → content stays visible
+  var items = document.querySelectorAll(
+    "section:not(.hero) .sec-head, section:not(.hero) .card, section:not(.hero) .widget, section:not(.hero) .tbl-wrap"
+  );
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(!e.isIntersecting) return;
+      e.target.classList.remove("pending");
+      if(e.target.querySelectorAll(".gauge-bar > div").length){ animateGauges(e.target); }
+      io.unobserve(e.target);
+    });
+  }, { threshold:0.06, rootMargin:"0px 0px -30px 0px" });
+  Array.prototype.forEach.call(items, function(elm){
+    elm.classList.add("reveal");
+    if(elm.getBoundingClientRect().top >= window.innerHeight * 0.94){
+      var idx = elm.parentElement ? Array.prototype.indexOf.call(elm.parentElement.children, elm) : 0;
+      elm.style.transitionDelay = (Math.min(idx,3) * 70) + "ms";   // subtle stagger within a row
+      elm.classList.add("pending");
+      io.observe(elm);
+    }
+  });
+}
+</script>
+</body>
+</html>
