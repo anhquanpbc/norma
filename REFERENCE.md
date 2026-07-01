@@ -35,7 +35,7 @@ This layering lets you re-theme (light/dark, brand A/B) by remapping the semanti
 {
   "color": {
     "brand": {
-      "primary": { "$value": "oklch(0.58 0.18 250)", "$type": "color", "$description": "Primary brand color" }
+      "primary": { "$value": "oklch(0.58 0.16 252)", "$type": "color", "$description": "Primary brand color" }
     },
     "text": {
       "primary": { "$value": "{color.brand.primary}", "$type": "color" }
