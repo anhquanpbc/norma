@@ -21,7 +21,7 @@
     "postcss": "^8.4.49"
   },
   "devDependencies": {
-    "@types/node": "^22.10.0",
+    "@types/node": "^26.1.0",
     "typescript": "^5.7.2",
     "vitest": "^4.1.9"
   },
