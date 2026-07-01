@@ -5,6 +5,7 @@ import { buildContext } from "../src/parse.js";
 import { lintContext } from "../src/engine.js";
 import { loadRules } from "../src/loadRules.js";
 import { lintFiles } from "../src/index.js";
+import { CHECKS } from "../src/checks.js";
 import type { FileType } from "../src/types.js";
 
 const { rules } = loadRules();
@@ -81,6 +82,48 @@ describe("antipattern.indigo-default", () => {
   it("flags the indigo default gradient", () => {
     const f = lint(`.x{ background:linear-gradient(135deg,#667eea,#764ba2); }`, "css");
     expect(ids(f)).toContain("antipattern.indigo-default");
+  });
+});
+
+describe("catalog integrity", () => {
+  it("every non-manual rule maps to an implemented check", () => {
+    const orphans = rules
+      .filter((r) => r.check.type !== "manual" && !CHECKS[r.check.type])
+      .map((r) => `${r.id} -> check.type '${r.check.type}'`);
+    expect(orphans).toEqual([]);
+  });
+});
+
+describe("a11y.target-size", () => {
+  it("flags an interactive control below 24x24 CSS px", () => {
+    const f = lint(`<button style="width:16px;height:16px">x</button>`, "html");
+    expect(ids(f)).toContain("a11y.target-size");
+  });
+  it("passes a 44x44 control", () => {
+    const f = lint(`<button style="width:44px;height:44px">x</button>`, "html");
+    expect(ids(f)).not.toContain("a11y.target-size");
+  });
+});
+
+describe("a11y.emoji-icon", () => {
+  it("flags an emoji-only button with no label", () => {
+    const f = lint(`<button>🔔</button>`, "html");
+    expect(ids(f)).toContain("a11y.emoji-icon");
+  });
+  it("passes when an aria-label is present", () => {
+    const f = lint(`<button aria-label="Alerts">🔔</button>`, "html");
+    expect(ids(f)).not.toContain("a11y.emoji-icon");
+  });
+});
+
+describe("perf.img-dimensions", () => {
+  it("flags an <img> with no dimensions", () => {
+    const f = lint(`<img src="a.png">`, "html");
+    expect(ids(f)).toContain("perf.img-dimensions");
+  });
+  it("passes an <img> with width and height", () => {
+    const f = lint(`<img src="a.png" width="80" height="80">`, "html");
+    expect(ids(f)).not.toContain("perf.img-dimensions");
   });
 });
 

@@ -175,7 +175,7 @@ rules:
       en: "Hard-coded hex/rgb outside the token definitions defeats theming and drifts from the palette."
       vi: "Hex/rgb cứng ngoài phần định nghĩa token phá vỡ theming và lệch khỏi palette."
     check:
-      type: colorTokenOnly
+      type: manual  # planned static check (colorTokenOnly); agent-enforced until the token/theme phase implements it
     remediation:
       en: "Reference a CSS custom property / token instead of a literal color."
       vi: "Tham chiếu CSS custom property / token thay vì màu cố định."
@@ -191,9 +191,7 @@ rules:
       en: "Arbitrary px values (mt-[13px]) break rhythm; use the 0·4·8·12·16·24·32·48·64·96·128 scale."
       vi: "Giá trị px tuỳ tiện (mt-[13px]) phá nhịp; dùng thang 0·4·8·12·16·24·32·48·64·96·128."
     check:
-      type: spacingScale
-      scale: [0, 4, 8, 12, 16, 24, 32, 48, 64, 96, 128]
-      properties: [margin, padding, gap, top, right, bottom, left]
+      type: manual  # planned static check (spacingScale); agent-enforced until the token/theme phase implements it
     remediation:
       en: "Round the value to the nearest scale step or use a space token."
       vi: "Làm tròn về bước thang gần nhất hoặc dùng token khoảng cách."

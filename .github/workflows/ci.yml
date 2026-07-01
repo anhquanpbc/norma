@@ -45,4 +45,4 @@ jobs:
         with:
           node-version: 22
       - name: pa11y WCAG 2 AA on index.html
-        run: npx --yes pa11y@8 --standard WCAG2AA --runner axe --runner htmlcs index.html
+        run: npx --yes pa11y@8 --config pa11y.config.json --standard WCAG2AA --runner axe --runner htmlcs index.html
