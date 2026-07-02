@@ -48,7 +48,7 @@ sources and machine assertions lives in `standard/rules.json`.
 Not compliance failures, but they erase brand distinctiveness and often *induce* a violation.
 
 - **antipattern.indigo-default** — no `#667eea → #764ba2` (indigo-500) default gradient; use brand tokens.
-  *(Tailwind's creator publicly apologized in 2025 for "every AI-generated UI being indigo.")*
+  *(Tailwind's creator publicly apologized in 2025 for the indigo-500 default "leading to every AI generated UI on earth also being indigo.")*
 - **antipattern.pure-dark-mode** — no pure `#000`/`#fff` dark mode; use `#121212` surface + `#E4E4E7` text.
 - **Halo / glow overuse** — neutral elevation scale, one light source; no stacked colored shadows.
 - **Glassmorphism by default** — at most 2–3 glass surfaces + a scrim, never everywhere.

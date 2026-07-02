@@ -3,7 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>UX/UI Technical Standards 2025 — Bilingual Reference</title>
+<title>Norma — UX/UI Technical Standards 2026 (EN/VI)</title>
+<meta name="description" content="Norma — an enforceable, bilingual (EN/VI) web design standard: WCAG 2.2 contrast and target sizes, Core Web Vitals, W3C design tokens, Material motion tokens, HCI laws, and AI-era anti-patterns — with a CI linter and AI-agent rule files.">
+<meta property="og:title" content="Norma — UX/UI Technical Standards 2026">
+<meta property="og:description" content="Concrete design numbers you can drop into an acceptance ticket — every value tagged as a published mandate or an industry convention. Self-contained, zero network requests.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://anhquanpbc.github.io/norma/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231d7cd5'/%3E%3Ctext x='16' y='23' font-family='monospace' font-size='19' font-weight='700' fill='%23fff' text-anchor='middle'%3EN%3C/text%3E%3C/svg%3E">
 <script>document.documentElement.classList.add('js');
 (function(){var d=document.documentElement;var t;try{t=localStorage.getItem('norma-theme');}catch(e){}
 if(t!=='dark'&&t!=='light'){t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}
@@ -165,10 +171,15 @@ nav.sections a.active{ color:var(--azure-ink); background:var(--azure-wash); }
 .theme-btn:hover{ color:var(--ink); border-color:var(--line); }
 .theme-btn:focus-visible{ outline:2px solid var(--azure-ink); outline-offset:1px; }
 .theme-btn svg{ inline-size:16px; block-size:16px; }
+.gh-link{ font-family:var(--mono); font-size:12px; font-weight:600; letter-spacing:0.03em; color:var(--ink-3);
+  text-decoration:none; border:1px solid var(--line-2); border-radius:7px; padding:0 10px; min-height:34px;
+  display:flex; align-items:center; flex-shrink:0; transition:color .15s var(--ease), border-color .15s var(--ease); }
+.gh-link:hover{ color:var(--ink); border-color:var(--line); }
 @media (max-width:560px){
   .bar-inner{ gap:var(--s-3); padding-inline:var(--s-4); }
   .brand{ font-size:12px; }
   .theme-btn{ inline-size:30px; block-size:30px; }
+  .gh-link{ padding:0 8px; font-size:11px; min-height:30px; }
 }
 .lang-toggle button{ font-family:var(--mono); font-size:12px; font-weight:600; letter-spacing:0.04em;
   border:0; background:var(--surface); color:var(--ink-3); padding:0 12px; min-height:34px; cursor:pointer;
@@ -210,7 +221,6 @@ section:first-of-type{ border-top:0; }
   letter-spacing:-0.02em; }
 .sec-tick{ width:4px; align-self:stretch; border-radius:2px; }
 .sec-head .titles{ flex:1; min-width:260px; }
-.sec-head h2 .vi, .sec-head h2 .en{ }
 .sec-sub{ font-size:var(--t-0); color:var(--ink-3); margin-top:6px; max-width:64ch; }
 
 /* ---- cards / grid ---- */
@@ -456,10 +466,11 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
 
 <header class="bar">
   <div class="bar-inner">
-    <div class="brand"><span class="dot"></span>UX/UI&nbsp;<span style="color:var(--azure-ink)">STANDARDS</span>&nbsp;’25</div>
-    <button id="themeToggle" class="theme-btn" aria-label="Switch to dark theme" aria-pressed="false" title="Toggle theme">
+    <div class="brand"><span class="dot"></span>Norma&nbsp;<span style="color:var(--azure-ink)">· UX/UI STANDARDS</span>&nbsp;’26</div>
+    <button id="themeToggle" class="theme-btn" aria-label="Dark theme" aria-pressed="false" title="Dark theme">
       <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="6.25" stroke="currentColor" stroke-width="1.5"/><path d="M8 1.75a6.25 6.25 0 000 12.5z" fill="currentColor"/></svg>
     </button>
+    <a class="gh-link" href="https://github.com/anhquanpbc/norma">GitHub</a>
     <div class="lang-toggle" role="group" aria-label="Language">
       <button id="btn-en" onclick="setLang('en')" aria-pressed="true">EN</button>
       <button id="btn-vi" onclick="setLang('vi')" aria-pressed="false">VI</button>
@@ -500,8 +511,8 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
       <span class="vi">Một tài liệu chuẩn thiết kế <span class="accent">tự tuân thủ chính nó</span>.</span>
     </h1>
     <p class="hero-lead">
-      <span class="en">Concrete numbers you can drop into an acceptance ticket — spacing, contrast, target sizes, Core Web Vitals, motion tokens — with every value tagged as a published mandate or an industry convention. This page is built on the same standards it documents.</span>
-      <span class="vi">Những con số cụ thể có thể đưa thẳng vào tiêu chí nghiệm thu — khoảng cách, tương phản, vùng chạm, Core Web Vitals, token chuyển động — mỗi giá trị đều được gắn nhãn "bắt buộc theo chuẩn" hay "quy ước ngành". Trang này được dựng trên chính các chuẩn nó trình bày.</span>
+      <span class="en">Concrete numbers you can drop into an acceptance ticket — spacing, contrast, target sizes, Core Web Vitals, motion tokens — with every value tagged as a published mandate or an industry convention. This is the reference site of <b>Norma</b>, an open standard with a CI linter and AI-agent rule files — built on the same standards it documents.</span>
+      <span class="vi">Những con số cụ thể có thể đưa thẳng vào tiêu chí nghiệm thu — khoảng cách, tương phản, vùng chạm, Core Web Vitals, token chuyển động — mỗi giá trị đều được gắn nhãn "bắt buộc theo chuẩn" hay "quy ước ngành". Đây là site tham chiếu của <b>Norma</b>, chuẩn mở kèm linter cho CI và file rule cho AI agent — được dựng trên chính các chuẩn nó trình bày.</span>
     </p>
 
     <div class="chips">
@@ -690,16 +701,16 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
 
   <div class="grid g2" style="margin-top:var(--s-5)">
     <div class="card" style="border-left:3px solid var(--amber)">
-      <h3>🇻🇳 <span class="en">Vietnamese</span><span class="vi">Tiếng Việt</span> <span class="badge conv">CONV</span></h3>
+      <h3><span aria-hidden="true">🇻🇳</span> <span class="en">Vietnamese</span><span class="vi">Tiếng Việt</span> <span class="badge conv">CONV</span></h3>
       <p><span class="en">The most demanding Latin script: <b>134+ accented characters</b> whose precomposed forms span <b>four Unicode blocks</b> — Latin-1 Supplement, Latin Extended-A/B, and <b>Latin Extended Additional</b> (which holds the largest share). Budget fonts often skip Extended-A/B/Additional — <b>verify glyph coverage</b> (Noto Sans/Serif, Be Vietnam Pro are safe). Give a little extra line-height so stacked marks don't collide.</span><span class="vi">Chữ Latin khó nhất: <b>134+ ký tự có dấu</b> với dạng dựng sẵn trải trên <b>bốn khối Unicode</b> — Latin-1 Supplement, Latin Extended-A/B, và <b>Latin Extended Additional</b> (chứa phần lớn nhất). Font giá rẻ hay thiếu Extended-A/B/Additional — <b>kiểm tra độ phủ glyph</b> (Noto Sans/Serif, Be Vietnam Pro an toàn). Cho line-height nhỉnh hơn để dấu chồng không dính.</span></p>
     </div>
     <div class="card" style="border-left:3px solid oklch(0.6 0.16 20)">
-      <h3>🇹🇼 <span class="en">Traditional Chinese / CJK</span><span class="vi">Trung Phồn thể / CJK</span> <span class="badge conv">CONV</span></h3>
+      <h3><span aria-hidden="true">🇹🇼</span> <span class="en">Traditional Chinese / CJK</span><span class="vi">Trung Phồn thể / CJK</span> <span class="badge conv">CONV</span></h3>
       <p><span class="en">CJK fonts hold <b>20,000–80,000+ glyphs (5–20MB)</b> — delivery is the problem; subset via <code>unicode-range</code> (100+ subsets). <b>Raise line-height to ~1.7.</b> Ship <b>region-specific fonts (TC ≠ SC)</b> — Taiwan/HK readers reject Simplified; pan-CJK variants are unreliable.</span><span class="vi">Font CJK chứa <b>20.000–80.000+ glyph (5–20MB)</b> — cốt lõi là phân phối; subset bằng <code>unicode-range</code> (100+ subset). <b>Tăng line-height ~1.7.</b> Dùng <b>font theo vùng (TC ≠ SC)</b> — độc giả Đài Loan/HK không chấp nhận Giản thể; biến thể pan-CJK không đáng tin.</span></p>
     </div>
   </div>
   <div class="card" style="border-inline-start:3px solid var(--azure); margin-top:var(--s-4)">
-    <h3>🌐 <span class="en">Multi-language design</span><span class="vi">Thiết kế đa ngôn ngữ</span> <span class="badge spec">SPEC</span></h3>
+    <h3><span aria-hidden="true">🌐</span> <span class="en">Multi-language design</span><span class="vi">Thiết kế đa ngôn ngữ</span> <span class="badge spec">SPEC</span></h3>
     <p><span class="en">Declare <code>&lt;html lang&gt;</code> (WCAG 3.1.1 🔒) and tag inline foreign-language runs with <code>lang</code>. Lay out with <b>logical properties</b> — <code>margin-inline</code>, <code>padding-inline</code>, <code>text-align:start</code> — never physical <code>*-left/right</code>, so RTL (Arabic, Hebrew) and vertical writing modes mirror automatically; set <code>dir</code> and honor <code>writing-mode</code>. This site is enforced by <code>i18n.html-lang</code> + <code>i18n.logical-properties</code>.</span><span class="vi">Khai báo <code>&lt;html lang&gt;</code> (WCAG 3.1.1 🔒) và gắn <code>lang</code> cho đoạn ngôn ngữ khác xen kẽ. Bố cục bằng <b>thuộc tính logic</b> — <code>margin-inline</code>, <code>padding-inline</code>, <code>text-align:start</code> — không dùng <code>*-left/right</code> vật lý, để RTL (Ả Rập, Do Thái) và chế độ viết dọc tự lật; đặt <code>dir</code> và tôn trọng <code>writing-mode</code>. Trang này được thực thi bởi <code>i18n.html-lang</code> + <code>i18n.logical-properties</code>.</span></p>
   </div>
 </section>
@@ -721,7 +732,7 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
       <div style="display:flex; gap:16px; margin-bottom:14px; flex-wrap:wrap">
         <label class="ctrl" style="flex:1" for="hueSlider"><span class="en">Hue</span><span class="vi">Tông (H)</span>: <output id="hueOut">252</output>°<br>
           <input type="range" id="hueSlider" min="0" max="360" value="252" aria-label="Hue"></label>
-        <label class="ctrl" style="flex:1" for="chromaSlider">Chroma (C): <output id="chromaOut">0.15</output><br>
+        <label class="ctrl" style="flex:1" for="chromaSlider"><span class="en">Chroma (C)</span><span class="vi">Độ rực (C)</span>: <output id="chromaOut">0.15</output><br>
           <input type="range" id="chromaSlider" min="0" max="0.30" step="0.01" value="0.15" aria-label="Chroma"></label>
       </div>
       <div class="ramp" id="oklchRamp"></div>
@@ -799,9 +810,20 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
           <li><span class="k">1.4.10</span><span><span class="en">Reflow — no 2-D scroll at <b>320px</b> (≈1280px @ 400% zoom)</span><span class="vi">Reflow — không cuộn 2 chiều ở <b>320px</b> (≈1280px @ zoom 400%)</span></span></li>
           <li><span class="k">1.4.4</span><span><span class="en">Resize text to <b>200%</b> without loss (no px minimum)</span><span class="vi">Phóng chữ tới <b>200%</b> không mất nội dung (không có sàn px)</span></span></li>
         </ul>
-        <p class="note"><span class="en"><b>New in WCAG 2.2</b> (2023-10-05): dragging alternatives (2.5.7), consistent help (3.2.6), redundant-entry (3.3.7), accessible authentication (3.3.8/9). Honor <code>prefers-reduced-motion</code>; no flashing &gt;3×/s.</span><span class="vi"><b>Mới trong WCAG 2.2</b> (05/10/2023): phương án thay kéo (2.5.7), trợ giúp nhất quán (3.2.6), không nhập lại (3.3.7), xác thực tiếp cận (3.3.8/9). Tôn trọng <code>prefers-reduced-motion</code>; không chớp &gt;3 lần/giây.</span></p>
+        <p class="note"><span class="en"><b>New in WCAG 2.2</b> (2023-10-05): dragging alternatives (2.5.7), consistent help (3.2.6), redundant-entry (3.3.7), accessible authentication (3.3.8/9). Honor <code>prefers-reduced-motion</code>; auto-playing motion &gt;5s needs a pause/stop/hide control (2.2.2); no flashing &gt;3×/s.</span><span class="vi"><b>Mới trong WCAG 2.2</b> (05/10/2023): phương án thay kéo (2.5.7), trợ giúp nhất quán (3.2.6), không nhập lại (3.3.7), xác thực tiếp cận (3.3.8/9). Tôn trọng <code>prefers-reduced-motion</code>; chuyển động tự chạy &gt;5s cần nút tạm dừng/dừng/ẩn (2.2.2); không chớp &gt;3 lần/giây.</span></p>
       </div>
     </div>
+  </div>
+
+  <div class="card" style="border-inline-start:3px solid var(--azure); margin-top:var(--s-5)">
+    <h3><span class="en">Keyboard · ARIA · screen readers</span><span class="vi">Bàn phím · ARIA · trình đọc màn hình</span> <span class="badge spec">SPEC</span></h3>
+    <ul class="spec">
+      <li><span class="k">2.1.1</span><span><span class="en">All functionality <b>keyboard-operable</b> — no mouse-only interactions.</span><span class="vi">Mọi chức năng <b>thao tác được bằng bàn phím</b> — không có tương tác chỉ dành cho chuột.</span></span></li>
+      <li><span class="k">2.4.3</span><span><span class="en"><b>Logical focus order</b>; DOM reading order matches visual order.</span><span class="vi"><b>Thứ tự focus hợp lý</b>; thứ tự đọc DOM khớp thứ tự thị giác.</span></span></li>
+      <li><span class="k">1.3.1</span><span><span class="en"><b>Landmark roles</b> — <code>banner</code>, <code>nav</code>, <code>main</code>, <code>contentinfo</code> — so SR users can jump by region.</span><span class="vi"><b>Landmark</b> — <code>banner</code>, <code>nav</code>, <code>main</code>, <code>contentinfo</code> — để người dùng trình đọc màn hình nhảy theo vùng.</span></span></li>
+      <li><span class="k">4.1.2</span><span><span class="en"><b>Descriptive accessible names</b> ("Create account", not "Button").</span><span class="vi"><b>Tên tiếp cận mô tả</b> ("Tạo tài khoản", không phải "Button").</span></span></li>
+      <li><span class="k">4.1.3</span><span><span class="en"><code>aria-live</code> (<code>polite</code>/<code>assertive</code>) for dynamic updates such as form errors.</span><span class="vi"><code>aria-live</code> (<code>polite</code>/<code>assertive</code>) cho cập nhật động như lỗi biểu mẫu.</span></span></li>
+    </ul>
   </div>
 </section>
 
@@ -831,7 +853,7 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
         <div class="gauge-top"><span class="gauge-name">CLS <span>· <span class="en">stability</span><span class="vi">ổn định</span></span></span><span class="src">good ≤ 0.1</span></div>
         <div class="gauge-bar"><div class="gz-good" style="width:28.6%">≤0.1</div><div class="gz-ni" style="width:42.9%">0.25</div><div class="gz-bad" style="width:28.6%">&gt;0.25</div></div>
       </div>
-      <p class="note"><span class="en"><b>INP replaced FID on 2024-03-12.</b> It measures every interaction's full latency (input → next paint) and reports the worst — markedly stricter (≈65% of mobile sites pass INP vs ≈93% for FID). TTFB (&lt;800ms) &amp; TBT are diagnostics, not Core Web Vitals.</span><span class="vi"><b>INP thay FID từ 12/03/2024.</b> Nó đo toàn bộ độ trễ của MỌI tương tác (input → vẽ kế tiếp) và báo giá trị tệ nhất — khó hơn hẳn (≈65% site mobile đạt INP so với ≈93% đạt FID). TTFB (&lt;800ms) &amp; TBT là chỉ số chẩn đoán, không phải Core Web Vitals.</span></p>
+      <p class="note"><span class="en"><b>INP replaced FID on 2024-03-12.</b> It measures every interaction's full latency (input → next paint) and reports the worst — markedly stricter (at the switch only ≈65% of mobile sites passed INP vs ≈93% for FID; 2025 Almanac: 77% now pass). TTFB (&lt;800ms) &amp; TBT are diagnostics, not Core Web Vitals.</span><span class="vi"><b>INP thay FID từ 12/03/2024.</b> Nó đo toàn bộ độ trễ của MỌI tương tác (input → vẽ kế tiếp) và báo giá trị tệ nhất — khó hơn hẳn (lúc chuyển đổi chỉ ≈65% site mobile đạt INP so với ≈93% đạt FID; Almanac 2025: nay 77% đạt). TTFB (&lt;800ms) &amp; TBT là chỉ số chẩn đoán, không phải Core Web Vitals.</span></p>
     </div>
 
     <div>
@@ -1028,12 +1050,13 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
         <p class="note"><span class="en">Decision time grows <b>logarithmically</b> with the number of equal choices <b>n</b>. Split large menus into tiers; reduce simultaneous options; use progressive disclosure.</span><span class="vi">Thời gian quyết định tăng theo <b>logarit</b> số lựa chọn <b>n</b>. Chia menu lớn thành tầng; giảm lựa chọn cùng lúc; hé lộ dần.</span></p>
       </div>
       <div class="card tint">
-        <h3><span class="en">Four more laws worth knowing</span><span class="vi">Bốn định luật nữa nên biết</span></h3>
+        <h3><span class="en">Five more laws worth knowing</span><span class="vi">Năm định luật nữa nên biết</span></h3>
         <ul class="spec">
           <li><b>Miller</b><span><span class="en">working memory ≈ <b>7±2</b> chunks — chunk content; it's about grouping, not a hard cap.</span><span class="vi">trí nhớ làm việc ≈ <b>7±2</b> khối — chia khối; là về nhóm gộp, không phải giới hạn cứng.</span></span></li>
           <li><b>Doherty</b><span><span class="en">keep response <b>&lt;400ms</b> to sustain flow — ties to INP &lt;200ms.</span><span class="vi">giữ phản hồi <b>&lt;400ms</b> để duy trì dòng chảy — gắn với INP &lt;200ms.</span></span></li>
           <li><b>Jakob</b><span><span class="en">users expect your site to work like the others they know — honor conventions.</span><span class="vi">người dùng kỳ vọng site của bạn giống các site họ biết — tôn trọng quy ước.</span></span></li>
           <li><b>Tesler</b><span><span class="en">complexity is conserved — absorb it in the system (smart defaults), not the user.</span><span class="vi">độ phức tạp được bảo toàn — để hệ thống gánh (mặc định thông minh), không phải người dùng.</span></span></li>
+          <li><b>Postel</b><span><span class="en">be liberal in inputs (parse messy phone/date formats), conservative in outputs.</span><span class="vi">rộng rãi với đầu vào (chấp nhận định dạng số/ngày lộn xộn), chặt chẽ với đầu ra.</span></span></li>
         </ul>
       </div>
     </div>
@@ -1108,7 +1131,7 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
           <div class="tell-bar tell-purple">#667eea → #764ba2</div>
           <div class="tell-bar tell-brand">oklch(0.45 0.15 258)</div>
         </div>
-        <p class="note"><span class="en">Tailwind UI defaulted buttons to <code>indigo-500</code>; its creator publicly apologized in 2025 for "every AI-generated UI being indigo." Define brand tokens instead.</span><span class="vi">Tailwind UI mặc định nút màu <code>indigo-500</code>; tác giả đã công khai xin lỗi năm 2025 vì "mọi UI do AI tạo đều tím indigo." Hãy định nghĩa token thương hiệu riêng.</span></p>
+        <p class="note"><span class="en">Tailwind UI defaulted buttons to <code>indigo-500</code>; its creator publicly apologized in 2025 for that default "leading to every AI generated UI on earth also being indigo." Define brand tokens instead.</span><span class="vi">Tailwind UI mặc định nút màu <code>indigo-500</code>; tác giả đã công khai xin lỗi năm 2025 vì mặc định ấy "khiến mọi UI do AI tạo trên đời cũng tím indigo." Hãy định nghĩa token thương hiệu riêng.</span></p>
       </div>
     </div>
   </div>
@@ -1139,7 +1162,7 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
         <li><span class="badge tell">TELL</span><span><b><span class="en">Chatbot shoehorning.</span><span class="vi">Nhồi chatbot.</span></b> <span class="en">Chat bolted where direct manipulation is faster → task UI; chat only to help formulate intent.</span><span class="vi">Gắn chat vào nơi thao tác trực tiếp nhanh hơn → UI tác vụ; chỉ dùng chat khi giúp diễn đạt ý định.</span></span></li>
         <li><span class="badge tell">TELL</span><span><b><span class="en">AI feature bolt-on.</span><span class="vi">Gắn tính năng AI cho có.</span></b> <span class="en">✨ buttons as marketing → gate on user-need × AI-strength (PAIR).</span><span class="vi">Nút ✨ để tiếp thị → chỉ làm khi nhu cầu người dùng × thế mạnh AI (PAIR).</span></span></li>
         <li><span class="badge viol">VIOL</span><span><b><span class="en">Over-automation / lost control.</span><span class="vi">Tự động hóa quá / mất kiểm soát.</span></b> <span class="en">No undo/oversight; automation bias → human-in-the-loop, global controls.</span><span class="vi">Không undo/giám sát; thiên kiến tự động → giữ người trong vòng lặp, điều khiển toàn cục.</span> <span class="src">MS HAX · HIG</span></span></li>
-        <li><span class="badge viol">VIOL</span><span><b><span class="en">Dark patterns, unprompted.</span><span class="vi">Dark pattern tự phát.</span></b> <span class="en">Fake urgency / hidden costs; ~37% of AI commerce components (arXiv) → audit + prohibit.</span><span class="vi">Khẩn cấp giả / phí ẩn; ~37% thành phần TMĐT do AI (arXiv) → kiểm toán + cấm.</span></span></li>
+        <li><span class="badge viol">VIOL</span><span><b><span class="en">Dark patterns, unprompted.</span><span class="vi">Dark pattern tự phát.</span></b> <span class="en">Fake urgency / hidden costs; 55.8% of LLM commerce components (arXiv 2502.13499) → audit + prohibit.</span><span class="vi">Khẩn cấp giả / phí ẩn; 55.8% thành phần TMĐT do LLM tạo (arXiv 2502.13499) → kiểm toán + cấm.</span></span></li>
         <li><span class="badge tell">TELL</span><span><b><span class="en">Hallucinated content shipped.</span><span class="vi">Nội dung bịa bị phát hành.</span></b> <span class="en">Lorem ipsum, fake stats/terms → never ship placeholder; fact-check.</span><span class="vi">Lorem ipsum, số liệu/thuật ngữ bịa → không phát hành placeholder; kiểm chứng.</span></span></li>
         <li><span class="badge viol">VIOL</span><span><b><span class="en">No AI transparency.</span><span class="vi">Thiếu minh bạch AI.</span></b> <span class="en">No disclosure / confidence / verify path → label AI, show sources + undo.</span><span class="vi">Không tiết lộ / độ tin cậy / cách kiểm chứng → gắn nhãn AI, hiện nguồn + undo.</span> <span class="src">HIG · PAIR · MS G11</span></span></li>
       </ul>
@@ -1162,18 +1185,29 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
 
 <footer>
   <div class="fin">
+    <h3><span class="en">Norma — adopt the standard</span><span class="vi">Norma — áp dụng chuẩn</span></h3>
+    <div class="srcgrid" style="margin-block-end:var(--s-6)">
+      <div><span class="en">Source &amp; docs</span><span class="vi">Mã nguồn &amp; tài liệu</span> · <a href="https://github.com/anhquanpbc/norma">github.com/anhquanpbc/norma</a></div>
+      <div><span class="en">Written reference</span><span class="vi">Tài liệu chuẩn</span> · <a href="https://github.com/anhquanpbc/norma/blob/main/REFERENCE.md">REFERENCE.md</a> · <a href="https://github.com/anhquanpbc/norma/blob/main/REFERENCE.vi.md">REFERENCE.vi.md</a></div>
+      <div><span class="en">CI linter</span><span class="vi">Linter cho CI</span> · npx @norma/design-lint · <a href="https://www.npmjs.com/package/@norma/design-lint">npm</a></div>
+      <div><span class="en">AI-agent rules</span><span class="vi">Rule cho AI agent</span> · <a href="https://github.com/anhquanpbc/norma/blob/main/AGENTS.md">AGENTS.md</a> <span class="en">+ Cursor / Copilot / Claude files</span><span class="vi">+ file Cursor / Copilot / Claude</span></div>
+      <div><span class="en">Rule catalog</span><span class="vi">Catalog rule</span> · <a href="https://github.com/anhquanpbc/norma/blob/main/standard/rules.yaml">standard/rules.yaml</a> → rules.json</div>
+      <div><span class="en">Version</span><span class="vi">Phiên bản</span> · <span class="src">standard v1.1.0</span> · <a href="https://github.com/anhquanpbc/norma/blob/main/CHANGELOG.md">CHANGELOG</a></div>
+    </div>
     <h3><span class="en">Authoritative primary sources</span><span class="vi">Nguồn gốc có thẩm quyền</span></h3>
     <div class="srcgrid">
-      <div>W3C WCAG 2.2 — <span class="src">Recommendation 2023-10-05</span> · w3.org/TR/WCAG22</div>
-      <div>W3C Design Tokens (DTCG) — <span class="src">v2025.10</span> · tr.designtokens.org</div>
+      <div>W3C WCAG 2.2 — <span class="src">Rec. 2023-10-05 · upd. 2024-12-12 · ISO/IEC 40500:2025</span> · w3.org/TR/WCAG22</div>
+      <div>W3C Design Tokens (DTCG) — <span class="src">v2025.10</span> · designtokens.org/TR/2025.10</div>
       <div>Apple Human Interface Guidelines · developer.apple.com/design</div>
       <div>Google Material Design 3 · m3.material.io</div>
       <div>web.dev / Chrome — Core Web Vitals &amp; INP · web.dev/vitals</div>
-      <div>HTTP Archive Web Almanac 2024 · almanac.httparchive.org</div>
+      <div>HTTP Archive Web Almanac 2025 · almanac.httparchive.org</div>
       <div>OKLCH — Björn Ottosson (2020) · APCA · git.apcacontrast.com</div>
       <div>Laws of UX (Fitts, Hick, Miller…) · lawsofux.com</div>
+      <div>CSS Values &amp; Units Level 4 (clamp/fluid) · w3.org/TR/css-values-4</div>
     </div>
     <p class="fine"><span class="en"><b>On the numbers:</b> mandates (WCAG ratios, CWV thresholds, target sizes, Material motion tokens, DTCG keys) trace to the specs above and are tagged <span class="badge spec">SPEC</span>. Conventions (spacing scales, type ratios, "optimal" motion ranges, characters-per-line) have no single canonical authority and are tagged <span class="badge conv">CONV</span>. This page is self-contained: no external fonts, no CDN, no network requests, no tracking — view source to verify.</span><span class="vi"><b>Về các con số:</b> mục bắt buộc (tỷ lệ WCAG, ngưỡng CWV, vùng chạm, token motion Material, khóa DTCG) truy về các chuẩn trên và gắn nhãn <span class="badge spec">SPEC</span>. Quy ước (thang khoảng cách, tỷ lệ chữ, dải motion "tối ưu", ký tự/dòng) không có nguồn chuẩn duy nhất và gắn nhãn <span class="badge conv">CONV</span>. Trang này tự chứa: không font ngoài, không CDN, không request mạng, không theo dõi — xem mã nguồn để kiểm chứng.</span></p>
+    <p class="fine"><span class="en"><b>Scope:</b> Norma is a front-end <i>design</i> standard. Frontend-markup security is in scope — rel="noopener" on external target="_blank" links (security.external-rel) and Subresource Integrity on any CDN asset (security.sri; this page ships zero external resources). Header/runtime security (CSP, HSTS, frame-ancestors, Trusted Types) is a server concern — enforce it there, not from HTML/CSS.</span><span class="vi"><b>Phạm vi:</b> Norma là chuẩn <i>thiết kế</i> front-end. Bảo mật markup front-end thuộc phạm vi — rel="noopener" cho link ngoài target="_blank" (security.external-rel) và Subresource Integrity cho tài nguyên CDN (security.sri; trang này không có tài nguyên ngoài nào). Bảo mật tầng header/runtime (CSP, HSTS, frame-ancestors, Trusted Types) là việc của server — thực thi ở đó, không phải từ HTML/CSS.</span></p>
   </div>
 </footer>
 
@@ -1193,11 +1227,35 @@ function syncLangButtons(l){
   $("btn-en").setAttribute("aria-pressed", l === "en");
   $("btn-vi").setAttribute("aria-pressed", l === "vi");
 }
+/* Attribute-level bilingual layer: <span class=en/vi> covers visible copy, but document.title,
+   aria-labels and placeholders are attributes — swap them here so lang=vi never announces
+   English strings under Vietnamese pronunciation rules (i18n.html-lang would be a lie otherwise). */
+var I18N_ATTRS = [
+  ["#themeToggle",       "aria-label",  "Dark theme",               "Chế độ tối"],
+  ["#themeToggle",       "title",       "Dark theme",               "Chế độ tối"],
+  [".lang-toggle",       "aria-label",  "Language",                 "Ngôn ngữ"],
+  [".doc-nav",           "aria-label",  "Documentation navigation", "Điều hướng tài liệu"],
+  [".doc-nav .sections", "aria-label",  "Sections",                 "Các mục"],
+  ["#docSearch",         "aria-label",  "Search the standard",      "Tìm trong chuẩn"],
+  ["#docSearch",         "placeholder", "Search the standard…",     "Tìm trong chuẩn…"],
+  [".audit",             "aria-label",  "This page's self-audit",   "Tự kiểm của trang này"],
+  ["#ratioSlider",       "aria-label",  "Type scale ratio",         "Tỷ lệ thang chữ"],
+  ["#hueSlider",         "aria-label",  "Hue",                      "Tông màu (H)"],
+  ["#chromaSlider",      "aria-label",  "Chroma",                   "Độ rực màu (C)"]
+];
+function applyI18nAttrs(){
+  document.title = t("Norma — UX/UI Technical Standards 2026 (EN/VI)", "Norma — Quy chuẩn Kỹ thuật UX/UI 2026 (EN/VI)");
+  I18N_ATTRS.forEach(function(row){
+    var el = document.querySelector(row[0]);
+    if(el){ el.setAttribute(row[1], t(row[2], row[3])); }
+  });
+}
 function setLang(l){
   document.documentElement.dataset.lang = l;
   document.documentElement.lang = l;
   try { localStorage.setItem("norma-lang", l); } catch(e){}   // persist the explicit choice, like the theme
   syncLangButtons(l);
+  applyI18nAttrs();
   updateType();          // refresh ratio name
   drawContrast();        // refresh badge words
 }
@@ -1466,8 +1524,7 @@ function setTheme(t, persist){
   if(persist){ try { localStorage.setItem("norma-theme", t); } catch(e){} }
   var b = $("themeToggle");
   if(b){
-    b.setAttribute("aria-pressed", t === "dark");
-    b.setAttribute("aria-label", t === "dark" ? "Switch to light theme" : "Switch to dark theme");
+    b.setAttribute("aria-pressed", t === "dark");   // state via aria-pressed; the static localized label names the control
   }
 }
 function initTheme(){
@@ -1510,6 +1567,7 @@ document.addEventListener("DOMContentLoaded", function(){
   initDocSearch();
   initTheme();
   syncLangButtons(lang());   // sync EN/VI buttons to the language the <head> script restored
+  applyI18nAttrs();          // localize title + aria-labels/placeholder to the restored language
   initReveal();
 });
 

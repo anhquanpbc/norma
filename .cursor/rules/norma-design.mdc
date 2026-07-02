@@ -47,7 +47,7 @@ sources and machine assertions lives in `standard/rules.json`.
 Not compliance failures, but they erase brand distinctiveness and often *induce* a violation.
 
 - **antipattern.indigo-default** — no `#667eea → #764ba2` (indigo-500) default gradient; use brand tokens.
-  *(Tailwind's creator publicly apologized in 2025 for "every AI-generated UI being indigo.")*
+  *(Tailwind's creator publicly apologized in 2025 for the indigo-500 default "leading to every AI generated UI on earth also being indigo.")*
 - **antipattern.pure-dark-mode** — no pure `#000`/`#fff` dark mode; use `#121212` surface + `#E4E4E7` text.
 - **Halo / glow overuse** — neutral elevation scale, one light source; no stacked colored shadows.
 - **Glassmorphism by default** — at most 2–3 glass surfaces + a scrim, never everywhere.
@@ -109,7 +109,7 @@ npx @norma/design-lint "**/*.{html,css}"     # gate SPEC violations; exits non-z
 - 📐 CONV `theme.color-scheme` (warn) — Declare color-scheme · [W3C CSS Color Adjustment Module L1](https://www.w3.org/TR/css-color-adjust-1/)
 - 📐 CONV `tokens.color-only` (warn) — Color comes from tokens, not raw hex · Norma §1 Design Tokens
 - 📐 CONV `tokens.spacing-scale` (off) — Spacing snaps to the 8px scale · Norma §2 Spacing & Grid
-- 📐 CONV `antipattern.indigo-default` (warn) — No default indigo/purple gradient · Norma §14 AI-era Anti-patterns (TELL)
+- 📐 CONV `antipattern.indigo-default` (warn) — No default indigo/purple gradient · [Norma §14 AI-era Anti-patterns (TELL); Adam Wathan's 2025 indigo apology](https://x.com/adamwathan/status/1953510802159219096)
 - 📐 CONV `antipattern.pure-dark-mode` (warn) — No pure #000/#fff dark mode · Norma §14 AI-era Anti-patterns (TELL)
 - 📐 CONV `security.external-rel` (warn) — target=_blank has rel=noopener · [WHATWG HTML — noopener link type (OWASP: reverse tabnabbing)](https://html.spec.whatwg.org/multipage/links.html#link-type-noopener)
 - 📐 CONV `security.sri` (warn) — External subresources use SRI · [W3C Subresource Integrity](https://www.w3.org/TR/SRI/)

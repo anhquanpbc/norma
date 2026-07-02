@@ -1,6 +1,8 @@
 **English** · [Tiếng Việt](REFERENCE.vi.md)
 
-# Technical UX/UI Design Standards — Consolidated Reference (2025)
+# Technical UX/UI Design Standards — Consolidated Reference (2026)
+
+> Last verified against primary sources: 2026-07-03.
 
 > This document is the synthesized "single source of truth" merging two prior drafts: it keeps the
 > broad, source-cited coverage of one and the interactive HCI-law angle of the other.
@@ -128,7 +130,7 @@ Ratio = (L1 + 0.05)/(L2 + 0.05), range 1:1–21:1.
 
 ## 5. Accessibility (measurable)
 
-**WCAG 2.2** — W3C Recommendation **2023-10-05**, 87 success criteria (32 A, 24 AA, 31 AAA); Level **AA** is the near-universal legal target (EU Accessibility Act / Directive 2019/882, Section 508, EN 301 549, ADA case law). New in 2.2: 2.4.11/2.4.12 Focus Not Obscured, 2.4.13 Focus Appearance, 2.5.7 Dragging Movements, 2.5.8 Target Size (Minimum), 3.2.6 Consistent Help, 3.3.7 Redundant Entry, 3.3.8/3.3.9 Accessible Authentication. SC 4.1.1 Parsing was removed.
+**WCAG 2.2** — W3C Recommendation **2023-10-05** (updated edition **2024-12-12**; approved as **ISO/IEC 40500:2025**), 86 success criteria (31 A, 24 AA, 31 AAA); Level **AA** is the near-universal legal target (EU Accessibility Act / Directive 2019/882 — enforceable in all EU member states since **2025-06-28**; Section 508; EN 301 549; ADA case law). New in 2.2: 2.4.11/2.4.12 Focus Not Obscured, 2.4.13 Focus Appearance, 2.5.7 Dragging Movements, 2.5.8 Target Size (Minimum), 3.2.6 Consistent Help, 3.3.7 Redundant Entry, 3.3.8/3.3.9 Accessible Authentication. SC 4.1.1 Parsing was removed.
 
 **Target sizes:**
 
@@ -146,7 +148,7 @@ Ratio = (L1 + 0.05)/(L2 + 0.05), range 1:1–21:1.
 
 **Keyboard / ARIA / SR 🔒:** all functionality keyboard-operable (2.1.1); logical focus order (2.4.3); landmark roles (`banner`, `nav`, `main`, `contentinfo`); descriptive labels (not "Button"); DOM reading order matches visual order; `aria-live` (`polite`/`assertive`) for dynamic updates like errors.
 
-**Motion 🔒:** honor `prefers-reduced-motion: reduce` (2.3.3 AAA / 2.2.2); no content flashes >3×/second (2.3.1 A).
+**Motion 🔒:** honor `prefers-reduced-motion: reduce` (2.3.3 AAA); auto-playing motion that lasts >5s needs a visible pause/stop/hide control for **all** users — an OS preference is not a substitute (2.2.2 A); no content flashes >3×/second (2.3.1 A).
 
 **Text spacing / reflow / resize:**
 - 1.4.12 Text Spacing (AA) 🔒 — no loss when users set line-height **1.5×**, paragraph spacing **2×**, letter-spacing **0.12×**, word-spacing **0.16×** (for 16px: 24 / 32 / 1.92 / 2.56px). Scripts that don't use a property are exempt (e.g. letter-spacing for Chinese).
@@ -165,7 +167,7 @@ Ratio = (L1 + 0.05)/(L2 + 0.05), range 1:1–21:1.
 | **INP** (responsiveness) | ≤ 200ms | 200–500ms | > 500ms |
 | **CLS** (visual stability) | ≤ 0.1 | 0.1–0.25 | > 0.25 |
 
-**INP replaced FID on 2024-03-12** (web.dev/Chrome). INP measures every interaction's full latency (input → next paint) across the whole visit and reports the worst (excluding outliers); FID measured only the first interaction's input delay. INP is markedly stricter — web.dev notes ~93% of mobile sites had good FID but only ~65% have good INP; HTTP Archive 2024 Almanac: 48% passed CWV with FID vs 43% with INP on mobile. Failures trace to heavy JS, long tasks (>50ms), third-party scripts. TTFB (<800ms) and TBT are diagnostics, **not** Core Web Vitals.
+**INP replaced FID on 2024-03-12** (web.dev/Chrome). INP measures every interaction's full latency (input → next paint) across the whole visit and reports the worst (excluding outliers); FID measured only the first interaction's input delay. INP is markedly stricter — at the 2024 switch, ~93% of mobile sites had good FID but only ~65% had good INP; HTTP Archive 2025 Almanac: 77% of mobile origins now have good INP (74% in 2024), and 48% pass all three CWV. Failures trace to heavy JS, long tasks (>50ms), third-party scripts. TTFB (<800ms) and TBT are diagnostics, **not** Core Web Vitals.
 
 **UX/business impact:** these are the metrics users *feel* (load speed, tap responsiveness, layout stability) and are confirmed ranking signals (a tiebreaker, not dominant vs relevance).
 
@@ -278,7 +280,7 @@ These predictive models turn "feel" into estimates you can design against. They 
 **Caveats (mandate vs convention):**
 - The 8pt grid is Material-mandated but only an Apple *convention*; "45–75 CPL" and "200–500ms optimal" are heuristics, not spec constants.
 - AVIF's edge over WebP is ~10–12% (controlled tests), not dramatic; big wins are vs legacy JPEG/PNG.
-- Bounce-rate/conversion claims tied to CWV come from SEO/perf vendors — directional, not exact. Audited pass-rates (43% good INP mobile) come from HTTP Archive/Google.
+- Bounce-rate/conversion claims tied to CWV come from SEO/perf vendors — directional, not exact. Audited pass-rates (77% good INP on mobile, 2025 Almanac) come from HTTP Archive/Google.
 - APCA is a moving target (reverted to "Placeholder" in the 2023-06 WCAG 3.0 draft); its Lc thresholds are from APCA/ARC docs; final WCAG 3.0 role unconfirmed (~2030).
 - Material 3 is mid-transition from easing/duration tokens to a spring system (default in Jetpack Compose) — verify which your toolkit uses.
 - Breakpoint values differ by framework/version — confirm against the version you deploy.
@@ -302,7 +304,7 @@ AI coding tools reliably emit two kinds of defect, and it matters which one you 
 | **Emoji as icons** — 🚀🔥 as controls; render + SR-name vary | VIOLATION (1.1.1) | inline SVG + a real label |
 | **Placeholder-as-label** — hint disappears on input | VIOLATION (3.3.2/4.1.2) | persistent associated `<label>` |
 | **Halo / glow overuse** — stacked colored shadows | TELL | neutral elevation scale, one light source |
-| **Purple→violet gradient** — `#667eea → #764ba2` indigo default | TELL | brand tokens (Tailwind's creator publicly apologized in 2025 for "every AI-generated UI being indigo") |
+| **Purple→violet gradient** — `#667eea → #764ba2` indigo default | TELL | brand tokens (Tailwind's creator publicly apologized in 2025 for the indigo-500 default "leading to every AI generated UI on earth also being indigo") |
 | **Glassmorphism everywhere** — `backdrop-filter` spam, dynamic-contrast fails, GPU cost | TELL | 2–3 glass surfaces + a scrim, never by default |
 | **Arbitrary spacing / over-rounding** — `mt-[13px]`, mixed radii | TELL | token scales |
 | **Pure `#000`/`#fff` dark mode** — halation for astigmatism | TELL | `#121212` surface + `#E4E4E7` text |
@@ -314,7 +316,7 @@ AI coding tools reliably emit two kinds of defect, and it matters which one you 
 - **Chatbot shoehorning** 📐 — chat bolted where direct manipulation is faster → task UI; chat only to help formulate intent.
 - **AI feature bolt-on** 📐 — ✨ buttons as marketing → gate on user-need × AI-strength (Google PAIR).
 - **Over-automation / lost control** 🔒 — no undo/oversight, automation bias → human-in-the-loop, global controls (MS HAX, HIG).
-- **Dark patterns, unprompted** 🔒 — fake urgency / hidden costs; ~37% of AI-generated commerce components (arXiv 2502.13499) → audit + prohibit.
+- **Dark patterns, unprompted** 🔒 — fake urgency / hidden costs; 55.8% of 1K LLM-generated e-commerce components contained at least one deceptive design (arXiv 2502.13499 v2, "Deception at Scale", 2026) → audit + prohibit.
 - **Hallucinated content shipped** 📐 — lorem ipsum, fabricated stats/terms → never ship placeholder; fact-check.
 - **No AI transparency** 🔒 — no disclosure / confidence / verify path → label AI, show sources + undo (HIG, PAIR, MS G11).
 
@@ -327,12 +329,12 @@ AI coding tools reliably emit two kinds of defect, and it matters which one you 
 
 ## Sources (authoritative primary sources)
 
-- **W3C WCAG 2.2** — Recommendation, 2023-10-05 · https://www.w3.org/TR/WCAG22/
-- **W3C Design Tokens Format Module** (DTCG), v2025.10 · https://tr.designtokens.org/format/
+- **W3C WCAG 2.2** — Recommendation 2023-10-05, updated 2024-12-12; ISO/IEC 40500:2025 · https://www.w3.org/TR/WCAG22/
+- **W3C Design Tokens Format Module** (DTCG), v2025.10 (stable) · https://www.designtokens.org/TR/2025.10/format/
 - **Apple Human Interface Guidelines** · https://developer.apple.com/design/human-interface-guidelines/
 - **Google Material Design 3** · https://m3.material.io/ · Motion tokens: material-components-android (GitHub) `docs/theming/Motion.md`
 - **web.dev / Chrome — Core Web Vitals & INP** · https://web.dev/articles/vitals · "INP becomes a Core Web Vital on March 12" (2024-01-31)
-- **HTTP Archive Web Almanac 2024 — Performance** · https://almanac.httparchive.org/en/2024/performance
+- **HTTP Archive Web Almanac 2025 — Performance** · https://almanac.httparchive.org/en/2025/performance
 - **OKLCH / OKLab** — Björn Ottosson (2020) · https://bottosson.github.io/posts/oklab/ · APCA: https://git.apcacontrast.com/
 - **CSS Values and Units Level 4** (clamp/fluid) · https://www.w3.org/TR/css-values-4/
 - **Laws of UX** (Fitts, Hick, Miller, Doherty, Jakob, Tesler) · https://lawsofux.com/

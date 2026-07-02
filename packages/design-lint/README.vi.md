@@ -49,8 +49,8 @@ Các kiểm tra tĩnh chắc chắn, ít dương tính giả, ánh xạ tới ca
 tương phản (cặp giá trị đặt cùng chỗ và giải được, kể cả `var()` + OKLCH), một vòng focus duy nhất,
 sự hiện diện reduced-motion, nhãn biểu mẫu / placeholder-làm-nhãn, điều khiển ngữ nghĩa (`<div onclick>`),
 emoji-làm-icon, kích thước ảnh, kích thước vùng chạm, và "dấu hiệu" gradient indigo mặc định. Những rule
-mà phân tích tĩnh không kiểm chắc chắn được (kích thước vùng chạm khi render, thang khoảng cách, bề mặt
-dark-mode) mặc định để `off` và được agent thiết kế Norma thực thi thay thế.
+mà phân tích tĩnh không kiểm chắc chắn được (thang khoảng cách 8px, sàn chữ thân 16px, ngân sách hiệu
+năng runtime) mang `check: manual` trong catalog — engine bỏ qua chúng và agent thiết kế Norma thực thi thay.
 
 ## API lập trình
 

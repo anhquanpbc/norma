@@ -49,8 +49,9 @@ Sound, low-false-positive static checks mapped to the Norma rule catalog (`stand
 contrast (co-located resolvable pairs, incl. `var()` + OKLCH), single focus ring,
 reduced-motion presence, form labels / placeholder-as-label, semantic controls (`<div onclick>`),
 emoji-as-icon, image dimensions, target size, and the indigo-default gradient tell. Rules that
-static analysis cannot verify soundly (rendered target size, spacing scale, dark-mode surfaces) are
-`off` by default and enforced by the Norma design agent instead.
+static analysis cannot verify soundly (the 8px spacing scale, the 16px body-text floor, runtime
+performance budgets) are `check: manual` in the catalog — the engine skips them and the Norma
+design agent enforces them instead.
 
 ## Programmatic API
 

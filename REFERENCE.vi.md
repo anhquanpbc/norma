@@ -1,6 +1,8 @@
 [English](REFERENCE.md) · **Tiếng Việt**
 
-# Quy chuẩn Kỹ thuật Thiết kế UX/UI — Tài liệu Hợp nhất (2025)
+# Quy chuẩn Kỹ thuật Thiết kế UX/UI — Tài liệu Hợp nhất (2026)
+
+> Kiểm chứng lần cuối với nguồn gốc: 03/07/2026.
 
 > **Chú thích:** 🔒 = yêu cầu bắt buộc trong một spec đã ban hành (mandate) · 📐 = quy ước/heuristic ngành (không phải mandate của vendor).
 
@@ -120,7 +122,7 @@ Thang khoảng cách khuyến nghị (token, px): **0 · 4 · 8 · 12 · 16 · 2
 
 ## 5. Khả năng tiếp cận (đo được)
 
-**WCAG 2.2** — Khuyến nghị W3C ngày **05/10/2023**, 87 tiêu chí (32 A, 24 AA, 31 AAA); mức **AA** là mục tiêu pháp lý gần như phổ quát (Đạo luật Tiếp cận EU / Chỉ thị 2019/882, Section 508, EN 301 549, án lệ ADA). Mới trong 2.2: 2.4.11/2.4.12 Focus không bị che, 2.4.13 Hình thức Focus, 2.5.7 Thao tác kéo, 2.5.8 Kích thước vùng chạm (tối thiểu), 3.2.6 Trợ giúp nhất quán, 3.3.7 Nhập trùng lặp, 3.3.8/3.3.9 Xác thực tiếp cận. Bỏ 4.1.1 Parsing.
+**WCAG 2.2** — Khuyến nghị W3C ngày **05/10/2023** (bản cập nhật **12/12/2024**; được phê duyệt thành **ISO/IEC 40500:2025**), 86 tiêu chí (31 A, 24 AA, 31 AAA); mức **AA** là mục tiêu pháp lý gần như phổ quát (Đạo luật Tiếp cận EU / Chỉ thị 2019/882 — có hiệu lực thi hành tại mọi nước thành viên EU từ **28/06/2025**; Section 508; EN 301 549; án lệ ADA). Mới trong 2.2: 2.4.11/2.4.12 Focus không bị che, 2.4.13 Hình thức Focus, 2.5.7 Thao tác kéo, 2.5.8 Kích thước vùng chạm (tối thiểu), 3.2.6 Trợ giúp nhất quán, 3.3.7 Nhập trùng lặp, 3.3.8/3.3.9 Xác thực tiếp cận. Bỏ 4.1.1 Parsing.
 
 **Kích thước vùng chạm:** WCAG 2.5.8 (AA) 🔒 **24×24 CSS px** (5 ngoại lệ: khoảng cách/tương đương/inline/UA/thiết yếu); WCAG 2.5.5 (AAA) 🔒 44×44px; **Apple HIG** 🔒 **44×44pt**; **Material** 📐 **48×48dp**. Xây theo nền nghiêm ngặt nhất: native iOS = 44pt, Android = 48dp — không phải sàn 24px.
 
@@ -135,7 +137,7 @@ Thang khoảng cách khuyến nghị (token, px): **0 · 4 · 8 · 12 · 16 · 2
 
 **Bàn phím / ARIA / trình đọc màn hình 🔒:** mọi chức năng thao tác được bằng bàn phím (2.1.1); thứ tự focus hợp lý (2.4.3); landmark (`banner`, `nav`, `main`, `contentinfo`); nhãn mô tả (không phải "Button"); thứ tự đọc DOM khớp thứ tự thị giác; `aria-live` cho cập nhật động như lỗi.
 
-**Chuyển động 🔒:** tôn trọng `prefers-reduced-motion: reduce` (2.3.3 AAA); không chớp >3 lần/giây (2.3.1 A).
+**Chuyển động 🔒:** tôn trọng `prefers-reduced-motion: reduce` (2.3.3 AAA); chuyển động tự chạy kéo dài >5s phải có nút tạm dừng/dừng/ẩn nhìn thấy được cho **mọi** người dùng — thiết lập hệ điều hành không thay thế được (2.2.2 A); không chớp >3 lần/giây (2.3.1 A).
 
 **Giãn chữ / reflow / phóng to:** 1.4.12 (AA) 🔒 không mất nội dung khi line-height **1.5×**, cách đoạn **2×**, giãn chữ **0.12×**, giãn từ **0.16×**; 1.4.10 Reflow (AA) 🔒 không cuộn 2 chiều ở **320 CSS px** (≈ 1280px @ zoom 400%); 1.4.4 (AA) 🔒 phóng chữ tới **200%** không mất nội dung.
 
@@ -151,7 +153,7 @@ Thang khoảng cách khuyến nghị (token, px): **0 · 4 · 8 · 12 · 16 · 2
 | **INP** (responsiveness) | ≤ 200ms | 200–500ms | > 500ms |
 | **CLS** (visual stability) | ≤ 0.1 | 0.1–0.25 | > 0.25 |
 
-**INP thay FID từ 12/03/2024** (web.dev/Chrome). INP đo toàn bộ độ trễ của MỌI tương tác (input → lần vẽ kế tiếp) suốt phiên và báo giá trị tệ nhất (loại ngoại lệ); FID chỉ đo độ trễ đầu vào của tương tác đầu tiên. INP khó hơn hẳn — ~93% site mobile đạt FID tốt nhưng chỉ ~65% đạt INP tốt; HTTP Archive 2024: 48% qua CWV với FID so với 43% với INP (mobile). Nguyên nhân trượt: JS nặng, tác vụ dài (>50ms), script bên thứ ba. TTFB (<800ms) và TBT là chỉ số chẩn đoán, **không** phải Core Web Vitals.
+**INP thay FID từ 12/03/2024** (web.dev/Chrome). INP đo toàn bộ độ trễ của MỌI tương tác (input → lần vẽ kế tiếp) suốt phiên và báo giá trị tệ nhất (loại ngoại lệ); FID chỉ đo độ trễ đầu vào của tương tác đầu tiên. INP khó hơn hẳn — tại thời điểm chuyển đổi 2024, ~93% site mobile đạt FID tốt nhưng chỉ ~65% đạt INP tốt; HTTP Archive Almanac 2025: 77% origin mobile nay đạt INP tốt (2024: 74%), và 48% qua cả ba CWV. Nguyên nhân trượt: JS nặng, tác vụ dài (>50ms), script bên thứ ba. TTFB (<800ms) và TBT là chỉ số chẩn đoán, **không** phải Core Web Vitals.
 
 **Tác động UX/kinh doanh:** đây là những chỉ số người dùng *cảm nhận trực tiếp* và là tín hiệu xếp hạng đã xác nhận (yếu tố phân định, không lấn át độ liên quan).
 
@@ -236,7 +238,7 @@ Các mô hình dự báo này biến "cảm giác" thành ước lượng có th
 **Lưu ý (bắt buộc vs quy ước):**
 - Lưới 8pt là bắt buộc ở Material nhưng chỉ là *quy ước* ở Apple; "45–75 ký tự/dòng" và "200–500ms tối ưu" là kinh nghiệm, không phải hằng số chuẩn.
 - Lợi thế AVIF so với WebP ~10–12% (thử nghiệm có kiểm soát), không lớn; lợi lớn là so với JPEG/PNG cũ.
-- Con số tỷ lệ thoát/chuyển đổi gắn với CWV đến từ nhà cung cấp SEO/hiệu năng — mang tính định hướng, không chính xác. Tỷ lệ đạt đã kiểm toán (43% INP tốt trên mobile) đến từ HTTP Archive/Google.
+- Con số tỷ lệ thoát/chuyển đổi gắn với CWV đến từ nhà cung cấp SEO/hiệu năng — mang tính định hướng, không chính xác. Tỷ lệ đạt đã kiểm toán (77% INP tốt trên mobile, Almanac 2025) đến từ HTTP Archive/Google.
 - APCA là mục tiêu di động (bị đưa về "Placeholder" trong nháp WCAG 3.0 06/2023); ngưỡng Lc từ tài liệu APCA/ARC; vai trò cuối trong WCAG 3.0 chưa chốt (~2030).
 - Material 3 đang chuyển tiếp từ token easing/duration sang hệ spring (mặc định trong Jetpack Compose) — kiểm tra bộ công cụ của bạn dùng loại nào.
 - Giá trị breakpoint khác nhau theo framework/phiên bản — xác nhận theo bản bạn triển khai.
@@ -260,7 +262,7 @@ Công cụ AI thường sinh hai loại lỗi, và cần biết bạn đang xử
 | **Emoji làm icon** — 🚀🔥 làm nút; hiển thị + tên đọc màn hình khác nhau | VIOLATION (1.1.1) | SVG inline + nhãn thật |
 | **Placeholder làm nhãn** — gợi ý biến mất khi gõ | VIOLATION (3.3.2/4.1.2) | `<label>` cố định, liên kết theo mã |
 | **Lạm dụng halo / glow** — nhiều bóng màu chồng | TELL | thang độ nổi trung tính, một nguồn sáng |
-| **Gradient tím→chàm** — `#667eea → #764ba2` indigo mặc định | TELL | token thương hiệu (tác giả Tailwind đã công khai xin lỗi năm 2025 vì "mọi UI do AI tạo đều tím indigo") |
+| **Gradient tím→chàm** — `#667eea → #764ba2` indigo mặc định | TELL | token thương hiệu (tác giả Tailwind đã công khai xin lỗi năm 2025 vì mặc định indigo-500 "khiến mọi UI do AI tạo trên đời cũng tím indigo") |
 | **Glassmorphism khắp nơi** — `backdrop-filter` tràn lan, tương phản động fail, tốn GPU | TELL | 2–3 bề mặt kính + lớp phủ, không mặc định |
 | **Spacing tùy tiện / bo góc quá đà** — `mt-[13px]`, bo góc lẫn lộn | TELL | thang token |
 | **Dark mode `#000`/`#fff` thuần** — chói (halation) với loạn thị | TELL | nền `#121212` + chữ `#E4E4E7` |
@@ -272,7 +274,7 @@ Công cụ AI thường sinh hai loại lỗi, và cần biết bạn đang xử
 - **Nhồi chatbot** 📐 — gắn chat vào nơi thao tác trực tiếp nhanh hơn → UI tác vụ; chỉ dùng chat khi giúp diễn đạt ý định.
 - **Gắn tính năng AI cho có** 📐 — nút ✨ để tiếp thị → chỉ làm khi nhu cầu người dùng × thế mạnh AI (Google PAIR).
 - **Tự động hóa quá / mất kiểm soát** 🔒 — không undo/giám sát, thiên kiến tự động → giữ người trong vòng lặp, điều khiển toàn cục (MS HAX, HIG).
-- **Dark pattern tự phát** 🔒 — khẩn cấp giả / phí ẩn; ~37% thành phần TMĐT do AI tạo (arXiv 2502.13499) → kiểm toán + cấm.
+- **Dark pattern tự phát** 🔒 — khẩn cấp giả / phí ẩn; 55.8% trong 1K thành phần TMĐT do LLM tạo chứa ít nhất một dark pattern (arXiv 2502.13499 v2, "Deception at Scale", 2026) → kiểm toán + cấm.
 - **Nội dung bịa bị phát hành** 📐 — lorem ipsum, số liệu/thuật ngữ bịa → không phát hành placeholder; kiểm chứng.
 - **Thiếu minh bạch AI** 🔒 — không tiết lộ / độ tin cậy / cách kiểm chứng → gắn nhãn AI, hiện nguồn + undo (HIG, PAIR, MS G11).
 
@@ -285,12 +287,12 @@ Công cụ AI thường sinh hai loại lỗi, và cần biết bạn đang xử
 
 ## Nguồn (authoritative primary sources)
 
-- **W3C WCAG 2.2** — Recommendation, 2023-10-05 · https://www.w3.org/TR/WCAG22/
-- **W3C Design Tokens Format Module** (DTCG), v2025.10 · https://tr.designtokens.org/format/
+- **W3C WCAG 2.2** — Recommendation 2023-10-05, updated 2024-12-12; ISO/IEC 40500:2025 · https://www.w3.org/TR/WCAG22/
+- **W3C Design Tokens Format Module** (DTCG), v2025.10 (stable) · https://www.designtokens.org/TR/2025.10/format/
 - **Apple Human Interface Guidelines** · https://developer.apple.com/design/human-interface-guidelines/
 - **Google Material Design 3** · https://m3.material.io/ · Motion tokens: material-components-android (GitHub) `docs/theming/Motion.md`
 - **web.dev / Chrome — Core Web Vitals & INP** · https://web.dev/articles/vitals · "INP becomes a Core Web Vital on March 12" (2024-01-31)
-- **HTTP Archive Web Almanac 2024 — Performance** · https://almanac.httparchive.org/en/2024/performance
+- **HTTP Archive Web Almanac 2025 — Performance** · https://almanac.httparchive.org/en/2025/performance
 - **OKLCH / OKLab** — Björn Ottosson (2020) · https://bottosson.github.io/posts/oklab/ · APCA: https://git.apcacontrast.com/
 - **CSS Values and Units Level 4** (clamp/fluid) · https://www.w3.org/TR/css-values-4/
 - **Laws of UX** (Fitts, Hick, Miller, Doherty, Jakob, Tesler) · https://lawsofux.com/

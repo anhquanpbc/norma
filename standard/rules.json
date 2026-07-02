@@ -385,8 +385,8 @@
       "domain": "antipattern",
       "tag": "CONV",
       "severity": "warn",
-      "source": "Norma §14 AI-era Anti-patterns (TELL)",
-      "source_url": "",
+      "source": "Norma §14 AI-era Anti-patterns (TELL); Adam Wathan's 2025 indigo apology",
+      "source_url": "https://x.com/adamwathan/status/1953510802159219096",
       "rationale": {
         "en": "The #667eea->#764ba2 indigo gradient is the AI default 'tell' that erases brand distinctiveness. Define brand tokens instead.",
         "vi": "Gradient indigo #667eea->#764ba2 là 'dấu hiệu' mặc định của AI, xoá bản sắc thương hiệu. Hãy định nghĩa token thương hiệu."
