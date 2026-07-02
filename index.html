@@ -13,6 +13,7 @@
    focus ≥2px/≥3:1 · reduced-motion respected · 0 network requests.
    ================================================================= */
 :root{
+  color-scheme: light;   /* UA widgets (form controls, scrollbars) match the light theme */
   /* ---- primitive color tokens (OKLCH) ---- */
   --ink:        oklch(0.20 0.028 258);
   --ink-2:      oklch(0.40 0.022 258);
@@ -113,7 +114,7 @@ header.bar{ position:sticky; top:0; z-index:50; background:oklch(0.983 0.004 250
   color:var(--ink); display:flex; align-items:center; gap:8px; flex-shrink:0; }
 .brand .dot{ width:9px; height:9px; border-radius:2px; background:var(--azure);
   box-shadow:0 0 0 3px var(--azure-wash); }
-nav.sections{ display:flex; gap:2px; margin-left:auto; overflow-x:auto; }
+nav.sections{ display:flex; gap:2px; margin-inline-start:auto; overflow-x:auto; }
 nav.sections a{ font-family:var(--mono); font-size:12px; letter-spacing:0.03em; text-transform:uppercase;
   color:var(--ink-3); text-decoration:none; padding:8px 9px; border-radius:6px; white-space:nowrap;
   min-height:34px; display:flex; align-items:center; transition:color .15s var(--ease), background .15s var(--ease); }
@@ -166,7 +167,7 @@ ul.spec li b{ color:var(--ink); }
 /* ---- tables ---- */
 .tbl-wrap{ overflow-x:auto; border:1px solid var(--line); border-radius:var(--radius); }
 table{ width:100%; border-collapse:collapse; font-size:14px; }
-thead th{ text-align:left; background:var(--surface-2); color:var(--ink); font-weight:650;
+thead th{ text-align:start; background:var(--surface-2); color:var(--ink); font-weight:650;
   padding:var(--s-3) var(--s-4); border-bottom:1px solid var(--line-2); font-family:var(--mono);
   font-size:12px; letter-spacing:0.03em; text-transform:uppercase; white-space:nowrap; }
 tbody td{ padding:var(--s-3) var(--s-4); border-bottom:1px solid var(--line); color:var(--ink-2); vertical-align:top; }
@@ -207,7 +208,7 @@ pre .c-mut{ color:oklch(0.62 0.02 258); }  /* comment */
 /* ---- self-audit strip ---- */
 .audit{ display:flex; flex-wrap:wrap; gap:8px; margin-top:var(--s-6); align-items:center; }
 .audit .lbl{ font-family:var(--mono); font-size:11px; text-transform:uppercase; letter-spacing:0.06em;
-  color:var(--ink-3); margin-right:4px; }
+  color:var(--ink-3); margin-inline-end:4px; }
 .audit .item{ font-family:var(--mono); font-size:11.5px; color:var(--ink-2); background:var(--surface);
   border:1px solid var(--line); border-radius:20px; padding:4px 10px; display:inline-flex; align-items:center; gap:5px; }
 .audit .item::before{ content:""; width:6px; height:6px; border-radius:50%; background:var(--good); }
@@ -257,7 +258,7 @@ select{ font-family:var(--sans); font-size:14px; padding:8px 10px; border:1px so
 .gauge-name span{ font-weight:400; color:var(--ink-3); font-size:12px; }
 .gauge-bar{ display:flex; height:26px; border-radius:6px; overflow:hidden; font-family:var(--mono);
   font-size:11px; color:#fff; font-weight:600; }
-.gauge-bar > div{ display:flex; align-items:center; padding-left:8px; white-space:nowrap; }
+.gauge-bar > div{ display:flex; align-items:center; padding-inline-start:8px; white-space:nowrap; }
 .gz-good{ background:var(--good-solid); } .gz-ni{ background:var(--warn); color:oklch(0.30 0.05 80); } .gz-bad{ background:var(--bad-solid); }
 
 /* target size demo */
@@ -318,7 +319,7 @@ select{ font-family:var(--sans); font-size:14px; padding:8px 10px; border:1px so
 .tell-bars{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
 .tell-bar{ height:52px; border-radius:8px; display:flex; align-items:flex-end; padding:6px 8px;
   font-family:var(--mono); font-size:10px; color:#fff; }
-/* norma-disable antipattern.indigo-default -- intentional TELL demo (shows the AI default cliché) */
+/* norma-disable antipattern.indigo-default tokens.color-only -- intentional TELL demo (shows the AI default cliché) */
 .tell-purple{ background:linear-gradient(135deg,#667eea,#764ba2); }  /* the AI default cliché */
 .tell-brand{ background:var(--azure-ink); }
 
@@ -645,7 +646,7 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
       <div style="display:flex; gap:16px; margin-bottom:14px; align-items:center; flex-wrap:wrap">
         <label class="ctrl" style="margin:0"><span class="en">Text</span><span class="vi">Chữ</span><br><input type="color" id="fgColor" value="#5b6472"></label>
         <label class="ctrl" style="margin:0"><span class="en">Background</span><span class="vi">Nền</span><br><input type="color" id="bgColor" value="#ffffff"></label>
-        <div style="flex:1; text-align:right">
+        <div style="flex:1; text-align:end">
           <div class="cc-result" id="ccRatio">—</div>
           <div class="note" style="margin:0"><span class="en">contrast ratio</span><span class="vi">tỷ lệ tương phản</span></div>
         </div>

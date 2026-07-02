@@ -127,6 +127,65 @@ describe("perf.img-dimensions", () => {
   });
 });
 
+describe("i18n.html-lang", () => {
+  it("flags a document whose <html> has no lang", () => {
+    const f = lint(`<html><body>hi</body></html>`, "html");
+    expect(ids(f)).toContain("i18n.html-lang");
+  });
+  it("passes <html lang=...>", () => {
+    const f = lint(`<html lang="en"><body>hi</body></html>`, "html");
+    expect(ids(f)).not.toContain("i18n.html-lang");
+  });
+  it("ignores fragments with no <html>", () => {
+    const f = lint(`<div>hi</div>`, "html");
+    expect(ids(f)).not.toContain("i18n.html-lang");
+  });
+});
+
+describe("i18n.logical-properties", () => {
+  it("flags physical margin-left and text-align:left", () => {
+    const f = lint(`.x{ margin-left:8px; text-align:left; }`, "css");
+    expect(ids(f)).toContain("i18n.logical-properties");
+  });
+  it("passes the logical equivalents", () => {
+    const f = lint(`.x{ margin-inline-start:8px; text-align:start; }`, "css");
+    expect(ids(f)).not.toContain("i18n.logical-properties");
+  });
+});
+
+describe("theme.color-scheme", () => {
+  it("flags a :root with no color-scheme", () => {
+    const f = lint(`:root{ --x:1px }`, "css");
+    expect(ids(f)).toContain("theme.color-scheme");
+  });
+  it("passes when color-scheme is declared", () => {
+    const f = lint(`:root{ color-scheme:light; --x:1px }`, "css");
+    expect(ids(f)).not.toContain("theme.color-scheme");
+  });
+});
+
+describe("tokens.color-only", () => {
+  it("flags a raw chromatic hex in a color property", () => {
+    const f = lint(`.x{ color:#3b82f6; }`, "css");
+    expect(ids(f)).toContain("tokens.color-only");
+  });
+  it("exempts neutral black/white and custom-property definitions", () => {
+    const f = lint(`:root{ --c:#3b82f6 }\n.x{ color:#fff; background:var(--c); }`, "css");
+    expect(ids(f)).not.toContain("tokens.color-only");
+  });
+});
+
+describe("antipattern.pure-dark-mode", () => {
+  it("fires for pure #000/#fff inside a dark context", () => {
+    const f = lint(`@media (prefers-color-scheme: dark){ body{ background:#000000; color:#ffffff; } }`, "css");
+    expect(ids(f)).toContain("antipattern.pure-dark-mode");
+  });
+  it("does not fire in a light context", () => {
+    const f = lint(`body{ background:#ffffff; color:#000000; }`, "css");
+    expect(ids(f)).not.toContain("antipattern.pure-dark-mode");
+  });
+});
+
 describe("dogfood: index.html has zero errors", () => {
   it("lints the reference site clean", () => {
     const indexHtml = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "..", "index.html");

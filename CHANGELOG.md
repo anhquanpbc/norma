@@ -12,6 +12,13 @@ All notable changes to this project are documented here. The format is based on
   `standard/rules.yaml` (15 rules, 9 SPEC) → generated `standard/rules.json`, schema-validated.
 - Added §14 "AI-era Design Anti-patterns" to `REFERENCE.md` (previously only in the site).
 - Reconciled the domain count to 13 across README, the site, and the reference.
+- **Enforceable i18n + theme (P2):** added `i18n.html-lang` (SPEC, WCAG 3.1.1), `i18n.logical-properties`
+  (CONV, CSS Logical Properties L1) and `theme.color-scheme` (CONV, CSS Color Adjustment L1); implemented
+  the real `tokens.color-only` check (raw chromatic hex, neutral black/white exempt) and enabled
+  `antipattern.pure-dark-mode` scoped to dark contexts (`forbiddenValue` now reads `context`). Shipped a
+  dark theme ramp (`color.dark.*`) + a `$themes` map in `tokens.tokens.json`. Catalog is now **18 rules
+  (10 SPEC)**; the reference site dogfoods clean against all of them. (`tokens.spacing-scale` stays
+  agent-advisory pending a reference raw-px → token pass — a strict scale check would be noisy today.)
 
 ### Added
 

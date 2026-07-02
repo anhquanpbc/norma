@@ -1,5 +1,10 @@
 {
   "$description": "Norma design tokens — W3C DTCG Format Module v2025.10. The single source of truth for the palette, spacing, type scale, radius and motion. The brand color lives here and nowhere else.",
+  "$themes": {
+    "$description": "Light is the default; dark remaps the semantic tier only. Consumers apply via prefers-color-scheme: dark or [data-theme=dark]. Enforced by rules theme.color-scheme and antipattern.pure-dark-mode.",
+    "light": { "surface": "{color.surface.1}", "text": "{color.ink.1}", "brand": "{color.brand.azure}" },
+    "dark": { "surface": "{color.dark.surface.1}", "text": "{color.dark.ink.1}", "brand": "{color.dark.brand.azure}" }
+  },
   "color": {
     "$type": "color",
     "$description": "OKLCH palette. Primitive ramp + semantic aliases (3-tier model).",
@@ -33,6 +38,24 @@
       "secondary": { "$value": "{color.ink.2}", "$type": "color" },
       "muted": { "$value": "{color.ink.3}", "$type": "color" },
       "link": { "$value": "{color.brand.azure-ink}", "$type": "color" }
+    },
+    "dark": {
+      "$description": "Dark theme ramp — near-black surfaces + off-white ink (never pure #000/#fff), lighter brand for contrast on dark. Remap the semantic tier to these under prefers-color-scheme: dark or [data-theme=dark].",
+      "paper": { "$value": "oklch(0.17 0.008 258)" },
+      "surface": {
+        "1": { "$value": "oklch(0.21 0.010 258)", "$description": "Dark card surface (~#1c1f24, not pure black)." },
+        "2": { "$value": "oklch(0.25 0.012 258)" }
+      },
+      "ink": {
+        "1": { "$value": "oklch(0.93 0.010 250)", "$description": "Primary text on dark (~#e9ecf1, not pure white)." },
+        "2": { "$value": "oklch(0.78 0.012 250)" },
+        "3": { "$value": "oklch(0.66 0.012 250)", "$description": "Muted text on dark (AA on dark surfaces)." }
+      },
+      "line": { "$value": "oklch(0.32 0.012 258)" },
+      "brand": {
+        "azure": { "$value": "oklch(0.72 0.14 252)", "$description": "Brand azure lifted for dark backgrounds." },
+        "azure-ink": { "$value": "oklch(0.80 0.11 252)", "$description": "Link/text azure on dark (>=4.5:1 on dark surface)." }
+      }
     }
   },
   "space": {

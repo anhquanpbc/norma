@@ -113,6 +113,17 @@ const reducedMotion: Check = (ctx, rules) => {
   return [];
 };
 
+// A "dark context" = inside @media (prefers-color-scheme: dark) or a .dark / [data-theme=dark] scope.
+function inDarkContext(node: Declaration): boolean {
+  let p = node.parent as { type?: string; name?: string; params?: string; selector?: string; parent?: unknown } | undefined;
+  while (p) {
+    if (p.type === "atrule" && /^media$/i.test(p.name ?? "") && /prefers-color-scheme\s*:\s*dark/i.test(p.params ?? "")) return true;
+    if (p.type === "rule" && /\.dark\b|\.theme-dark\b|\[data-theme[~|^$*]?=['"]?dark/i.test(p.selector ?? "")) return true;
+    p = p.parent as typeof p;
+  }
+  return false;
+}
+
 const forbiddenValue: Check = (ctx, rules) => {
   const out: Finding[] = [];
   for (const block of ctx.css) {
@@ -121,6 +132,8 @@ const forbiddenValue: Check = (ctx, rules) => {
         const patterns = ((r.check as { patterns?: string[] }).patterns ?? []);
         const hit = patterns.find((p) => d.value.toLowerCase().includes(p.toLowerCase()));
         if (!hit) continue;
+        // context: "dark-surface" rules only fire inside a dark theme scope.
+        if ((r.check as { context?: string }).context === "dark-surface" && !inDarkContext(d)) continue;
         const parent = d.parent;
         if (parent && parent.type === "rule" && ruleDisabled(parent as PostcssRule, r.id)) continue;
         out.push(mk(ctx, r, cssLine(block, d),
@@ -225,6 +238,85 @@ const targetSize: Check = (ctx, rules) => {
   return out;
 };
 
+// ---------- i18n / theme checks ----------
+const htmlLang: Check = (ctx, rules) => {
+  if (!ctx.dom || !/<html\b/i.test(ctx.source)) return []; // only a full document, not a fragment
+  const r = rules[0];
+  const html = ctx.dom.querySelector("html");
+  if (!html) return [];
+  const lang = (html.getAttribute("lang") ?? "").trim();
+  if (lang || elDisabled(html, r.id)) return [];
+  return [mk(ctx, r, elementLine(ctx, html),
+    "<html> has no lang attribute — set the document's default language.",
+    "<html> không có thuộc tính lang — đặt ngôn ngữ mặc định của tài liệu.")];
+};
+
+const logicalProperties: Check = (ctx, rules) => {
+  const r = rules[0];
+  const dir = /^(left|right)$/i;
+  const out: Finding[] = [];
+  for (const block of ctx.css) {
+    block.root.walkDecls((d) => {
+      const prop = d.prop.toLowerCase();
+      let hit: string | null = null;
+      if (/^(margin|padding)-(left|right)$/.test(prop)) hit = prop;
+      else if ((prop === "text-align" || prop === "float" || prop === "clear") && dir.test(d.value.trim())) hit = `${prop}:${d.value.trim().toLowerCase()}`;
+      if (!hit) return;
+      const parent = d.parent;
+      if (parent && parent.type === "rule" && ruleDisabled(parent as PostcssRule, r.id)) return;
+      out.push(mk(ctx, r, cssLine(block, d),
+        `Physical "${hit}" — use the logical (inline) equivalent for RTL / vertical support.`,
+        `Vật lý "${hit}" — dùng bản logic (inline) để hỗ trợ RTL / viết dọc.`));
+    });
+  }
+  return out;
+};
+
+const colorScheme: Check = (ctx, rules) => {
+  const r = rules[0];
+  if (!ctx.css.length) return [];
+  if (ctx.dom && ctx.dom.querySelectorAll("meta").some((m) => (m.getAttribute("name") ?? "").toLowerCase() === "color-scheme")) return [];
+  let declared = false;
+  let rootLine = 0;
+  for (const block of ctx.css) {
+    block.root.walkDecls((d) => { if (d.prop.toLowerCase() === "color-scheme") declared = true; });
+    block.root.walkRules((rule) => { if (!rootLine && /(^|,)\s*(:root|html)\b/.test(rule.selector)) rootLine = cssLine(block, rule); });
+  }
+  if (declared || !rootLine) return []; // no :root/html block => a snippet, don't require it
+  return [mk(ctx, r, rootLine,
+    "No color-scheme declared — UA-rendered widgets (form controls, scrollbars) won't match the theme.",
+    "Chưa khai báo color-scheme — widget do trình duyệt vẽ (form control, thanh cuộn) sẽ không khớp theme.")];
+};
+
+function hexRgb(h: string): [number, number, number] | null {
+  let s = h.replace("#", "");
+  if (s.length === 3) s = s.split("").map((c) => c + c).join("");
+  if (s.length < 6) return null;
+  return [parseInt(s.slice(0, 2), 16), parseInt(s.slice(2, 4), 16), parseInt(s.slice(4, 6), 16)];
+}
+const COLOR_PROP = /^(color|background(-color)?|border(-(top|right|bottom|left))?(-color)?|outline(-color)?|fill|stroke|box-shadow|text-decoration-color|caret-color|text-shadow)$/;
+const colorTokenOnly: Check = (ctx, rules) => {
+  const r = rules[0];
+  const out: Finding[] = [];
+  for (const block of ctx.css) {
+    block.root.walkDecls((d) => {
+      const prop = d.prop.toLowerCase();
+      if (prop.startsWith("--") || !COLOR_PROP.test(prop)) return; // token definitions & non-color props are fine
+      const hexes = d.value.match(/#[0-9a-fA-F]{3}(?:[0-9a-fA-F]{3})?\b/g);
+      if (!hexes) return;
+      const chromatic = hexes.find((h) => { const rgb = hexRgb(h); return rgb !== null && Math.max(...rgb) - Math.min(...rgb) > 12; });
+      if (!chromatic) return; // neutral black / white / grey is exempt
+      const parent = d.parent;
+      if (parent && parent.type === "rule" && ruleDisabled(parent as PostcssRule, r.id)) return;
+      out.push(mk(ctx, r, cssLine(block, d),
+        `Raw color "${chromatic}" in ${d.prop} — reference a token / custom property instead.`,
+        `Màu thô "${chromatic}" trong ${d.prop} — hãy tham chiếu token / custom property.`));
+    });
+  }
+  return out;
+};
+
 export const CHECKS: Record<string, Check> = {
   contrast, focusRing, reducedMotion, forbiddenValue, formLabel, semanticControl, emojiIcon, imgDimensions, targetSize,
+  htmlLang, logicalProperties, colorScheme, colorTokenOnly,
 };

@@ -164,18 +164,66 @@ rules:
       en: "Add width and height attributes (or an aspect-ratio) to every <img>."
       vi: "Thêm thuộc tính width và height (hoặc aspect-ratio) cho mọi <img>."
 
+  - id: i18n.html-lang
+    title: { en: "<html> declares a lang", vi: "<html> khai báo lang" }
+    domain: a11y
+    tag: SPEC
+    severity: error
+    source: "WCAG 2.2 SC 3.1.1 Language of Page"
+    source_url: "https://www.w3.org/TR/WCAG22/#language-of-page"
+    rationale:
+      en: "The document's default human language must be set programmatically so screen readers pick the right pronunciation and voice, and translation tools work."
+      vi: "Ngôn ngữ mặc định của tài liệu phải đặt theo mã để trình đọc màn hình chọn đúng phát âm/giọng, và công cụ dịch hoạt động."
+    check:
+      type: htmlLang
+    remediation:
+      en: "Add lang to the root element, e.g. <html lang=\"en\"> (and lang on inline foreign-language runs, SC 3.1.2)."
+      vi: "Thêm lang vào phần tử gốc, vd <html lang=\"en\"> (và lang cho đoạn ngôn ngữ khác xen kẽ, SC 3.1.2)."
+
+  - id: i18n.logical-properties
+    title: { en: "Use logical (inline/block) CSS properties", vi: "Dùng thuộc tính CSS logic (inline/block)" }
+    domain: responsive
+    tag: CONV
+    severity: warn
+    source: "W3C CSS Logical Properties and Values L1"
+    source_url: "https://www.w3.org/TR/css-logical-1/"
+    rationale:
+      en: "Physical properties (margin-left, text-align:left, float:left) hard-code left-to-right and break under RTL / vertical writing modes. Logical properties (margin-inline-start, text-align:start) flow with the writing direction."
+      vi: "Thuộc tính vật lý (margin-left, text-align:left, float:left) cố định trái-sang-phải và vỡ khi RTL / viết dọc. Thuộc tính logic (margin-inline-start, text-align:start) chảy theo hướng viết."
+    check:
+      type: logicalProperties
+    remediation:
+      en: "Replace *-left/right with *-inline-start/end; text-align:left/right with start/end; float:left/right with inline-start/end."
+      vi: "Thay *-left/right bằng *-inline-start/end; text-align:left/right bằng start/end; float:left/right bằng inline-start/end."
+
+  - id: theme.color-scheme
+    title: { en: "Declare color-scheme", vi: "Khai báo color-scheme" }
+    domain: color
+    tag: CONV
+    severity: warn
+    source: "W3C CSS Color Adjustment Module L1"
+    source_url: "https://www.w3.org/TR/css-color-adjust-1/"
+    rationale:
+      en: "Declaring color-scheme (on :root or a <meta>) opts UA-rendered widgets — form controls, scrollbars, spellcheck — into the right light/dark rendering and prevents a flash of mismatched system chrome."
+      vi: "Khai báo color-scheme (trên :root hoặc <meta>) giúp các widget do trình duyệt vẽ — form control, thanh cuộn, spellcheck — hiển thị đúng sáng/tối và tránh nháy giao diện hệ thống."
+    check:
+      type: colorScheme
+    remediation:
+      en: "Add color-scheme: light (or 'light dark') to :root, or <meta name=\"color-scheme\" content=\"light dark\">."
+      vi: "Thêm color-scheme: light (hoặc 'light dark') vào :root, hoặc <meta name=\"color-scheme\" content=\"light dark\">."
+
   - id: tokens.color-only
     title: { en: "Color comes from tokens, not raw hex", vi: "Màu lấy từ token, không hex trần" }
     domain: tokens
     tag: CONV
-    severity: off
+    severity: warn
     source: "Norma §1 Design Tokens"
     source_url: ""
     rationale:
-      en: "Hard-coded hex/rgb outside the token definitions defeats theming and drifts from the palette."
-      vi: "Hex/rgb cứng ngoài phần định nghĩa token phá vỡ theming và lệch khỏi palette."
+      en: "Hard-coded chromatic hex/rgb/hsl outside the token definitions defeats theming and drifts from the palette. Neutral black/white and greys are exempt."
+      vi: "Hex/rgb/hsl màu cứng ngoài phần định nghĩa token phá vỡ theming và lệch khỏi palette. Đen/trắng trung tính và xám được miễn."
     check:
-      type: manual  # planned static check (colorTokenOnly); agent-enforced until the token/theme phase implements it
+      type: colorTokenOnly
     remediation:
       en: "Reference a CSS custom property / token instead of a literal color."
       vi: "Tham chiếu CSS custom property / token thay vì màu cố định."
@@ -217,7 +265,7 @@ rules:
     title: { en: "No pure #000/#fff dark mode", vi: "Không dark mode #000/#fff thuần" }
     domain: antipattern
     tag: CONV
-    severity: off
+    severity: warn
     source: "Norma §14 AI-era Anti-patterns (TELL)"
     source_url: ""
     rationale:
