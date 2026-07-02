@@ -1455,6 +1455,18 @@ function initReveal(){
       io.observe(elm);
     }
   });
+
+  // Jumping via the sidebar nav (hash links) or a deep link skips sections, so their
+  // IntersectionObserver never fires and they'd stay invisible — reveal everything on hash
+  // navigation so no section is ever left blank in the docs layout.
+  function revealAll(){
+    Array.prototype.forEach.call(document.querySelectorAll(".reveal.pending"), function(el){
+      el.classList.remove("pending");
+      if(el.querySelectorAll(".gauge-bar > div").length){ animateGauges(el); }
+    });
+  }
+  window.addEventListener("hashchange", revealAll);
+  if(location.hash){ revealAll(); }
 }
 </script>
 </body>
