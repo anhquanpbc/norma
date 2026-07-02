@@ -1,0 +1,40 @@
+name: Publish CLI
+
+# Push a tag (e.g. `git tag v1.0.1 && git push --tags`) to publish @norma/design-lint.
+# One-time setup by the maintainer: add an npm automation token as the NPM_TOKEN repo secret.
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write # npm provenance (OIDC-signed provenance attestation)
+
+jobs:
+  publish:
+    name: Verify, then publish @norma/design-lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+          registry-url: https://registry.npmjs.org
+      - run: npm ci
+      - name: Verify — build + unit tests + anti-drift + dogfood
+        run: |
+          npm run build
+          npm test
+          npm run check:drift
+          node packages/design-lint/dist/cli.js index.html
+      - name: Browser self-test — axe × theme × lang, 0-network, overflow
+        run: |
+          npx playwright install --with-deps chromium firefox webkit
+          npx playwright test
+      - name: Publish (public, with provenance)
+        working-directory: packages/design-lint
+        run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

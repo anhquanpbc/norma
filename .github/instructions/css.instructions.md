@@ -14,7 +14,8 @@ Use tokens from `standard/tokens.tokens.json`. Color and spacing come from token
 - 🔒 SPEC `color.contrast.large-ui` (error) — Large text & UI contrast >= 3:1 · [WCAG 2.2 SC 1.4.3 / 1.4.11 Non-text Contrast](https://www.w3.org/TR/WCAG22/#non-text-contrast)
 - 🔒 SPEC `a11y.focus-ring-single` (error) — Visible focus indicator (never removed) · [WCAG 2.2 SC 2.4.7 Focus Visible](https://www.w3.org/TR/WCAG22/#focus-visible)
 - 🔒 SPEC `a11y.reduced-motion` (error) — Honor prefers-reduced-motion · [WCAG 2.2 SC 2.3.3 Animation from Interactions](https://www.w3.org/TR/WCAG22/#animation-from-interactions)
+- 📐 CONV `i18n.logical-properties` (warn) — Use logical (inline/block) CSS properties · [W3C CSS Logical Properties and Values L1](https://www.w3.org/TR/css-logical-1/)
+- 📐 CONV `theme.color-scheme` (warn) — Declare color-scheme · [W3C CSS Color Adjustment Module L1](https://www.w3.org/TR/css-color-adjust-1/)
 - 📐 CONV `tokens.color-only` (warn) — Color comes from tokens, not raw hex · Norma §1 Design Tokens
-- 📐 CONV `tokens.spacing-scale` (off) — Spacing snaps to the 8px scale · Norma §2 Spacing & Grid
 - 📐 CONV `antipattern.indigo-default` (warn) — No default indigo/purple gradient · Norma §14 AI-era Anti-patterns (TELL)
 - 📐 CONV `antipattern.pure-dark-mode` (warn) — No pure #000/#fff dark mode · Norma §14 AI-era Anti-patterns (TELL)

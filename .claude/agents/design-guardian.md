@@ -43,6 +43,7 @@ sources and machine assertions lives in `standard/rules.json`.
 - **a11y.semantic-control** — interactive controls are `<button>`/`<a>`, not `<div onClick>` (4.1.2).
 - **a11y.emoji-icon** — no emoji as an interactive icon without a real text/aria label (1.1.1).
 - **a11y.img-alt** — every `<img>` has an `alt` (descriptive text, or `alt=""` if purely decorative) (1.1.1).
+- **i18n.html-lang** — set `<html lang>` so AT and translation tools pick the right language (WCAG 3.1.1); more under *Internationalization & theming* below.
 
 ## Anti-defaults — TELL (📐, actively avoid)
 
@@ -55,6 +56,7 @@ Not compliance failures, but they erase brand distinctiveness and often *induce*
 - **Glassmorphism by default** — at most 2–3 glass surfaces + a scrim, never everywhere.
 - **tokens.color-only / tokens.spacing-scale** — no raw hex, no off-scale px; snap to the 8px scale.
 - **perf.img-dimensions** — set `width`/`height` (or `aspect-ratio`) on every `<img>` to prevent CLS.
+- **a11y.heading-order** — never skip a heading level (`h2 → h4`); descend one at a time so the screen-reader outline stays correct (WCAG 1.3.1, axe best-practice).
 
 ## Internationalization & theming
 
@@ -103,6 +105,7 @@ npx @norma/design-lint "**/*.{html,css}"     # gate SPEC violations; exits non-z
 - 🔒 SPEC `a11y.semantic-control` (error) — Interactive controls are <button>/<a> · [WCAG 2.2 SC 4.1.2 Name, Role, Value](https://www.w3.org/TR/WCAG22/#name-role-value)
 - 🔒 SPEC `a11y.emoji-icon` (warn) — No emoji as interactive icons · [WCAG 2.2 SC 1.1.1 Non-text Content](https://www.w3.org/TR/WCAG22/#non-text-content)
 - 🔒 SPEC `a11y.img-alt` (error) — Every <img> has an alt attribute · [WCAG 2.2 SC 1.1.1 Non-text Content](https://www.w3.org/TR/WCAG22/#non-text-content)
+- 📐 CONV `a11y.heading-order` (warn) — Headings don't skip a level · [WCAG 2.2 SC 1.3.1 Info and Relationships](https://www.w3.org/TR/WCAG22/#info-and-relationships)
 - 📐 CONV `perf.img-dimensions` (warn) — Images set width/height or aspect-ratio · [web.dev — Optimize CLS](https://web.dev/articles/cls)
 - 🔒 SPEC `i18n.html-lang` (error) — <html> declares a lang · [WCAG 2.2 SC 3.1.1 Language of Page](https://www.w3.org/TR/WCAG22/#language-of-page)
 - 📐 CONV `i18n.logical-properties` (warn) — Use logical (inline/block) CSS properties · [W3C CSS Logical Properties and Values L1](https://www.w3.org/TR/css-logical-1/)

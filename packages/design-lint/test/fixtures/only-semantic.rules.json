@@ -1,0 +1,17 @@
+{
+  "version": "test",
+  "rules": [
+    {
+      "id": "a11y.semantic-control",
+      "tag": "SPEC",
+      "severity": "error",
+      "domain": "antipattern",
+      "title": { "en": "Interactive controls are <button>/<a>", "vi": "Điều khiển tương tác là <button>/<a>" },
+      "source": "WCAG 2.2 SC 4.1.2 Name, Role, Value",
+      "source_url": "https://www.w3.org/TR/WCAG22/#name-role-value",
+      "rationale": { "en": "A <div onclick> is not keyboard-operable.", "vi": "<div onclick> không thao tác bằng bàn phím." },
+      "remediation": { "en": "Use <button> or <a>.", "vi": "Dùng <button> hoặc <a>." },
+      "check": { "type": "semanticControl" }
+    }
+  ]
+}

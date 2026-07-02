@@ -4,6 +4,46 @@ All notable changes to this project are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The **standard** is versioned in
 `standard/VERSION`; the **CLI** (`@norma/design-lint`) is versioned in its own `package.json`.
 
+## [Unreleased]
+
+Post-1.0.0 hardening from an independent multi-dimension audit. The CLI was never published, so these
+land **before the first npm release**.
+
+### Added
+
+- **New rule `a11y.heading-order`** (📐 CONV, WCAG 1.3.1) — flags a skipped heading level (`h2 → h4`).
+  The catalog is now **22 rules (10 SPEC 🔒 / 12 CONV 📐)**.
+- **`publish.yml`** — a tag-triggered `npm publish --provenance --access public` behind the full verify
+  gate, so releasing the CLI is push-button (set the `NPM_TOKEN` secret once). The package now declares
+  `publishConfig.access: "public"`, an `exports` map, and ships its own `LICENSE`.
+- **CLI config validation** — `.normarc.json` is parsed defensively (a friendly error, no stack trace)
+  and override severities are checked against `error | warn | off`.
+- CI now runs a **Node 22 + 24 matrix** and a **dependency-review** gate on pull requests.
+
+### Fixed
+
+- **Contrast false positive** — large text sized via a token (`font-size: var(--h1)`) was misclassified
+  as body text and failed at 4.5:1; the size is now resolved through tokens first and held to 3:1.
+- **Inline styles are linted** — the CSS checks (contrast, token-only color, forbidden values, logical
+  properties) previously ignored `style="…"` attributes, the surface AI-generated markup leans on most.
+- **`a11y.target-size`** now flags a control undersized in *either* axis (was `&&`, missing `16×100`) and
+  reads `min-width` / `min-height`.
+- **`tokens.color-only`** now catches `rgb()` / `hsl()` / 8-digit hex, not just 3/6-digit hex.
+- **`a11y.emoji-icon`** now covers Dingbats / Misc-Technical / arrow icons (✅ ❤ ✨ ⌚) and accepts
+  `title` / `aria-labelledby` / `[role=button]` as an accessible name.
+- **Translucent foregrounds** (alpha 0.5–0.99) are alpha-composited over the background instead of scored
+  as opaque, so they no longer over-report contrast.
+- **Generated scoped Copilot files** are derived from each rule's check-type surface (not a hand-kept id
+  list), so the `html` / `css` instruction files can't silently omit a mandate — a drift assertion enforces
+  it. Restores the previously-missing `a11y.img-alt`, `i18n.html-lang`, `i18n.logical-properties`,
+  `theme.color-scheme`, `security.*`.
+- **Reference site** — card headings no longer skip a level (`h4` → `h3`); the docs search box has a
+  persistent visible label; language choice persists (localStorage + `navigator.language`) like the theme;
+  the skip link targets the content start (`#top`); code blocks keep a border in dark mode; scroll-spy uses
+  `getBoundingClientRect` (robust to positioned ancestors).
+- **REFERENCE** — documented the §10 Forms & Responsive merge (the former §10 + §11) in both languages, so the numbering no longer reads as an accidental gap (the site already labels it "§10–11").
+- **Tests** — **87 unit tests** (was 58); coverage 94% statements / 87% branches.
+
 ## [1.0.0] — 2026-07-02
 
 First tagged release of the Norma standard (`standard/VERSION` 1.0.0) and the

@@ -233,6 +233,8 @@ Ratio = (L1 + 0.05)/(L2 + 0.05), range 1:1–21:1.
 
 ## 10. Forms & Responsive
 
+> *§10 (Forms) and §11 (Responsive) are merged into this one section — there is no standalone §11; the reference site labels it "§10–11".*
+
 **📐**
 - **Layout:** single-column, top-aligned labels (best for scanning + mobile full-width). Avoid left-aligned labels and placeholder-as-label.
 - **Labels:** every input has a programmatically associated `<label>` (`for`/`id`) 🔒 — improves SR context and enlarges the tap target.

@@ -5,9 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>UX/UI Technical Standards 2025 — Bilingual Reference</title>
 <script>document.documentElement.classList.add('js');
-(function(){var t;try{t=localStorage.getItem('norma-theme');}catch(e){}
+(function(){var d=document.documentElement;var t;try{t=localStorage.getItem('norma-theme');}catch(e){}
 if(t!=='dark'&&t!=='light'){t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}
-document.documentElement.setAttribute('data-theme',t);})();</script>
+d.setAttribute('data-theme',t);
+var l;try{l=localStorage.getItem('norma-lang');}catch(e){}
+if(l!=='en'&&l!=='vi'){l=(navigator.language||'en').toLowerCase().indexOf('vi')===0?'vi':'en';}
+d.setAttribute('data-lang',l);d.lang=l;})();</script>
 <style>
 /* =================================================================
    SELF-CONTAINED DESIGN SYSTEM — no external fonts, no CDN, offline-safe.
@@ -112,10 +115,9 @@ html[data-lang="en"] .en{ display:revert; }
 html[data-lang="vi"] .vi{ display:revert; }
 
 /* ---- typography ---- */
-h1,h2,h3,h4{ font-weight:750; line-height:1.12; letter-spacing:-0.02em; margin:0; color:var(--ink); }
+h1,h2,h3{ font-weight:750; line-height:1.12; letter-spacing:-0.02em; margin:0; color:var(--ink); }
 h2{ font-size:var(--t-3); letter-spacing:-0.025em; }
-h3{ font-size:var(--t-1); letter-spacing:-0.015em; }
-h4{ font-size:var(--t-0); }
+h3{ font-size:var(--t-0); }
 p{ margin:0 0 var(--s-3); color:var(--ink-2); max-width:70ch; }
 strong{ color:var(--ink); font-weight:650; }
 code{ font-family:var(--mono); font-size:0.9em; background:var(--surface-2);
@@ -182,6 +184,8 @@ main{ max-width:var(--maxw); margin:0 auto; padding:0 var(--s-5); }
 .doc-shell > main{ max-width:none; margin:0; padding:0; }
 .doc-nav{ position:sticky; top:68px; align-self:start; max-height:calc(100vh - 84px);
   overflow-y:auto; padding-block:var(--s-3) var(--s-5); }
+.doc-search-label{ display:block; font-family:var(--mono); font-size:11px; letter-spacing:0.04em;
+  text-transform:uppercase; color:var(--ink-3); margin-block-end:6px; }
 .doc-search{ inline-size:100%; box-sizing:border-box; font-family:inherit; font-size:13px;
   padding:8px 11px; margin-block-end:var(--s-4); border:1px solid var(--line-2); border-radius:8px;
   background:var(--surface); color:var(--ink); }
@@ -217,7 +221,7 @@ section:first-of-type{ border-top:0; }
 .card{ background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
   padding:var(--s-5); }
 .card.tint{ background:var(--surface-2); }
-.card h4{ margin-bottom:var(--s-2); }
+.card h3{ margin-bottom:var(--s-2); }
 .card p{ font-size:var(--t-0); margin-bottom:0; }
 .card p + p{ margin-top:var(--s-3); }
 
@@ -246,7 +250,7 @@ td b{ color:var(--ink); }
 /* ---- code block ---- */
 pre{ background:oklch(0.20 0.028 258); color:oklch(0.92 0.01 250); font-family:var(--mono);
   font-size:12.5px; line-height:1.6; padding:var(--s-4); border-radius:var(--radius);
-  overflow-x:auto; margin:0; }
+  border:1px solid oklch(0.32 0.02 258); overflow-x:auto; margin:0; }
 pre code{ background:none; border:0; padding:0; border-radius:0; font-size:inherit; color:inherit; white-space:pre; }
 pre .c-key{ color:oklch(0.78 0.13 60); }   /* amber */
 pre .c-str{ color:oklch(0.78 0.12 155); }  /* green */
@@ -434,7 +438,7 @@ nav.sections a{ position:relative; }
 footer{ background:var(--footer-bg); color:oklch(0.72 0.01 250); margin-top:var(--s-9);
   padding:var(--s-8) var(--s-5); }
 footer .fin{ max-width:var(--maxw); margin:0 auto; }
-footer h4{ color:oklch(0.96 0.005 250); font-family:var(--mono); font-size:12px; text-transform:uppercase;
+footer h3{ color:oklch(0.96 0.005 250); font-family:var(--mono); font-size:12px; text-transform:uppercase;
   letter-spacing:0.06em; margin-bottom:var(--s-4); }
 footer a{ color:oklch(0.80 0.08 252); }
 footer .src{ color:oklch(0.66 0.02 250); }   /* lift source labels to AA (>=4.5:1) on the dark footer */
@@ -448,7 +452,7 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
 </style>
 </head>
 <body>
-<a href="#s1" class="skip"><span class="en">Skip to content</span><span class="vi">Tới nội dung</span></a>
+<a href="#top" class="skip"><span class="en">Skip to content</span><span class="vi">Tới nội dung</span></a>
 
 <header class="bar">
   <div class="bar-inner">
@@ -465,6 +469,7 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
 
 <div class="doc-shell">
 <aside class="doc-nav" aria-label="Documentation navigation">
+  <label class="doc-search-label" for="docSearch"><span class="en">Search</span><span class="vi">Tìm kiếm</span></label>
   <input type="search" class="doc-search" id="docSearch" aria-label="Search the standard" placeholder="Search the standard…" autocomplete="off">
   <nav class="sections" aria-label="Sections">
     <a href="#top"><span class="en">Overview</span><span class="vi">Tổng quan</span></a>
@@ -486,7 +491,7 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
 </aside>
 
 <main>
-<section class="hero" id="top">
+<section class="hero" id="top" tabindex="-1">
   <div class="hero-grid"></div>
   <div class="hero-inner">
     <div class="eyebrow"><span class="en">Consolidated technical reference · 13 domains · primary-source cited</span><span class="vi">Tài liệu kỹ thuật hợp nhất · 13 mảng · trích dẫn nguồn gốc</span></div>
@@ -571,7 +576,7 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
 
     <div>
       <div class="card" style="margin-bottom:var(--s-5)">
-        <h4><span class="en">Three-tier taxonomy</span><span class="vi">Phân loại ba tầng</span></h4>
+        <h3><span class="en">Three-tier taxonomy</span><span class="vi">Phân loại ba tầng</span></h3>
         <ul class="spec">
           <li><span class="k">1 · primitive</span> <span><b><span class="en">Raw values, no meaning.</span><span class="vi">Giá trị thô, vô nghĩa.</span></b> <code>blue.500 = #3b82f6</code></span></li>
           <li><span class="k">2 · semantic</span> <span><b><span class="en">Intent, references primitives.</span><span class="vi">Ý nghĩa, trỏ primitive.</span></b> <code>action.primary → blue.500</code></span></li>
@@ -580,7 +585,7 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
         <p class="note"><span class="en">Re-theme (light/dark, brand A/B) by remapping the <b>semantic</b> tier only — never touch every call site.</span><span class="vi">Đổi theme (sáng/tối, thương hiệu A/B) chỉ bằng cách ánh xạ lại tầng <b>semantic</b> — không đụng mọi nơi sử dụng.</span></p>
       </div>
       <div class="card tint">
-        <h4><span class="en">Toolchain</span><span class="vi">Bộ công cụ</span> <span class="badge conv">CONV</span></h4>
+        <h3><span class="en">Toolchain</span><span class="vi">Bộ công cụ</span> <span class="badge conv">CONV</span></h3>
         <p><span class="en"><b>Style Dictionary</b> (DTCG since v4) · <b>Tokens Studio</b> for Figma (toggle "W3C DTCG") · Terrazzo · Figma Variables · Supernova · zeroheight. Validate against the DTCG JSON Schema before shipping.</span><span class="vi"><b>Style Dictionary</b> (DTCG từ v4) · <b>Tokens Studio</b> cho Figma (bật "W3C DTCG") · Terrazzo · Figma Variables · Supernova · zeroheight. Kiểm tra bằng DTCG JSON Schema trước khi phát hành.</span></p>
       </div>
     </div>
@@ -600,7 +605,7 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
 
   <div class="grid g2">
     <div class="card">
-      <h4><span class="en">8px spacing scale</span><span class="vi">Thang khoảng cách 8px</span> <span class="badge conv">CONV</span></h4>
+      <h3><span class="en">8px spacing scale</span><span class="vi">Thang khoảng cách 8px</span> <span class="badge conv">CONV</span></h3>
       <div style="display:flex; align-items:flex-end; gap:6px; margin:14px 0; height:70px">
         <div style="width:4px;height:4px;background:var(--azure);border-radius:2px"></div>
         <div style="width:8px;height:8px;background:var(--azure);border-radius:2px"></div>
@@ -616,7 +621,7 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
     </div>
 
     <div class="card">
-      <h4><span class="en">Responsive breakpoints</span><span class="vi">Breakpoint đáp ứng</span> <span class="badge spec">SPEC</span></h4>
+      <h3><span class="en">Responsive breakpoints</span><span class="vi">Breakpoint đáp ứng</span> <span class="badge spec">SPEC</span></h3>
       <div class="tbl-wrap" style="border:0">
         <table>
           <thead><tr><th><span class="en">Framework</span><span class="vi">Framework</span></th><th>sm</th><th>md</th><th>lg</th><th>xl</th><th>2xl</th></tr></thead>
@@ -662,7 +667,7 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
 
     <div>
       <div class="card" style="margin-bottom:var(--s-5)">
-        <h4><span class="en">Ratios &amp; when to use</span><span class="vi">Tỷ lệ &amp; khi nào dùng</span> <span class="badge conv">CONV</span></h4>
+        <h3><span class="en">Ratios &amp; when to use</span><span class="vi">Tỷ lệ &amp; khi nào dùng</span> <span class="badge conv">CONV</span></h3>
         <ul class="spec">
           <li><span class="k">1.200</span><span><span class="en">Minor third — text-heavy, compact UI</span><span class="vi">Minor third — UI nhiều chữ, chật</span></span></li>
           <li><span class="k">1.250</span><span><b><span class="en">Major third — general app UI (Material)</span><span class="vi">Major third — UI ứng dụng (Material)</span></b></span></li>
@@ -671,7 +676,7 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
         </ul>
       </div>
       <div class="card tint">
-        <h4><span class="en">Rules that always hold</span><span class="vi">Quy tắc luôn đúng</span></h4>
+        <h3><span class="en">Rules that always hold</span><span class="vi">Quy tắc luôn đúng</span></h3>
         <ul class="spec">
           <li><span class="en"><b>Line-height</b> body ~1.5 <span class="badge spec">SPEC 1.5×</span>, headings 1.1–1.25.</span><span class="vi"><b>Line-height</b> thân ~1.5 <span class="badge spec">SPEC 1.5×</span>, tiêu đề 1.1–1.25.</span></li>
           <li><span class="en"><b>Measure</b> 45–75 chars/line (~66 ideal).</span><span class="vi"><b>Độ dài dòng</b> 45–75 ký tự (~66 lý tưởng).</span></li>
@@ -685,16 +690,16 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
 
   <div class="grid g2" style="margin-top:var(--s-5)">
     <div class="card" style="border-left:3px solid var(--amber)">
-      <h4>🇻🇳 <span class="en">Vietnamese</span><span class="vi">Tiếng Việt</span> <span class="badge conv">CONV</span></h4>
+      <h3>🇻🇳 <span class="en">Vietnamese</span><span class="vi">Tiếng Việt</span> <span class="badge conv">CONV</span></h3>
       <p><span class="en">The most demanding Latin script: <b>134+ accented characters</b> whose precomposed forms span <b>four Unicode blocks</b> — Latin-1 Supplement, Latin Extended-A/B, and <b>Latin Extended Additional</b> (which holds the largest share). Budget fonts often skip Extended-A/B/Additional — <b>verify glyph coverage</b> (Noto Sans/Serif, Be Vietnam Pro are safe). Give a little extra line-height so stacked marks don't collide.</span><span class="vi">Chữ Latin khó nhất: <b>134+ ký tự có dấu</b> với dạng dựng sẵn trải trên <b>bốn khối Unicode</b> — Latin-1 Supplement, Latin Extended-A/B, và <b>Latin Extended Additional</b> (chứa phần lớn nhất). Font giá rẻ hay thiếu Extended-A/B/Additional — <b>kiểm tra độ phủ glyph</b> (Noto Sans/Serif, Be Vietnam Pro an toàn). Cho line-height nhỉnh hơn để dấu chồng không dính.</span></p>
     </div>
     <div class="card" style="border-left:3px solid oklch(0.6 0.16 20)">
-      <h4>🇹🇼 <span class="en">Traditional Chinese / CJK</span><span class="vi">Trung Phồn thể / CJK</span> <span class="badge conv">CONV</span></h4>
+      <h3>🇹🇼 <span class="en">Traditional Chinese / CJK</span><span class="vi">Trung Phồn thể / CJK</span> <span class="badge conv">CONV</span></h3>
       <p><span class="en">CJK fonts hold <b>20,000–80,000+ glyphs (5–20MB)</b> — delivery is the problem; subset via <code>unicode-range</code> (100+ subsets). <b>Raise line-height to ~1.7.</b> Ship <b>region-specific fonts (TC ≠ SC)</b> — Taiwan/HK readers reject Simplified; pan-CJK variants are unreliable.</span><span class="vi">Font CJK chứa <b>20.000–80.000+ glyph (5–20MB)</b> — cốt lõi là phân phối; subset bằng <code>unicode-range</code> (100+ subset). <b>Tăng line-height ~1.7.</b> Dùng <b>font theo vùng (TC ≠ SC)</b> — độc giả Đài Loan/HK không chấp nhận Giản thể; biến thể pan-CJK không đáng tin.</span></p>
     </div>
   </div>
   <div class="card" style="border-inline-start:3px solid var(--azure); margin-top:var(--s-4)">
-    <h4>🌐 <span class="en">Multi-language design</span><span class="vi">Thiết kế đa ngôn ngữ</span> <span class="badge spec">SPEC</span></h4>
+    <h3>🌐 <span class="en">Multi-language design</span><span class="vi">Thiết kế đa ngôn ngữ</span> <span class="badge spec">SPEC</span></h3>
     <p><span class="en">Declare <code>&lt;html lang&gt;</code> (WCAG 3.1.1 🔒) and tag inline foreign-language runs with <code>lang</code>. Lay out with <b>logical properties</b> — <code>margin-inline</code>, <code>padding-inline</code>, <code>text-align:start</code> — never physical <code>*-left/right</code>, so RTL (Arabic, Hebrew) and vertical writing modes mirror automatically; set <code>dir</code> and honor <code>writing-mode</code>. This site is enforced by <code>i18n.html-lang</code> + <code>i18n.logical-properties</code>.</span><span class="vi">Khai báo <code>&lt;html lang&gt;</code> (WCAG 3.1.1 🔒) và gắn <code>lang</code> cho đoạn ngôn ngữ khác xen kẽ. Bố cục bằng <b>thuộc tính logic</b> — <code>margin-inline</code>, <code>padding-inline</code>, <code>text-align:start</code> — không dùng <code>*-left/right</code> vật lý, để RTL (Ả Rập, Do Thái) và chế độ viết dọc tự lật; đặt <code>dir</code> và tôn trọng <code>writing-mode</code>. Trang này được thực thi bởi <code>i18n.html-lang</code> + <code>i18n.logical-properties</code>.</span></p>
   </div>
 </section>
@@ -745,7 +750,7 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
   </div>
 
   <div class="card tint" style="margin-top:var(--s-5)">
-    <h4>APCA <span class="en">&amp; the WCAG 3.0 direction</span><span class="vi">&amp; hướng WCAG 3.0</span> <span class="badge conv">CONV</span></h4>
+    <h3>APCA <span class="en">&amp; the WCAG 3.0 direction</span><span class="vi">&amp; hướng WCAG 3.0</span> <span class="badge conv">CONV</span></h3>
     <p><span class="en">The Accessible Perceptual Contrast Algorithm outputs a polarity- and weight-aware <b>Lc</b> value (≈−108…+106): <b>Lc 90 preferred / 75 min</b> for body text, <b>~60</b> for large/bold. Crucially, WCAG 2.x overstates contrast for near-black colors, so it <b>can't reliably guide dark mode</b> — APCA can. <b>But keep WCAG 2.x</b>: APCA reverted to "Placeholder" in the 2023-06 WCAG 3.0 draft; no release date (~2030). For dark UIs, show elevation with progressively <b>lighter surfaces</b>, not just shadows, and avoid pure black/white pairings.</span><span class="vi">Thuật toán APCA cho ra giá trị <b>Lc</b> có xét cực tính và độ đậm (≈−108…+106): <b>Lc 90 nên có / 75 tối thiểu</b> cho thân bài, <b>~60</b> cho chữ lớn/đậm. Quan trọng: WCAG 2.x phóng đại tương phản với màu gần đen nên <b>không dẫn hướng tốt cho dark mode</b> — APCA thì có. <b>Nhưng giữ WCAG 2.x</b>: APCA bị đưa về "Placeholder" trong nháp WCAG 3.0 06/2023; chưa có ngày phát hành (~2030). Với UI tối, thể hiện độ nổi bằng <b>bề mặt sáng dần</b>, không chỉ đổ bóng, và tránh cặp đen/trắng thuần.</span></p>
   </div>
 </section>
@@ -779,7 +784,7 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
 
     <div>
       <div class="card" style="margin-bottom:var(--s-5)">
-        <h4><span class="en">Focus appearance</span><span class="vi">Hình thức focus</span> <span class="badge spec">SPEC</span></h4>
+        <h3><span class="en">Focus appearance</span><span class="vi">Hình thức focus</span> <span class="badge spec">SPEC</span></h3>
         <ul class="spec">
           <li><span class="en"><b>2.4.7</b> Focus Visible (AA) — an indicator must exist.</span><span class="vi"><b>2.4.7</b> Focus nhìn thấy (AA) — phải có chỉ báo.</span></li>
           <li><span class="en"><b>2.4.11</b> Not Obscured (AA) — not fully hidden by sticky bars.</span><span class="vi"><b>2.4.11</b> Không bị che (AA) — không bị thanh dính che hết.</span></li>
@@ -788,7 +793,7 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
         <p class="note"><span class="en">Use <code>:focus-visible</code> + ≥2px outline + <code>outline-offset</code>. Never <code>outline:none</code> without a compliant replacement. <b>Try it: press Tab through this page.</b></span><span class="vi">Dùng <code>:focus-visible</code> + outline ≥2px + <code>outline-offset</code>. Đừng bao giờ <code>outline:none</code> mà không thay thế hợp chuẩn. <b>Thử: nhấn Tab qua trang này.</b></span></p>
       </div>
       <div class="card tint">
-        <h4><span class="en">Text spacing · reflow · resize</span><span class="vi">Giãn chữ · reflow · phóng to</span> <span class="badge spec">SPEC</span></h4>
+        <h3><span class="en">Text spacing · reflow · resize</span><span class="vi">Giãn chữ · reflow · phóng to</span> <span class="badge spec">SPEC</span></h3>
         <ul class="spec">
           <li><span class="k">1.4.12</span><span><span class="en">line-height <b>1.5×</b> · paragraph <b>2×</b> · letter <b>0.12×</b> · word <b>0.16×</b>, no loss</span><span class="vi">line-height <b>1.5×</b> · đoạn <b>2×</b> · chữ <b>0.12×</b> · từ <b>0.16×</b>, không mất nội dung</span></span></li>
           <li><span class="k">1.4.10</span><span><span class="en">Reflow — no 2-D scroll at <b>320px</b> (≈1280px @ 400% zoom)</span><span class="vi">Reflow — không cuộn 2 chiều ở <b>320px</b> (≈1280px @ zoom 400%)</span></span></li>
@@ -831,7 +836,7 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
 
     <div>
       <div class="card" style="margin-bottom:var(--s-5)">
-        <h4><span class="en">Image optimization</span><span class="vi">Tối ưu ảnh</span> <span class="badge conv">CONV</span></h4>
+        <h3><span class="en">Image optimization</span><span class="vi">Tối ưu ảnh</span> <span class="badge conv">CONV</span></h3>
         <ul class="spec">
           <li><span class="en"><b>Format:</b> AVIF → WebP → JPEG via <code>&lt;picture&gt;</code>. AVIF's edge over WebP ~10–12%; big wins vs legacy JPEG/PNG.</span><span class="vi"><b>Định dạng:</b> AVIF → WebP → JPEG qua <code>&lt;picture&gt;</code>. Lợi thế AVIF so WebP ~10–12%; lợi lớn so JPEG/PNG cũ.</span></li>
           <li><span class="en"><b>Responsive:</b> <code>srcset</code>+<code>sizes</code>, 3–5 widths.</span><span class="vi"><b>Responsive:</b> <code>srcset</code>+<code>sizes</code>, 3–5 cỡ rộng.</span></li>
@@ -840,7 +845,7 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
         </ul>
       </div>
       <div class="card tint">
-        <h4><span class="en">Perceived performance</span><span class="vi">Hiệu năng cảm nhận</span> <span class="badge conv">CONV</span></h4>
+        <h3><span class="en">Perceived performance</span><span class="vi">Hiệu năng cảm nhận</span> <span class="badge conv">CONV</span></h3>
         <p><span class="en">Skeleton screens, <b>optimistic UI</b> (reflect the action before the server confirms), streaming/progressive loading, and prioritizing above-the-fold all make a page <i>feel</i> faster than its raw numbers. These are UX <b>and</b> ranking signals — a tiebreaker, not a substitute for relevance.</span><span class="vi">Skeleton screen, <b>optimistic UI</b> (phản ánh hành động trước khi server xác nhận), tải streaming/tuần tự, và ưu tiên phần trên màn hình khiến trang <i>cảm thấy</i> nhanh hơn con số thô. Đây là tín hiệu UX <b>và</b> xếp hạng — yếu tố phân định, không thay thế độ liên quan.</span></p>
       </div>
     </div>
@@ -879,13 +884,13 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
 
     <div>
       <div class="card" style="margin-bottom:var(--s-5)">
-        <h4><span class="en">Duration tokens (ms)</span><span class="vi">Token thời lượng (ms)</span> <span class="badge spec">SPEC</span></h4>
+        <h3><span class="en">Duration tokens (ms)</span><span class="vi">Token thời lượng (ms)</span> <span class="badge spec">SPEC</span></h3>
         <p style="font-family:var(--mono);font-size:12.5px;color:var(--ink);line-height:1.9">
           short 50·100·150·200 &nbsp; medium 250·300·350·400<br>long 450·500·550·600 &nbsp; x-long 700·800·900·1000</p>
         <p class="note"><span class="en"><b>Micro-interactions 100–300ms</b> · optimal perceived 200–500ms · &lt;100ms = instant, &gt;1s = laggy. Desktop faster (150–200ms); exit &lt; entrance; larger travel → longer.</span><span class="vi"><b>Vi tương tác 100–300ms</b> · cảm nhận tối ưu 200–500ms · &lt;100ms = tức thì, &gt;1s = ì. Desktop nhanh hơn (150–200ms); thoát &lt; vào; di chuyển xa hơn → lâu hơn.</span></p>
       </div>
       <div class="card tint">
-        <h4><span class="en">When NOT to animate + gestures</span><span class="vi">Khi nào KHÔNG animate + cử chỉ</span> <span class="badge conv">CONV</span></h4>
+        <h3><span class="en">When NOT to animate + gestures</span><span class="vi">Khi nào KHÔNG animate + cử chỉ</span> <span class="badge conv">CONV</span></h3>
         <p><span class="en">Skip motion on high-frequency repeated actions (it adds latency) and decorative bounce/stretch in utility contexts. For mobile, use the standard gesture vocabulary and give every custom gesture a visible alternative <span class="badge spec">SPEC 2.5.7</span>; never override system-reserved edge swipes.</span><span class="vi">Bỏ chuyển động ở hành động lặp tần suất cao (thêm độ trễ) và bounce/stretch trang trí trong ngữ cảnh công cụ. Với mobile, dùng bộ cử chỉ chuẩn và cho mỗi cử chỉ tùy biến một phương án thay thế nhìn thấy được <span class="badge spec">SPEC 2.5.7</span>; đừng ghi đè cử chỉ vuốt mép của hệ thống.</span></p>
       </div>
     </div>
@@ -922,8 +927,8 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
     </table>
   </div>
   <div class="grid g2" style="margin-top:var(--s-5)">
-    <div class="card"><h4>iOS <span class="en">safe areas</span><span class="vi">vùng an toàn</span> <span class="badge spec">SPEC</span></h4><p><span class="en">Keep interactive/essential content out of the status bar, Dynamic Island, notch and home indicator via <code>safeAreaLayoutGuide</code>. Design to semantic colors (<code>label</code>, <code>systemBackground</code>) so light/dark/contrast come free. 2025's "Liquid Glass" (iOS 26) adds a translucent material layer.</span><span class="vi">Né status bar, Dynamic Island, tai thỏ và home indicator bằng <code>safeAreaLayoutGuide</code>. Thiết kế theo màu semantic (<code>label</code>, <code>systemBackground</code>) để sáng/tối/tương phản tự có. "Liquid Glass" (iOS 26, 2025) thêm lớp vật liệu trong mờ.</span></p></div>
-    <div class="card"><h4>Material <span class="en">components</span><span class="vi">thành phần</span> <span class="badge conv">CONV</span></h4><p><span class="en">Button ~40dp visual / 48dp target / 16dp padding · text field 56dp outlined / 48dp filled · checkbox·radio 40dp in 48dp target · chip ≥32dp (40 rec.) · FAB 40 / 56 / 96dp. Elevation via tonal overlays, not just shadow.</span><span class="vi">Nút ~40dp thị giác / 48dp vùng chạm / 16dp padding · text field 56dp outlined / 48dp filled · checkbox·radio 40dp trong 48dp · chip ≥32dp (khuyến nghị 40) · FAB 40 / 56 / 96dp. Độ nổi bằng lớp phủ tông, không chỉ bóng.</span></p></div>
+    <div class="card"><h3>iOS <span class="en">safe areas</span><span class="vi">vùng an toàn</span> <span class="badge spec">SPEC</span></h3><p><span class="en">Keep interactive/essential content out of the status bar, Dynamic Island, notch and home indicator via <code>safeAreaLayoutGuide</code>. Design to semantic colors (<code>label</code>, <code>systemBackground</code>) so light/dark/contrast come free. 2025's "Liquid Glass" (iOS 26) adds a translucent material layer.</span><span class="vi">Né status bar, Dynamic Island, tai thỏ và home indicator bằng <code>safeAreaLayoutGuide</code>. Thiết kế theo màu semantic (<code>label</code>, <code>systemBackground</code>) để sáng/tối/tương phản tự có. "Liquid Glass" (iOS 26, 2025) thêm lớp vật liệu trong mờ.</span></p></div>
+    <div class="card"><h3>Material <span class="en">components</span><span class="vi">thành phần</span> <span class="badge conv">CONV</span></h3><p><span class="en">Button ~40dp visual / 48dp target / 16dp padding · text field 56dp outlined / 48dp filled · checkbox·radio 40dp in 48dp target · chip ≥32dp (40 rec.) · FAB 40 / 56 / 96dp. Elevation via tonal overlays, not just shadow.</span><span class="vi">Nút ~40dp thị giác / 48dp vùng chạm / 16dp padding · text field 56dp outlined / 48dp filled · checkbox·radio 40dp trong 48dp · chip ≥32dp (khuyến nghị 40) · FAB 40 / 56 / 96dp. Độ nổi bằng lớp phủ tông, không chỉ bóng.</span></p></div>
   </div>
 </section>
 
@@ -939,14 +944,14 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
   </div>
   <div class="grid g2" style="align-items:start">
     <div class="card">
-      <h4><span class="en">States to design for every interactive element</span><span class="vi">Trạng thái cần thiết kế cho mọi phần tử tương tác</span> <span class="badge spec">SPEC</span></h4>
+      <h3><span class="en">States to design for every interactive element</span><span class="vi">Trạng thái cần thiết kế cho mọi phần tử tương tác</span> <span class="badge spec">SPEC</span></h3>
       <div style="display:flex;flex-wrap:wrap;gap:8px;margin:14px 0">
         <span class="k">default</span><span class="k">hover</span><span class="k">focus-visible</span><span class="k">active</span><span class="k">disabled</span><span class="k">loading</span><span class="k">error</span><span class="k">selected</span><span class="k">read-only</span>
       </div>
       <p class="note"><span class="en">Material adds <b>state layers</b> (overlay tints) filling the full 48dp target. <code>hover</code> is pointer-only — never gate essential info behind it.</span><span class="vi">Material thêm <b>state layer</b> (lớp phủ tông) phủ trọn vùng chạm 48dp. <code>hover</code> chỉ dành cho chuột — đừng giấu thông tin thiết yếu sau nó.</span></p>
     </div>
     <div class="card tint">
-      <h4><span class="en">Common specs</span><span class="vi">Thông số phổ biến</span> <span class="badge conv">CONV</span></h4>
+      <h3><span class="en">Common specs</span><span class="vi">Thông số phổ biến</span> <span class="badge conv">CONV</span></h3>
       <ul class="spec">
         <li><span class="en"><b>Buttons</b> 40–48px tall · ~16px padding · min-width 64–88px · action-specific labels ("Create account", not "Submit").</span><span class="vi"><b>Nút</b> cao 40–48px · padding ~16px · rộng tối thiểu 64–88px · nhãn theo hành động ("Tạo tài khoản", không phải "Gửi").</span></li>
         <li><span class="en"><b>Inputs</b> ≥44–56px · persistent label above · helper/error below · never placeholder-as-label.</span><span class="vi"><b>Input</b> ≥44–56px · nhãn cố định phía trên · trợ giúp/lỗi phía dưới · không dùng placeholder làm nhãn.</span></li>
@@ -970,7 +975,7 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
   </div>
   <div class="grid g2" style="align-items:start">
     <div class="card">
-      <h4><span class="en">Forms &amp; input</span><span class="vi">Biểu mẫu &amp; nhập liệu</span> <span class="badge conv">CONV</span></h4>
+      <h3><span class="en">Forms &amp; input</span><span class="vi">Biểu mẫu &amp; nhập liệu</span> <span class="badge conv">CONV</span></h3>
       <ul class="spec">
         <li><span class="en"><b>Layout:</b> single column, top-aligned labels. Avoid placeholder-as-label.</span><span class="vi"><b>Bố cục:</b> một cột, nhãn căn trên. Tránh placeholder làm nhãn.</span></li>
         <li><span class="en"><b>Labels</b> programmatically tied (<code>for</code>/<code>id</code>) <span class="badge spec">SPEC</span> — enlarges tap target.</span><span class="vi"><b>Nhãn</b> liên kết theo mã (<code>for</code>/<code>id</code>) <span class="badge spec">SPEC</span> — mở rộng vùng chạm.</span></li>
@@ -980,7 +985,7 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
       </ul>
     </div>
     <div class="card tint">
-      <h4><span class="en">Responsive &amp; adaptive</span><span class="vi">Đáp ứng &amp; thích ứng</span> <span class="badge conv">CONV</span></h4>
+      <h3><span class="en">Responsive &amp; adaptive</span><span class="vi">Đáp ứng &amp; thích ứng</span> <span class="badge conv">CONV</span></h3>
       <ul class="spec">
         <li><span class="en"><b>Mobile-first:</b> base styles smallest, layer <code>min-width</code> up. Include the viewport meta tag.</span><span class="vi"><b>Mobile-first:</b> style nền nhỏ nhất, thêm <code>min-width</code> lên. Nhớ thẻ meta viewport.</span></li>
         <li><span class="en"><b>Fluid:</b> <code>max-width</code>, Flex/Grid, <code>clamp()</code>.</span><span class="vi"><b>Co giãn:</b> <code>max-width</code>, Flex/Grid, <code>clamp()</code>.</span></li>
@@ -1023,7 +1028,7 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
         <p class="note"><span class="en">Decision time grows <b>logarithmically</b> with the number of equal choices <b>n</b>. Split large menus into tiers; reduce simultaneous options; use progressive disclosure.</span><span class="vi">Thời gian quyết định tăng theo <b>logarit</b> số lựa chọn <b>n</b>. Chia menu lớn thành tầng; giảm lựa chọn cùng lúc; hé lộ dần.</span></p>
       </div>
       <div class="card tint">
-        <h4><span class="en">Four more laws worth knowing</span><span class="vi">Bốn định luật nữa nên biết</span></h4>
+        <h3><span class="en">Four more laws worth knowing</span><span class="vi">Bốn định luật nữa nên biết</span></h3>
         <ul class="spec">
           <li><b>Miller</b><span><span class="en">working memory ≈ <b>7±2</b> chunks — chunk content; it's about grouping, not a hard cap.</span><span class="vi">trí nhớ làm việc ≈ <b>7±2</b> khối — chia khối; là về nhóm gộp, không phải giới hạn cứng.</span></span></li>
           <li><b>Doherty</b><span><span class="en">keep response <b>&lt;400ms</b> to sustain flow — ties to INP &lt;200ms.</span><span class="vi">giữ phản hồi <b>&lt;400ms</b> để duy trì dòng chảy — gắn với INP &lt;200ms.</span></span></li>
@@ -1111,7 +1116,7 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
   <!-- catalogs -->
   <div class="grid g2" style="margin-top:var(--s-5); align-items:start">
     <div class="card">
-      <h4><span class="en">Level 1 — Visual &amp; CSS defects</span><span class="vi">Cấp 1 — Lỗi thị giác &amp; CSS</span></h4>
+      <h3><span class="en">Level 1 — Visual &amp; CSS defects</span><span class="vi">Cấp 1 — Lỗi thị giác &amp; CSS</span></h3>
       <ul class="spec">
         <li><span class="badge viol">VIOL</span><span><b><span class="en">Nested focus rings.</span><span class="vi">Vòng focus chồng.</span></b> <span class="en">border+outline+shadow → one <code>:focus-visible</code> ring.</span><span class="vi">border+outline+shadow → một vòng <code>:focus-visible</code>.</span> <span class="src">2.4.11 / 2.4.13</span></span></li>
         <li><span class="badge tell">TELL</span><span><b><span class="en">Halo / glow overuse.</span><span class="vi">Lạm dụng halo / glow.</span></b> <span class="en">Stacked colored shadows → neutral elevation scale, one light source.</span><span class="vi">Nhiều bóng màu chồng → thang độ nổi trung tính, một nguồn sáng.</span></span></li>
@@ -1127,7 +1132,7 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
     </div>
 
     <div class="card">
-      <h4><span class="en">Level 2 — UX &amp; product diseases</span><span class="vi">Cấp 2 — Bệnh UX &amp; sản phẩm</span></h4>
+      <h3><span class="en">Level 2 — UX &amp; product diseases</span><span class="vi">Cấp 2 — Bệnh UX &amp; sản phẩm</span></h3>
       <ul class="spec">
         <li><span class="badge viol">VIOL</span><span><b><span class="en">"Inaccessible by default."</span><span class="vi">"Mặc định bất khả tiếp cận."</span></b> <span class="en"><code>&lt;div onClick&gt;</code> not <code>&lt;button&gt;</code>; no ARIA / keyboard → semantic HTML.</span><span class="vi"><code>&lt;div onClick&gt;</code> thay vì <code>&lt;button&gt;</code>; thiếu ARIA / bàn phím → HTML ngữ nghĩa.</span></span></li>
         <li><span class="badge tell">TELL</span><span><b><span class="en">AI slop / sameness.</span><span class="vi">"AI slop" / na ná nhau.</span></b> <span class="en">"Logo-removed test" — mistakable for a competitor? → brand system first.</span><span class="vi">"Thử bỏ logo" — có bị nhầm với đối thủ? → hệ thương hiệu trước.</span></span></li>
@@ -1157,7 +1162,7 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
 
 <footer>
   <div class="fin">
-    <h4><span class="en">Authoritative primary sources</span><span class="vi">Nguồn gốc có thẩm quyền</span></h4>
+    <h3><span class="en">Authoritative primary sources</span><span class="vi">Nguồn gốc có thẩm quyền</span></h3>
     <div class="srcgrid">
       <div>W3C WCAG 2.2 — <span class="src">Recommendation 2023-10-05</span> · w3.org/TR/WCAG22</div>
       <div>W3C Design Tokens (DTCG) — <span class="src">v2025.10</span> · tr.designtokens.org</div>
@@ -1184,11 +1189,15 @@ function t(en, vi){ return lang() === "en" ? en : vi; }
 function el(tag, attrs){ var e = document.createElementNS(SVGNS, tag); for(var k in attrs){ e.setAttribute(k, attrs[k]); } return e; }
 
 /* ---------- language toggle ---------- */
+function syncLangButtons(l){
+  $("btn-en").setAttribute("aria-pressed", l === "en");
+  $("btn-vi").setAttribute("aria-pressed", l === "vi");
+}
 function setLang(l){
   document.documentElement.dataset.lang = l;
   document.documentElement.lang = l;
-  $("btn-en").setAttribute("aria-pressed", l === "en");
-  $("btn-vi").setAttribute("aria-pressed", l === "vi");
+  try { localStorage.setItem("norma-lang", l); } catch(e){}   // persist the explicit choice, like the theme
+  syncLangButtons(l);
   updateType();          // refresh ratio name
   drawContrast();        // refresh badge words
 }
@@ -1408,9 +1417,10 @@ function initScrollSpy(){
   var targets = links.map(function(a){ return { link:a, el: document.querySelector(a.getAttribute("href")) }; })
                      .filter(function(o){ return o.el; });
   function onScroll(){
-    var y = window.scrollY + 90;
+    // getBoundingClientRect().top is viewport-relative and robust to positioned ancestors,
+    // unlike offsetTop (which silently desyncs if .doc-shell/main ever becomes position:relative).
     var current = null;
-    targets.forEach(function(o){ if(o.el.offsetTop <= y){ current = o; } });
+    targets.forEach(function(o){ if(o.el.getBoundingClientRect().top <= 90){ current = o; } });
     links.forEach(function(a){ a.classList.remove("active"); });
     if(current){ current.link.classList.add("active"); }
   }
@@ -1499,6 +1509,7 @@ document.addEventListener("DOMContentLoaded", function(){
   initScrollSpy();
   initDocSearch();
   initTheme();
+  syncLangButtons(lang());   // sync EN/VI buttons to the language the <head> script restored
   initReveal();
 });
 

@@ -30,17 +30,18 @@ if (!validate(catalog)) {
 }
 
 // Extra invariants the JSON Schema can't express cleanly.
+const die = (msg: string): never => { console.error(`✗ ${msg}`); process.exit(1); };
 const ids = new Set<string>();
-for (const rule of catalog.rules as Array<{ id: string; tag: string; source_url?: string }>) {
-  if (ids.has(rule.id)) {
-    console.error(`✗ duplicate rule id: ${rule.id}`);
-    process.exit(1);
-  }
+for (const rule of catalog.rules as Array<{ id: string; tag: string; source_url?: string; check: Record<string, unknown> }>) {
+  if (ids.has(rule.id)) die(`duplicate rule id: ${rule.id}`);
   ids.add(rule.id);
-  if (rule.tag === "SPEC" && !rule.source_url) {
-    console.error(`✗ SPEC rule ${rule.id} is missing a source_url`);
-    process.exit(1);
-  }
+  if (rule.tag === "SPEC" && !rule.source_url) die(`SPEC rule ${rule.id} is missing a source_url`);
+  // Each typed check must carry the parameters its implementation reads, so a malformed
+  // rule fails the build rather than silently misbehaving at runtime.
+  const c = rule.check;
+  if (c.type === "contrast" && typeof c.min !== "number") die(`${rule.id}: contrast check needs a numeric "min"`);
+  if (c.type === "targetSize" && typeof c.min_px !== "number") die(`${rule.id}: targetSize check needs a numeric "min_px"`);
+  if (c.type === "forbiddenValue" && !(Array.isArray(c.patterns) && c.patterns.length)) die(`${rule.id}: forbiddenValue check needs a non-empty "patterns" array`);
 }
 
 const out = {

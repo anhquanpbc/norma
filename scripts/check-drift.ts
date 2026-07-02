@@ -10,6 +10,7 @@ import { execSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
+import { onSurface } from "./surfaces.js";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const read = (rel: string) => readFileSync(join(root, rel), "utf8");
@@ -31,6 +32,15 @@ try {
 } catch {
   fail.push("generated files are out of sync — run `npm run build:rules && npm run gen` and commit the result");
 }
+// git diff --exit-code ignores UNTRACKED files, so a brand-new generated surface that was never
+// committed would slip past. Fail on any untracked file under the generated trees.
+try {
+  const untracked = execSync(
+    `git status --porcelain -- standard .github/instructions .cursor/rules .claude/agents AGENTS.md CLAUDE.md .github/copilot-instructions.md`,
+    { cwd: root, stdio: "pipe" },
+  ).toString().split("\n").filter((l) => l.startsWith("??"));
+  if (untracked.length) fail.push("untracked generated files (add to GENERATED[] and commit):\n    " + untracked.join("\n    "));
+} catch { /* git unavailable — the diff check above is the primary guard */ }
 
 // 2. Single brand-OKLCH constant.
 const tokens = JSON.parse(read("standard/tokens.tokens.json"));
@@ -81,6 +91,20 @@ if (htmlSectionsVi.join(" | ") !== mdSectionsVi.join(" | ")) {
 }
 if (mdSections.length !== mdSectionsVi.length) {
   fail.push(`REFERENCE.md has ${mdSections.length} sections but REFERENCE.vi.md has ${mdSectionsVi.length}`);
+}
+
+// 6. Every error-severity rule must appear in its scoped Copilot instruction file (surface derived
+// from check.type in scripts/surfaces.ts), so the scoped agent surfaces can't silently omit a mandate.
+const scoped = {
+  css: read(".github/instructions/css.instructions.md"),
+  html: read(".github/instructions/html.instructions.md"),
+} as const;
+for (const r of catalog.rules as unknown as { id: string; severity: string; check: { type: string } }[]) {
+  for (const s of ["css", "html"] as const) {
+    if (r.severity === "error" && onSurface(r.check.type, s) && !scoped[s].includes(r.id)) {
+      fail.push(`.github/instructions/${s}.instructions.md is missing error-severity rule ${r.id}`);
+    }
+  }
 }
 
 if (fail.length) {

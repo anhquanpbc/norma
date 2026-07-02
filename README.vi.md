@@ -44,6 +44,10 @@ biến chuẩn thành ba tạo phẩm đồng bộ để cả người lẫn age
 npx @norma/design-lint "**/*.{html,css}"      # thêm --lang vi để có thông báo tiếng Việt
 ```
 
+> **Chưa có trên npm?** Cho tới bản phát hành đầu tiên, chạy từ mã nguồn: `npm ci && npm run build`, rồi
+> `node packages/design-lint/dist/cli.js "**/*.{html,css}"`. Việc publish chỉ cách một tag — xem
+> [`.github/workflows/publish.yml`](.github/workflows/publish.yml).
+
 **Trỏ agent AI vào Norma** bằng cách copy file luật tương ứng với công cụ của bạn vào dự án:
 `AGENTS.md` (Codex/Cline/Gemini/…), `.cursor/rules/norma-design.mdc` (Cursor),
 `.github/copilot-instructions.md` (Copilot), hoặc `.claude/agents/design-guardian.md` (Claude Code).

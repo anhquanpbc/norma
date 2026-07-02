@@ -13,8 +13,8 @@ Thanks for helping make Norma better. This project is a **standard**, a **design
 - `standard/tokens.tokens.json` — the design tokens (the brand color lives here and nowhere else).
 - `agents/norma-design-agent.md` — the canonical agent behaviour.
 
-Everything else — `standard/rules.json`, `AGENTS.md`, `CLAUDE.md`, `.cursor/rules/*`,
-`.github/copilot-instructions.md`, `.github/instructions/*` — is **generated**. After editing a source,
+Everything else — `standard/rules.json`, `AGENTS.md`, `CLAUDE.md`, `.claude/agents/design-guardian.md`,
+`.cursor/rules/*`, `.github/copilot-instructions.md`, `.github/instructions/*` — is **generated**. After editing a source,
 run:
 
 ```bash
@@ -43,8 +43,8 @@ agent enforces those instead. Soundness over coverage: a false positive on the r
 **English is the canonical language.** Each human-facing document has an English version at its canonical
 path (`README.md`, `REFERENCE.md`, `CONTRIBUTING.md`, `packages/design-lint/README.md`) and a Vietnamese
 sibling with a `.vi.md` suffix (`README.vi.md`, `REFERENCE.vi.md`, …). The generated agent-surface files
-(`AGENTS.md`, `CLAUDE.md`, `.cursor/rules/*`, `.github/copilot-instructions.md`,
-`.github/instructions/*`) are **English-only**, since AI tools consume them in English.
+(`AGENTS.md`, `CLAUDE.md`, `.claude/agents/design-guardian.md`, `.cursor/rules/*`,
+`.github/copilot-instructions.md`, `.github/instructions/*`) are **English-only**, since AI tools consume them in English.
 
 The rule catalog (`standard/rules.yaml`) keeps bilingual `title` / `rationale` / `remediation`, because
 the linter emits findings in both languages via `--lang en|vi`; `index.html` keeps its in-page EN/VI
