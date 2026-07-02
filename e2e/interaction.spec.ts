@@ -46,3 +46,14 @@ test("sidebar search filters the section nav", async ({ page }) => {
   expect(visible).toBeGreaterThan(0);
   expect(visible).toBeLessThan(total);
 });
+
+test("nav-jump reveals every section (no reduced-motion)", async ({ page }) => {
+  // Without reduced-motion, sections start hidden and reveal on scroll; jumping via a
+  // nav/hash link must not leave skipped sections blank.
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.goto("/index.html");
+  await page.evaluate(() => { location.hash = "#s8"; });
+  await page.waitForTimeout(200);
+  const pending = await page.evaluate(() => document.querySelectorAll(".reveal.pending").length);
+  expect(pending).toBe(0);
+});
