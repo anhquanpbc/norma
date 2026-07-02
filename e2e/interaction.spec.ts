@@ -36,3 +36,13 @@ test("type-scale slider updates its live output", async ({ page }) => {
   await page.keyboard.press("ArrowRight");
   await expect(out).not.toHaveText(before ?? "");
 });
+
+test("sidebar search filters the section nav", async ({ page }) => {
+  await page.goto("/index.html");
+  const links = page.locator(".doc-nav .sections a");
+  const total = await links.count();
+  await page.locator("#docSearch").fill("color");
+  const visible = await links.evaluateAll((els) => els.filter((e) => !(e as HTMLElement).hidden).length);
+  expect(visible).toBeGreaterThan(0);
+  expect(visible).toBeLessThan(total);
+});

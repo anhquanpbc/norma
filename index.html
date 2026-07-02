@@ -120,9 +120,7 @@ nav.sections a{ font-family:var(--mono); font-size:12px; letter-spacing:0.03em; 
   min-height:34px; display:flex; align-items:center; transition:color .15s var(--ease), background .15s var(--ease); }
 nav.sections a:hover{ color:var(--ink); background:var(--surface-2); }
 nav.sections a.active{ color:var(--azure-ink); background:var(--azure-wash); }
-@media (max-width:900px){ nav.sections{ display:none; } }
-
-.lang-toggle{ display:flex; border:1px solid var(--line-2); border-radius:7px; overflow:hidden; flex-shrink:0; }
+.lang-toggle{ display:flex; margin-inline-start:auto; border:1px solid var(--line-2); border-radius:7px; overflow:hidden; flex-shrink:0; }
 .lang-toggle button{ font-family:var(--mono); font-size:12px; font-weight:600; letter-spacing:0.04em;
   border:0; background:var(--surface); color:var(--ink-3); padding:0 12px; min-height:34px; cursor:pointer;
   transition:background .15s var(--ease), color .15s var(--ease); }
@@ -130,6 +128,29 @@ nav.sections a.active{ color:var(--azure-ink); background:var(--azure-wash); }
 
 /* =================== LAYOUT =================== */
 main{ max-width:var(--maxw); margin:0 auto; padding:0 var(--s-5); }
+
+/* ---- docs shell: a sticky sidebar (search + section nav) beside the content ---- */
+.doc-shell{ max-width:1340px; margin-inline:auto; padding-inline:var(--s-5);
+  display:grid; grid-template-columns:214px minmax(0,1fr); gap:var(--s-7); }
+.doc-shell > main{ max-width:none; margin:0; padding:0; }
+.doc-nav{ position:sticky; top:68px; align-self:start; max-height:calc(100vh - 84px);
+  overflow-y:auto; padding-block:var(--s-3) var(--s-5); }
+.doc-search{ inline-size:100%; box-sizing:border-box; font-family:inherit; font-size:13px;
+  padding:8px 11px; margin-block-end:var(--s-4); border:1px solid var(--line-2); border-radius:8px;
+  background:var(--surface); color:var(--ink); }
+.doc-search::placeholder{ color:var(--ink-3); }
+.doc-search:focus-visible{ outline:2px solid var(--azure-ink); outline-offset:1px; }
+.doc-nav .sections{ flex-direction:column; gap:1px; margin:0; overflow:visible; }
+.doc-nav .sections a{ min-height:auto; padding:6px 10px; border-inline-start:2px solid transparent; }
+.doc-nav .sections a.active{ border-inline-start-color:var(--azure-ink); }
+.doc-nav .sections a[hidden]{ display:none; }
+.doc-nav .no-hits{ font-size:12px; color:var(--ink-3); padding:8px 10px; }
+@media (max-width:900px){
+  .doc-shell{ grid-template-columns:minmax(0,1fr); gap:var(--s-4); }
+  .doc-nav{ position:static; max-height:none; overflow:visible; padding-block:0; margin-block-end:var(--s-4); }
+  .doc-nav .sections{ flex-direction:row; overflow-x:auto; gap:4px; }
+  .doc-nav .sections a{ border-inline-start:0; white-space:nowrap; flex:0 0 auto; }
+}
 section{ padding:var(--s-9) 0 var(--s-8); border-top:1px solid var(--line); scroll-margin-top:70px; }
 section:first-of-type{ border-top:0; }
 
@@ -385,25 +406,34 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
 <header class="bar">
   <div class="bar-inner">
     <div class="brand"><span class="dot"></span>UX/UI&nbsp;<span style="color:var(--azure-ink)">STANDARDS</span>&nbsp;’25</div>
-    <nav class="sections" aria-label="Sections">
-      <a href="#s1">Tokens</a>
-      <a href="#s2">Grid</a>
-      <a href="#s3">Type</a>
-      <a href="#s4">Color</a>
-      <a href="#s5">A11y</a>
-      <a href="#s6">Perf</a>
-      <a href="#s7">Motion</a>
-      <a href="#s8">Platform</a>
-      <a href="#s9">Components</a>
-      <a href="#s12">HCI</a>
-      <a href="#s14">AI Traps</a>
-    </nav>
     <div class="lang-toggle" role="group" aria-label="Language">
       <button id="btn-en" onclick="setLang('en')" aria-pressed="true">EN</button>
       <button id="btn-vi" onclick="setLang('vi')" aria-pressed="false">VI</button>
     </div>
   </div>
 </header>
+
+<div class="doc-shell">
+<aside class="doc-nav" aria-label="Documentation navigation">
+  <input type="search" class="doc-search" id="docSearch" aria-label="Search sections" placeholder="Search sections…" autocomplete="off">
+  <nav class="sections" aria-label="Sections">
+    <a href="#top"><span class="en">Overview</span><span class="vi">Tổng quan</span></a>
+    <a href="#s1">Tokens</a>
+    <a href="#s2"><span class="en">Grid</span><span class="vi">Lưới</span></a>
+    <a href="#s3"><span class="en">Type</span><span class="vi">Chữ</span></a>
+    <a href="#s4"><span class="en">Color</span><span class="vi">Màu</span></a>
+    <a href="#s5">A11y</a>
+    <a href="#s6">Perf</a>
+    <a href="#s7"><span class="en">Motion</span><span class="vi">Chuyển động</span></a>
+    <a href="#s8"><span class="en">Platform</span><span class="vi">Nền tảng</span></a>
+    <a href="#s9"><span class="en">Components</span><span class="vi">Thành phần</span></a>
+    <a href="#s10"><span class="en">Forms</span><span class="vi">Biểu mẫu</span></a>
+    <a href="#s12">HCI</a>
+    <a href="#s13"><span class="en">Roadmap</span><span class="vi">Lộ trình</span></a>
+    <a href="#s14"><span class="en">AI Traps</span><span class="vi">Bẫy AI</span></a>
+  </nav>
+  <p class="no-hits" id="navNoHits" hidden><span class="en">No matches</span><span class="vi">Không khớp</span></p>
+</aside>
 
 <main>
 <section class="hero" id="top">
@@ -1069,6 +1099,7 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
   </div>
 </section>
 </main>
+</div>
 
 <footer>
   <div class="fin">
@@ -1334,6 +1365,30 @@ function initScrollSpy(){
   onScroll();
 }
 
+/* ---------- section search (filters the sidebar nav) ---------- */
+function initDocSearch(){
+  var input = $("docSearch");
+  if(!input) return;
+  var links = Array.prototype.slice.call(document.querySelectorAll(".doc-nav .sections a"));
+  var noHits = $("navNoHits");
+  input.addEventListener("input", function(){
+    var q = input.value.trim().toLowerCase();
+    var shown = 0;
+    links.forEach(function(a){
+      var match = !q || a.textContent.toLowerCase().indexOf(q) !== -1;
+      a.hidden = !match;
+      if(match){ shown++; }
+    });
+    if(noHits){ noHits.hidden = shown !== 0; }
+  });
+  input.addEventListener("keydown", function(e){
+    if(e.key === "Enter"){
+      var first = links.filter(function(a){ return !a.hidden; })[0];
+      if(first){ e.preventDefault(); location.hash = first.getAttribute("href"); }
+    }
+  });
+}
+
 /* ---------- init ---------- */
 document.addEventListener("DOMContentLoaded", function(){
   // listeners
@@ -1361,6 +1416,7 @@ document.addEventListener("DOMContentLoaded", function(){
   drawHick();
   drawFitts();
   initScrollSpy();
+  initDocSearch();
   initReveal();
 });
 
