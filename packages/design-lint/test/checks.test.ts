@@ -212,6 +212,14 @@ describe("security.sri", () => {
   });
 });
 
+describe("theme-aware var resolution", () => {
+  it("resolves tokens from the base :root, not a later [data-theme] override", () => {
+    // Light --fg (#111 on #fff) passes; the static contrast check must not pick up the dark override (#eee).
+    const f = lint(`:root{ --fg:#111; --bg:#fff }\n[data-theme="dark"]{ --fg:#eee; --bg:#111 }\n.x{ color:var(--fg); background:var(--bg); }`, "css");
+    expect(ids(f)).not.toContain("color.contrast.text");
+  });
+});
+
 describe("dogfood: index.html has zero errors", () => {
   it("lints the reference site clean", () => {
     const indexHtml = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "..", "index.html");

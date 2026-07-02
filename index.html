@@ -4,7 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>UX/UI Technical Standards 2025 — Bilingual Reference</title>
-<script>document.documentElement.classList.add('js');</script>
+<script>document.documentElement.classList.add('js');
+(function(){var t;try{t=localStorage.getItem('norma-theme');}catch(e){}
+if(t!=='dark'&&t!=='light'){t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}
+document.documentElement.setAttribute('data-theme',t);})();</script>
 <style>
 /* =================================================================
    SELF-CONTAINED DESIGN SYSTEM — no external fonts, no CDN, offline-safe.
@@ -13,7 +16,7 @@
    focus ≥2px/≥3:1 · reduced-motion respected · 0 network requests.
    ================================================================= */
 :root{
-  color-scheme: light;   /* UA widgets (form controls, scrollbars) match the light theme */
+  color-scheme: light dark;   /* UA widgets (form controls, scrollbars) match the active theme */
   /* ---- primitive color tokens (OKLCH) ---- */
   --ink:        oklch(0.20 0.028 258);
   --ink-2:      oklch(0.40 0.022 258);
@@ -37,7 +40,10 @@
   --good-solid: oklch(0.52 0.14 155);   /* darker green: AA (>=4.5:1) for white text on a solid fill */
   --bad-solid:  oklch(0.55 0.19 25);    /* darker red:   AA (>=4.5:1) for white text on a solid fill */
   --bad-ink:    oklch(0.48 0.19 25);    /* darker red:   AA (>=4.5:1) as text on a light --bad-wash */
+  --good-ink:   oklch(0.40 0.14 155);   /* darker green: AA (>=4.5:1) as text on a light --good-wash */
   --grid-line:  oklch(0.55 0.04 258 / 0.05);
+  --bar-bg:     oklch(0.983 0.004 250 / 0.82);   /* sticky header (translucent) */
+  --footer-bg:  oklch(0.20 0.028 258);           /* footer is an always-dark section in both themes */
 
   /* ---- type scale: base 16px × 1.25 (major third) ---- */
   --t--1: 0.8rem;      /* 12.8 */
@@ -58,6 +64,36 @@
   --mono: ui-monospace, "SF Mono", "JetBrains Mono", "Cascadia Code", Menlo, Consolas, "Liberation Mono", monospace;
   --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Be Vietnam Pro", Arial, sans-serif;
   --ease: cubic-bezier(0.2, 0, 0, 1);      /* Material 3 "standard" */
+}
+
+/* ---- Dark theme: remap the semantic token tier only (mirrors color.dark.* in
+   standard/tokens.tokens.json). Near-black surfaces + off-white ink, never pure #000/#fff. ---- */
+[data-theme="dark"]{
+  --ink:        oklch(0.94 0.010 250);
+  --ink-2:      oklch(0.80 0.012 250);
+  --ink-3:      oklch(0.70 0.012 250);
+  --paper:      oklch(0.17 0.008 258);
+  --surface:    oklch(0.215 0.012 258);
+  --surface-2:  oklch(0.255 0.013 258);
+  --line:       oklch(0.33 0.012 258);
+  --line-2:     oklch(0.42 0.014 258);
+  --azure:      oklch(0.72 0.14 252);
+  --azure-ink:  oklch(0.82 0.11 252);
+  --azure-wash: oklch(0.32 0.06 255);
+  --amber:      oklch(0.83 0.13 70);
+  --amber-ink:  oklch(0.85 0.11 70);
+  --good:       oklch(0.76 0.15 155);
+  --good-wash:  oklch(0.31 0.06 155);
+  --warn:       oklch(0.84 0.14 82);
+  --warn-wash:  oklch(0.33 0.06 82);
+  --bad:        oklch(0.74 0.17 25);
+  --bad-wash:   oklch(0.31 0.08 25);
+  --good-solid: oklch(0.52 0.15 155);
+  --bad-solid:  oklch(0.55 0.19 25);
+  --bad-ink:    oklch(0.82 0.14 25);
+  --good-ink:   oklch(0.82 0.14 155);
+  --grid-line:  oklch(0.78 0.04 258 / 0.05);
+  --bar-bg:     oklch(0.17 0.008 258 / 0.86);
 }
 
 *{box-sizing:border-box}
@@ -106,7 +142,7 @@ input:focus-visible, [tabindex]:focus-visible{
 .src{ font-family:var(--mono); font-size:11px; color:var(--ink-3); }
 
 /* =================== HEADER / NAV =================== */
-header.bar{ position:sticky; top:0; z-index:50; background:oklch(0.983 0.004 250 / 0.82);
+header.bar{ position:sticky; top:0; z-index:50; background:var(--bar-bg);
   backdrop-filter:blur(10px) saturate(1.1); border-bottom:1px solid var(--line); }
 .bar-inner{ max-width:var(--maxw); margin:0 auto; padding:10px var(--s-5);
   display:flex; align-items:center; gap:var(--s-5); }
@@ -120,7 +156,18 @@ nav.sections a{ font-family:var(--mono); font-size:12px; letter-spacing:0.03em; 
   min-height:34px; display:flex; align-items:center; transition:color .15s var(--ease), background .15s var(--ease); }
 nav.sections a:hover{ color:var(--ink); background:var(--surface-2); }
 nav.sections a.active{ color:var(--azure-ink); background:var(--azure-wash); }
-.lang-toggle{ display:flex; margin-inline-start:auto; border:1px solid var(--line-2); border-radius:7px; overflow:hidden; flex-shrink:0; }
+.lang-toggle{ display:flex; border:1px solid var(--line-2); border-radius:7px; overflow:hidden; flex-shrink:0; }
+.theme-btn{ margin-inline-start:auto; display:flex; align-items:center; justify-content:center;
+  inline-size:34px; block-size:34px; flex-shrink:0; border:1px solid var(--line-2); border-radius:7px;
+  background:var(--surface); color:var(--ink-3); cursor:pointer; transition:color .15s var(--ease), border-color .15s var(--ease); }
+.theme-btn:hover{ color:var(--ink); border-color:var(--line); }
+.theme-btn:focus-visible{ outline:2px solid var(--azure-ink); outline-offset:1px; }
+.theme-btn svg{ inline-size:16px; block-size:16px; }
+@media (max-width:560px){
+  .bar-inner{ gap:var(--s-3); padding-inline:var(--s-4); }
+  .brand{ font-size:12px; }
+  .theme-btn{ inline-size:30px; block-size:30px; }
+}
 .lang-toggle button{ font-family:var(--mono); font-size:12px; font-weight:600; letter-spacing:0.04em;
   border:0; background:var(--surface); color:var(--ink-3); padding:0 12px; min-height:34px; cursor:pointer;
   transition:background .15s var(--ease), color .15s var(--ease); }
@@ -268,7 +315,7 @@ select{ font-family:var(--sans); font-size:14px; padding:8px 10px; border:1px so
 .cc-result{ font-family:var(--mono); font-size:26px; font-weight:700; color:var(--ink); }
 .cc-badges{ display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
 .cc-badge{ font-family:var(--mono); font-size:11px; font-weight:600; padding:3px 8px; border-radius:6px; }
-.cc-pass{ background:var(--good-wash); color:oklch(0.40 0.14 155); }
+.cc-pass{ background:var(--good-wash); color:var(--good-ink); }
 .cc-fail{ background:var(--bad-wash); color:var(--bad-ink); }
 
 /* gauges (Core Web Vitals) */
@@ -300,7 +347,7 @@ select{ font-family:var(--sans); font-size:14px; padding:8px 10px; border:1px so
 /* fitts demo */
 .fitts-stage{ position:relative; height:150px; border:1px dashed var(--line-2); border-radius:8px;
   background:var(--surface-2); overflow:hidden; }
-.fitts-target{ position:absolute; background:var(--azure-ink); color:#fff; border-radius:8px;
+.fitts-target{ position:absolute; background:var(--azure-ink); color:var(--paper); border-radius:8px;
   display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:600; cursor:pointer;
   transition:all .35s var(--ease); user-select:none; }
 
@@ -339,7 +386,7 @@ select{ font-family:var(--sans); font-size:14px; padding:8px 10px; border:1px so
 /* the "purple tell" bars */
 .tell-bars{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
 .tell-bar{ height:52px; border-radius:8px; display:flex; align-items:flex-end; padding:6px 8px;
-  font-family:var(--mono); font-size:10px; color:#fff; }
+  font-family:var(--mono); font-size:10px; color:var(--paper); }
 /* norma-disable antipattern.indigo-default tokens.color-only -- intentional TELL demo (shows the AI default cliché) */
 .tell-purple{ background:linear-gradient(135deg,#667eea,#764ba2); }  /* the AI default cliché */
 .tell-brand{ background:var(--azure-ink); }
@@ -384,10 +431,10 @@ nav.sections a{ position:relative; }
 }
 
 /* footer */
-footer{ background:var(--ink); color:oklch(0.72 0.01 250); margin-top:var(--s-9);
+footer{ background:var(--footer-bg); color:oklch(0.72 0.01 250); margin-top:var(--s-9);
   padding:var(--s-8) var(--s-5); }
 footer .fin{ max-width:var(--maxw); margin:0 auto; }
-footer h4{ color:var(--paper); font-family:var(--mono); font-size:12px; text-transform:uppercase;
+footer h4{ color:oklch(0.96 0.005 250); font-family:var(--mono); font-size:12px; text-transform:uppercase;
   letter-spacing:0.06em; margin-bottom:var(--s-4); }
 footer a{ color:oklch(0.80 0.08 252); }
 footer .src{ color:oklch(0.66 0.02 250); }   /* lift source labels to AA (>=4.5:1) on the dark footer */
@@ -395,7 +442,7 @@ footer .srcgrid{ display:grid; grid-template-columns:repeat(2,1fr); gap:6px 24px
 @media (max-width:640px){ footer .srcgrid{ grid-template-columns:1fr; } }
 footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250); line-height:1.6; max-width:80ch; }
 
-.skip{ position:absolute; left:-9999px; top:0; background:var(--ink); color:#fff; padding:10px 16px;
+.skip{ position:absolute; left:-9999px; top:0; background:var(--ink); color:var(--paper); padding:10px 16px;
   border-radius:0 0 8px 0; z-index:100; }
 .skip:focus{ left:0; }
 </style>
@@ -406,6 +453,9 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
 <header class="bar">
   <div class="bar-inner">
     <div class="brand"><span class="dot"></span>UX/UI&nbsp;<span style="color:var(--azure-ink)">STANDARDS</span>&nbsp;’25</div>
+    <button id="themeToggle" class="theme-btn" aria-label="Switch to dark theme" aria-pressed="false" title="Toggle theme">
+      <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="6.25" stroke="currentColor" stroke-width="1.5"/><path d="M8 1.75a6.25 6.25 0 000 12.5z" fill="currentColor"/></svg>
+    </button>
     <div class="lang-toggle" role="group" aria-label="Language">
       <button id="btn-en" onclick="setLang('en')" aria-pressed="true">EN</button>
       <button id="btn-vi" onclick="setLang('vi')" aria-pressed="false">VI</button>
@@ -1389,6 +1439,27 @@ function initDocSearch(){
   });
 }
 
+/* ---------- theme (light / dark) ---------- */
+function currentTheme(){ return document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light"; }
+function setTheme(t, persist){
+  document.documentElement.setAttribute("data-theme", t);
+  if(persist){ try { localStorage.setItem("norma-theme", t); } catch(e){} }
+  var b = $("themeToggle");
+  if(b){
+    b.setAttribute("aria-pressed", t === "dark");
+    b.setAttribute("aria-label", t === "dark" ? "Switch to light theme" : "Switch to dark theme");
+  }
+}
+function initTheme(){
+  setTheme(currentTheme(), false);   // sync the button to the theme the <head> script already applied
+  var b = $("themeToggle");
+  if(b){ b.addEventListener("click", function(){ setTheme(currentTheme() === "dark" ? "light" : "dark", true); }); }
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", function(e){
+    var s = null; try { s = localStorage.getItem("norma-theme"); } catch(err){}
+    if(s !== "dark" && s !== "light"){ setTheme(e.matches ? "dark" : "light", false); }   // follow OS unless overridden
+  });
+}
+
 /* ---------- init ---------- */
 document.addEventListener("DOMContentLoaded", function(){
   // listeners
@@ -1417,6 +1488,7 @@ document.addEventListener("DOMContentLoaded", function(){
   drawFitts();
   initScrollSpy();
   initDocSearch();
+  initTheme();
   initReveal();
 });
 

@@ -57,3 +57,15 @@ test("nav-jump reveals every section (no reduced-motion)", async ({ page }) => {
   const pending = await page.evaluate(() => document.querySelectorAll(".reveal.pending").length);
   expect(pending).toBe(0);
 });
+
+test("theme toggle switches and persists the theme", async ({ page }) => {
+  await page.goto("/index.html");
+  const html = page.locator("html");
+  const before = await html.getAttribute("data-theme");
+  await page.locator("#themeToggle").click();
+  const after = await html.getAttribute("data-theme");
+  expect(after).not.toBe(before);
+  expect(["light", "dark"]).toContain(after);
+  await expect(page.locator("#themeToggle")).toHaveAttribute("aria-pressed", after === "dark" ? "true" : "false");
+  expect(await page.evaluate(() => localStorage.getItem("norma-theme"))).toBe(after);
+});

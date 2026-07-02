@@ -17,17 +17,21 @@ function parseCss(css: string, startLine: number): CssBlock | null {
 }
 
 function collectVars(blocks: CssBlock[], dom?: HTMLElement): Map<string, string> {
+  // First definition wins: the base :root (light) theme is declared first, so token
+  // overrides in later scopes (e.g. [data-theme="dark"]) don't clobber the value the static
+  // contrast check resolves. Dark-theme contrast is verified separately by the browser a11y test.
   const vars = new Map<string, string>();
+  const put = (k: string, v: string) => { if (!vars.has(k)) vars.set(k, v); };
   for (const b of blocks) {
     b.root.walkDecls((d) => {
-      if (d.prop.startsWith("--")) vars.set(d.prop, d.value);
+      if (d.prop.startsWith("--")) put(d.prop, d.value);
     });
   }
   // inline style="--x: ..." declarations
   dom?.querySelectorAll("[style]").forEach((el) => {
     for (const part of (el.getAttribute("style") ?? "").split(";")) {
       const [k, ...rest] = part.split(":");
-      if (k && k.trim().startsWith("--")) vars.set(k.trim(), rest.join(":").trim());
+      if (k && k.trim().startsWith("--")) put(k.trim(), rest.join(":").trim());
     }
   });
   return vars;
