@@ -14,10 +14,17 @@ for (const width of breakpoints) {
     const overflow = await page.evaluate(
       () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
     );
-    await testInfo.attach(`index-${width}px`, {
-      body: await page.screenshot({ fullPage: true }),
-      contentType: "image/png",
-    });
+    // The real cross-browser assertion runs first, on every engine.
     expect(overflow, `horizontal overflow of ${overflow}px at ${width}px`).toBeLessThanOrEqual(1);
+    // A full-page screenshot is only a human-review artifact — best-effort. WebKit caps screenshot
+    // dimensions, so a very tall (narrow) page can exceed the limit; never fail the test over that.
+    try {
+      await testInfo.attach(`index-${width}px`, {
+        body: await page.screenshot({ fullPage: true }),
+        contentType: "image/png",
+      });
+    } catch (e) {
+      testInfo.annotations.push({ type: "screenshot-skipped", description: `${width}px: ${(e as Error).message}` });
+    }
   });
 }

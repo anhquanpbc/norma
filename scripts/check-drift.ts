@@ -67,6 +67,22 @@ if (htmlSections.join(" | ") !== mdSections.join(" | ")) {
   );
 }
 
+// 5b. VI section sync: index.html VI <h2> titles must match REFERENCE.vi.md sections,
+// so the Vietnamese half of the bilingual standard can't drift either.
+const refVi = read("REFERENCE.vi.md");
+const htmlSectionsVi = [...html.matchAll(/<h2><span class="en">.*?<\/span><span class="vi">(.*?)<\/span>/g)].map((m) => dec(m[1]));
+const mdSectionsVi = [...refVi.matchAll(/^##\s+\d+\.\s+(.+)$/gm)].map((m) => m[1].trim()).filter((t) => !/^cách đọc/i.test(t));
+if (htmlSectionsVi.join(" | ") !== mdSectionsVi.join(" | ")) {
+  fail.push(
+    "index.html VI <h2> sections and REFERENCE.vi.md sections are out of sync:\n" +
+    `    html (${htmlSectionsVi.length}): ${htmlSectionsVi.join(", ")}\n` +
+    `    vi   (${mdSectionsVi.length}): ${mdSectionsVi.join(", ")}`,
+  );
+}
+if (mdSections.length !== mdSectionsVi.length) {
+  fail.push(`REFERENCE.md has ${mdSections.length} sections but REFERENCE.vi.md has ${mdSectionsVi.length}`);
+}
+
 if (fail.length) {
   console.error("✗ drift check failed:");
   for (const f of fail) console.error("  - " + f);

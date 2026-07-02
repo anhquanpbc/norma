@@ -37,11 +37,12 @@ test("type-scale slider updates its live output", async ({ page }) => {
   await expect(out).not.toHaveText(before ?? "");
 });
 
-test("sidebar search filters the section nav", async ({ page }) => {
+test("sidebar search matches section content, not just labels", async ({ page }) => {
   await page.goto("/index.html");
   const links = page.locator(".doc-nav .sections a");
   const total = await links.count();
-  await page.locator("#docSearch").fill("color");
+  // "fitts" appears in a section BODY (HCI), not in any nav label — proves content search.
+  await page.locator("#docSearch").fill("fitts");
   const visible = await links.evaluateAll((els) => els.filter((e) => !(e as HTMLElement).hidden).length);
   expect(visible).toBeGreaterThan(0);
   expect(visible).toBeLessThan(total);

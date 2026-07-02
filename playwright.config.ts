@@ -24,5 +24,9 @@ export default defineConfig({
     // (index.html line ~361). Otherwise axe/screenshots catch elements mid-animation.
     reducedMotion: "reduce",
   },
-  projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
+  projects: [
+    { name: "chromium", use: { ...devices["Desktop Chrome"] } },
+    { name: "firefox", use: { ...devices["Desktop Firefox"] } },
+    { name: "webkit", use: { ...devices["Desktop Safari"] } },
+  ],
 });

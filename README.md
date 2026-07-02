@@ -13,8 +13,12 @@ drop into an acceptance ticket, every value tagged as a published **mandate** (�
 **convention** (📐), plus the machinery to make **AI coding agents** build to it and a **linter** that
 gates violations in CI.
 
-English is the primary language; a full Vietnamese translation lives in
-**[README.vi.md](README.vi.md)** and **[REFERENCE.vi.md](REFERENCE.vi.md)**.
+See the standard in action: **[live reference site →](https://anhquanpbc.github.io/norma/)** — a single
+self-contained, zero-network page that dogfoods every rule it documents (light/dark, EN/VI).
+
+English is the primary language; a Vietnamese translation lives in
+**[README.vi.md](README.vi.md)** and **[REFERENCE.vi.md](REFERENCE.vi.md)** (the reference's dense data
+tables defer to the English block).
 
 ## Why
 

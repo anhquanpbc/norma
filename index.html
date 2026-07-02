@@ -465,7 +465,7 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
 
 <div class="doc-shell">
 <aside class="doc-nav" aria-label="Documentation navigation">
-  <input type="search" class="doc-search" id="docSearch" aria-label="Search sections" placeholder="Search sections…" autocomplete="off">
+  <input type="search" class="doc-search" id="docSearch" aria-label="Search the standard" placeholder="Search the standard…" autocomplete="off">
   <nav class="sections" aria-label="Sections">
     <a href="#top"><span class="en">Overview</span><span class="vi">Tổng quan</span></a>
     <a href="#s1">Tokens</a>
@@ -1425,12 +1425,18 @@ function initDocSearch(){
   if(!input) return;
   var links = Array.prototype.slice.call(document.querySelectorAll(".doc-nav .sections a"));
   var noHits = $("navNoHits");
+  // Index each section's full text so search matches CONTENT, not just the nav label.
+  var index = links.map(function(a){
+    var id = (a.getAttribute("href") || "").replace(/^#/, "");
+    var sec = id ? document.getElementById(id) : null;
+    return { a: a, text: ((a.textContent || "") + " " + (sec ? sec.textContent : "")).toLowerCase() };
+  });
   input.addEventListener("input", function(){
     var q = input.value.trim().toLowerCase();
     var shown = 0;
-    links.forEach(function(a){
-      var match = !q || a.textContent.toLowerCase().indexOf(q) !== -1;
-      a.hidden = !match;
+    index.forEach(function(item){
+      var match = !q || item.text.indexOf(q) !== -1;
+      item.a.hidden = !match;
       if(match){ shown++; }
     });
     if(noHits){ noHits.hidden = shown !== 0; }

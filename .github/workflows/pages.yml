@@ -33,6 +33,16 @@ jobs:
       - run: npm run check:drift
       - name: Lint the site against its own standard
         run: node packages/design-lint/dist/cli.js index.html
+      - name: Install Playwright browsers (Chromium, Firefox, WebKit)
+        run: npx playwright install --with-deps chromium firefox webkit
+      - name: Browser self-test — never publish a site that fails axe / interaction / 0-network / overflow
+        run: npx playwright test
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: pages-playwright-report
+          path: playwright-report/
+          retention-days: 7
 
   deploy:
     needs: verify
