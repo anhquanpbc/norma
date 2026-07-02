@@ -35,7 +35,7 @@ Norma turns the standard into three aligned artifacts so both people and agents 
 | Path | Purpose |
 |------|---------|
 | [`index.html`](index.html) | Interactive, **self-contained** reference site (EN/VI toggle, defaults to English, live widgets, **zero network requests**). It passes its own linter and is a reference implementation of its own content. |
-| [`REFERENCE.md`](REFERENCE.md) | The full written reference in English — 14 sections, primary-source cited. Vietnamese: [`REFERENCE.vi.md`](REFERENCE.vi.md). |
+| [`REFERENCE.md`](REFERENCE.md) | The full written reference in English — 14 numbered sections (§0 *How to read* + the 13 content domains), primary-source cited. Vietnamese: [`REFERENCE.vi.md`](REFERENCE.vi.md). |
 | [`standard/`](standard) | **The single source of truth**: `tokens.tokens.json` (DTCG v2025.10) + `rules.yaml` → `rules.json`. |
 | [`agents/`](agents) | The canonical design-agent spec, projected into the surfaces below. |
 | [`AGENTS.md`](AGENTS.md) · [`CLAUDE.md`](CLAUDE.md) · [`.cursor/rules`](.cursor/rules) · [`.github/copilot-instructions.md`](.github/copilot-instructions.md) | **Generated** agent rule files (English), one per AI surface. |
@@ -48,6 +48,10 @@ Norma turns the standard into three aligned artifacts so both people and agents 
 ```bash
 npx @norma/design-lint "**/*.{html,css}"      # add --lang vi for Vietnamese messages
 ```
+
+> **Not on npm yet?** Until the first release lands, run it from source: `npm ci && npm run build`, then
+> `node packages/design-lint/dist/cli.js "**/*.{html,css}"`. Publishing is one tag away — see
+> [`.github/workflows/publish.yml`](.github/workflows/publish.yml).
 
 **Point your AI agent at Norma** by copying the generated rule file for your tool into your project:
 `AGENTS.md` (Codex/Cline/Gemini/…), `.cursor/rules/norma-design.mdc` (Cursor),

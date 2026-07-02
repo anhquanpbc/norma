@@ -44,7 +44,21 @@ function main(argv: string[]): number {
   };
   const format = opt("--format") ?? "stylish";
   const configPath = opt("--config") ?? (existsSync(".normarc.json") ? ".normarc.json" : undefined);
-  const config: Config = configPath && existsSync(configPath) ? JSON.parse(readFileSync(configPath, "utf8")) : {};
+  let config: Config = {};
+  if (configPath && existsSync(configPath)) {
+    try {
+      config = JSON.parse(readFileSync(configPath, "utf8")) as Config;
+    } catch (e) {
+      console.error(`Invalid config ${configPath}: ${(e as Error).message}`);
+      return 1;
+    }
+    for (const [id, sev] of Object.entries(config.rules ?? {})) {
+      if (sev !== "error" && sev !== "warn" && sev !== "off") {
+        console.error(`Invalid severity "${sev}" for rule ${id} in ${configPath} (use error|warn|off).`);
+        return 1;
+      }
+    }
+  }
   const lang = (opt("--lang") ?? config.lang ?? process.env.NORMA_LANG ?? "en") as Lang;
   const quiet = args.includes("--quiet");
 

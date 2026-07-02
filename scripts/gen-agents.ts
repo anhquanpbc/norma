@@ -16,12 +16,14 @@
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
+import { onSurface } from "./surfaces.js";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 
 type Rule = {
   id: string; tag: "SPEC" | "CONV"; severity: string;
   title: { en: string; vi: string }; source: string; source_url?: string;
+  check: { type: string };
 };
 const catalog = JSON.parse(readFileSync(join(root, "standard/rules.json"), "utf8")) as { version: string; rules: Rule[] };
 
@@ -38,15 +40,6 @@ function ruleLine(r: Rule): string {
 function ruleIndex(filter: (r: Rule) => boolean = () => true, heading = `Rule index (generated from standard/rules.json v${catalog.version})`): string {
   return `## ${heading}\n\n${catalog.rules.filter(filter).map(ruleLine).join("\n")}\n`;
 }
-
-const CSS_IDS = new Set([
-  "color.contrast.text", "color.contrast.large-ui", "a11y.focus-ring-single", "a11y.reduced-motion",
-  "tokens.color-only", "tokens.spacing-scale", "antipattern.indigo-default", "antipattern.pure-dark-mode",
-]);
-const HTML_IDS = new Set([
-  "a11y.target-size", "a11y.form-label", "a11y.semantic-control", "a11y.emoji-icon",
-  "perf.img-dimensions", "color.contrast.text", "color.contrast.large-ui", "a11y.focus-ring-single",
-]);
 
 function write(rel: string, content: string) {
   const abs = join(root, rel);
@@ -102,7 +95,7 @@ ${BANNER}
 Use tokens from \`standard/tokens.tokens.json\`. Color and spacing come from tokens only; one clean
 \`:focus-visible\` ring; honor \`prefers-reduced-motion\`; no indigo default; no pure black/white dark mode.
 
-${ruleIndex((r) => CSS_IDS.has(r.id), "Applicable rules")}`);
+${ruleIndex((r) => onSurface(r.check.type, "css"), "Applicable rules")}`);
 
 // 5. Copilot scoped — HTML
 write(".github/instructions/html.instructions.md", `---
@@ -115,7 +108,7 @@ ${BANNER}
 Semantic HTML first: interactive controls are \`<button>\`/\`<a>\`, never \`<div onClick>\`. Every input has a
 real \`<label>\`. Touch targets ≥ 24 CSS px. Set \`width\`/\`height\` on images. No emoji as icons.
 
-${ruleIndex((r) => HTML_IDS.has(r.id), "Applicable rules")}`);
+${ruleIndex((r) => onSurface(r.check.type, "html"), "Applicable rules")}`);
 
 // 6. Vendor-neutral AGENTS.md
 write("AGENTS.md", `${BANNER}

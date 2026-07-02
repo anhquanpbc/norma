@@ -13,8 +13,10 @@ export function lintContext(ctx: FileContext, rules: Rule[]): Finding[] {
   for (const [type, rs] of byType) {
     try {
       findings.push(...CHECKS[type](ctx, rs));
-    } catch {
-      // a single misbehaving check should never abort the whole lint run
+    } catch (e) {
+      // a single misbehaving check should never abort the whole lint run; surface it under NORMA_DEBUG
+      // so a check that silently always throws (and thus reports clean) is discoverable.
+      if (process.env.NORMA_DEBUG) console.error(`[norma] check "${type}" threw: ${(e as Error).message}`);
     }
   }
   return findings.sort((a, b) => a.line - b.line || a.ruleId.localeCompare(b.ruleId));

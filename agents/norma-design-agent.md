@@ -41,6 +41,7 @@ sources and machine assertions lives in `standard/rules.json`.
 - **a11y.semantic-control** — interactive controls are `<button>`/`<a>`, not `<div onClick>` (4.1.2).
 - **a11y.emoji-icon** — no emoji as an interactive icon without a real text/aria label (1.1.1).
 - **a11y.img-alt** — every `<img>` has an `alt` (descriptive text, or `alt=""` if purely decorative) (1.1.1).
+- **i18n.html-lang** — set `<html lang>` so AT and translation tools pick the right language (WCAG 3.1.1); more under *Internationalization & theming* below.
 
 ## Anti-defaults — TELL (📐, actively avoid)
 
@@ -53,6 +54,7 @@ Not compliance failures, but they erase brand distinctiveness and often *induce*
 - **Glassmorphism by default** — at most 2–3 glass surfaces + a scrim, never everywhere.
 - **tokens.color-only / tokens.spacing-scale** — no raw hex, no off-scale px; snap to the 8px scale.
 - **perf.img-dimensions** — set `width`/`height` (or `aspect-ratio`) on every `<img>` to prevent CLS.
+- **a11y.heading-order** — never skip a heading level (`h2 → h4`); descend one at a time so the screen-reader outline stays correct (WCAG 1.3.1, axe best-practice).
 
 ## Internationalization & theming
 

@@ -1,4 +1,4 @@
-import { parse as parseColor, wcagContrast } from "culori";
+import { parse as parseColor, wcagContrast, rgb } from "culori";
 
 /** Recursively resolve `var(--x, fallback)` against a custom-property map. */
 export function resolveVar(value: string, vars: Map<string, string>, depth = 0): string {
@@ -21,11 +21,24 @@ export function toColor(value: string, vars: Map<string, string>) {
   return c;
 }
 
+/** Alpha-composite a (possibly translucent) foreground over an opaque background, in sRGB. */
+function composite(fg: { alpha?: number; [k: string]: unknown }, bg: { alpha?: number; [k: string]: unknown }) {
+  const f = rgb(fg);
+  const b = rgb(bg);
+  if (!f || !b) return fg;
+  const a = f.alpha ?? 1;
+  return { mode: "rgb" as const, r: f.r * a + b.r * (1 - a), g: f.g * a + b.g * (1 - a), b: f.b * a + b.b * (1 - a), alpha: 1 };
+}
+
 /** WCAG contrast ratio between two CSS color values, or null if either is unresolvable. */
 export function contrastRatio(a: string, b: string, vars: Map<string, string>): number | null {
   const ca = toColor(a, vars);
   const cb = toColor(b, vars);
   if (!ca || !cb) return null;
-  const r = wcagContrast(ca, cb);
+  if (typeof cb.alpha === "number" && cb.alpha < 1) return null; // translucent background: the backdrop is unknown
+  // Composite a translucent foreground (alpha 0.5–0.99) over the background instead of scoring it as opaque,
+  // which would overstate contrast and hide a real failure. Below 0.5, toColor already skipped it.
+  const fg = typeof ca.alpha === "number" && ca.alpha < 1 ? composite(ca, cb) : ca;
+  const r = wcagContrast(fg, cb);
   return Number.isFinite(r) ? r : null;
 }

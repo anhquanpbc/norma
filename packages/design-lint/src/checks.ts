@@ -1,7 +1,7 @@
 import type { Rule as PostcssRule, Declaration, ChildNode } from "postcss";
 import type { HTMLElement } from "node-html-parser";
 import type { Check, CssBlock, FileContext, Finding, Rule } from "./types.js";
-import { contrastRatio } from "./color.js";
+import { contrastRatio, resolveVar } from "./color.js";
 import { elementLine } from "./parse.js";
 
 // ---------- helpers ----------
@@ -32,9 +32,12 @@ function pxOf(value: string | undefined): number | null {
   const n = parseFloat(m[1]);
   return m[2] === "rem" || m[2] === "em" ? n * 16 : n;
 }
-function isLargeText(d: Map<string, string>): boolean {
-  const size = pxOf(d.get("font-size"));
-  const w = d.get("font-weight") ?? "";
+function isLargeText(d: Map<string, string>, vars: Map<string, string>): boolean {
+  // Resolve tokens first: a heading sized via font-size:var(--h1) is still large text,
+  // and must be held to the 3:1 (not 4.5:1) threshold. Without this, token-driven headings
+  // are misclassified as body text and falsely fail color.contrast.text at error severity.
+  const size = pxOf(resolveVar(d.get("font-size") ?? "", vars));
+  const w = resolveVar(d.get("font-weight") ?? "", vars).trim();
   const bold = w === "bold" || parseInt(w, 10) >= 700;
   if (size == null) return false;
   return size >= 24 || (size >= 18.66 && bold);
@@ -56,7 +59,7 @@ const contrast: Check = (ctx, rules) => {
       if (!fg || !bg) return;
       const ratio = contrastRatio(fg, bg, ctx.vars);
       if (ratio == null) return;
-      const target = isLargeText(d) ? large : text;
+      const target = isLargeText(d, ctx.vars) ? large : text;
       if (!target) return;
       const min = (target.check as unknown as { min: number }).min;
       if (ratio + 0.01 >= min) return;
@@ -207,8 +210,10 @@ const semanticControl: Check = (ctx, rules) => {
   return out;
 };
 
-const EMOJI = /[\u{1F000}-\u{1FAFF}\u{1F1E6}-\u{1F1FF}\u{2600}-\u{26FF}\u{2B00}-\u{2BFF}]/u;
-const EMOJI_STRIP = /[\u{1F000}-\u{1FAFF}\u{1F1E6}-\u{1F1FF}\u{2600}-\u{26FF}\u{2B00}-\u{2BFF}\u{FE0F}\u{200D}]/gu;
+// Covers Misc Technical (⌚ 231A), arrows (2190–21FF), Misc Symbols + Dingbats (2300–27BF:
+// ✅ 2705, ❤ 2764, ✨ 2728), and pictographs (1F000–1FAFF) + flags.
+const EMOJI = /[\u{1F000}-\u{1FAFF}\u{1F1E6}-\u{1F1FF}\u{2190}-\u{21FF}\u{2300}-\u{27BF}\u{2B00}-\u{2BFF}]/u;
+const EMOJI_STRIP = /[\u{1F000}-\u{1FAFF}\u{1F1E6}-\u{1F1FF}\u{2190}-\u{21FF}\u{2300}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE0F}\u{200D}]/gu;
 const emojiIcon: Check = (ctx, rules) => {
   if (!ctx.dom) return [];
   const r = rules[0];
@@ -230,8 +235,11 @@ const imgDimensions: Check = (ctx, rules) => {
   const r = rules[0];
   const out: Finding[] = [];
   ctx.dom.querySelectorAll("img").forEach((el) => {
-    const hasWH = el.hasAttribute("width") && el.hasAttribute("height");
-    const ar = /aspect-ratio/i.test(el.getAttribute("style") ?? "");
+    const style = el.getAttribute("style") ?? "";
+    // Inline width/height reserve space just as well as the attributes (consistent with targetSize).
+    const hasWH = (el.hasAttribute("width") && el.hasAttribute("height"))
+      || (inlinePx(style, "width") != null && inlinePx(style, "height") != null);
+    const ar = /aspect-ratio/i.test(style);
     if (hasWH || ar || elDisabled(el, r.id)) return;
     out.push(mk(ctx, r, elementLine(ctx, el),
       `<img> has no width/height or aspect-ratio — reserve space to prevent CLS.`,
@@ -255,21 +263,53 @@ const imgAlt: Check = (ctx, rules) => {
   return out;
 };
 
+const headingOrder: Check = (ctx, rules) => {
+  if (!ctx.dom || !/<h[1-6]\b/i.test(ctx.source)) return []; // only files that actually have headings
+  const r = rules[0];
+  const out: Finding[] = [];
+  let prev = 0;
+  ctx.dom.querySelectorAll("h1, h2, h3, h4, h5, h6").forEach((el) => {
+    const level = parseInt((el.rawTagName ?? "").slice(1), 10);
+    if (!level) return;
+    if (prev && level > prev + 1 && !elDisabled(el, r.id)) {
+      out.push(mk(ctx, r, elementLine(ctx, el),
+        `Heading <${el.rawTagName}> skips a level (from <h${prev}>) — descend one level at a time.`,
+        `<${el.rawTagName}> nhảy cấp tiêu đề (từ <h${prev}>) — chỉ xuống một cấp mỗi lần.`));
+    }
+    prev = level;
+  });
+  return out;
+};
+
 const INTERACTIVE = "button, a[href], input:not([type=hidden]), select, textarea, [role=button], [onclick]";
+// Read an inline dimension (prefers min-* over the plain property), in px, or null if not set inline.
+function inlinePx(style: string, ...props: string[]): number | null {
+  for (const p of props) {
+    const v = pxOf(new RegExp(`(?:^|;)\\s*${p}\\s*:\\s*([^;]+)`, "i").exec(style)?.[1]);
+    if (v != null) return v;
+  }
+  return null;
+}
 const targetSize: Check = (ctx, rules) => {
   if (!ctx.dom) return [];
   const r = rules[0];
+  // native_warn_px (44/48) can't be verified from HTML alone — native platform sizing is
+  // an agent-enforced note carried in the rule title, not a static check.
   const min = (r.check as unknown as { min_px: number }).min_px ?? 24;
   const out: Finding[] = [];
   ctx.dom.querySelectorAll(INTERACTIVE).forEach((el) => {
+    if (elDisabled(el, r.id)) return;
     const style = el.getAttribute("style") ?? "";
-    const w = pxOf(/(?:^|;)\s*width\s*:\s*([^;]+)/.exec(style)?.[1]);
-    const h = pxOf(/(?:^|;)\s*height\s*:\s*([^;]+)/.exec(style)?.[1]);
-    if (w != null && h != null && w < min && h < min && !elDisabled(el, r.id)) {
-      out.push(mk(ctx, r, elementLine(ctx, el),
-        `Interactive <${el.rawTagName}> is ${w}x${h}px — below the ${min}x${min} minimum.`,
-        `<${el.rawTagName}> tương tác ${w}x${h}px — dưới mức tối thiểu ${min}x${min}.`));
-    }
+    const w = inlinePx(style, "min-width", "width");
+    const h = inlinePx(style, "min-height", "height");
+    // WCAG 2.5.8 needs a 24x24 CSS px square to fit — any known dimension below the minimum fails.
+    const small: string[] = [];
+    if (w != null && w < min) small.push(`${w}px wide`);
+    if (h != null && h < min) small.push(`${h}px tall`);
+    if (!small.length) return;
+    out.push(mk(ctx, r, elementLine(ctx, el),
+      `Interactive <${el.rawTagName}> is ${small.join(" and ")} — below the ${min}x${min} CSS px minimum.`,
+      `<${el.rawTagName}> tương tác ${small.join(" và ")} — dưới tối thiểu ${min}x${min} CSS px.`));
   });
   return out;
 };
@@ -330,6 +370,26 @@ function hexRgb(h: string): [number, number, number] | null {
   if (s.length < 6) return null;
   return [parseInt(s.slice(0, 2), 16), parseInt(s.slice(2, 4), 16), parseInt(s.slice(4, 6), 16)];
 }
+const rgbChromatic = (r: number, g: number, b: number): boolean => Math.max(r, g, b) - Math.min(r, g, b) > 12;
+// The first raw chromatic color literal (hex #rgb/#rgba/#rrggbb/#rrggbbaa, rgb()/rgba(), hsl()/hsla())
+// in a value, or null. Neutral black/white/grey and OKLCH (the palette's native format) are exempt.
+function rawChromatic(value: string): string | null {
+  for (const m of value.matchAll(/#[0-9a-fA-F]{3,8}\b/g)) {
+    const hex = m[0].slice(1);
+    if (hex.length !== 3 && hex.length !== 4 && hex.length !== 6 && hex.length !== 8) continue;
+    const rgb = hexRgb("#" + (hex.length <= 4 ? hex.slice(0, 3) : hex.slice(0, 6))); // drop alpha nibble(s)
+    if (rgb && rgbChromatic(rgb[0], rgb[1], rgb[2])) return m[0];
+  }
+  for (const m of value.matchAll(/rgba?\([^)]*\)/gi)) {
+    const n = m[0].match(/[\d.]+/g);
+    if (n && n.length >= 3 && rgbChromatic(+n[0], +n[1], +n[2])) return m[0];
+  }
+  for (const m of value.matchAll(/hsla?\([^)]*\)/gi)) {
+    const n = m[0].match(/[\d.]+/g); // [h, s%, l%]
+    if (n && n.length >= 3 && +n[1] > 10 && +n[2] > 4 && +n[2] < 96) return m[0];
+  }
+  return null;
+}
 const COLOR_PROP = /^(color|background(-color)?|border(-(top|right|bottom|left))?(-color)?|outline(-color)?|fill|stroke|box-shadow|text-decoration-color|caret-color|text-shadow)$/;
 const colorTokenOnly: Check = (ctx, rules) => {
   const r = rules[0];
@@ -338,10 +398,8 @@ const colorTokenOnly: Check = (ctx, rules) => {
     block.root.walkDecls((d) => {
       const prop = d.prop.toLowerCase();
       if (prop.startsWith("--") || !COLOR_PROP.test(prop)) return; // token definitions & non-color props are fine
-      const hexes = d.value.match(/#[0-9a-fA-F]{3}(?:[0-9a-fA-F]{3})?\b/g);
-      if (!hexes) return;
-      const chromatic = hexes.find((h) => { const rgb = hexRgb(h); return rgb !== null && Math.max(...rgb) - Math.min(...rgb) > 12; });
-      if (!chromatic) return; // neutral black / white / grey is exempt
+      const chromatic = rawChromatic(d.value);
+      if (!chromatic) return; // neutral black / white / grey and OKLCH are exempt
       const parent = d.parent;
       if (parent && parent.type === "rule" && ruleDisabled(parent as PostcssRule, r.id)) return;
       out.push(mk(ctx, r, cssLine(block, d),
@@ -395,5 +453,5 @@ const sri: Check = (ctx, rules) => {
 
 export const CHECKS: Record<string, Check> = {
   contrast, focusRing, reducedMotion, forbiddenValue, formLabel, semanticControl, emojiIcon, imgDimensions, imgAlt, targetSize,
-  htmlLang, logicalProperties, colorScheme, colorTokenOnly, externalRel, sri,
+  headingOrder, htmlLang, logicalProperties, colorScheme, colorTokenOnly, externalRel, sri,
 };

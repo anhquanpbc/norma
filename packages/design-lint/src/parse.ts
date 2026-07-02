@@ -8,6 +8,14 @@ function lineAt(source: string, index: number): number {
   return line;
 }
 
+/** 1-based line of an HTML element in the original source (best effort). */
+function nodeLine(source: string, el: HTMLElement): number {
+  const range = (el as unknown as { range?: [number, number] }).range;
+  if (range && typeof range[0] === "number") return lineAt(source, range[0]);
+  const idx = source.indexOf(el.outerHTML);
+  return idx >= 0 ? lineAt(source, idx) : 1;
+}
+
 function parseCss(css: string, startLine: number): CssBlock | null {
   try {
     return { root: postcss.parse(css) as Root, startLine };
@@ -52,15 +60,26 @@ export function buildContext(file: string, source: string, type: FileType): File
     const block = parseCss(m[1], startLine);
     if (block) css.push(block);
   }
+  // Inline style="..." attributes become synthetic single-rule blocks so the CSS checks
+  // (contrast, color-only, forbidden values, logical properties) see inline declarations —
+  // the surface AI-generated markup leans on most. Appended AFTER <style> blocks so the base
+  // :root theme still wins in collectVars' first-definition-wins var resolution.
+  for (const el of dom.querySelectorAll("[style]")) {
+    const style = el.getAttribute("style") ?? "";
+    if (!style.trim()) continue;
+    const disable = el.getAttribute("data-norma-disable");
+    const tag = (el.rawTagName || "e").toLowerCase();
+    // Translate data-norma-disable into a leading comment so the shared disable logic applies.
+    const inlineSrc = (disable ? `/* norma-disable ${disable} */\n` : "") + `${tag}{${style}}`;
+    const block = parseCss(inlineSrc, nodeLine(source, el));
+    if (block) css.push(block);
+  }
   return { file, type, source, dom, css, vars: collectVars(css, dom) };
 }
 
 /** 1-based line of an HTML element in the original source (best effort). */
 export function elementLine(ctx: FileContext, el: HTMLElement): number {
-  const range = (el as unknown as { range?: [number, number] }).range;
-  if (range && typeof range[0] === "number") return lineAt(ctx.source, range[0]);
-  const idx = ctx.source.indexOf(el.outerHTML);
-  return idx >= 0 ? lineAt(ctx.source, idx) : 1;
+  return nodeLine(ctx.source, el);
 }
 
 export { lineAt };

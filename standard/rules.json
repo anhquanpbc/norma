@@ -216,6 +216,29 @@
       }
     },
     {
+      "id": "a11y.heading-order",
+      "title": {
+        "en": "Headings don't skip a level",
+        "vi": "Tiêu đề không nhảy cấp"
+      },
+      "domain": "a11y",
+      "tag": "CONV",
+      "severity": "warn",
+      "source": "WCAG 2.2 SC 1.3.1 Info and Relationships",
+      "source_url": "https://www.w3.org/TR/WCAG22/#info-and-relationships",
+      "rationale": {
+        "en": "An outline that jumps from <h2> to <h4> (skipping <h3>) misrepresents structure to screen-reader users who navigate by heading level. Descend one level at a time (axe flags heading-order as a best-practice).",
+        "vi": "Bố cục nhảy từ <h2> sang <h4> (bỏ <h3>) làm sai cấu trúc với người dùng trình đọc màn hình điều hướng theo cấp tiêu đề. Chỉ xuống một cấp mỗi lần (axe coi heading-order là thực hành tốt)."
+      },
+      "check": {
+        "type": "headingOrder"
+      },
+      "remediation": {
+        "en": "Promote or demote headings so each level increases by at most one (h1 → h2 → h3, never h2 → h4).",
+        "vi": "Nâng/hạ tiêu đề để mỗi cấp chỉ tăng tối đa một bậc (h1 → h2 → h3, không h2 → h4)."
+      }
+    },
+    {
       "id": "perf.img-dimensions",
       "title": {
         "en": "Images set width/height or aspect-ratio",

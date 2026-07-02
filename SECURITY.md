@@ -2,8 +2,8 @@
 
 ## Supported versions
 
-The latest published version of `@norma/design-lint` and the latest `main` of this repository receive
-security fixes.
+The latest `main` of this repository — and, once it is published to npm, the current release of
+`@norma/design-lint` — receive security fixes.
 
 ## Reporting a vulnerability
 

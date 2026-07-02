@@ -57,4 +57,36 @@ describe("cli", () => {
     expect(code).toBe(1);
     expect(err).toContain("No HTML/CSS files matched");
   });
+
+  it("reports warnings without --quiet", () => {
+    const { out } = run(["--format", "json", fx("bad.html")]);
+    expect(JSON.parse(out).warnCount).toBeGreaterThan(0);
+  });
+
+  it("applies a --config severity override (error → warn drops the exit code)", () => {
+    const { code } = run(["--config", fx("downgrade.normarc.json"), fx("bad.html")]);
+    expect(code).toBe(0);
+  });
+
+  it("fails with a friendly message on invalid config JSON", () => {
+    const { code, err } = run(["--config", fx("broken.normarc.json"), fx("good.html")]);
+    expect(code).toBe(1);
+    expect(err).toContain("Invalid config");
+  });
+
+  it("rejects an invalid override severity", () => {
+    const { code, err } = run(["--config", fx("badsev.normarc.json"), fx("good.html")]);
+    expect(code).toBe(1);
+    expect(err).toContain("Invalid severity");
+  });
+
+  it("emits Vietnamese messages with --lang vi", () => {
+    const { out } = run(["--lang", "vi", fx("bad.html")]);
+    expect(out).toContain("lỗi"); // the VI stylish summary: "✗ N lỗi, M cảnh báo"
+  });
+
+  it("loads a custom catalog via --rules", () => {
+    const { code } = run(["--rules", fx("only-semantic.rules.json"), fx("bad.html")]);
+    expect(code).toBe(1);
+  });
 });
