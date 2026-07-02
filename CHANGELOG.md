@@ -4,50 +4,52 @@ All notable changes to this project are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The **standard** is versioned in
 `standard/VERSION`; the **CLI** (`@norma/design-lint`) is versioned in its own `package.json`.
 
-## [Unreleased]
+## [1.0.0] — 2026-07-02
 
-### Standard v1.0.0
+First tagged release of the Norma standard (`standard/VERSION` 1.0.0) and the
+`@norma/design-lint` CLI (1.0.0).
 
-- Extracted the machine-readable standard: `standard/tokens.tokens.json` (W3C DTCG v2025.10) and
-  `standard/rules.yaml` (15 rules, 9 SPEC) → generated `standard/rules.json`, schema-validated.
-- Added §14 "AI-era Design Anti-patterns" to `REFERENCE.md` (previously only in the site).
-- Reconciled the domain count to 13 across README, the site, and the reference.
-- **Enforceable i18n + theme (P2):** added `i18n.html-lang` (SPEC, WCAG 3.1.1), `i18n.logical-properties`
-  (CONV, CSS Logical Properties L1) and `theme.color-scheme` (CONV, CSS Color Adjustment L1); implemented
-  the real `tokens.color-only` check (raw chromatic hex, neutral black/white exempt) and enabled
-  `antipattern.pure-dark-mode` scoped to dark contexts (`forbiddenValue` now reads `context`). Shipped a
-  dark theme ramp (`color.dark.*`) + a `$themes` map in `tokens.tokens.json`. Catalog is now **18 rules
-  (10 SPEC)**; the reference site dogfoods clean against all of them. (`tokens.spacing-scale` stays
-  agent-advisory pending a reference raw-px → token pass — a strict scale check would be noisy today.)
+### The standard
 
-### Added
+- **Machine-readable catalog** — `standard/rules.yaml` → schema-validated `standard/rules.json`:
+  **21 rules (10 SPEC 🔒 / 11 CONV 📐)** mapped onto the 13 reference domains. Every SPEC rule carries a
+  primary-source URL (WCAG 2.2 fragment anchors, WHATWG/W3C specs); internal conventions honestly leave
+  `source_url` empty rather than fabricate a citation.
+- **Coverage** — contrast (4.5 / 3:1, with `var()` + OKLCH resolution), target size, focus visibility
+  (2.4.7), reduced-motion, form labels, semantic controls, emoji-as-icon, image **alt** (1.1.1) and
+  dimensions, `<html lang>`, logical properties, `color-scheme`, token-only color, the indigo-default and
+  pure-`#000`/`#fff` dark-mode "tells", and frontend-markup security (`rel=noopener`, SRI). Three rules are
+  advisory/runtime and not statically enforced (`tokens.spacing-scale`, `type.body-min`, `perf.inp-budget`).
+- **Design tokens** in W3C DTCG format (`standard/tokens.tokens.json`) with a light + dark ramp and a
+  `$themes` map; one brand OKLCH pinned across tokens, site and reference.
+- **Scope note** — a front-end *design* standard. Backend and runtime/header security (CSP/HSTS/Trusted
+  Types) are explicitly out of scope; frontend-markup security is in.
 
-- **`@norma/design-lint`** (CLI v0.1.0): lints HTML/CSS against the standard — contrast (with `var()` +
-  OKLCH resolution), single focus ring, reduced-motion, form labels, semantic controls, emoji-as-icon,
-  image dimensions, target size, and the indigo-default tell. Bilingual (EN/VI) messages;
-  stylish / json / sarif output; inline `norma-disable` suppression; 15 tests.
-- **Design agent** projected from one canonical spec (`agents/norma-design-agent.md`) into 7 surfaces:
-  Claude Code subagent, `CLAUDE.md`, Cursor `.mdc`, Copilot instructions (+ scoped `applyTo`),
-  and a vendor-neutral `AGENTS.md`.
-- **CI/CD**: build+test, anti-drift guard, dogfood-lint (SARIF), advisory pa11y WCAG2AA cross-check,
-  GitHub Pages deploy, Dependabot.
-- Dual license: MIT (code) + CC BY 4.0 (content).
+### `@norma/design-lint` (CLI 1.0.0)
 
-### Changed
+- Lints HTML/CSS against the standard: stylish / JSON / SARIF output, `.normarc.json` config,
+  `--rules` / `--lang en|vi`, inline `norma-disable` suppression, and a programmatic API. Node ≥ 22.
+- **58 unit tests**, v8 coverage over an 80% gate; the reference `index.html` dogfoods clean in both the
+  unit suite and CI. The static contrast check resolves the base (`:root`/light) theme; dark-theme contrast
+  is verified by the browser a11y test.
 
-- **Language structure**: English is now the primary language. Each human-facing document is split into
-  an English canonical file plus a Vietnamese `*.vi.md` sibling — `README` / `REFERENCE` / `CONTRIBUTING`
-  / `packages/design-lint/README` — instead of inline EN+VI mixing. The generated agent-surface files
-  (`AGENTS.md`, `CLAUDE.md`, Cursor, Copilot, `.github/instructions/*`) are now **English-only**, and
-  `index.html` now **defaults to English** (the in-page EN/VI toggle stays). The rule catalog
-  (`standard/rules.yaml`) keeps bilingual `title` / `rationale` / `remediation` for the linter's
-  `--lang en|vi`.
+### The site & docs
 
-### Fixed
+- Single self-contained, **zero-network** `index.html` — a docs layout (sticky section nav + client-side
+  section search), a bilingual EN/VI toggle, and a **working light/dark theme** implemented as a
+  semantic-token remap (`[data-theme="dark"]`, near-black surfaces, never pure `#000`/`#fff`). Degrades
+  gracefully with no JS / reduced motion.
+- **Bilingual docs** — `README` / `REFERENCE` / `CONTRIBUTING` / the CLI README each ship an English
+  canonical file plus a `*.vi` sibling; `index.html` is fully EN/VI. The agent-surface files (Claude Code
+  subagent, `CLAUDE.md`, Cursor, Copilot, `AGENTS.md`) are projected from one canonical spec and are
+  English-only.
+- **CI/CD** — build + test + an anti-drift guard (regeneration diff, brand OKLCH, domain count, every rule
+  covered by the agent spec, and index.html ↔ REFERENCE.md section-sync) + dogfood-lint (SARIF); a
+  Playwright + axe browser self-test (WCAG across theme × language, interaction, zero-network, responsive
+  overflow); GitHub Pages deploy gated on a verify job; Dependabot.
 
-- Six real WCAG AA contrast self-violations in the reference site's own chrome (gauge labels, target
-  chips, footer source labels and fine print, and `.cc-fail` / `.badge.viol` — two of which were found
-  by the linter dogfooding itself).
-- Scroll-spy now recomputes the active section on window resize.
-- Corrected the Vietnamese-typography note (accented characters span four Unicode blocks, not only Latin
-  Extended Additional) and replaced a non-real phone-number example.
+### Dual license
+
+- MIT (code) + CC BY 4.0 (content), split via `LICENSE` + `LICENSE-CONTENT`.
+
+[1.0.0]: https://github.com/anhquanpbc/norma/releases/tag/v1.0.0

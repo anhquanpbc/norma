@@ -80,24 +80,24 @@
     {
       "id": "a11y.focus-ring-single",
       "title": {
-        "en": "Exactly one focus-visible ring",
-        "vi": "Đúng một vòng focus-visible"
+        "en": "Visible focus indicator (never removed)",
+        "vi": "Chỉ báo focus hiển thị (không bị xoá)"
       },
       "domain": "a11y",
       "tag": "SPEC",
       "severity": "error",
-      "source": "WCAG 2.2 SC 2.4.7 / 2.4.11 / 2.4.13",
-      "source_url": "https://www.w3.org/TR/WCAG22/#focus-appearance",
+      "source": "WCAG 2.2 SC 2.4.7 Focus Visible",
+      "source_url": "https://www.w3.org/TR/WCAG22/#focus-visible",
       "rationale": {
-        "en": "A focus indicator must exist, be >= 2px and >= 3:1, and be a SINGLE clean ring. Stacking border + outline + box-shadow (an AI habit) muddies it; outline:none with no replacement removes it.",
-        "vi": "Chỉ báo focus phải có, >= 2px và >= 3:1, và là MỘT vòng sạch. Chồng border + outline + box-shadow (thói quen AI) làm rối; outline:none không thay thế là xoá mất."
+        "en": "Keyboard focus must have a visible indicator (aim for >= 2px and >= 3:1). Removing it (outline:none / outline:0) with no replacement fails 2.4.7. A two-color outline + box-shadow ring, or a border, is a valid replacement — those are not violations.",
+        "vi": "Focus bàn phím phải có chỉ báo nhìn thấy (hướng tới >= 2px và >= 3:1). Xoá nó (outline:none / outline:0) mà không thay thế là vi phạm 2.4.7. Vòng hai màu outline + box-shadow, hoặc một border, là thay thế hợp lệ — không phải vi phạm."
       },
       "check": {
         "type": "focusRing"
       },
       "remediation": {
-        "en": "Use :focus-visible { outline: 2px solid <token>; outline-offset: 2px } and nothing else.",
-        "vi": "Dùng :focus-visible { outline: 2px solid <token>; outline-offset: 2px } và không gì khác."
+        "en": "Keep a visible :focus-visible indicator — outline: 2px solid <token>; outline-offset: 2px — or, if you set outline:none, replace it with a box-shadow ring or a border.",
+        "vi": "Giữ chỉ báo :focus-visible nhìn thấy — outline: 2px solid <token>; outline-offset: 2px — hoặc nếu đặt outline:none, thay bằng vòng box-shadow hoặc border."
       }
     },
     {
@@ -190,6 +190,29 @@
       "remediation": {
         "en": "Use an inline SVG icon plus a real text/aria label.",
         "vi": "Dùng SVG inline kèm nhãn chữ/aria thật."
+      }
+    },
+    {
+      "id": "a11y.img-alt",
+      "title": {
+        "en": "Every <img> has an alt attribute",
+        "vi": "Mọi <img> có thuộc tính alt"
+      },
+      "domain": "a11y",
+      "tag": "SPEC",
+      "severity": "error",
+      "source": "WCAG 2.2 SC 1.1.1 Non-text Content",
+      "source_url": "https://www.w3.org/TR/WCAG22/#non-text-content",
+      "rationale": {
+        "en": "Images need a text alternative: descriptive alt for meaningful images, or alt=\"\" for decorative ones. A missing alt attribute leaves screen-reader users with the raw file name or nothing.",
+        "vi": "Ảnh cần văn bản thay thế: alt mô tả cho ảnh có nghĩa, hoặc alt=\"\" cho ảnh trang trí. Thiếu thuộc tính alt khiến người dùng trình đọc màn hình chỉ nghe tên file hoặc không gì cả."
+      },
+      "check": {
+        "type": "imgAlt"
+      },
+      "remediation": {
+        "en": "Add alt to every <img>: descriptive text, or alt=\"\" if purely decorative (or mark it aria-hidden / role=presentation).",
+        "vi": "Thêm alt cho mọi <img>: văn bản mô tả, hoặc alt=\"\" nếu chỉ trang trí (hoặc đánh dấu aria-hidden / role=presentation)."
       }
     },
     {
@@ -377,8 +400,6 @@
         "type": "forbiddenValue",
         "patterns": [
           "#000000",
-          "#000;",
-          "#fff;",
           "#ffffff"
         ],
         "context": "dark-surface"
@@ -464,7 +485,7 @@
         "vi": "Ngân sách INP <= 200ms"
       },
       "domain": "perf",
-      "tag": "SPEC",
+      "tag": "CONV",
       "severity": "off",
       "source": "web.dev / Chrome — Core Web Vitals (INP)",
       "source_url": "https://web.dev/articles/inp",

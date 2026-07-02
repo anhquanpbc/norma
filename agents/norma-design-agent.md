@@ -34,12 +34,13 @@ sources and machine assertions lives in `standard/rules.json`.
 - **color.contrast.text** — body text ≥ **4.5:1** (WCAG 1.4.3).
 - **color.contrast.large-ui** — large text (≥24px / ≥18.66px bold) & UI components ≥ **3:1** (1.4.11).
 - **a11y.target-size** — pointer targets ≥ **24×24 CSS px**; native ≥ **44pt (iOS) / 48dp (Android)** (2.5.8).
-- **a11y.focus-ring-single** — exactly one `:focus-visible` ring, ≥2px, ≥3:1; never stack
-  `border`+`outline`+`box-shadow`; never `outline:none` without a compliant replacement (2.4.7/2.4.11/2.4.13).
+- **a11y.focus-ring-single** — keep a visible `:focus-visible` indicator (≥2px, ≥3:1); never `outline:none`
+  without a replacement (a two-color outline+box-shadow ring or a border is a valid replacement) (2.4.7).
 - **a11y.reduced-motion** — any animation requires an `@media (prefers-reduced-motion: reduce)` block (2.3.3).
 - **a11y.form-label** — every input has an associated `<label>`/`aria-label`; never placeholder-as-label (3.3.2).
 - **a11y.semantic-control** — interactive controls are `<button>`/`<a>`, not `<div onClick>` (4.1.2).
 - **a11y.emoji-icon** — no emoji as an interactive icon without a real text/aria label (1.1.1).
+- **a11y.img-alt** — every `<img>` has an `alt` (descriptive text, or `alt=""` if purely decorative) (1.1.1).
 
 ## Anti-defaults — TELL (📐, actively avoid)
 

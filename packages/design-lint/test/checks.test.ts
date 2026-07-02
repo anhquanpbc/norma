@@ -15,20 +15,24 @@ function lint(source: string, type: FileType) {
 const ids = (fs: { ruleId: string }[]) => fs.map((f) => f.ruleId);
 
 describe("a11y.focus-ring-single", () => {
-  it("flags stacked outline + box-shadow", () => {
-    const f = lint(`a:focus-visible{ outline:2px solid blue; box-shadow:0 0 0 4px red; }`, "css");
-    expect(ids(f)).toContain("a11y.focus-ring-single");
+  it("passes a two-color outline + box-shadow ring (a valid single indicator)", () => {
+    const f = lint(`a:focus-visible{ outline:2px solid #fff; box-shadow:0 0 0 4px #2563eb; }`, "css");
+    expect(ids(f)).not.toContain("a11y.focus-ring-single");
   });
   it("passes a single clean ring", () => {
     const f = lint(`a:focus-visible{ outline:2px solid blue; outline-offset:2px; }`, "css");
     expect(ids(f)).not.toContain("a11y.focus-ring-single");
   });
-  it("flags outline:none with no replacement", () => {
+  it("passes outline:none replaced by a border", () => {
+    const f = lint(`button:focus-visible{ outline:none; border:2px solid #2563eb; }`, "css");
+    expect(ids(f)).not.toContain("a11y.focus-ring-single");
+  });
+  it("flags outline:none with no visible replacement", () => {
     const f = lint(`button:focus-visible{ outline:none; }`, "css");
     expect(ids(f)).toContain("a11y.focus-ring-single");
   });
   it("respects a disable comment", () => {
-    const f = lint(`/* norma-disable a11y.focus-ring-single */\na:focus-visible{ outline:1px solid blue; box-shadow:0 0 4px red; }`, "css");
+    const f = lint(`/* norma-disable a11y.focus-ring-single */\nbutton:focus-visible{ outline:none; }`, "css");
     expect(ids(f)).not.toContain("a11y.focus-ring-single");
   });
 });
@@ -114,6 +118,10 @@ describe("a11y.emoji-icon", () => {
     const f = lint(`<button aria-label="Alerts">🔔</button>`, "html");
     expect(ids(f)).not.toContain("a11y.emoji-icon");
   });
+  it("passes an emoji button that also has visible text", () => {
+    const f = lint(`<button>🔔 Notifications</button>`, "html");
+    expect(ids(f)).not.toContain("a11y.emoji-icon");
+  });
 });
 
 describe("perf.img-dimensions", () => {
@@ -124,6 +132,19 @@ describe("perf.img-dimensions", () => {
   it("passes an <img> with width and height", () => {
     const f = lint(`<img src="a.png" width="80" height="80">`, "html");
     expect(ids(f)).not.toContain("perf.img-dimensions");
+  });
+});
+
+describe("a11y.img-alt", () => {
+  it("flags an <img> with no alt attribute", () => {
+    expect(ids(lint(`<img src="a.png">`, "html"))).toContain("a11y.img-alt");
+  });
+  it("passes descriptive alt and empty (decorative) alt", () => {
+    expect(ids(lint(`<img src="a.png" alt="A cat">`, "html"))).not.toContain("a11y.img-alt");
+    expect(ids(lint(`<img src="a.png" alt="">`, "html"))).not.toContain("a11y.img-alt");
+  });
+  it("passes an aria-hidden decorative image", () => {
+    expect(ids(lint(`<img src="a.png" aria-hidden="true">`, "html"))).not.toContain("a11y.img-alt");
   });
 });
 
@@ -182,6 +203,14 @@ describe("antipattern.pure-dark-mode", () => {
   });
   it("does not fire in a light context", () => {
     const f = lint(`body{ background:#ffffff; color:#000000; }`, "css");
+    expect(ids(f)).not.toContain("antipattern.pure-dark-mode");
+  });
+  it("catches 3-digit #000/#fff in a dark context", () => {
+    const f = lint(`@media (prefers-color-scheme: dark){ body{ background:#000; color:#fff; } }`, "css");
+    expect(ids(f)).toContain("antipattern.pure-dark-mode");
+  });
+  it("does not flag a translucent #0009 value as pure-dark", () => {
+    const f = lint(`@media (prefers-color-scheme: dark){ .x{ box-shadow:0 0 4px #0009; background:#121212; } }`, "css");
     expect(ids(f)).not.toContain("antipattern.pure-dark-mode");
   });
 });

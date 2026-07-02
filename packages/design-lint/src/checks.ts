@@ -69,6 +69,7 @@ const contrast: Check = (ctx, rules) => {
   return out;
 };
 
+const BORDER_PROP = /^border(-(top|right|bottom|left|inline|block)(-(start|end))?)?(-width)?$/;
 const focusRing: Check = (ctx, rules) => {
   const r = rules[0];
   const out: Finding[] = [];
@@ -76,19 +77,22 @@ const focusRing: Check = (ctx, rules) => {
     block.root.walkRules((rule) => {
       if (!/:focus(-visible)?(?![\w-])/.test(rule.selector) || /:focus-within/.test(rule.selector)) return;
       const d = decls(rule);
-      const outline = d.get("outline");
-      const hasOutline = !!outline && !/^(none|0(px)?|0 )/.test(outline.trim());
-      const shadow = d.get("box-shadow");
-      const hasShadow = !!shadow && shadow.trim() !== "none";
-      const removed = outline != null && /^(none|0(px)?)\b/.test(outline.trim()) && !hasShadow;
-      const rings = (hasOutline ? 1 : 0) + (hasShadow ? 1 : 0);
-      if (rings < 2 && !removed) return;
-      if (ruleDisabled(rule, r.id)) return;
+      const outline = (d.get("outline") ?? "").trim();
+      const outlineWidth = (d.get("outline-width") ?? "").trim();
+      const removed = /^(none|0(px|rem|em)?)\b/.test(outline) || /^0(px|rem|em)?$/.test(outlineWidth);
+      if (!removed) return; // an outline is present → indicator visible; a two-color outline+box-shadow ring is valid
+      // Outline explicitly removed: fine only if a visible replacement exists — a box-shadow ring or a non-zero border.
+      const shadow = (d.get("box-shadow") ?? "").trim();
+      const hasShadow = !!shadow && shadow !== "none";
+      let hasBorder = false;
+      for (const [prop, val] of d) {
+        const v = val.trim();
+        if (BORDER_PROP.test(prop) && v && v !== "none" && !/^0(px|rem|em)?\b/.test(v)) hasBorder = true;
+      }
+      if (hasShadow || hasBorder || ruleDisabled(rule, r.id)) return;
       out.push(mk(ctx, r, cssLine(block, rule),
-        removed ? `"${rule.selector}" removes the focus outline with no visible replacement.`
-                : `"${rule.selector}" stacks ${rings} focus rings (outline + box-shadow); use one clean ring.`,
-        removed ? `"${rule.selector}" xoá outline focus mà không thay thế.`
-                : `"${rule.selector}" chồng ${rings} vòng focus (outline + box-shadow); dùng một vòng.`));
+        `"${rule.selector}" removes the focus outline with no visible replacement (box-shadow ring or border).`,
+        `"${rule.selector}" xoá outline focus mà không có thay thế nhìn thấy (vòng box-shadow hoặc border).`));
     });
   }
   return out;
@@ -124,13 +128,26 @@ function inDarkContext(node: Declaration): boolean {
   return false;
 }
 
+// Canonicalize a solid hex (#rgb / #rrggbb) to 6-digit lowercase; null for non-hex or alpha (#rgba/#rrggbbaa).
+function canonHex(h: string): string | null {
+  const m = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(h.trim());
+  if (!m) return null;
+  const s = m[1].toLowerCase();
+  return s.length === 3 ? s.split("").map((c) => c + c).join("") : s;
+}
 const forbiddenValue: Check = (ctx, rules) => {
   const out: Finding[] = [];
   for (const block of ctx.css) {
     block.root.walkDecls((d) => {
+      const lowerVal = d.value.toLowerCase();
+      // Hex patterns match a whole color token (so "#000000" also catches "#000", but never "#0009");
+      // non-hex patterns (e.g. "indigo-500") fall back to substring.
+      const valueHexes = new Set(
+        (d.value.match(/#[0-9a-f]{3,8}\b/gi) ?? []).map(canonHex).filter((x): x is string => x !== null),
+      );
       for (const r of rules) {
         const patterns = ((r.check as { patterns?: string[] }).patterns ?? []);
-        const hit = patterns.find((p) => d.value.toLowerCase().includes(p.toLowerCase()));
+        const hit = patterns.find((p) => { const ph = canonHex(p); return ph ? valueHexes.has(ph) : lowerVal.includes(p.toLowerCase()); });
         if (!hit) continue;
         // context: "dark-surface" rules only fire inside a dark theme scope.
         if ((r.check as { context?: string }).context === "dark-surface" && !inDarkContext(d)) continue;
@@ -191,14 +208,18 @@ const semanticControl: Check = (ctx, rules) => {
 };
 
 const EMOJI = /[\u{1F000}-\u{1FAFF}\u{1F1E6}-\u{1F1FF}\u{2600}-\u{26FF}\u{2B00}-\u{2BFF}]/u;
+const EMOJI_STRIP = /[\u{1F000}-\u{1FAFF}\u{1F1E6}-\u{1F1FF}\u{2600}-\u{26FF}\u{2B00}-\u{2BFF}\u{FE0F}\u{200D}]/gu;
 const emojiIcon: Check = (ctx, rules) => {
   if (!ctx.dom) return [];
   const r = rules[0];
   const out: Finding[] = [];
   ctx.dom.querySelectorAll("button, a, [role=button]").forEach((el) => {
-    if (!EMOJI.test(el.text) || el.hasAttribute("aria-label") || elDisabled(el, r.id)) return;
+    if (!EMOJI.test(el.text)) return;
+    const named = el.hasAttribute("aria-label") || el.hasAttribute("aria-labelledby") || el.hasAttribute("title");
+    const visibleText = el.text.replace(EMOJI_STRIP, "").trim(); // text left after removing the emoji glyphs
+    if (named || visibleText.length > 0 || elDisabled(el, r.id)) return; // an accessible name is present
     out.push(mk(ctx, r, elementLine(ctx, el),
-      `Interactive <${el.rawTagName}> uses an emoji with no text/aria label.`,
+      `Interactive <${el.rawTagName}> uses an emoji with no text or aria label.`,
       `<${el.rawTagName}> tương tác dùng emoji mà không có nhãn chữ/aria.`));
   });
   return out;
@@ -215,6 +236,21 @@ const imgDimensions: Check = (ctx, rules) => {
     out.push(mk(ctx, r, elementLine(ctx, el),
       `<img> has no width/height or aspect-ratio — reserve space to prevent CLS.`,
       `<img> thiếu width/height hoặc aspect-ratio — đặt sẵn kích thước để chống CLS.`));
+  });
+  return out;
+};
+
+const imgAlt: Check = (ctx, rules) => {
+  if (!ctx.dom) return [];
+  const r = rules[0];
+  const out: Finding[] = [];
+  ctx.dom.querySelectorAll("img").forEach((el) => {
+    if (el.hasAttribute("alt") || elDisabled(el, r.id)) return; // alt="" (decorative) is allowed; a MISSING alt is not
+    const role = (el.getAttribute("role") ?? "").toLowerCase();
+    if (el.getAttribute("aria-hidden") === "true" || role === "presentation" || role === "none") return;
+    out.push(mk(ctx, r, elementLine(ctx, el),
+      `<img> has no alt attribute — add alt text (alt="" if purely decorative).`,
+      `<img> không có thuộc tính alt — thêm alt (alt="" nếu chỉ trang trí).`));
   });
   return out;
 };
@@ -358,6 +394,6 @@ const sri: Check = (ctx, rules) => {
 };
 
 export const CHECKS: Record<string, Check> = {
-  contrast, focusRing, reducedMotion, forbiddenValue, formLabel, semanticControl, emojiIcon, imgDimensions, targetSize,
+  contrast, focusRing, reducedMotion, forbiddenValue, formLabel, semanticControl, emojiIcon, imgDimensions, imgAlt, targetSize,
   htmlLang, logicalProperties, colorScheme, colorTokenOnly, externalRel, sri,
 };

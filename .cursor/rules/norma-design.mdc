@@ -33,12 +33,13 @@ sources and machine assertions lives in `standard/rules.json`.
 - **color.contrast.text** — body text ≥ **4.5:1** (WCAG 1.4.3).
 - **color.contrast.large-ui** — large text (≥24px / ≥18.66px bold) & UI components ≥ **3:1** (1.4.11).
 - **a11y.target-size** — pointer targets ≥ **24×24 CSS px**; native ≥ **44pt (iOS) / 48dp (Android)** (2.5.8).
-- **a11y.focus-ring-single** — exactly one `:focus-visible` ring, ≥2px, ≥3:1; never stack
-  `border`+`outline`+`box-shadow`; never `outline:none` without a compliant replacement (2.4.7/2.4.11/2.4.13).
+- **a11y.focus-ring-single** — keep a visible `:focus-visible` indicator (≥2px, ≥3:1); never `outline:none`
+  without a replacement (a two-color outline+box-shadow ring or a border is a valid replacement) (2.4.7).
 - **a11y.reduced-motion** — any animation requires an `@media (prefers-reduced-motion: reduce)` block (2.3.3).
 - **a11y.form-label** — every input has an associated `<label>`/`aria-label`; never placeholder-as-label (3.3.2).
 - **a11y.semantic-control** — interactive controls are `<button>`/`<a>`, not `<div onClick>` (4.1.2).
 - **a11y.emoji-icon** — no emoji as an interactive icon without a real text/aria label (1.1.1).
+- **a11y.img-alt** — every `<img>` has an `alt` (descriptive text, or `alt=""` if purely decorative) (1.1.1).
 
 ## Anti-defaults — TELL (📐, actively avoid)
 
@@ -93,11 +94,12 @@ npx @norma/design-lint "**/*.{html,css}"     # gate SPEC violations; exits non-z
 - 🔒 SPEC `color.contrast.text` (error) — Body text contrast >= 4.5:1 · [WCAG 2.2 SC 1.4.3 Contrast (Minimum)](https://www.w3.org/TR/WCAG22/#contrast-minimum)
 - 🔒 SPEC `color.contrast.large-ui` (error) — Large text & UI contrast >= 3:1 · [WCAG 2.2 SC 1.4.3 / 1.4.11 Non-text Contrast](https://www.w3.org/TR/WCAG22/#non-text-contrast)
 - 🔒 SPEC `a11y.target-size` (error) — Touch target >= 24x24 CSS px (native 44/48) · [WCAG 2.2 SC 2.5.8 Target Size (Minimum)](https://www.w3.org/TR/WCAG22/#target-size-minimum)
-- 🔒 SPEC `a11y.focus-ring-single` (error) — Exactly one focus-visible ring · [WCAG 2.2 SC 2.4.7 / 2.4.11 / 2.4.13](https://www.w3.org/TR/WCAG22/#focus-appearance)
+- 🔒 SPEC `a11y.focus-ring-single` (error) — Visible focus indicator (never removed) · [WCAG 2.2 SC 2.4.7 Focus Visible](https://www.w3.org/TR/WCAG22/#focus-visible)
 - 🔒 SPEC `a11y.reduced-motion` (error) — Honor prefers-reduced-motion · [WCAG 2.2 SC 2.3.3 Animation from Interactions](https://www.w3.org/TR/WCAG22/#animation-from-interactions)
 - 🔒 SPEC `a11y.form-label` (error) — Every input has a real label · [WCAG 2.2 SC 3.3.2 / 1.3.1 / 4.1.2](https://www.w3.org/TR/WCAG22/#labels-or-instructions)
 - 🔒 SPEC `a11y.semantic-control` (error) — Interactive controls are <button>/<a> · [WCAG 2.2 SC 4.1.2 Name, Role, Value](https://www.w3.org/TR/WCAG22/#name-role-value)
 - 🔒 SPEC `a11y.emoji-icon` (warn) — No emoji as interactive icons · [WCAG 2.2 SC 1.1.1 Non-text Content](https://www.w3.org/TR/WCAG22/#non-text-content)
+- 🔒 SPEC `a11y.img-alt` (error) — Every <img> has an alt attribute · [WCAG 2.2 SC 1.1.1 Non-text Content](https://www.w3.org/TR/WCAG22/#non-text-content)
 - 📐 CONV `perf.img-dimensions` (warn) — Images set width/height or aspect-ratio · [web.dev — Optimize CLS](https://web.dev/articles/cls)
 - 🔒 SPEC `i18n.html-lang` (error) — <html> declares a lang · [WCAG 2.2 SC 3.1.1 Language of Page](https://www.w3.org/TR/WCAG22/#language-of-page)
 - 📐 CONV `i18n.logical-properties` (warn) — Use logical (inline/block) CSS properties · [W3C CSS Logical Properties and Values L1](https://www.w3.org/TR/css-logical-1/)
@@ -109,4 +111,4 @@ npx @norma/design-lint "**/*.{html,css}"     # gate SPEC violations; exits non-z
 - 📐 CONV `security.external-rel` (warn) — target=_blank has rel=noopener · [WHATWG HTML — noopener link type (OWASP: reverse tabnabbing)](https://html.spec.whatwg.org/multipage/links.html#link-type-noopener)
 - 📐 CONV `security.sri` (warn) — External subresources use SRI · [W3C Subresource Integrity](https://www.w3.org/TR/SRI/)
 - 📐 CONV `type.body-min` (off) — Body text >= 16px · Norma §3 Typography
-- 🔒 SPEC `perf.inp-budget` (off) — INP budget <= 200ms · [web.dev / Chrome — Core Web Vitals (INP)](https://web.dev/articles/inp)
+- 📐 CONV `perf.inp-budget` (off) — INP budget <= 200ms · [web.dev / Chrome — Core Web Vitals (INP)](https://web.dev/articles/inp)

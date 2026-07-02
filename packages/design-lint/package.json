@@ -1,6 +1,6 @@
 {
   "name": "@norma/design-lint",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Lint HTML/CSS against the Norma web design standard — contrast, focus rings, semantic HTML, labels, reduced-motion, and the common AI-generated design tells.",
   "type": "module",
   "license": "MIT",
@@ -32,7 +32,8 @@
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json && node copy-rules.mjs",
-    "test": "vitest run --coverage"
+    "test": "vitest run --coverage",
+    "prepack": "npm run build"
   },
   "dependencies": {
     "culori": "^4.0.1",
