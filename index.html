@@ -142,9 +142,9 @@ section:first-of-type{ border-top:0; }
 
 /* ---- cards / grid ---- */
 .grid{ display:grid; gap:var(--s-5); }
-.g2{ grid-template-columns:1fr 1fr; }
-.g3{ grid-template-columns:repeat(3,1fr); }
-@media (max-width:820px){ .g2,.g3{ grid-template-columns:1fr; } }
+.g2{ grid-template-columns:minmax(0,1fr) minmax(0,1fr); }
+.g3{ grid-template-columns:repeat(3,minmax(0,1fr)); }
+@media (max-width:820px){ .g2,.g3{ grid-template-columns:minmax(0,1fr); } }
 .card{ background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
   padding:var(--s-5); }
 .card.tint{ background:var(--surface-2); }
@@ -436,7 +436,7 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
       </div>
     </div>
 
-    <div class="audit" aria-label="This page's self-audit">
+    <div class="audit" role="group" aria-label="This page's self-audit">
       <span class="lbl"><span class="en">This page:</span><span class="vi">Trang này:</span></span>
       <span class="item">8px grid</span>
       <span class="item">1.25 scale</span>
@@ -1158,6 +1158,16 @@ function drawTypeChart(r, base){
 }
 
 /* ---------- §04 OKLCH ramp + HSL compare ---------- */
+function oklchLum(L,C,H){                   // OKLCH -> linear sRGB -> WCAG relative luminance
+  var hr=H*Math.PI/180, a=C*Math.cos(hr), b=C*Math.sin(hr);
+  var l=Math.pow(L+0.3963377774*a+0.2158037573*b,3),
+      m=Math.pow(L-0.1055613458*a-0.0638541728*b,3),
+      s=Math.pow(L-0.0894841775*a-1.2914855480*b,3);
+  var cl=function(x){return Math.max(0,Math.min(1,x));};
+  return 0.2126*cl(4.0767416621*l-3.3077115913*m+0.2309699292*s)
+       + 0.7152*cl(-1.2684380046*l+2.6097574011*m-0.3413193965*s)
+       + 0.0722*cl(-0.0041960863*l-0.7034186147*m+1.7076147010*s);
+}
 function drawRamp(){
   var h = parseFloat($("hueSlider").value);
   var c = parseFloat($("chromaSlider").value);
@@ -1169,7 +1179,8 @@ function drawRamp(){
     var d = document.createElement("div");
     d.className = "sw";
     d.style.background = "oklch("+L.toFixed(3)+" "+c+" "+h+")";
-    d.style.color = L < 0.62 ? "rgba(255,255,255,.9)" : "rgba(0,0,0,.6)";
+    var lum = oklchLum(L, c, h);           // full black/white, whichever contrasts more (>= 4.5:1)
+    d.style.color = (lum + 0.05) / 0.05 >= 1.05 / (lum + 0.05) ? "#000" : "#fff";
     d.textContent = (L*100).toFixed(0);
     ramp.appendChild(d);
   }

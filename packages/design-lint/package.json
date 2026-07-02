@@ -5,15 +5,34 @@
   "type": "module",
   "license": "MIT",
   "homepage": "https://github.com/anhquanpbc/norma/tree/main/packages/design-lint",
-  "repository": { "type": "git", "url": "git+https://github.com/anhquanpbc/norma.git", "directory": "packages/design-lint" },
-  "keywords": ["design", "linter", "accessibility", "wcag", "a11y", "design-tokens", "ai", "css", "html"],
-  "bin": { "norma-design-lint": "dist/cli.js" },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anhquanpbc/norma.git",
+    "directory": "packages/design-lint"
+  },
+  "keywords": [
+    "design",
+    "linter",
+    "accessibility",
+    "wcag",
+    "a11y",
+    "design-tokens",
+    "ai",
+    "css",
+    "html"
+  ],
+  "bin": {
+    "norma-design-lint": "dist/cli.js"
+  },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "files": ["dist", "README.md"],
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "scripts": {
     "build": "tsc -p tsconfig.json && node copy-rules.mjs",
-    "test": "vitest run"
+    "test": "vitest run --coverage"
   },
   "dependencies": {
     "culori": "^4.0.1",
@@ -22,8 +41,11 @@
   },
   "devDependencies": {
     "@types/node": "^26.1.0",
+    "@vitest/coverage-v8": "^4.1.9",
     "typescript": "^6.0.3",
     "vitest": "^4.1.9"
   },
-  "engines": { "node": ">=22" }
+  "engines": {
+    "node": ">=22"
+  }
 }

@@ -15,9 +15,12 @@
     "check:drift": "tsx scripts/check-drift.ts",
     "build": "npm run build:rules && npm run build --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",
-    "lint:self": "npm run build --workspace @norma/design-lint && node packages/design-lint/dist/cli.js index.html"
+    "lint:self": "npm run build --workspace @norma/design-lint && node packages/design-lint/dist/cli.js index.html",
+    "e2e": "playwright test"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.12.1",
+    "@playwright/test": "^1.61.1",
     "@types/node": "^26.1.0",
     "ajv": "^8.17.1",
     "tsx": "^4.19.2",

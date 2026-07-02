@@ -35,14 +35,23 @@ jobs:
           name: design-lint-sarif
           path: design-lint.sarif
 
-  a11y:
-    name: Independent WCAG cross-check (advisory)
+  e2e:
+    name: Browser self-test (Playwright)
     runs-on: ubuntu-latest
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v6
         with:
           node-version: 22
-      - name: pa11y WCAG 2 AA on index.html
-        run: npx --yes pa11y@8 --config pa11y.config.json --standard WCAG2AA --runner axe --runner htmlcs index.html
+          cache: npm
+      - run: npm ci
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Run e2e (axe WCAG, EN/VI toggle, 0-network, responsive overflow)
+        run: npx playwright test
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7

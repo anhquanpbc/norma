@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { readFileSync, existsSync, globSync } from "node:fs";
+import { pathToFileURL } from "node:url";
 import { lintFiles } from "./index.js";
 import { stylish, json, sarif, type Lang } from "./formatters.js";
 import type { Severity } from "./types.js";
@@ -65,4 +66,9 @@ function main(argv: string[]): number {
   return res.errorCount > 0 ? 1 : 0;
 }
 
-process.exit(main(process.argv));
+export { main };
+
+// Execute as a CLI only when invoked directly, so tests can import main() without exiting.
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  process.exit(main(process.argv));
+}
