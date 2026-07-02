@@ -59,6 +59,12 @@ Not compliance failures, but they erase brand distinctiveness and often *induce*
 - **i18n.logical-properties** (📐) — prefer logical CSS (`margin-inline`, `padding-inline`, `text-align:start/end`) over physical `*-left/right`, `text-align:left/right`, `float:left/right`, so RTL and vertical writing modes work.
 - **theme.color-scheme** (📐) — declare `color-scheme` so UA-rendered controls/scrollbars match; a dark theme must remap the **semantic token tier** (see `standard/tokens.tokens.json` `color.dark.*` + `$themes`) — near-black surfaces + off-white ink, never pure `#000`/`#fff` (**antipattern.pure-dark-mode**).
 
+## Frontend-markup security
+
+- **security.external-rel** (📐) — every external `target="_blank"` link needs `rel="noopener"` (reverse-tabnabbing).
+- **security.sri** (📐) — external `<script>`/`<link>` need Subresource Integrity (`integrity`); prefer self-hosting.
+- **Out of the static linter's scope** (server/runtime, enforce elsewhere): CSP, HSTS, `frame-ancestors`/clickjacking, Trusted Types. And **backend** is out of scope entirely — Norma is a front-end *design* standard.
+
 ## Product-layer rules (for AI features)
 
 - Semantic HTML by default; no "inaccessible by default" `<div>` soup.

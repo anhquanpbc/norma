@@ -389,6 +389,52 @@
       }
     },
     {
+      "id": "security.external-rel",
+      "title": {
+        "en": "target=_blank has rel=noopener",
+        "vi": "target=_blank có rel=noopener"
+      },
+      "domain": "antipattern",
+      "tag": "CONV",
+      "severity": "warn",
+      "source": "WHATWG HTML — noopener link type (OWASP: reverse tabnabbing)",
+      "source_url": "https://html.spec.whatwg.org/multipage/links.html#link-type-noopener",
+      "rationale": {
+        "en": "A link opening an external page in a new tab without rel=noopener lets the opened page reach window.opener — reverse tabnabbing / phishing.",
+        "vi": "Link mở trang ngoài ở tab mới mà thiếu rel=noopener cho phép trang được mở truy cập window.opener — reverse tabnabbing / lừa đảo."
+      },
+      "check": {
+        "type": "externalRel"
+      },
+      "remediation": {
+        "en": "Add rel=\"noopener\" (or \"noopener noreferrer\") to every external target=_blank link.",
+        "vi": "Thêm rel=\"noopener\" (hoặc \"noopener noreferrer\") cho mọi link ngoài target=_blank."
+      }
+    },
+    {
+      "id": "security.sri",
+      "title": {
+        "en": "External subresources use SRI",
+        "vi": "Tài nguyên ngoài dùng SRI"
+      },
+      "domain": "antipattern",
+      "tag": "CONV",
+      "severity": "warn",
+      "source": "W3C Subresource Integrity",
+      "source_url": "https://www.w3.org/TR/SRI/",
+      "rationale": {
+        "en": "An external <script>/<link> with no integrity hash runs whatever the CDN serves — a supply-chain risk if that origin is compromised.",
+        "vi": "Thẻ <script>/<link> ngoài không có hash integrity sẽ chạy bất cứ thứ gì CDN trả về — rủi ro chuỗi cung ứng nếu origin bị xâm phạm."
+      },
+      "check": {
+        "type": "sri"
+      },
+      "remediation": {
+        "en": "Add integrity=\"sha384-…\" + crossorigin to external <script>/<link>, or self-host (Norma's own site ships 0 external resources).",
+        "vi": "Thêm integrity=\"sha384-…\" + crossorigin cho <script>/<link> ngoài, hoặc self-host (site Norma ship 0 tài nguyên ngoài)."
+      }
+    },
+    {
       "id": "type.body-min",
       "title": {
         "en": "Body text >= 16px",

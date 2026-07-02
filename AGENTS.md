@@ -59,6 +59,12 @@ Not compliance failures, but they erase brand distinctiveness and often *induce*
 - **i18n.logical-properties** (📐) — prefer logical CSS (`margin-inline`, `padding-inline`, `text-align:start/end`) over physical `*-left/right`, `text-align:left/right`, `float:left/right`, so RTL and vertical writing modes work.
 - **theme.color-scheme** (📐) — declare `color-scheme` so UA-rendered controls/scrollbars match; a dark theme must remap the **semantic token tier** (see `standard/tokens.tokens.json` `color.dark.*` + `$themes`) — near-black surfaces + off-white ink, never pure `#000`/`#fff` (**antipattern.pure-dark-mode**).
 
+## Frontend-markup security
+
+- **security.external-rel** (📐) — every external `target="_blank"` link needs `rel="noopener"` (reverse-tabnabbing).
+- **security.sri** (📐) — external `<script>`/`<link>` need Subresource Integrity (`integrity`); prefer self-hosting.
+- **Out of the static linter's scope** (server/runtime, enforce elsewhere): CSP, HSTS, `frame-ancestors`/clickjacking, Trusted Types. And **backend** is out of scope entirely — Norma is a front-end *design* standard.
+
 ## Product-layer rules (for AI features)
 
 - Semantic HTML by default; no "inaccessible by default" `<div>` soup.
@@ -101,6 +107,8 @@ npx @norma/design-lint "**/*.{html,css}"     # gate SPEC violations; exits non-z
 - 📐 CONV `tokens.spacing-scale` (off) — Spacing snaps to the 8px scale · Norma §2 Spacing & Grid
 - 📐 CONV `antipattern.indigo-default` (warn) — No default indigo/purple gradient · Norma §14 AI-era Anti-patterns (TELL)
 - 📐 CONV `antipattern.pure-dark-mode` (warn) — No pure #000/#fff dark mode · Norma §14 AI-era Anti-patterns (TELL)
+- 📐 CONV `security.external-rel` (warn) — target=_blank has rel=noopener · [WHATWG HTML — noopener link type (OWASP: reverse tabnabbing)](https://html.spec.whatwg.org/multipage/links.html#link-type-noopener)
+- 📐 CONV `security.sri` (warn) — External subresources use SRI · [W3C Subresource Integrity](https://www.w3.org/TR/SRI/)
 - 📐 CONV `type.body-min` (off) — Body text >= 16px · Norma §3 Typography
 - 🔒 SPEC `perf.inp-budget` (off) — INP budget <= 200ms · [web.dev / Chrome — Core Web Vitals (INP)](https://web.dev/articles/inp)
 

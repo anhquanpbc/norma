@@ -51,6 +51,25 @@ npx @norma/design-lint "**/*.{html,css}"      # add --lang vi for Vietnamese mes
 
 **Read the reference:** open `index.html` in any browser (works offline), or read [`REFERENCE.md`](REFERENCE.md).
 
+## Adopt in your project
+
+**1. Gate CI with the linter** — fail the build on real violations:
+
+```bash
+npx @norma/design-lint "**/*.{html,css}"          # non-zero exit on any error-severity finding
+```
+
+**2. Wire your AI coding agent** — copy the generated rule file for your tool into your repo:
+
+| Tool | File to copy |
+|------|--------------|
+| Claude Code | `.claude/agents/design-guardian.md` |
+| Cursor | `.cursor/rules/norma-design.mdc` |
+| GitHub Copilot | `.github/copilot-instructions.md` (+ scoped `.github/instructions/*`) |
+| Codex / Cline / Gemini / any `AGENTS.md` tool | `AGENTS.md` |
+
+**3. Verify the agent is wired** — ask it to review a component. A wired agent returns findings shaped like `[SPEC] a11y.focus-ring-single — …` and refuses to emit a mandate (🔒) violation; if it doesn't, the file isn't being read. All agent files are generated from one spec so they never drift — and `npx @norma/design-lint` is the ground truth regardless.
+
 ## Covers
 
 13 domains: design tokens (W3C DTCG 2025.10) · spacing & the 8px grid · typography (incl. Vietnamese &

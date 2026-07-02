@@ -316,7 +316,48 @@ const colorTokenOnly: Check = (ctx, rules) => {
   return out;
 };
 
+// ---------- frontend-markup security checks ----------
+const isExternalUrl = (u: string): boolean => /^(https?:)?\/\//i.test(u);
+
+const externalRel: Check = (ctx, rules) => {
+  if (!ctx.dom) return [];
+  const r = rules[0];
+  const out: Finding[] = [];
+  ctx.dom.querySelectorAll("a[target]").forEach((el) => {
+    if ((el.getAttribute("target") ?? "").toLowerCase() !== "_blank") return;
+    if (!isExternalUrl(el.getAttribute("href") ?? "")) return; // only external links
+    const rel = (el.getAttribute("rel") ?? "").toLowerCase();
+    if (rel.includes("noopener") || rel.includes("noreferrer") || elDisabled(el, r.id)) return;
+    out.push(mk(ctx, r, elementLine(ctx, el),
+      `External <a target="_blank"> has no rel="noopener" — reverse-tabnabbing risk.`,
+      `<a target="_blank"> ra ngoài thiếu rel="noopener" — rủi ro reverse-tabnabbing.`));
+  });
+  return out;
+};
+
+const sri: Check = (ctx, rules) => {
+  if (!ctx.dom) return [];
+  const r = rules[0];
+  const out: Finding[] = [];
+  ctx.dom.querySelectorAll("script").forEach((el) => {
+    const src = el.getAttribute("src") ?? "";
+    if (!isExternalUrl(src) || el.hasAttribute("integrity") || elDisabled(el, r.id)) return;
+    out.push(mk(ctx, r, elementLine(ctx, el),
+      `External <script src> has no Subresource Integrity (integrity=...).`,
+      `<script src> ngoài thiếu Subresource Integrity (integrity=...).`));
+  });
+  ctx.dom.querySelectorAll("link").forEach((el) => {
+    const rel = (el.getAttribute("rel") ?? "").toLowerCase();
+    if (!/stylesheet|preload|modulepreload/.test(rel)) return;
+    if (!isExternalUrl(el.getAttribute("href") ?? "") || el.hasAttribute("integrity") || elDisabled(el, r.id)) return;
+    out.push(mk(ctx, r, elementLine(ctx, el),
+      `External <link rel="${rel}"> has no Subresource Integrity (integrity=...).`,
+      `<link rel="${rel}"> ngoài thiếu Subresource Integrity (integrity=...).`));
+  });
+  return out;
+};
+
 export const CHECKS: Record<string, Check> = {
   contrast, focusRing, reducedMotion, forbiddenValue, formLabel, semanticControl, emojiIcon, imgDimensions, targetSize,
-  htmlLang, logicalProperties, colorScheme, colorTokenOnly,
+  htmlLang, logicalProperties, colorScheme, colorTokenOnly, externalRel, sri,
 };

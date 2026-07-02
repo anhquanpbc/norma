@@ -50,6 +50,25 @@ npx @norma/design-lint "**/*.{html,css}"      # thêm --lang vi để có thông
 
 **Đọc tài liệu:** mở `index.html` trong trình duyệt bất kỳ (chạy offline), hoặc đọc [`REFERENCE.vi.md`](REFERENCE.vi.md).
 
+## Áp dụng vào dự án của bạn
+
+**1. Gate CI bằng linter** — fail build khi có vi phạm thật:
+
+```bash
+npx @norma/design-lint "**/*.{html,css}"          # exit khác 0 khi có phát hiện mức error
+```
+
+**2. Nối agent AI của bạn** — copy file luật tương ứng với công cụ vào repo:
+
+| Công cụ | File cần copy |
+|---------|---------------|
+| Claude Code | `.claude/agents/design-guardian.md` |
+| Cursor | `.cursor/rules/norma-design.mdc` |
+| GitHub Copilot | `.github/copilot-instructions.md` (+ `.github/instructions/*` theo phạm vi) |
+| Codex / Cline / Gemini / mọi công cụ đọc `AGENTS.md` | `AGENTS.md` |
+
+**3. Kiểm tra agent đã nối chưa** — yêu cầu nó review một component. Agent đã nối sẽ trả về phát hiện dạng `[SPEC] a11y.focus-ring-single — …` và từ chối tạo vi phạm mandate (🔒); nếu không, file chưa được đọc. Mọi file agent đều sinh từ một spec nên không bao giờ lệch — và `npx @norma/design-lint` luôn là sự thật cuối cùng.
+
 ## Bao gồm
 
 13 mảng: design tokens (W3C DTCG 2025.10) · khoảng cách & lưới 8px · typography (kể cả tiếng Việt &

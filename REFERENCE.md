@@ -14,6 +14,8 @@
 
 This is a lookup reference, not an essay. Every figure is meant to be droppable into an acceptance ticket. Three changes from 2023–2025 dominate everything below and you should internalize them first: (1) **INP replaced FID** as a Core Web Vital on **2024-03-12** (web.dev/Chrome); (2) **WCAG 2.2** became a W3C Recommendation on **2023-10-05**, adding target-size, focus-appearance, and authentication criteria; (3) the **W3C Design Tokens Format Module** reached its first stable version **2025.10** on **2025-10-28**. When a number is a published mandate it is marked 🔒; when it is a strong convention it is marked 📐. Build to the strictest relevant platform, never to the loosest floor.
 
+**Scope.** Norma is a front-end **design** standard for HTML/CSS. In scope: everything below, plus lint-enforced frontend-markup security (`security.external-rel`, `security.sri`). **Out of scope:** backend/server engineering, and header/runtime security (CSP, HSTS, `frame-ancestors`/clickjacking, Trusted Types) — enforce those on the server, not from HTML/CSS.
+
 ---
 
 ## 1. Design Tokens & Systems

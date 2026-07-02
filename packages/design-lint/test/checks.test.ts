@@ -186,6 +186,32 @@ describe("antipattern.pure-dark-mode", () => {
   });
 });
 
+describe("security.external-rel", () => {
+  it("flags an external target=_blank without rel=noopener", () => {
+    const f = lint(`<a href="https://x.example" target="_blank">x</a>`, "html");
+    expect(ids(f)).toContain("security.external-rel");
+  });
+  it("passes with rel=noopener", () => {
+    const f = lint(`<a href="https://x.example" target="_blank" rel="noopener">x</a>`, "html");
+    expect(ids(f)).not.toContain("security.external-rel");
+  });
+  it("ignores internal (non-external) links", () => {
+    const f = lint(`<a href="#s1" target="_blank">x</a>`, "html");
+    expect(ids(f)).not.toContain("security.external-rel");
+  });
+});
+
+describe("security.sri", () => {
+  it("flags an external <script> with no integrity", () => {
+    const f = lint(`<script src="https://cdn.example/x.js"></script>`, "html");
+    expect(ids(f)).toContain("security.sri");
+  });
+  it("passes inline scripts and integrity-pinned externals", () => {
+    const f = lint(`<script>var x=1</script>\n<script src="https://cdn.example/x.js" integrity="sha384-abc"></script>`, "html");
+    expect(ids(f)).not.toContain("security.sri");
+  });
+});
+
 describe("dogfood: index.html has zero errors", () => {
   it("lints the reference site clean", () => {
     const indexHtml = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "..", "index.html");

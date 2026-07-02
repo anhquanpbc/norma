@@ -10,6 +10,8 @@
 
 Đây là tài liệu tra cứu, không phải bài luận. Mỗi con số đều có thể đưa thẳng vào tiêu chí nghiệm thu (acceptance ticket). Ba thay đổi giai đoạn 2023–2025 chi phối toàn bộ phần dưới, cần nắm trước: (1) **INP thay thế FID** trong bộ Core Web Vitals từ **12/03/2024** (web.dev/Chrome); (2) **WCAG 2.2** trở thành Khuyến nghị W3C ngày **05/10/2023**, bổ sung tiêu chí kích thước vùng chạm, hình thức focus, và xác thực; (3) **W3C Design Tokens Format Module** đạt phiên bản ổn định đầu tiên **2025.10** ngày **28/10/2025**. Con số nào là bắt buộc theo chuẩn thì đánh dấu 🔒; con số nào là quy ước mạnh thì đánh dấu 📐. Luôn xây theo nền tảng nghiêm ngặt nhất có liên quan, không xây theo mức sàn lỏng nhất.
 
+**Phạm vi.** Norma là chuẩn **thiết kế** front-end cho HTML/CSS. Trong phạm vi: mọi mục bên dưới, cộng bảo mật markup front-end được lint (`security.external-rel`, `security.sri`). **Ngoài phạm vi:** backend/server, và bảo mật tầng header/runtime (CSP, HSTS, `frame-ancestors`/clickjacking, Trusted Types) — hãy thực thi ở server, không phải từ HTML/CSS.
+
 ---
 
 ## 1. Design Tokens & Hệ thống
