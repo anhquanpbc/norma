@@ -693,6 +693,10 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
       <p><span class="en">CJK fonts hold <b>20,000–80,000+ glyphs (5–20MB)</b> — delivery is the problem; subset via <code>unicode-range</code> (100+ subsets). <b>Raise line-height to ~1.7.</b> Ship <b>region-specific fonts (TC ≠ SC)</b> — Taiwan/HK readers reject Simplified; pan-CJK variants are unreliable.</span><span class="vi">Font CJK chứa <b>20.000–80.000+ glyph (5–20MB)</b> — cốt lõi là phân phối; subset bằng <code>unicode-range</code> (100+ subset). <b>Tăng line-height ~1.7.</b> Dùng <b>font theo vùng (TC ≠ SC)</b> — độc giả Đài Loan/HK không chấp nhận Giản thể; biến thể pan-CJK không đáng tin.</span></p>
     </div>
   </div>
+  <div class="card" style="border-inline-start:3px solid var(--azure); margin-top:var(--s-4)">
+    <h4>🌐 <span class="en">Multi-language design</span><span class="vi">Thiết kế đa ngôn ngữ</span> <span class="badge spec">SPEC</span></h4>
+    <p><span class="en">Declare <code>&lt;html lang&gt;</code> (WCAG 3.1.1 🔒) and tag inline foreign-language runs with <code>lang</code>. Lay out with <b>logical properties</b> — <code>margin-inline</code>, <code>padding-inline</code>, <code>text-align:start</code> — never physical <code>*-left/right</code>, so RTL (Arabic, Hebrew) and vertical writing modes mirror automatically; set <code>dir</code> and honor <code>writing-mode</code>. This site is enforced by <code>i18n.html-lang</code> + <code>i18n.logical-properties</code>.</span><span class="vi">Khai báo <code>&lt;html lang&gt;</code> (WCAG 3.1.1 🔒) và gắn <code>lang</code> cho đoạn ngôn ngữ khác xen kẽ. Bố cục bằng <b>thuộc tính logic</b> — <code>margin-inline</code>, <code>padding-inline</code>, <code>text-align:start</code> — không dùng <code>*-left/right</code> vật lý, để RTL (Ả Rập, Do Thái) và chế độ viết dọc tự lật; đặt <code>dir</code> và tôn trọng <code>writing-mode</code>. Trang này được thực thi bởi <code>i18n.html-lang</code> + <code>i18n.logical-properties</code>.</span></p>
+  </div>
 </section>
 
 <!-- ============ 4. COLOR ============ -->

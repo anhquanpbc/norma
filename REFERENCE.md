@@ -98,6 +98,8 @@ Use `rem` (not `px`) so type respects user font-size. Typically 6–8 steps; neg
 
 **Vietnamese 📐:** the most demanding Latin script — 134+ accented characters whose precomposed forms are spread across **four Unicode blocks**: Latin-1 Supplement, Latin Extended-A, Latin Extended-B, and **Latin Extended Additional** (U+1E00–U+1EFF, which holds the largest single share, ~90). A font that covers only Latin Extended Additional will still miss Vietnamese glyphs — budget fonts often skip Extended-A/B/Additional, so **verify glyph coverage before deploying** (Noto Sans/Serif and Be Vietnam Pro are safe). Give Vietnamese slightly more line-height so stacked diacritics don't collide.
 
+**Multi-language design (i18n) 🔒📐:** declare `<html lang>` (WCAG 3.1.1 🔒) and tag inline foreign-language runs with `lang` (SC 3.1.2). Lay out with **logical properties** — `margin-inline`, `padding-inline`, `text-align:start` — not physical `*-left/right`, so RTL (Arabic, Hebrew) and vertical writing modes mirror automatically; set `dir` and honor `writing-mode`. Norma enforces these statically as `i18n.html-lang` (🔒, WCAG 3.1.1) and `i18n.logical-properties` (📐, CSS Logical Properties L1).
+
 ---
 
 ## 4. Color
@@ -229,7 +231,7 @@ Ratio = (L1 + 0.05)/(L2 + 0.05), range 1:1–21:1.
 
 ---
 
-## 10. Forms & Input
+## 10. Forms & Responsive
 
 **📐**
 - **Layout:** single-column, top-aligned labels (best for scanning + mobile full-width). Avoid left-aligned labels and placeholder-as-label.
@@ -239,11 +241,7 @@ Ratio = (L1 + 0.05)/(L2 + 0.05), range 1:1–21:1.
 - **Required fields:** mark clearly; ask only for what's necessary.
 - **Mobile input:** set correct `type`/`inputmode` (email/tel/number/url) to summon the right keyboard; enable `autocomplete`/autofill; support one-time-code autofill. WCAG 3.3.7 Redundant Entry 🔒 — don't force re-entry of provided info.
 
----
-
-## 11. Responsive & Adaptive
-
-**📐**
+**Responsive & adaptive (📐)**
 - **Mobile-first:** author base styles for the smallest viewport, then layer `min-width` media queries upward (matches Tailwind/Bootstrap). Include `<meta name="viewport" content="width=device-width, initial-scale=1">`.
 - **Fluid layouts:** `max-width` (not fixed `width`), Flexbox/Grid, relative units, `clamp()` for fluid type/space.
 - **Container queries** (modern CSS): style a component by *its container's* size, not the viewport — the right tool for reusable components in varying contexts (sidebars, grids).

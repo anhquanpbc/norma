@@ -55,6 +55,18 @@ for (const r of catalog.rules) {
   if (!canonical.includes(r.id)) fail.push(`rule ${r.id} is not referenced in agents/norma-design-agent.md`);
 }
 
+// 5. Section sync: index.html <h2> section titles must match REFERENCE.md sections (md <-> html).
+const dec = (s: string) => s.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&#39;/g, "'").trim();
+const htmlSections = [...html.matchAll(/<h2><span class="en">(.*?)<\/span>/g)].map((m) => dec(m[1]));
+const mdSections = [...ref.matchAll(/^##\s+\d+\.\s+(.+)$/gm)].map((m) => m[1].trim()).filter((t) => !/^how to read/i.test(t));
+if (htmlSections.join(" | ") !== mdSections.join(" | ")) {
+  fail.push(
+    "index.html <h2> sections and REFERENCE.md sections are out of sync:\n" +
+    `    html (${htmlSections.length}): ${htmlSections.join(", ")}\n` +
+    `    md   (${mdSections.length}): ${mdSections.join(", ")}`,
+  );
+}
+
 if (fail.length) {
   console.error("✗ drift check failed:");
   for (const f of fail) console.error("  - " + f);

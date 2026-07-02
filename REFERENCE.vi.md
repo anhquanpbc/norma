@@ -92,6 +92,8 @@ Thang khoảng cách khuyến nghị (token, px): **0 · 4 · 8 · 12 · 16 · 2
 
 **Tiếng Việt 📐:** chữ Latin khó nhất — 134+ ký tự có dấu, với dạng dựng sẵn (precomposed) trải trên **bốn khối Unicode**: Latin-1 Supplement, Latin Extended-A, Latin Extended-B, và **Latin Extended Additional** (U+1E00–U+1EFF, chứa phần lớn nhất, ~90 ký tự). Font chỉ phủ Latin Extended Additional vẫn thiếu glyph tiếng Việt — font giá rẻ thường thiếu Extended-A/B/Additional, nên **kiểm tra độ phủ glyph trước khi triển khai** (Noto Sans/Serif và Be Vietnam Pro an toàn). Cho tiếng Việt line-height nhỉnh hơn để dấu chồng không dính nhau.
 
+**Thiết kế đa ngôn ngữ (i18n) 🔒📐:** khai báo `<html lang>` (WCAG 3.1.1 🔒) và gắn `lang` cho đoạn ngôn ngữ khác xen kẽ (SC 3.1.2). Bố cục bằng **thuộc tính logic** — `margin-inline`, `padding-inline`, `text-align:start` — thay vì `*-left/right` vật lý, để RTL (Ả Rập, Do Thái) và chế độ viết dọc tự lật; đặt `dir` và tôn trọng `writing-mode`. Norma thực thi tĩnh qua `i18n.html-lang` (🔒, WCAG 3.1.1) và `i18n.logical-properties` (📐, CSS Logical Properties L1).
+
 ---
 
 ## 4. Màu sắc
@@ -198,15 +200,11 @@ Thang khoảng cách khuyến nghị (token, px): **0 · 4 · 8 · 12 · 16 · 2
 
 ---
 
-## 10. Biểu mẫu & Nhập liệu
+## 10. Biểu mẫu & Đáp ứng
 
 **📐** Bố cục một cột, nhãn căn trên (dễ quét + full-width mobile); tránh nhãn căn trái và placeholder làm nhãn. Mỗi input có `<label>` liên kết theo mã (`for`/`id`) 🔒. Kiểm tra hợp lệ **khi rời trường (on blur)**, không phải mỗi lần gõ; hiện xác nhận tích cực khi hữu ích. Thông báo lỗi: đặt ngay dưới trường, cụ thể và hành động được ("Nhập số điện thoại 10 chữ số, ví dụ 0912 345 678" — không phải "Dữ liệu không hợp lệ"); không chỉ dựa vào màu (màu + icon + chữ) 🔒; thông báo qua `aria-live`. Đánh dấu trường bắt buộc rõ ràng; chỉ hỏi thông tin cần thiết. Mobile: đặt đúng `type`/`inputmode` để gọi đúng bàn phím; bật `autocomplete`/tự điền; hỗ trợ tự điền mã OTP. WCAG 3.3.7 🔒 — đừng bắt nhập lại thông tin đã cung cấp.
 
----
-
-## 11. Đáp ứng & Thích ứng
-
-**📐** Mobile-first: viết style nền cho khung nhỏ nhất, rồi thêm media query `min-width` đi lên (khớp Tailwind/Bootstrap); nhớ thẻ `viewport`. Bố cục co giãn: `max-width` (không `width` cố định), Flexbox/Grid, đơn vị tương đối, `clamp()` cho chữ/khoảng cách co giãn. **Container query** (CSS hiện đại): tạo kiểu theo kích thước *container* thay vì khung nhìn — công cụ đúng cho thành phần tái sử dụng ở nhiều ngữ cảnh. Adaptive vs responsive: responsive = co giãn liên tục; adaptive = các bố cục rời khớp theo breakpoint; sản phẩm hiện đại thường trộn cả hai. Bề rộng cần test: 320 (điện thoại nhỏ / sàn reflow WCAG), 360–414 (điện thoại thường), 768 (tablet dọc), 1024 (tablet ngang / laptop nhỏ), 1280–1440 (desktop), 1536+ (desktop lớn).
+**Đáp ứng & thích ứng (📐)** Mobile-first: viết style nền cho khung nhỏ nhất, rồi thêm media query `min-width` đi lên (khớp Tailwind/Bootstrap); nhớ thẻ `viewport`. Bố cục co giãn: `max-width` (không `width` cố định), Flexbox/Grid, đơn vị tương đối, `clamp()` cho chữ/khoảng cách co giãn. **Container query** (CSS hiện đại): tạo kiểu theo kích thước *container* thay vì khung nhìn — công cụ đúng cho thành phần tái sử dụng ở nhiều ngữ cảnh. Adaptive vs responsive: responsive = co giãn liên tục; adaptive = các bố cục rời khớp theo breakpoint; sản phẩm hiện đại thường trộn cả hai. Bề rộng cần test: 320 (điện thoại nhỏ / sàn reflow WCAG), 360–414 (điện thoại thường), 768 (tablet dọc), 1024 (tablet ngang / laptop nhỏ), 1280–1440 (desktop), 1536+ (desktop lớn).
 
 ---
 
