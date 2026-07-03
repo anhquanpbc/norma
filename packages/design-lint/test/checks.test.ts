@@ -534,3 +534,26 @@ describe("a11y.no-positive-tabindex — tabindex >= 1", () => {
     expect(ids(lint(`<div tabindex="1" data-norma-disable="a11y.no-positive-tabindex">x</div>`, "html"))).not.toContain("a11y.no-positive-tabindex");
   });
 });
+
+describe("a11y.target-size — only flags dimensions resolvable to CSS px", () => {
+  it("does NOT flag a percentage-width button (5% is not resolvable to px)", () => {
+    const f = lint(`<button style="width:5%; min-height:44px">CTA</button>`, "html");
+    expect(ids(f)).not.toContain("a11y.target-size");
+  });
+  it("does NOT flag viewport/ch units below the numeric threshold", () => {
+    const f = lint(`<button style="width:3ch; min-height:44px">x</button><a href="/x" style="min-width:2vw; min-height:44px">y</a>`, "html");
+    expect(ids(f)).not.toContain("a11y.target-size");
+  });
+  it("does NOT flag calc()/clamp() dimensions", () => {
+    const f = lint(`<button style="width:calc(10% - 4px); min-height:44px">x</button>`, "html");
+    expect(ids(f)).not.toContain("a11y.target-size");
+  });
+  it("still flags a genuinely small px control", () => {
+    const f = lint(`<button style="width:20px; height:20px">x</button>`, "html");
+    expect(ids(f)).toContain("a11y.target-size");
+  });
+  it("still resolves rem to px and flags below the minimum", () => {
+    const f = lint(`<button style="width:1rem; height:1rem">x</button>`, "html"); // 16px < 24
+    expect(ids(f)).toContain("a11y.target-size");
+  });
+});
