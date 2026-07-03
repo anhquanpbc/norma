@@ -35,6 +35,7 @@ export const SURFACE_BY_CHECK: Record<string, Surface[]> = {
   deadHref: ["html"],
   positiveTabindex: ["html"],
   gradientText: ["css"],
+  langValid: ["html"],
   manual: [], // spacing-scale / body-min / inp-budget / agent-verified WCAG mandates — not statically checkable
 };
 

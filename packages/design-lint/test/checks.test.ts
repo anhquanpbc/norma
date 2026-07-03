@@ -557,3 +557,47 @@ describe("a11y.target-size — only flags dimensions resolvable to CSS px", () =
     expect(ids(f)).toContain("a11y.target-size");
   });
 });
+
+describe("i18n.lang-valid — BCP-47 well-formedness of lang", () => {
+  const doc = (lang) => `<!DOCTYPE html><html lang="${lang}"><head><title>t</title><meta name="viewport" content="width=device-width, initial-scale=1"></head><body><p>x</p></body></html>`;
+  it('flags a spelled-out language name (lang="english")', () => {
+    expect(ids(lint(doc("english"), "html"))).toContain("i18n.lang-valid");
+  });
+  it('flags an underscore region (lang="en_US")', () => {
+    expect(ids(lint(doc("en_US"), "html"))).toContain("i18n.lang-valid");
+  });
+  it('flags a single-letter primary subtag', () => {
+    expect(ids(lint(doc("e"), "html"))).toContain("i18n.lang-valid");
+  });
+  it("passes real tags (en, vi, en-US, zh-Hant-TW, es-419, yue)", () => {
+    for (const t of ["en", "vi", "en-US", "zh-Hant-TW", "es-419", "yue"]) {
+      expect(ids(lint(doc(t), "html")), t).not.toContain("i18n.lang-valid");
+    }
+  });
+  it("passes private-use and grandfathered primaries (x-klingon, i-navajo)", () => {
+    expect(ids(lint(doc("x-klingon"), "html"))).not.toContain("i18n.lang-valid");
+    expect(ids(lint(doc("i-navajo"), "html"))).not.toContain("i18n.lang-valid");
+  });
+  it("flags an invalid lang on a nested element too", () => {
+    const f = lint(`<p lang="vietnamese">Xin chào</p>`, "html");
+    expect(ids(f)).toContain("i18n.lang-valid");
+  });
+  it("respects data-norma-disable", () => {
+    expect(ids(lint(`<span lang="english" data-norma-disable="i18n.lang-valid">x</span>`, "html"))).not.toContain("i18n.lang-valid");
+  });
+});
+
+describe("i18n.logical-properties — extended to border-left/right", () => {
+  it("flags border-left", () => {
+    expect(ids(lint(`.x{ border-left: 3px solid #000 }`, "css"))).toContain("i18n.logical-properties");
+  });
+  it("flags border-right-width", () => {
+    expect(ids(lint(`.x{ border-right-width: 2px }`, "css"))).toContain("i18n.logical-properties");
+  });
+  it("passes border-inline-start", () => {
+    expect(ids(lint(`.x{ border-inline-start: 3px solid #000 }`, "css"))).not.toContain("i18n.logical-properties");
+  });
+  it("does not flag border-bottom (block-axis, no logical concern here)", () => {
+    expect(ids(lint(`.x{ border-bottom: 1px solid #000 }`, "css"))).not.toContain("i18n.logical-properties");
+  });
+});

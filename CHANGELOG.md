@@ -6,8 +6,20 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+Nothing yet.
+
+## [1.2.0] — 2026-07-04
+
 ### Added
 
+- **i18n / multi-script enforcement** (catalog 32 → 34 rules; 16 → 18 SPEC). `i18n.lang-valid`
+  (🔒 error, WCAG 3.1.1/3.1.2) flags a `lang` that isn't a well-formed BCP-47 tag — `english`,
+  `en_US`, `e` — with no false positives on real tags (`en-US`, `zh-Hant-TW`, `es-419`, `yue`, private-use
+  `x-…`). `i18n.inline-lang` (🔒 `check: manual`, SC 3.1.2) requires a `lang` on foreign-language runs
+  (agent-verified). `i18n.logical-properties` now also flags physical `border-left`/`border-right`
+  (→ `border-inline-start/end`). REFERENCE §3 gains a **locale formatting, expansion & bidi** block
+  (ECMA-402 `Intl`, `Intl.PluralRules`, ~30% text-expansion budget, `unicode-bidi:isolate`/`<bdi>`),
+  and the reference site converts its remaining `border-left` decorations to logical props.
 - **`examples/`** — a runnable adoption surface: `minimal-pass/` (a clean starter page that lints with
   zero findings) and `catches-violations/` (an AI-scaffolded "before" page seeded with 11 rules' worth
   of defects), plus a copy-paste `ci-recipe.yml`. A new **Examples & action self-test** CI job proves

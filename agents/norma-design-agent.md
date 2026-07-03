@@ -76,8 +76,10 @@ Not compliance failures, but they erase brand distinctiveness and often *induce*
 
 ## Internationalization & theming
 
-- **i18n.html-lang** (🔒) — set `<html lang>` (WCAG 3.1.1); add `lang` to inline foreign-language runs (3.1.2).
-- **i18n.logical-properties** (📐) — prefer logical CSS (`margin-inline`, `padding-inline`, `text-align:start/end`) over physical `*-left/right`, `text-align:left/right`, `float:left/right`, so RTL and vertical writing modes work.
+- **i18n.html-lang** (🔒) — set `<html lang>` (WCAG 3.1.1).
+- **i18n.lang-valid** (🔒) — every `lang` value is a well-formed BCP-47 tag (`en`, `vi`, `zh-Hant`), never a spelled-out name (`english`) or an underscore locale (`en_US`) (WCAG 3.1.1/3.1.2).
+- **i18n.inline-lang** (🔒, `check: manual`) — a passage in a different language than the page default carries its own `lang` (WCAG 3.1.2); agent-verified.
+- **i18n.logical-properties** (📐) — prefer logical CSS (`margin-inline`, `padding-inline`, `border-inline-start`, `text-align:start/end`) over physical `margin/padding/border-left/right`, `text-align:left/right`, `float:left/right`, so RTL and vertical writing modes work.
 - **theme.color-scheme** (📐) — declare `color-scheme` so UA-rendered controls/scrollbars match; a dark theme must remap the **semantic token tier** (see `standard/tokens.tokens.json` `color.dark.*` + `$extensions.org.norma.themes`) — near-black surfaces + off-white ink, never pure `#000`/`#fff` (**antipattern.pure-dark-mode**).
 
 ## Frontend-markup security

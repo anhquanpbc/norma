@@ -23,6 +23,7 @@ real `<label>`. Touch targets ≥ 24 CSS px. Set `width`/`height` on images. No 
 - 🔒 SPEC `a11y.control-name` (error) — Every control has an accessible name · [WCAG 2.2 SC 4.1.2 Name, Role, Value](https://www.w3.org/TR/WCAG22/#name-role-value)
 - 📐 CONV `perf.img-dimensions` (warn) — Images set width/height or aspect-ratio · [web.dev — Optimize CLS](https://web.dev/articles/cls)
 - 🔒 SPEC `i18n.html-lang` (error) — <html> declares a lang · [WCAG 2.2 SC 3.1.1 Language of Page](https://www.w3.org/TR/WCAG22/#language-of-page)
+- 🔒 SPEC `i18n.lang-valid` (error) — lang is a well-formed BCP-47 tag · [WCAG 2.2 SC 3.1.1 / 3.1.2 (BCP-47 / RFC 5646)](https://www.w3.org/TR/WCAG22/#language-of-page)
 - 📐 CONV `antipattern.dead-href` (warn) — No dead links (href="#" or empty) · Norma §14 AI-era Anti-patterns (TELL)
 - 📐 CONV `a11y.no-positive-tabindex` (warn) — No positive tabindex (>= 1) · [WCAG 2.2 SC 2.4.3 Focus Order](https://www.w3.org/TR/WCAG22/#focus-order)
 - 📐 CONV `security.external-rel` (warn) — target=_blank has rel=noopener · [WHATWG HTML — noopener link type (OWASP: reverse tabnabbing)](https://html.spec.whatwg.org/multipage/links.html#link-type-noopener)

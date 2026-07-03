@@ -404,6 +404,32 @@ const controlName: Check = (ctx, rules) => {
 };
 
 // ---------- i18n / theme checks ----------
+// A well-formed BCP-47 language tag in practice: a 2-3 ALPHA primary subtag (ISO 639-1/639-3),
+// or the grandfathered/private-use singletons i-/x-; every subtag is alphanumeric, length 1-8,
+// hyphen-separated. This catches the common mistakes (lang="english", "en_US", "e") with no
+// false positives on real tags (en-US, zh-Hant-TW, es-419, yue). It is a well-formedness check,
+// not a registry lookup — a well-formed but unregistered tag is not flagged.
+function isWellFormedLang(tag: string): boolean {
+  const t = tag.trim().toLowerCase();
+  if (!t) return false;
+  const parts = t.split("-");
+  if (parts.some((p) => !/^[a-z0-9]{1,8}$/.test(p))) return false; // underscores, spaces, empties, >8 all fail
+  return /^[a-z]{2,3}$/.test(parts[0]) || parts[0] === "i" || parts[0] === "x";
+}
+const langValid: Check = (ctx, rules) => {
+  if (!ctx.dom) return [];
+  const r = rules[0];
+  const out: Finding[] = [];
+  ctx.dom.querySelectorAll("[lang]").forEach((el) => {
+    const lang = el.getAttribute("lang") ?? "";
+    if (!lang.trim() || isWellFormedLang(lang) || elDisabled(el, r.id)) return; // empty is i18n.html-lang's concern
+    out.push(mk(ctx, r, elementLine(ctx, el),
+      `lang="${lang}" is not a well-formed BCP-47 language tag — use a code like "en", "vi", or "zh-Hant".`,
+      `lang="${lang}" không phải thẻ ngôn ngữ BCP-47 hợp lệ — dùng mã như "en", "vi", hoặc "zh-Hant".`));
+  });
+  return out;
+};
+
 const htmlLang: Check = (ctx, rules) => {
   if (!ctx.dom || !/<html\b/i.test(ctx.source)) return []; // only a full document, not a fragment
   const r = rules[0];
@@ -424,7 +450,7 @@ const logicalProperties: Check = (ctx, rules) => {
     block.root.walkDecls((d) => {
       const prop = d.prop.toLowerCase();
       let hit: string | null = null;
-      if (/^(margin|padding)-(left|right)$/.test(prop)) hit = prop;
+      if (/^(margin|padding)-(left|right)$/.test(prop) || /^border-(left|right)(-(width|style|color))?$/.test(prop)) hit = prop;
       else if ((prop === "text-align" || prop === "float" || prop === "clear") && dir.test(d.value.trim())) hit = `${prop}:${d.value.trim().toLowerCase()}`;
       if (!hit) return;
       const parent = d.parent;
@@ -592,5 +618,5 @@ const sri: Check = (ctx, rules) => {
 export const CHECKS: Record<string, Check> = {
   contrast, focusRing, reducedMotion, forbiddenValue, formLabel, semanticControl, emojiIcon, imgDimensions, imgAlt, targetSize,
   headingOrder, htmlLang, logicalProperties, colorScheme, colorTokenOnly, externalRel, sri,
-  metaViewport, viewportPresence, controlName, deadHref, gradientText, positiveTabindex,
+  metaViewport, viewportPresence, controlName, deadHref, gradientText, positiveTabindex, langValid,
 };
