@@ -494,6 +494,53 @@ const colorTokenOnly: Check = (ctx, rules) => {
   return out;
 };
 
+// ---------- AI-tell markup/style checks ----------
+const deadHref: Check = (ctx, rules) => {
+  if (!ctx.dom) return [];
+  const r = rules[0];
+  const out: Finding[] = [];
+  ctx.dom.querySelectorAll("a[href]").forEach((el) => {
+    const href = (el.getAttribute("href") ?? "").trim();
+    if ((href !== "#" && href !== "") || elDisabled(el, r.id)) return;
+    out.push(mk(ctx, r, elementLine(ctx, el),
+      `<a href="${href}"> is wired to nothing — link to a real target or use a <button>.`,
+      `<a href="${href}"> không nối vào đâu — trỏ tới đích thật hoặc dùng <button>.`));
+  });
+  return out;
+};
+
+const gradientText: Check = (ctx, rules) => {
+  const r = rules[0];
+  const out: Finding[] = [];
+  for (const block of ctx.css) {
+    block.root.walkRules((rule) => {
+      const d = decls(rule);
+      const clipsText = [d.get("background-clip"), d.get("-webkit-background-clip")].some((v) => (v ?? "").trim().toLowerCase() === "text");
+      if (!clipsText) return;
+      const bg = `${d.get("background") ?? ""} ${d.get("background-image") ?? ""}`;
+      if (!/gradient\(/i.test(bg) || ruleDisabled(rule, r.id)) return;
+      out.push(mk(ctx, r, cssLine(block, rule),
+        `"${rule.selector}" clips a gradient to text — gradient text has no single computable contrast (WCAG 1.4.3 can silently fail).`,
+        `"${rule.selector}" cắt gradient vào chữ — chữ gradient không có tương phản tính được (WCAG 1.4.3 có thể fail ngầm).`));
+    });
+  }
+  return out;
+};
+
+const positiveTabindex: Check = (ctx, rules) => {
+  if (!ctx.dom) return [];
+  const r = rules[0];
+  const out: Finding[] = [];
+  ctx.dom.querySelectorAll("[tabindex]").forEach((el) => {
+    const n = parseInt((el.getAttribute("tabindex") ?? "").trim(), 10);
+    if (!(n >= 1) || elDisabled(el, r.id)) return;
+    out.push(mk(ctx, r, elementLine(ctx, el),
+      `<${el.rawTagName} tabindex="${n}"> forces tab order — use tabindex="0"/"-1" and DOM order instead.`,
+      `<${el.rawTagName} tabindex="${n}"> ép thứ tự tab — dùng tabindex="0"/"-1" và thứ tự DOM.`));
+  });
+  return out;
+};
+
 // ---------- frontend-markup security checks ----------
 const isExternalUrl = (u: string): boolean => /^(https?:)?\/\//i.test(u);
 
@@ -538,5 +585,5 @@ const sri: Check = (ctx, rules) => {
 export const CHECKS: Record<string, Check> = {
   contrast, focusRing, reducedMotion, forbiddenValue, formLabel, semanticControl, emojiIcon, imgDimensions, imgAlt, targetSize,
   headingOrder, htmlLang, logicalProperties, colorScheme, colorTokenOnly, externalRel, sri,
-  metaViewport, viewportPresence, controlName,
+  metaViewport, viewportPresence, controlName, deadHref, gradientText, positiveTabindex,
 };

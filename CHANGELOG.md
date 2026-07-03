@@ -20,11 +20,13 @@ never published, so everything below lands **before the first npm release**.
 - **New static rules** — `a11y.meta-viewport` (🔒 error, WCAG 1.4.4: `user-scalable=no` /
   `maximum-scale<2` in the viewport meta), `a11y.control-name` (🔒 error, WCAG 4.1.2: every
   `button`/`a[href]`/`[role=button]` needs an accessible name), `responsive.viewport-meta` (📐 warn:
-  full documents declare a viewport meta).
+  full documents declare a viewport meta), `antipattern.dead-href` (📐 warn: `href="#"` / empty),
+  `antipattern.gradient-text` (📐 warn: `background-clip:text` over a gradient — uncomputable contrast),
+  `a11y.no-positive-tabindex` (📐 warn, WCAG 2.4.3: `tabindex >= 1`).
 - **Agent-verified SPEC rules** (`check: manual` — the engine skips them; the design agent cites them):
   `a11y.focus-not-obscured` (2.4.11), `a11y.dragging-alternative` (2.5.7), `forms.redundant-entry`
   (3.3.7), `a11y.color-only-meaning` (1.4.1). The rules.yaml header now documents that severity is
-  agent-weight-only for manual rules. **Catalog: 21 → 29 rules (16 SPEC 🔒 / 13 CONV 📐).**
+  agent-weight-only for manual rules. **Catalog: 21 → 32 rules (16 SPEC 🔒 / 16 CONV 📐).**
 - **§14 anti-patterns extended with the 2025–26 tells** — default-font monoculture
   (Inter/Roboto/Space Grotesk), gradient-text headlines (`background-clip:text`), stock-AI imagery,
   dead controls (`href="#"`), the landing-template skeleton + dark-by-default sameness, fabricated
@@ -54,7 +56,14 @@ never published, so everything below lands **before the first npm release**.
 - `a11y.semantic-control` now also flags href-less `<a onclick>` (no link role, not focusable).
 - e2e axe self-test upgraded from WCAG 2.1 to **WCAG 2.2** tags (`wcag22a`/`wcag22aa`).
 - ADOPTERS + linter README wording made accurate ("statically checkable" dogfood; the real
-  `check: manual` rule list instead of a wrong "off" list).
+  `check: manual` rule list instead of a wrong "off" list); the linter README now documents its
+  reach (HTML/CSS only; JSX/Tailwind rely on the agent layer).
+- **`tokens.tokens.json`** — the theme map moved from a non-spec root `$themes` key to
+  `$extensions.org.norma.themes` so the file is strict-DTCG valid; the "verbatim" motion-token
+  descriptions now state they are the M3 subset this standard references (M3 defines 16).
+- **e2e** — added keyboard-operability (skip link, focus ring ≥2px, toggle activation) and
+  reduced-motion (settled reveal, neutralized transitions) specs — the interaction-a11y layer axe
+  can't reach. The PR **dependency-review** job is now advisory until Dependency graph is enabled.
 - **`publish.yml`** — a tag-triggered `npm publish --provenance --access public` behind the full verify
   gate, so releasing the CLI is push-button (set the `NPM_TOKEN` secret once). The package now declares
   `publishConfig.access: "public"`, an `exports` map, and ships its own `LICENSE`.
@@ -84,7 +93,7 @@ never published, so everything below lands **before the first npm release**.
   the skip link targets the content start (`#top`); code blocks keep a border in dark mode; scroll-spy uses
   `getBoundingClientRect` (robust to positioned ancestors).
 - **REFERENCE** — documented the §10 Forms & Responsive merge (the former §10 + §11) in both languages, so the numbering no longer reads as an accidental gap (the site already labels it "§10–11").
-- **Tests** — **100 unit tests** (was 58); coverage 94% statements / 87% branches.
+- **Tests** — **106 unit tests** (was 58) + new keyboard/reduced-motion e2e specs; coverage 94% statements / 87% branches.
 
 ## [1.0.0] — 2026-07-02
 

@@ -64,7 +64,10 @@ Not compliance failures, but they erase brand distinctiveness and often *induce*
 - **Default-font monoculture** — no reflex Inter/Roboto/Space Grotesk stack; choose a deliberate typeface pairing.
 - **Gradient-text headlines** — no `background-clip: text` gradient heroes; gradient text has no computable contrast.
 - **Stock-AI imagery** — no plastic AI illustrations, 3D gradient blobs, or fake team photos; real shots or a deliberate illustration system.
-- **Dead controls** — no `href="#"` links or CTAs wired to nothing; every control does what it says.
+- **antipattern.dead-href** — no `href="#"` / empty-href links wired to nothing; use a real destination or a `<button>`.
+- **antipattern.gradient-text** — no `background-clip:text` gradient headlines; gradient text has no computable contrast.
+- **a11y.no-positive-tabindex** — never `tabindex >= 1`; use `0`/`-1` and DOM order (WCAG 2.4.3).
+- **Dead controls** — no CTAs wired to nothing; every control does what it says.
 - **Dark-by-default** — dark mode is a theme, not a default; no glow-edged dark cards as a premium shortcut.
 - **tokens.color-only / tokens.spacing-scale** — no raw hex, no off-scale px; snap to the 8px scale.
 - **perf.img-dimensions** — set `width`/`height` (or `aspect-ratio`) on every `<img>` to prevent CLS.
@@ -75,7 +78,7 @@ Not compliance failures, but they erase brand distinctiveness and often *induce*
 
 - **i18n.html-lang** (🔒) — set `<html lang>` (WCAG 3.1.1); add `lang` to inline foreign-language runs (3.1.2).
 - **i18n.logical-properties** (📐) — prefer logical CSS (`margin-inline`, `padding-inline`, `text-align:start/end`) over physical `*-left/right`, `text-align:left/right`, `float:left/right`, so RTL and vertical writing modes work.
-- **theme.color-scheme** (📐) — declare `color-scheme` so UA-rendered controls/scrollbars match; a dark theme must remap the **semantic token tier** (see `standard/tokens.tokens.json` `color.dark.*` + `$themes`) — near-black surfaces + off-white ink, never pure `#000`/`#fff` (**antipattern.pure-dark-mode**).
+- **theme.color-scheme** (📐) — declare `color-scheme` so UA-rendered controls/scrollbars match; a dark theme must remap the **semantic token tier** (see `standard/tokens.tokens.json` `color.dark.*` + `$extensions.org.norma.themes`) — near-black surfaces + off-white ink, never pure `#000`/`#fff` (**antipattern.pure-dark-mode**).
 
 ## Frontend-markup security
 

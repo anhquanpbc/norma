@@ -53,6 +53,15 @@ mà phân tích tĩnh không kiểm chắc chắn được (thang khoảng cách
 năng runtime, và bốn mandate WCAG 2.2 do agent kiểm như 2.4.11 Focus Not Obscured) mang `check: manual`
 trong catalog — engine bỏ qua chúng và agent thiết kế Norma thực thi thay.
 
+## Kiểm được gì và không kiểm được gì
+
+Linter phân tích **HTML và CSS** (gồm cả khối `<style>` và thuộc tính `style="…"` inline). Nó **không**
+hiểu JSX/TSX, template Vue/Svelte, CSS-in-JS, hay class tiện ích Tailwind — trong dự án React/Next/Tailwind,
+glob `**/*.{html,css}` khớp rất ít, và chuỗi `className`, styled-components, class tiện ích đều vô hình với
+mọi kiểm tra. Với các stack đó, hãy dựa vào **tầng agent** (`AGENTS.md`, các file rule Cursor/Copilot/Claude)
+— sinh ra từ cùng một catalog — và lint phần HTML/CSS đã build khi có thể. Bộ trích xuất JSX/template nằm
+trong lộ trình.
+
 ## API lập trình
 
 ```ts

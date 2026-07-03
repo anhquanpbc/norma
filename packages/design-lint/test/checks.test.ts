@@ -473,3 +473,60 @@ describe("review hardening — viewport + control-name edge cases", () => {
     expect(ids(f)).not.toContain("a11y.semantic-control");
   });
 });
+
+describe("antipattern.dead-href — links wired to nothing", () => {
+  it('flags <a href="#">', () => {
+    expect(ids(lint(`<a href="#">Learn more</a>`, "html"))).toContain("antipattern.dead-href");
+  });
+  it('flags <a href="">', () => {
+    expect(ids(lint(`<a href="">Go</a>`, "html"))).toContain("antipattern.dead-href");
+  });
+  it('passes a real fragment link (#section)', () => {
+    expect(ids(lint(`<a href="#s3">Type</a>`, "html"))).not.toContain("antipattern.dead-href");
+  });
+  it("passes a real URL", () => {
+    expect(ids(lint(`<a href="/docs">Docs</a>`, "html"))).not.toContain("antipattern.dead-href");
+  });
+  it("respects data-norma-disable", () => {
+    expect(ids(lint(`<a href="#" data-norma-disable="antipattern.dead-href">x</a>`, "html"))).not.toContain("antipattern.dead-href");
+  });
+});
+
+describe("antipattern.gradient-text — background-clip:text over a gradient", () => {
+  it("flags a -webkit-background-clip:text gradient headline", () => {
+    const f = lint(`.h{ background:linear-gradient(90deg,#0af,#f0a); -webkit-background-clip:text; color:transparent; }`, "css");
+    expect(ids(f)).toContain("antipattern.gradient-text");
+  });
+  it("flags the standard background-clip:text form", () => {
+    const f = lint(`.h{ background-image:radial-gradient(#0af,#f0a); background-clip:text; }`, "css");
+    expect(ids(f)).toContain("antipattern.gradient-text");
+  });
+  it("passes background-clip:text without a gradient (solid fill)", () => {
+    const f = lint(`.h{ background:#0af; background-clip:text; }`, "css");
+    expect(ids(f)).not.toContain("antipattern.gradient-text");
+  });
+  it("passes a gradient background with no text clip", () => {
+    const f = lint(`.bar{ background:linear-gradient(90deg,#0af,#f0a); }`, "css");
+    expect(ids(f)).not.toContain("antipattern.gradient-text");
+  });
+  it("respects a norma-disable comment", () => {
+    const f = lint(`/* norma-disable antipattern.gradient-text */\n.h{ background:linear-gradient(90deg,#0af,#f0a); background-clip:text; }`, "css");
+    expect(ids(f)).not.toContain("antipattern.gradient-text");
+  });
+});
+
+describe("a11y.no-positive-tabindex — tabindex >= 1", () => {
+  it("flags tabindex=1", () => {
+    expect(ids(lint(`<div tabindex="1">x</div>`, "html"))).toContain("a11y.no-positive-tabindex");
+  });
+  it("flags a large positive tabindex", () => {
+    expect(ids(lint(`<button tabindex="99">x</button>`, "html"))).toContain("a11y.no-positive-tabindex");
+  });
+  it("passes tabindex=0 and tabindex=-1", () => {
+    const f = lint(`<div tabindex="0">a</div><span tabindex="-1">b</span>`, "html");
+    expect(ids(f)).not.toContain("a11y.no-positive-tabindex");
+  });
+  it("respects data-norma-disable", () => {
+    expect(ids(lint(`<div tabindex="1" data-norma-disable="a11y.no-positive-tabindex">x</div>`, "html"))).not.toContain("a11y.no-positive-tabindex");
+  });
+});

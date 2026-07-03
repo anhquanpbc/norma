@@ -594,6 +594,75 @@
       }
     },
     {
+      "id": "antipattern.dead-href",
+      "title": {
+        "en": "No dead links (href=\"#\" or empty)",
+        "vi": "Không link chết (href=\"#\" hoặc rỗng)"
+      },
+      "domain": "antipattern",
+      "tag": "CONV",
+      "severity": "warn",
+      "source": "Norma §14 AI-era Anti-patterns (TELL)",
+      "source_url": "",
+      "rationale": {
+        "en": "AI-scaffolded UIs ship links wired to nothing (href=\"#\" or href=\"\") that scroll to top or do nothing — a placeholder never replaced with a real destination or a <button>.",
+        "vi": "UI do AI dựng thường có link không nối vào đâu (href=\"#\" hoặc href=\"\") chỉ cuộn lên đầu hoặc không làm gì — placeholder chưa được thay bằng đích thật hoặc <button>."
+      },
+      "check": {
+        "type": "deadHref"
+      },
+      "remediation": {
+        "en": "Point href at a real URL/fragment, or use a <button type=\"button\"> for an in-page action.",
+        "vi": "Trỏ href tới URL/fragment thật, hoặc dùng <button type=\"button\"> cho hành động trong trang."
+      }
+    },
+    {
+      "id": "antipattern.gradient-text",
+      "title": {
+        "en": "No gradient-clipped text headlines",
+        "vi": "Không tiêu đề chữ cắt-gradient"
+      },
+      "domain": "antipattern",
+      "tag": "CONV",
+      "severity": "warn",
+      "source": "Norma §14 AI-era Anti-patterns (TELL)",
+      "source_url": "",
+      "rationale": {
+        "en": "A background-clip:text headline over a gradient is a signature AI tell; worse, gradient text has no single computable foreground color, so the WCAG 1.4.3 contrast check cannot verify it and it can silently fail.",
+        "vi": "Tiêu đề background-clip:text trên nền gradient là dấu hiệu đặc trưng của AI; tệ hơn, chữ gradient không có một màu chữ tính được nên kiểm tra tương phản WCAG 1.4.3 không xác minh được và có thể fail ngầm."
+      },
+      "check": {
+        "type": "gradientText"
+      },
+      "remediation": {
+        "en": "Use a solid ink or brand token for headline text; reserve gradients for non-text surfaces.",
+        "vi": "Dùng mực đặc hoặc token thương hiệu cho chữ tiêu đề; để gradient cho bề mặt không phải chữ."
+      }
+    },
+    {
+      "id": "a11y.no-positive-tabindex",
+      "title": {
+        "en": "No positive tabindex (>= 1)",
+        "vi": "Không tabindex dương (>= 1)"
+      },
+      "domain": "a11y",
+      "tag": "CONV",
+      "severity": "warn",
+      "source": "WCAG 2.2 SC 2.4.3 Focus Order",
+      "source_url": "https://www.w3.org/TR/WCAG22/#focus-order",
+      "rationale": {
+        "en": "tabindex >= 1 forces an element ahead of the natural DOM order, desynchronizing focus order from reading order (SC 2.4.3) and creating traps that are hard to maintain. Use tabindex=\"0\"/\"-1\" and DOM order.",
+        "vi": "tabindex >= 1 đẩy phần tử vượt lên trước thứ tự DOM tự nhiên, làm lệch thứ tự focus khỏi thứ tự đọc (SC 2.4.3) và tạo bẫy khó bảo trì. Dùng tabindex=\"0\"/\"-1\" và thứ tự DOM."
+      },
+      "check": {
+        "type": "positiveTabindex"
+      },
+      "remediation": {
+        "en": "Remove the positive value (use tabindex=\"0\" to add to natural order, \"-1\" for programmatic focus) and order the DOM to match the visual flow.",
+        "vi": "Bỏ giá trị dương (dùng tabindex=\"0\" để thêm vào thứ tự tự nhiên, \"-1\" cho focus theo mã) và sắp DOM khớp luồng thị giác."
+      }
+    },
+    {
       "id": "security.external-rel",
       "title": {
         "en": "target=_blank has rel=noopener",

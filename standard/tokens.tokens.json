@@ -1,9 +1,11 @@
 {
   "$description": "Norma design tokens — W3C DTCG Format Module v2025.10. The single source of truth for the palette, spacing, type scale, radius and motion. The brand color lives here and nowhere else.",
-  "$themes": {
-    "$description": "Light is the default; dark remaps the semantic tier only. Consumers apply via prefers-color-scheme: dark or [data-theme=dark]. Enforced by rules theme.color-scheme and antipattern.pure-dark-mode.",
-    "light": { "surface": "{color.surface.1}", "text": "{color.ink.1}", "brand": "{color.brand.azure}" },
-    "dark": { "surface": "{color.dark.surface.1}", "text": "{color.dark.ink.1}", "brand": "{color.dark.brand.azure}" }
+  "$extensions": {
+    "org.norma.themes": {
+      "$description": "Theme map (a Norma extension — DTCG reserves theming for the Resolver module, so it lives under $extensions to keep the file strict-DTCG valid). Light is the default; dark remaps the semantic tier only. Consumers apply via prefers-color-scheme: dark or [data-theme=dark]. Enforced by rules theme.color-scheme and antipattern.pure-dark-mode.",
+      "light": { "surface": "{color.surface.1}", "text": "{color.ink.1}", "brand": "{color.brand.azure}" },
+      "dark": { "surface": "{color.dark.surface.1}", "text": "{color.dark.ink.1}", "brand": "{color.dark.brand.azure}" }
+    }
   },
   "color": {
     "$type": "color",
@@ -99,7 +101,7 @@
   "motion": {
     "duration": {
       "$type": "duration",
-      "$description": "Material 3 duration tokens (verbatim).",
+      "$description": "The subset of Material 3 duration tokens this standard references (M3 defines 16; values are verbatim). Since M3 Expressive the spring system is Material's primary motion model — these are the fallback tokens.",
       "short1": { "$value": { "value": 50, "unit": "ms" } },
       "short2": { "$value": { "value": 100, "unit": "ms" } },
       "short3": { "$value": { "value": 150, "unit": "ms" } },
@@ -109,7 +111,7 @@
     },
     "easing": {
       "$type": "cubicBezier",
-      "$description": "Material 3 easing tokens (verbatim).",
+      "$description": "Material 3 easing tokens (values verbatim; the emphasized token is a two-segment path and cannot be a single cubic-bezier, so it is omitted).",
       "standard": { "$value": [0.2, 0, 0, 1] },
       "standard-decelerate": { "$value": [0, 0, 0, 1] },
       "standard-accelerate": { "$value": [0.3, 0, 1, 1] },

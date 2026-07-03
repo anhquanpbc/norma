@@ -64,7 +64,10 @@ Not compliance failures, but they erase brand distinctiveness and often *induce*
 - **Default-font monoculture** — no reflex Inter/Roboto/Space Grotesk stack; choose a deliberate typeface pairing.
 - **Gradient-text headlines** — no `background-clip: text` gradient heroes; gradient text has no computable contrast.
 - **Stock-AI imagery** — no plastic AI illustrations, 3D gradient blobs, or fake team photos; real shots or a deliberate illustration system.
-- **Dead controls** — no `href="#"` links or CTAs wired to nothing; every control does what it says.
+- **antipattern.dead-href** — no `href="#"` / empty-href links wired to nothing; use a real destination or a `<button>`.
+- **antipattern.gradient-text** — no `background-clip:text` gradient headlines; gradient text has no computable contrast.
+- **a11y.no-positive-tabindex** — never `tabindex >= 1`; use `0`/`-1` and DOM order (WCAG 2.4.3).
+- **Dead controls** — no CTAs wired to nothing; every control does what it says.
 - **Dark-by-default** — dark mode is a theme, not a default; no glow-edged dark cards as a premium shortcut.
 - **tokens.color-only / tokens.spacing-scale** — no raw hex, no off-scale px; snap to the 8px scale.
 - **perf.img-dimensions** — set `width`/`height` (or `aspect-ratio`) on every `<img>` to prevent CLS.
@@ -75,7 +78,7 @@ Not compliance failures, but they erase brand distinctiveness and often *induce*
 
 - **i18n.html-lang** (🔒) — set `<html lang>` (WCAG 3.1.1); add `lang` to inline foreign-language runs (3.1.2).
 - **i18n.logical-properties** (📐) — prefer logical CSS (`margin-inline`, `padding-inline`, `text-align:start/end`) over physical `*-left/right`, `text-align:left/right`, `float:left/right`, so RTL and vertical writing modes work.
-- **theme.color-scheme** (📐) — declare `color-scheme` so UA-rendered controls/scrollbars match; a dark theme must remap the **semantic token tier** (see `standard/tokens.tokens.json` `color.dark.*` + `$themes`) — near-black surfaces + off-white ink, never pure `#000`/`#fff` (**antipattern.pure-dark-mode**).
+- **theme.color-scheme** (📐) — declare `color-scheme` so UA-rendered controls/scrollbars match; a dark theme must remap the **semantic token tier** (see `standard/tokens.tokens.json` `color.dark.*` + `$extensions.org.norma.themes`) — near-black surfaces + off-white ink, never pure `#000`/`#fff` (**antipattern.pure-dark-mode**).
 
 ## Frontend-markup security
 
@@ -134,6 +137,9 @@ npx @norma/design-lint "**/*.{html,css}"     # gate SPEC violations; exits non-z
 - 📐 CONV `tokens.spacing-scale` (off · manual, agent-verified) — Spacing snaps to the 8px scale · Norma §2 Spacing & Grid
 - 📐 CONV `antipattern.indigo-default` (warn) — No default indigo/purple gradient · [Norma §14 AI-era Anti-patterns (TELL); Adam Wathan's 2025 indigo apology](https://x.com/adamwathan/status/1953510802159219096)
 - 📐 CONV `antipattern.pure-dark-mode` (warn) — No pure #000/#fff dark mode · Norma §14 AI-era Anti-patterns (TELL)
+- 📐 CONV `antipattern.dead-href` (warn) — No dead links (href="#" or empty) · Norma §14 AI-era Anti-patterns (TELL)
+- 📐 CONV `antipattern.gradient-text` (warn) — No gradient-clipped text headlines · Norma §14 AI-era Anti-patterns (TELL)
+- 📐 CONV `a11y.no-positive-tabindex` (warn) — No positive tabindex (>= 1) · [WCAG 2.2 SC 2.4.3 Focus Order](https://www.w3.org/TR/WCAG22/#focus-order)
 - 📐 CONV `security.external-rel` (warn) — target=_blank has rel=noopener · [WHATWG HTML — noopener link type (OWASP: reverse tabnabbing)](https://html.spec.whatwg.org/multipage/links.html#link-type-noopener)
 - 📐 CONV `security.sri` (warn) — External subresources use SRI · [W3C Subresource Integrity](https://www.w3.org/TR/SRI/)
 - 📐 CONV `type.body-min` (off · manual, agent-verified) — Body text >= 16px · Norma §3 Typography
