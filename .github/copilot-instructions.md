@@ -118,19 +118,19 @@ npx @norma/design-lint "**/*.{html,css}"     # gate SPEC violations; exits non-z
 - 🔒 SPEC `a11y.meta-viewport` (error) — Viewport meta must not block zoom · [WCAG 2.2 SC 1.4.4 Resize Text](https://www.w3.org/TR/WCAG22/#resize-text)
 - 📐 CONV `responsive.viewport-meta` (warn) — Full documents declare a viewport meta · Norma §10–11 Responsive (mobile-first)
 - 🔒 SPEC `a11y.control-name` (error) — Every control has an accessible name · [WCAG 2.2 SC 4.1.2 Name, Role, Value](https://www.w3.org/TR/WCAG22/#name-role-value)
-- 🔒 SPEC `a11y.focus-not-obscured` (warn) — Focused element not fully hidden · [WCAG 2.2 SC 2.4.11 Focus Not Obscured (Minimum)](https://www.w3.org/TR/WCAG22/#focus-not-obscured-minimum)
-- 🔒 SPEC `a11y.dragging-alternative` (warn) — Every drag action has a non-drag alternative · [WCAG 2.2 SC 2.5.7 Dragging Movements](https://www.w3.org/TR/WCAG22/#dragging-movements)
-- 🔒 SPEC `forms.redundant-entry` (warn) — Never force re-entering known info · [WCAG 2.2 SC 3.3.7 Redundant Entry](https://www.w3.org/TR/WCAG22/#redundant-entry)
-- 🔒 SPEC `a11y.color-only-meaning` (warn) — Never encode meaning in color alone · [WCAG 2.2 SC 1.4.1 Use of Color](https://www.w3.org/TR/WCAG22/#use-of-color)
+- 🔒 SPEC `a11y.focus-not-obscured` (warn · manual, agent-verified) — Focused element not fully hidden · [WCAG 2.2 SC 2.4.11 Focus Not Obscured (Minimum)](https://www.w3.org/TR/WCAG22/#focus-not-obscured-minimum)
+- 🔒 SPEC `a11y.dragging-alternative` (warn · manual, agent-verified) — Every drag action has a non-drag alternative · [WCAG 2.2 SC 2.5.7 Dragging Movements](https://www.w3.org/TR/WCAG22/#dragging-movements)
+- 🔒 SPEC `forms.redundant-entry` (warn · manual, agent-verified) — Never force re-entering known info · [WCAG 2.2 SC 3.3.7 Redundant Entry](https://www.w3.org/TR/WCAG22/#redundant-entry)
+- 🔒 SPEC `a11y.color-only-meaning` (warn · manual, agent-verified) — Never encode meaning in color alone · [WCAG 2.2 SC 1.4.1 Use of Color](https://www.w3.org/TR/WCAG22/#use-of-color)
 - 📐 CONV `perf.img-dimensions` (warn) — Images set width/height or aspect-ratio · [web.dev — Optimize CLS](https://web.dev/articles/cls)
 - 🔒 SPEC `i18n.html-lang` (error) — <html> declares a lang · [WCAG 2.2 SC 3.1.1 Language of Page](https://www.w3.org/TR/WCAG22/#language-of-page)
 - 📐 CONV `i18n.logical-properties` (warn) — Use logical (inline/block) CSS properties · [W3C CSS Logical Properties and Values L1](https://www.w3.org/TR/css-logical-1/)
 - 📐 CONV `theme.color-scheme` (warn) — Declare color-scheme · [W3C CSS Color Adjustment Module L1](https://www.w3.org/TR/css-color-adjust-1/)
 - 📐 CONV `tokens.color-only` (warn) — Color comes from tokens, not raw hex · Norma §1 Design Tokens
-- 📐 CONV `tokens.spacing-scale` (off) — Spacing snaps to the 8px scale · Norma §2 Spacing & Grid
+- 📐 CONV `tokens.spacing-scale` (off · manual, agent-verified) — Spacing snaps to the 8px scale · Norma §2 Spacing & Grid
 - 📐 CONV `antipattern.indigo-default` (warn) — No default indigo/purple gradient · [Norma §14 AI-era Anti-patterns (TELL); Adam Wathan's 2025 indigo apology](https://x.com/adamwathan/status/1953510802159219096)
 - 📐 CONV `antipattern.pure-dark-mode` (warn) — No pure #000/#fff dark mode · Norma §14 AI-era Anti-patterns (TELL)
 - 📐 CONV `security.external-rel` (warn) — target=_blank has rel=noopener · [WHATWG HTML — noopener link type (OWASP: reverse tabnabbing)](https://html.spec.whatwg.org/multipage/links.html#link-type-noopener)
 - 📐 CONV `security.sri` (warn) — External subresources use SRI · [W3C Subresource Integrity](https://www.w3.org/TR/SRI/)
-- 📐 CONV `type.body-min` (off) — Body text >= 16px · Norma §3 Typography
-- 📐 CONV `perf.inp-budget` (off) — INP budget <= 200ms · [web.dev / Chrome — Core Web Vitals (INP)](https://web.dev/articles/inp)
+- 📐 CONV `type.body-min` (off · manual, agent-verified) — Body text >= 16px · Norma §3 Typography
+- 📐 CONV `perf.inp-budget` (off · manual, agent-verified) — INP budget <= 200ms · [web.dev / Chrome — Core Web Vitals (INP)](https://web.dev/articles/inp)

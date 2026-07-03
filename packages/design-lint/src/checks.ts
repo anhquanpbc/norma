@@ -204,13 +204,15 @@ const semanticControl: Check = (ctx, rules) => {
   ctx.dom.querySelectorAll("[onclick]").forEach((el) => {
     const tag = el.rawTagName?.toUpperCase() ?? "";
     // <a> counts as semantic only with an href — an href-less <a onclick> has no link role
-    // and is not keyboard-focusable (mirrors the a[href] in the INTERACTIVE selector below).
-    const isSemantic = tag === "A" ? el.hasAttribute("href") : SEMANTIC.has(tag);
+    // (mirrors the a[href] in the INTERACTIVE selector below). An explicit ARIA retrofit
+    // (role + tabindex) satisfies 4.1.2, so conforming markup is not flagged.
+    const retrofitted = el.hasAttribute("tabindex") && (el.getAttribute("role") ?? "").trim() !== "";
+    const isSemantic = tag === "A" ? (el.hasAttribute("href") || retrofitted) : SEMANTIC.has(tag);
     if (isSemantic || elDisabled(el, r.id)) return;
     if (tag === "A") {
       out.push(mk(ctx, r, elementLine(ctx, el),
-        `<a onclick> without href has no link role and is not focusable — add href or use <button>.`,
-        `<a onclick> không có href nên không có role liên kết và không focus được — thêm href hoặc dùng <button>.`));
+        `<a onclick> without href exposes no link role — use <button> or add a real href.`,
+        `<a onclick> không có href nên không có role liên kết — dùng <button> hoặc thêm href thật.`));
     } else {
       out.push(mk(ctx, r, elementLine(ctx, el),
         `<${el.rawTagName} onclick> is not a semantic control — use <button> or <a>.`,
@@ -334,11 +336,12 @@ const metaViewport: Check = (ctx, rules) => {
   ctx.dom!.querySelectorAll("meta").forEach((el) => {
     if ((el.getAttribute("name") ?? "").toLowerCase() !== "viewport" || elDisabled(el, r.id)) return;
     const content = (el.getAttribute("content") ?? "").toLowerCase();
-    const noScale = /user-scalable\s*=\s*(no|0)(\s|,|$)/.test(content);
+    // Browsers accept ',' AND ';' as viewport property separators.
+    const noScale = /user-scalable\s*=\s*(no|0)(\s|,|;|$)/.exec(content);
     const maxScale = /maximum-scale\s*=\s*([\d.]+)/.exec(content);
     const zoomCapped = maxScale != null && parseFloat(maxScale[1]) < 2;
     if (!noScale && !zoomCapped) return;
-    const what = noScale ? "user-scalable=no" : `maximum-scale=${maxScale![1]}`;
+    const what = noScale ? `user-scalable=${noScale[1]}` : `maximum-scale=${maxScale![1]}`;
     out.push(mk(ctx, r, elementLine(ctx, el),
       `Viewport meta blocks zoom (${what}) — users must be able to zoom text to 200%.`,
       `Thẻ viewport chặn zoom (${what}) — người dùng phải phóng to chữ được tới 200%.`));
@@ -349,7 +352,8 @@ const metaViewport: Check = (ctx, rules) => {
 const viewportPresence: Check = (ctx, rules) => {
   if (!isFullDocument(ctx)) return [];
   const r = rules[0];
-  const has = ctx.dom!.querySelectorAll("meta").some((m) => (m.getAttribute("name") ?? "").toLowerCase() === "viewport");
+  const has = ctx.dom!.querySelectorAll("meta").some((m) =>
+    (m.getAttribute("name") ?? "").toLowerCase() === "viewport" && (m.getAttribute("content") ?? "").trim() !== "");
   if (has) return [];
   const html = ctx.dom!.querySelector("html");
   if (!html || elDisabled(html, r.id)) return [];
@@ -358,17 +362,34 @@ const viewportPresence: Check = (ctx, rules) => {
     `Tài liệu thiếu <meta name="viewport"> — trình duyệt mobile sẽ hiển thị bố cục desktop thu nhỏ.`)];
 };
 
+// Name-from-content per accname: descendant text EXCLUDING aria-hidden subtrees, with a
+// descendant <img alt> contributing its alt (an <svg><title> counts only while the svg
+// itself is not aria-hidden).
+function accessibleText(el: HTMLElement): string {
+  let s = "";
+  for (const child of el.childNodes) {
+    if (child.nodeType === 3) { s += (child as { text?: string }).text ?? ""; }
+    else if (child.nodeType === 1) {
+      const c = child as HTMLElement;
+      if (c.getAttribute("aria-hidden") === "true") continue;
+      if ((c.rawTagName ?? "").toUpperCase() === "IMG") { s += c.getAttribute("alt") ?? ""; continue; }
+      s += accessibleText(c);
+    }
+  }
+  return s;
+}
+const nonEmptyAttr = (el: HTMLElement, name: string): boolean => (el.getAttribute(name) ?? "").trim().length > 0;
+
 const controlName: Check = (ctx, rules) => {
   if (!ctx.dom) return [];
   const r = rules[0];
   const out: Finding[] = [];
   ctx.dom.querySelectorAll("button, a[href], [role=button]").forEach((el) => {
-    if (el.getAttribute("aria-hidden") === "true" || elDisabled(el, r.id)) return;
-    // Accessible name from: text content (includes an <svg><title>), aria-label/labelledby,
-    // title, or a descendant image's non-empty alt (name-from-content per accname).
-    const named = el.hasAttribute("aria-label") || el.hasAttribute("aria-labelledby") || el.hasAttribute("title")
-      || el.text.trim().length > 0
-      || el.querySelectorAll("img[alt]").some((img) => (img.getAttribute("alt") ?? "").trim().length > 0);
+    // aria-hidden controls are out of the a11y tree; <template> content is inert (named at clone time).
+    if (el.getAttribute("aria-hidden") === "true" || el.closest("template") || elDisabled(el, r.id)) return;
+    // An EMPTY aria-label/labelledby/title contributes no name per accname — require non-empty.
+    const named = nonEmptyAttr(el, "aria-label") || nonEmptyAttr(el, "aria-labelledby") || nonEmptyAttr(el, "title")
+      || accessibleText(el).trim().length > 0;
     if (named) return;
     out.push(mk(ctx, r, elementLine(ctx, el),
       `<${el.rawTagName}> has no accessible name — add text content or an aria-label (SR users hear only "${(el.rawTagName ?? "").toLowerCase() === "a" ? "link" : "button"}").`,

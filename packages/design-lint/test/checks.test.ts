@@ -427,3 +427,49 @@ describe("a11y.semantic-control — href-less <a onclick>", () => {
     expect(ids(lint(`<a href="/x" onclick="track()">Go</a>`, "html"))).not.toContain("a11y.semantic-control");
   });
 });
+
+describe("review hardening — viewport + control-name edge cases", () => {
+  const doc = (meta: string) =>
+    `<!DOCTYPE html><html lang="en"><head><title>t</title>${meta}</head><body><p>x</p></body></html>`;
+  it("flags user-scalable=0 and reports the matched value", () => {
+    const f = lint(doc(`<meta name="viewport" content="width=device-width, user-scalable=0">`), "html");
+    const hit = f.find((x) => x.ruleId === "a11y.meta-viewport");
+    expect(hit).toBeDefined();
+    expect(hit!.message.en).toContain("user-scalable=0");
+  });
+  it("flags semicolon-separated user-scalable=no", () => {
+    const f = lint(doc(`<meta name="viewport" content="width=device-width, user-scalable=no;initial-scale=1">`), "html");
+    expect(ids(f)).toContain("a11y.meta-viewport");
+  });
+  it("passes maximum-scale=2 exactly (the 200% boundary)", () => {
+    const f = lint(doc(`<meta name="viewport" content="width=device-width, maximum-scale=2">`), "html");
+    expect(ids(f)).not.toContain("a11y.meta-viewport");
+  });
+  it("ignores fragments for the viewport check", () => {
+    const f = lint(`<meta name="viewport" content="user-scalable=no">`, "html");
+    expect(ids(f)).not.toContain("a11y.meta-viewport");
+  });
+  it("respects data-norma-disable on the viewport meta", () => {
+    const f = lint(doc(`<meta name="viewport" content="user-scalable=no" data-norma-disable="a11y.meta-viewport">`), "html");
+    expect(ids(f)).not.toContain("a11y.meta-viewport");
+  });
+  it("an empty-content viewport meta does not satisfy presence", () => {
+    const f = lint(doc(`<meta name="viewport" content="">`), "html");
+    expect(ids(f)).toContain("responsive.viewport-meta");
+  });
+  it("flags an empty aria-label as no accessible name", () => {
+    expect(ids(lint(`<button aria-label=""></button>`, "html"))).toContain("a11y.control-name");
+  });
+  it("flags aria-hidden-only content (icon button missing its aria-label)", () => {
+    const f = lint(`<button><span aria-hidden="true">×</span></button><button><svg aria-hidden="true"><title>Close</title></svg></button>`, "html");
+    expect(f.filter((x) => x.ruleId === "a11y.control-name").length).toBe(2);
+  });
+  it("does not flag controls inside <template>", () => {
+    const f = lint(`<template><button><svg viewBox="0 0 1 1"><path d="M0 0"/></svg></button></template>`, "html");
+    expect(ids(f)).not.toContain("a11y.control-name");
+  });
+  it("passes an <a onclick> retrofitted with role + tabindex", () => {
+    const f = lint(`<a role="button" tabindex="0" onclick="f()">Go</a>`, "html");
+    expect(ids(f)).not.toContain("a11y.semantic-control");
+  });
+});

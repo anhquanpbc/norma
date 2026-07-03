@@ -2,7 +2,7 @@
 
 # Quy chuẩn Kỹ thuật Thiết kế UX/UI — Tài liệu Hợp nhất (2026)
 
-> Kiểm chứng lần cuối với nguồn gốc: 03/07/2026.
+> Kiểm chứng lần cuối với các nguồn sơ cấp: 03/07/2026.
 
 > **Chú thích:** 🔒 = yêu cầu bắt buộc trong một spec đã ban hành (mandate) · 📐 = quy ước/heuristic ngành (không phải mandate của vendor).
 
@@ -179,13 +179,13 @@ Thang khoảng cách khuyến nghị (token, px): **0 · 4 · 8 · 12 · 16 · 2
 
 **Khi nào KHÔNG animate 📐:** hành động lặp tần suất cao (motion thêm độ trễ); bounce/stretch trang trí trong ngữ cảnh công cụ (IBM Carbon khuyến cáo tránh); mọi thứ dưới `prefers-reduced-motion`.
 
-**Cử chỉ (mobile) 📐:** dùng bộ từ vựng chuẩn (chạm, giữ, vuốt, chụm, xoay). Mỗi cử chỉ tùy biến phải có phương án thay thế nhìn thấy được (WCAG 2.5.7 🔒; agent kiểm qua `a11y.dragging-alternative`). Đừng ghi đè cử chỉ hệ thống (vuốt mép, Trung tâm điều khiển/Thông báo). Thêm tay nắm (grabber) để gợi ý sheet kéo được.
+**Cử chỉ (mobile) 📐:** dùng bộ từ vựng chuẩn (chạm, giữ, vuốt, chụm, xoay). Mỗi cử chỉ tùy biến phải có phương án một-chạm thay thế nhìn thấy được (WCAG 2.5.1 cho cử chỉ theo đường vẽ 🔒; 2.5.7 cho thao tác kéo, agent kiểm qua `a11y.dragging-alternative`). Đừng ghi đè cử chỉ hệ thống (vuốt mép, Trung tâm điều khiển/Thông báo). Thêm tay nắm (grabber) để gợi ý sheet kéo được.
 
 ---
 
 ## 8. Quy chuẩn Nền tảng
 
-**Apple HIG (iOS):** font hệ thống **SF Pro** (Text ≤19pt, Display ≥20pt); Dynamic Type Body **17pt**, Large Title **34pt**, các text style phải co giãn theo Dynamic Type. Vùng chạm **44×44pt**, hàng list tối thiểu 44pt. Lưới 8pt + chia nhỏ 4pt là quy ước tin cậy 📐. Thiết kế theo **màu hệ thống semantic/thích ứng** 🔒 thay vì hex cứng để sáng/tối/tương phản tự có. Vùng an toàn 🔒: né status bar, Dynamic Island, tai thỏ, home indicator. Điều hướng: tab bar cho cấp cao nhất (**tối đa 3–5 tab trên iPhone**), nav bar cho đi sâu, modal cho tác vụ tập trung. Từ iOS 26 (2025), **Liquid Glass** là ngôn ngữ vật liệu toàn hệ thống; iOS 27 (WWDC 2026) giảm độ trong suốt mặc định, thêm thanh chỉnh trong↔đục cho người dùng và tinh chỉnh khuếch tán nội dung — một bước lùi vì độ dễ đọc, khiến tương phản-trên-kính thành rủi ro tuân thủ hạng nhất (TELL glassmorphism ở §14 phân biệt vật liệu nền tảng với kính CSS trang trí).
+**Apple HIG (iOS):** font hệ thống **SF Pro** (Text ≤19pt, Display ≥20pt); Dynamic Type Body **17pt**, Large Title **34pt**, các text style phải co giãn theo Dynamic Type. Vùng chạm **44×44pt**, hàng list tối thiểu 44pt. Lưới 8pt + chia nhỏ 4pt là quy ước tin cậy 📐. Thiết kế theo **màu hệ thống semantic/thích ứng** 🔒 thay vì hex cứng để sáng/tối/tương phản tự có. Vùng an toàn 🔒: né status bar, Dynamic Island, tai thỏ, home indicator. Điều hướng: tab bar cho cấp cao nhất (**tối đa 3–5 tab trên iPhone**), nav bar cho đi sâu, modal cho tác vụ tập trung. Từ iOS 26 (2025), **Liquid Glass** là ngôn ngữ vật liệu toàn hệ thống; iOS 27 (WWDC 2026) giảm độ trong suốt mặc định, thêm thanh chỉnh trong↔đục cho người dùng và tinh chỉnh khuếch tán nội dung — một bước hiệu chỉnh vì độ dễ đọc, khiến tương phản-trên-kính thành rủi ro tuân thủ hạng nhất (TELL glassmorphism ở §14 phân biệt vật liệu nền tảng với kính CSS trang trí).
 
 **Material Design 3 (Material You):** dynamic color sinh dải tông từ màu nguồn thành vai trò semantic; **độ nổi thể hiện bằng lớp phủ bề mặt tông màu**, không chỉ đổ bóng. Thông số 📐: nút chuẩn ~40dp thị giác / vùng chạm 48dp / padding ngang 16dp; text field ~56dp (outlined) / 48dp (filled); checkbox/radio 40dp trong vùng 48dp; chip ≥32dp (khuyến nghị 40dp); FAB nhỏ 40 / thường 56 / lớn 96dp. Lưới nền 4px, thành phần bội số của 8, thang chữ 1.25.
 
@@ -197,7 +197,7 @@ Thang khoảng cách khuyến nghị (token, px): **0 · 4 · 8 · 12 · 16 · 2
 
 **Trạng thái cần thiết kế cho mọi thành phần tương tác 🔒/📐:** mặc định, hover (chỉ chuột), focus (`:focus-visible`), active/nhấn, vô hiệu (disabled), đang tải (loading), lỗi (error) — cùng selected/checked, read-only khi cần. Material thêm **state layer** (lớp phủ tông) phủ trọn vùng chạm 48dp.
 
-**Thông số phổ biến 📐:** Nút cao 40–48px, padding ngang ~16px, rộng tối thiểu ~64–88px, phân cấp chính/phụ/ba rõ ràng, loading vô hiệu + hiện spinner, nhãn theo hành động. Input ≥44–56px, nhãn hiển thị cố định phía trên, chữ trợ giúp/lỗi phía dưới, không dùng placeholder làm nhãn. Modal: bẫy focus, khôi phục focus khi đóng, `Esc` để đóng, có backdrop, một lối đóng rõ ràng, tránh chồng modal. Ưu tiên phần tử `<dialog>` gốc và Popover API (Baseline 2025) — top layer cho sẵn quản lý focus, Esc, backdrop, light-dismiss; tự chế overlay `<div>` mới là phản mẫu. Định vị tooltip/menu bằng CSS anchor positioning (Baseline 2026). Card: padding trong 16–24px, khoảng cách giữa các card 16–24px.
+**Thông số phổ biến 📐:** Nút cao 40–48px, padding ngang ~16px, rộng tối thiểu ~64–88px, phân cấp chính/phụ/ba rõ ràng, loading vô hiệu + hiện spinner, nhãn theo hành động. Input ≥44–56px, nhãn hiển thị cố định phía trên, chữ trợ giúp/lỗi phía dưới, không dùng placeholder làm nhãn. Modal: bẫy focus, khôi phục focus khi đóng, `Esc` để đóng, có backdrop, một lối đóng rõ ràng, tránh chồng modal. Ưu tiên phần tử `<dialog>` gốc và Popover API (Baseline 2025) — top layer cho sẵn quản lý focus, Esc, backdrop, light-dismiss; tự chế overlay `<div>` mới là phản mẫu. Định vị tooltip/menu bằng CSS anchor positioning ở dạng cải tiến lũy tiến (Chrome/Edge, Firefox 151+; Safari chưa hỗ trợ — chưa Baseline). Card: padding trong 16–24px, khoảng cách giữa các card 16–24px.
 
 **Hệ thống thiết kế tham khảo 📐:** Material 3, Apple HIG, IBM Carbon, Shopify Polaris, Ant Design, Atlassian, Salesforce Lightning.
 

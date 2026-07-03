@@ -117,7 +117,7 @@ const FACTS: [string, (keyof typeof surfaceText)[]][] = [
   ["86 success criteria (31 A, 24 AA, 31 AAA)", ["REFERENCE.md"]],         // WCAG 2.2 count (4.1.1 removed)
   ["86 tiêu chí (31 A, 24 AA, 31 AAA)", ["REFERENCE.vi.md"]],
   ["ISO/IEC 40500:2025", ["REFERENCE.md", "REFERENCE.vi.md", "index.html"]],
-  ["2024-12-12", ["REFERENCE.md", "index.html"]],                          // WCAG 2.2 updated edition
+  ["2024-12-12", ["REFERENCE.md", "REFERENCE.vi.md", "index.html"]],       // WCAG 2.2 updated edition
 ];
 for (const [needle, files] of FACTS) {
   for (const f of files) {
@@ -131,6 +131,7 @@ const version = read("standard/VERSION").trim();
 const catalogVersion = (JSON.parse(read("standard/rules.json")) as { version: string }).version;
 if (catalogVersion !== version) fail.push(`standard/rules.json version ${catalogVersion} != standard/VERSION ${version} (bump rules.yaml + npm run build:rules)`);
 if (!readme.includes(`standard-v${version}`)) fail.push(`README.md badge does not say standard-v${version}`);
+if (!read("README.vi.md").includes(`standard-v${version}`)) fail.push(`README.vi.md badge does not say standard-v${version}`);
 if (!html.includes(`standard v${version}`)) fail.push(`index.html footer does not say "standard v${version}"`);
 
 if (fail.length) {

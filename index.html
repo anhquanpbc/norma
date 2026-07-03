@@ -9,6 +9,8 @@
 <meta property="og:description" content="Concrete design numbers you can drop into an acceptance ticket — every value tagged as a published mandate or an industry convention. Self-contained, zero network requests.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://anhquanpbc.github.io/norma/">
+<meta property="og:image" content="https://opengraph.githubassets.com/norma/anhquanpbc/norma">
+<meta name="twitter:card" content="summary">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231d7cd5'/%3E%3Ctext x='16' y='23' font-family='monospace' font-size='19' font-weight='700' fill='%23fff' text-anchor='middle'%3EN%3C/text%3E%3C/svg%3E">
 <script>document.documentElement.classList.add('js');
 (function(){var d=document.documentElement;var t;try{t=localStorage.getItem('norma-theme');}catch(e){}
@@ -467,7 +469,7 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
 
 <header class="bar">
   <div class="bar-inner">
-    <div class="brand"><span class="dot"></span>Norma&nbsp;<span class="brand-tag" style="color:var(--azure-ink)">· UX/UI STANDARDS</span>&nbsp;’26</div>
+    <div class="brand"><span class="dot"></span>Norma<span class="brand-tag" style="color:var(--azure-ink)">&nbsp;· UX/UI STANDARDS</span>&nbsp;’26</div>
     <button id="themeToggle" class="theme-btn" aria-label="Dark theme" aria-pressed="false" title="Dark theme">
       <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="6.25" stroke="currentColor" stroke-width="1.5"/><path d="M8 1.75a6.25 6.25 0 000 12.5z" fill="currentColor"/></svg>
     </button>
@@ -482,7 +484,7 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
 <div class="doc-shell">
 <aside class="doc-nav" aria-label="Documentation navigation">
   <label class="doc-search-label" for="docSearch"><span class="en">Search</span><span class="vi">Tìm kiếm</span></label>
-  <input type="search" class="doc-search" id="docSearch" aria-label="Search the standard" placeholder="Search the standard…" autocomplete="off">
+  <input type="search" class="doc-search" id="docSearch" placeholder="Search the standard…" autocomplete="off">
   <nav class="sections" aria-label="Sections">
     <a href="#top"><span class="en">Overview</span><span class="vi">Tổng quan</span></a>
     <a href="#s1">Tokens</a>
@@ -664,8 +666,7 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
     <div class="widget">
       <div class="widget-title"><span class="en">Modular scale · interactive</span><span class="vi">Thang modular · tương tác</span></div>
       <label class="ctrl" for="ratioSlider"><span class="en">Ratio</span><span class="vi">Tỷ lệ</span>: <output id="ratioOut">1.250</output> · <span id="ratioName" style="color:var(--ink-3);font-weight:400">Major third</span></label>
-      <input type="range" id="ratioSlider" min="1.067" max="1.618" step="0.001" value="1.25"
-             aria-label="Type scale ratio">
+      <input type="range" id="ratioSlider" min="1.067" max="1.618" step="0.001" value="1.25">
       <p class="note" style="margin-top:4px"><span class="en">base 16px · <code>sizeₙ = 16 × ratioⁿ</code></span><span class="vi">gốc 16px · <code>cỡₙ = 16 × tỷ_lệⁿ</code></span></p>
       <div id="typePreview" style="margin-top:16px; border-top:1px solid var(--line); padding-top:16px">
         <div class="s4" id="tp4">Display</div>
@@ -733,9 +734,9 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
       <div class="widget-title"><span class="en">OKLCH ramp · perceptually uniform</span><span class="vi">Dải OKLCH · đồng nhất tri giác</span></div>
       <div style="display:flex; gap:16px; margin-bottom:14px; flex-wrap:wrap">
         <label class="ctrl" style="flex:1" for="hueSlider"><span class="en">Hue</span><span class="vi">Tông (H)</span>: <output id="hueOut">252</output>°<br>
-          <input type="range" id="hueSlider" min="0" max="360" value="252" aria-label="Hue"></label>
+          <input type="range" id="hueSlider" min="0" max="360" value="252"></label>
         <label class="ctrl" style="flex:1" for="chromaSlider"><span class="en">Chroma (C)</span><span class="vi">Độ rực (C)</span>: <output id="chromaOut">0.15</output><br>
-          <input type="range" id="chromaSlider" min="0" max="0.30" step="0.01" value="0.15" aria-label="Chroma"></label>
+          <input type="range" id="chromaSlider" min="0" max="0.30" step="0.01" value="0.15"></label>
       </div>
       <div class="ramp" id="oklchRamp"></div>
       <p class="note"><span class="en">Fix H + C, step <b>L</b> in equal increments → perceptually even steps. HSL can't do this — compare the same-lightness HSL strip:</span><span class="vi">Giữ H + C, bước <b>L</b> đều → các bước cảm nhận đều nhau. HSL không làm được — so với dải HSL cùng độ sáng:</span></p>
@@ -915,7 +916,7 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
       </div>
       <div class="card tint">
         <h3><span class="en">When NOT to animate + gestures</span><span class="vi">Khi nào KHÔNG animate + cử chỉ</span> <span class="badge conv">CONV</span></h3>
-        <p><span class="en">Skip motion on high-frequency repeated actions (it adds latency) and decorative bounce/stretch in utility contexts. For mobile, use the standard gesture vocabulary and give every custom gesture a visible alternative <span class="badge spec">SPEC 2.5.7</span>; never override system-reserved edge swipes.</span><span class="vi">Bỏ chuyển động ở hành động lặp tần suất cao (thêm độ trễ) và bounce/stretch trang trí trong ngữ cảnh công cụ. Với mobile, dùng bộ cử chỉ chuẩn và cho mỗi cử chỉ tùy biến một phương án thay thế nhìn thấy được <span class="badge spec">SPEC 2.5.7</span>; đừng ghi đè cử chỉ vuốt mép của hệ thống.</span></p>
+        <p><span class="en">Skip motion on high-frequency repeated actions (it adds latency) and decorative bounce/stretch in utility contexts. For mobile, use the standard gesture vocabulary and give every custom gesture a visible alternative <span class="badge spec">SPEC 2.5.1 · 2.5.7</span>; never override system-reserved edge swipes.</span><span class="vi">Bỏ chuyển động ở hành động lặp tần suất cao (thêm độ trễ) và bounce/stretch trang trí trong ngữ cảnh công cụ. Với mobile, dùng bộ cử chỉ chuẩn và cho mỗi cử chỉ tùy biến một phương án thay thế nhìn thấy được <span class="badge spec">SPEC 2.5.1 · 2.5.7</span>; đừng ghi đè cử chỉ vuốt mép của hệ thống.</span></p>
       </div>
     </div>
   </div>
@@ -1235,19 +1236,17 @@ function syncLangButtons(l){
 }
 /* Attribute-level bilingual layer: <span class=en/vi> covers visible copy, but document.title,
    aria-labels and placeholders are attributes — swap them here so lang=vi never announces
-   English strings under Vietnamese pronunciation rules (i18n.html-lang would be a lie otherwise). */
+   English strings under Vietnamese pronunciation rules (i18n.html-lang would be a lie otherwise).
+   Controls with a visible bilingual <label for> (search box, sliders) take their accessible name
+   from the label — no aria-label here, or it would override it and break 2.5.3 Label in Name. */
 var I18N_ATTRS = [
   ["#themeToggle",       "aria-label",  "Dark theme",               "Chế độ tối"],
   ["#themeToggle",       "title",       "Dark theme",               "Chế độ tối"],
   [".lang-toggle",       "aria-label",  "Language",                 "Ngôn ngữ"],
   [".doc-nav",           "aria-label",  "Documentation navigation", "Điều hướng tài liệu"],
   [".doc-nav .sections", "aria-label",  "Sections",                 "Các mục"],
-  ["#docSearch",         "aria-label",  "Search the standard",      "Tìm trong chuẩn"],
   ["#docSearch",         "placeholder", "Search the standard…",     "Tìm trong chuẩn…"],
-  [".audit",             "aria-label",  "This page's self-audit",   "Tự kiểm của trang này"],
-  ["#ratioSlider",       "aria-label",  "Type scale ratio",         "Tỷ lệ thang chữ"],
-  ["#hueSlider",         "aria-label",  "Hue",                      "Tông màu (H)"],
-  ["#chromaSlider",      "aria-label",  "Chroma",                   "Độ rực màu (C)"]
+  [".audit",             "aria-label",  "This page's self-audit",   "Tự kiểm của trang này"]
 ];
 function applyI18nAttrs(){
   document.title = t("Norma — UX/UI Technical Standards 2026 (EN/VI)", "Norma — Quy chuẩn Kỹ thuật UX/UI 2026 (EN/VI)");

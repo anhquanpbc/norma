@@ -197,7 +197,7 @@ Ratio = (L1 + 0.05)/(L2 + 0.05), range 1:1–21:1.
 
 **When NOT to animate 📐:** high-frequency repetitive actions where motion adds latency; decorative bounce/stretch in utility contexts (IBM Carbon discourages bounce/stretch); anything under `prefers-reduced-motion`.
 
-**Gestures (mobile) 📐:** use the standard vocabulary (tap, long-press, swipe, pinch, rotate). Provide a visible non-gesture alternative for every custom gesture (WCAG 2.5.7 🔒; agent-verified as `a11y.dragging-alternative`). Never override system-reserved gestures (edge swipes, Control/Notification Center). Add grabber handles to hint draggable sheets.
+**Gestures (mobile) 📐:** use the standard vocabulary (tap, long-press, swipe, pinch, rotate). Provide a visible single-pointer alternative for every custom gesture (WCAG 2.5.1 for path-based gestures 🔒; 2.5.7 for dragging, agent-verified as `a11y.dragging-alternative`). Never override system-reserved gestures (edge swipes, Control/Notification Center). Add grabber handles to hint draggable sheets.
 
 ---
 
@@ -228,7 +228,7 @@ Ratio = (L1 + 0.05)/(L2 + 0.05), range 1:1–21:1.
 **Common specs 📐:**
 - **Buttons:** height 40–48px; horizontal padding ~16px; min width ~64–88px; clear primary/secondary/tertiary hierarchy; loading disables + shows spinner; action-specific labels ("Create account", not "Submit").
 - **Inputs/text fields:** ≥44–56px height; visible persistent label above the field; helper/error text below; never placeholder-as-label.
-- **Modals/dialogs:** trap focus, restore focus on close, `Esc` to dismiss, backdrop, single clear dismissal path; avoid stacking modals. Prefer the native `<dialog>` element and Popover API (Baseline 2025) — the top layer gives focus management, Esc, backdrop and light-dismiss for free; a hand-rolled overlay `<div>` is the anti-pattern. Position tooltips/menus with CSS anchor positioning (Baseline 2026).
+- **Modals/dialogs:** trap focus, restore focus on close, `Esc` to dismiss, backdrop, single clear dismissal path; avoid stacking modals. Prefer the native `<dialog>` element and Popover API (Baseline 2025) — the top layer gives focus management, Esc, backdrop and light-dismiss for free; a hand-rolled overlay `<div>` is the anti-pattern. Position tooltips/menus with CSS anchor positioning as progressive enhancement (Chrome/Edge, Firefox 151+; not yet in Safari — not yet Baseline).
 - **Cards:** 16–24px internal padding; 16–24px gaps between sibling cards from the spacing scale.
 
 **Reference design systems 📐 (study for concrete specs):** Google Material 3, Apple HIG, IBM Carbon, Shopify Polaris, Ant Design, Atlassian Design System, Salesforce Lightning.
