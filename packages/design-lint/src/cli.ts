@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-import { readFileSync, existsSync, globSync } from "node:fs";
+import { readFileSync, existsSync, statSync, globSync } from "node:fs";
+import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { lintFiles } from "./index.js";
 import { stylish, json, sarif, type Lang } from "./formatters.js";
@@ -22,13 +23,26 @@ Exit code is non-zero when any error-severity finding is present.`;
 
 interface Config { lang?: Lang; rules?: Record<string, Severity>; }
 
+// Never descend into vendored / build output — linting node_modules CSS the team can't fix
+// (or, worse, silently linting a directory as zero files) is the #1 first-run footgun.
+const EXCLUDE = (path: string): boolean =>
+  /(^|[\\/])(node_modules|dist|build|coverage|\.git)([\\/]|$)/.test(path);
+
 function expand(patterns: string[]): string[] {
   const files = new Set<string>();
   for (const p of patterns) {
     if (/[*?{[]/.test(p)) {
-      try { for (const f of globSync(p)) files.add(f); } catch { /* ignore bad glob */ }
+      try { for (const f of globSync(p, { exclude: EXCLUDE })) files.add(String(f)); } catch { /* ignore bad glob */ }
     } else if (existsSync(p)) {
-      files.add(p);
+      if (statSync(p).isDirectory()) {
+        // A directory arg means "lint everything lintable under here" — expand it so the files
+        // are actually inspected (a bare dir path is skipped by typeOf and would exit 0 = false green).
+        try {
+          for (const f of globSync("**/*.{html,htm,css}", { cwd: p, exclude: EXCLUDE })) files.add(join(p, String(f)));
+        } catch { /* ignore */ }
+      } else {
+        files.add(p);
+      }
     }
   }
   return [...files];

@@ -25,12 +25,17 @@ function decls(rule: PostcssRule): Map<string, string> {
   rule.walkDecls((d: Declaration) => { m.set(d.prop.toLowerCase(), d.value); });
   return m;
 }
+// Resolve a single CSS length to absolute CSS px, or null if it can't be resolved statically.
+// Only px/rem/em (and unitless 0) resolve; %, vw/vh, ch/ex, fr, calc()/min()/max()/clamp()/var()
+// depend on layout/viewport/font and must NOT be treated as px (a "5%" wide button is not 5px).
 function pxOf(value: string | undefined): number | null {
   if (!value) return null;
-  const m = value.match(/(-?[\d.]+)\s*(px|rem|em)?/);
-  if (!m) return null;
-  const n = parseFloat(m[1]);
-  return m[2] === "rem" || m[2] === "em" ? n * 16 : n;
+  const m = value.trim().match(/^(-?[\d.]+)\s*([a-z%]*)/i);
+  if (!m) return null; // doesn't start with a number (calc(), min(), var(), clamp() …) → unresolvable
+  const unit = m[2].toLowerCase();
+  if (unit === "" || unit === "px") return parseFloat(m[1]);
+  if (unit === "rem" || unit === "em") return parseFloat(m[1]) * 16;
+  return null; // %, vw, vh, vmin, vmax, ch, ex, fr, cap, lh … — not a static px value
 }
 function isLargeText(d: Map<string, string>, vars: Map<string, string>): boolean {
   // Resolve tokens first: a heading sized via font-size:var(--h1) is still large text,

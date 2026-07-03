@@ -89,4 +89,19 @@ describe("cli", () => {
     const { code } = run(["--rules", fx("only-semantic.rules.json"), fx("bad.html")]);
     expect(code).toBe(1);
   });
+
+  it("lints files inside a directory argument (recursively), not just explicit files", () => {
+    // tree/ = page.html (clean) + nested/bad.html (<div onclick>) + node_modules/vendor.css (excluded)
+    const { out } = run(["--format", "json", fx("tree")]);
+    const parsed = JSON.parse(out);
+    expect(parsed.fileCount).toBe(2); // page.html + nested/bad.html — node_modules skipped
+    expect(parsed.errorCount).toBeGreaterThan(0); // the nested <div onclick> is caught
+  });
+
+  it("excludes node_modules when a glob would otherwise match it", () => {
+    // tree/**/*.css matches only node_modules/vendor.css, which must be excluded → nothing to lint
+    const { code, err } = run([join(fx("tree"), "**", "*.css")]);
+    expect(code).toBe(1);
+    expect(err).toContain("No HTML/CSS files matched");
+  });
 });

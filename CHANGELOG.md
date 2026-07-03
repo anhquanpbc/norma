@@ -6,7 +6,18 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
-Nothing yet.
+### Fixed
+
+- **Directory arguments no longer silently lint zero files.** `norma-design-lint src` (a directory,
+  as the README's own examples show) was added verbatim, then skipped by the extension filter, so the
+  run reported "0 files" and **exited 0** — a green CI gate that inspected nothing. A directory arg now
+  expands to a recursive `**/*.{html,htm,css}` glob and actually lints the files under it.
+- **`node_modules`/`dist`/`build`/`coverage`/`.git` are excluded by default** from globs and directory
+  walks, so a broad glob no longer floods CI with violations in vendored CSS the team can't fix.
+- **`a11y.target-size` no longer false-positives on non-px inline units.** `pxOf` treated `width:5%`
+  / `2vw` / `3ch` / `calc(...)` as a bare px number, so a full-bleed `width:5%` button was flagged as
+  "5px wide — below 24×24" at **error** severity, breaking the build. It now resolves only px/rem/em
+  (and unitless 0) and returns null for anything layout/viewport/font-dependent. 127 → 132 unit tests.
 
 ## [1.1.0] — 2026-07-03
 
