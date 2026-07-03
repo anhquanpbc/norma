@@ -15,6 +15,16 @@ All notable changes to this project are documented here. The format is based on
 - **`action.yml`** — a reusable GitHub Action (`uses: anhquanpbc/norma@v1`) that builds the linter from
   its own checkout, so a team can gate CI **today**, before `@norma/design-lint` is published to npm.
   The README "Adopt in your project" now leads with it (EN + VI).
+- **`RELEASING.md`** — a one-tag release runbook (verify → `git tag v1.1.0 && git push` → `publish.yml`
+  publishes with provenance), plus the post-publish badge swap-back.
+
+### Changed
+
+- **Honest pre-publish docs.** The dead `npm/v` badge (rendered "not found" for the unpublished package,
+  reading as abandoned) is now a static `coming soon` placeholder; the Quick start (EN + VI) leads with
+  the paths that work **today** (the action, or from source) and demotes `npx @norma/design-lint` to
+  "once published". `npm pack --dry-run` confirmed the tarball is publish-safe (dist/cli.js + index.js +
+  rules.json via `prepack`).
 
 ### Fixed
 

@@ -3,7 +3,7 @@
 # Norma — a web design standard for humans **and** AI
 
 [![CI](https://github.com/anhquanpbc/norma/actions/workflows/ci.yml/badge.svg)](https://github.com/anhquanpbc/norma/actions/workflows/ci.yml)
-[![npm](https://img.shields.io/npm/v/@norma/design-lint?label=%40norma%2Fdesign-lint)](https://www.npmjs.com/package/@norma/design-lint)
+[![npm](https://img.shields.io/badge/%40norma%2Fdesign--lint-coming%20soon-lightgrey)](packages/design-lint)
 [![standard](https://img.shields.io/badge/standard-v1.1.0-informational)](standard/rules.yaml)
 [![code: MIT](https://img.shields.io/badge/code-MIT-blue)](LICENSE)
 [![content: CC BY 4.0](https://img.shields.io/badge/content-CC%20BY%204.0-lightgrey)](LICENSE-CONTENT)
@@ -45,15 +45,24 @@ Norma turns the standard into three aligned artifacts so both people and agents 
 
 ## Quick start
 
-**Lint your project** against the standard:
+**Lint your project** against the standard. `@norma/design-lint` isn't on npm yet, so use whichever of
+these works for you today:
 
-```bash
-npx @norma/design-lint "**/*.{html,css}"      # add --lang vi for Vietnamese messages
-```
+- **In CI (one step)** — the reusable action builds Norma from its own checkout, no install:
+  ```yaml
+  - uses: anhquanpbc/norma@v1
+    with: { globs: "**/*.{html,htm,css}" }   # lang: en|vi · format: stylish|json|sarif
+  ```
+  A ready-to-copy workflow is in [`examples/ci-recipe.yml`](examples/ci-recipe.yml).
+- **Locally (from source)**:
+  ```bash
+  npm ci && npm run build
+  node packages/design-lint/dist/cli.js "**/*.{html,css}"   # add --lang vi for Vietnamese messages
+  ```
+- **Once published** — `npx @norma/design-lint "**/*.{html,css}"`. Publishing is one tag away; see
+  [RELEASING.md](RELEASING.md).
 
-> **Not on npm yet?** Until the first release lands, run it from source: `npm ci && npm run build`, then
-> `node packages/design-lint/dist/cli.js "**/*.{html,css}"`. Publishing is one tag away — see
-> [`.github/workflows/publish.yml`](.github/workflows/publish.yml).
+See [`examples/`](examples) for a clean starter and a broken "before" page.
 
 **Point your AI agent at Norma** by copying the generated rule file for your tool into your project:
 `AGENTS.md` (Codex/Cline/Gemini/…), `.cursor/rules/norma-design.mdc` (Cursor),

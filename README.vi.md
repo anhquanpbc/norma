@@ -3,7 +3,7 @@
 # Norma — một chuẩn thiết kế web cho **cả người lẫn AI**
 
 [![CI](https://github.com/anhquanpbc/norma/actions/workflows/ci.yml/badge.svg)](https://github.com/anhquanpbc/norma/actions/workflows/ci.yml)
-[![npm](https://img.shields.io/npm/v/@norma/design-lint?label=%40norma%2Fdesign-lint)](https://www.npmjs.com/package/@norma/design-lint)
+[![npm](https://img.shields.io/badge/%40norma%2Fdesign--lint-coming%20soon-lightgrey)](packages/design-lint)
 [![standard](https://img.shields.io/badge/standard-v1.1.0-informational)](standard/rules.yaml)
 [![code: MIT](https://img.shields.io/badge/code-MIT-blue)](LICENSE)
 [![content: CC BY 4.0](https://img.shields.io/badge/content-CC%20BY%204.0-lightgrey)](LICENSE-CONTENT)
@@ -40,15 +40,24 @@ biến chuẩn thành ba tạo phẩm đồng bộ để cả người lẫn age
 
 ## Bắt đầu nhanh
 
-**Kiểm dự án của bạn** theo chuẩn:
+**Kiểm dự án của bạn** theo chuẩn. `@norma/design-lint` chưa có trên npm, nên dùng cách nào chạy được
+hôm nay cũng được:
 
-```bash
-npx @norma/design-lint "**/*.{html,css}"      # thêm --lang vi để có thông báo tiếng Việt
-```
+- **Trong CI (một bước)** — action tái sử dụng tự build Norma từ checkout của nó, không cần cài:
+  ```yaml
+  - uses: anhquanpbc/norma@v1
+    with: { globs: "**/*.{html,htm,css}" }   # lang: en|vi · format: stylish|json|sarif
+  ```
+  Workflow sẵn-để-copy ở [`examples/ci-recipe.yml`](examples/ci-recipe.yml).
+- **Cục bộ (từ mã nguồn)**:
+  ```bash
+  npm ci && npm run build
+  node packages/design-lint/dist/cli.js "**/*.{html,css}"   # thêm --lang vi cho thông báo tiếng Việt
+  ```
+- **Sau khi publish** — `npx @norma/design-lint "**/*.{html,css}"`. Việc publish chỉ cách một tag; xem
+  [RELEASING.md](RELEASING.md).
 
-> **Chưa có trên npm?** Cho tới bản phát hành đầu tiên, chạy từ mã nguồn: `npm ci && npm run build`, rồi
-> `node packages/design-lint/dist/cli.js "**/*.{html,css}"`. Việc publish chỉ cách một tag — xem
-> [`.github/workflows/publish.yml`](.github/workflows/publish.yml).
+Xem [`examples/`](examples) để có starter sạch và một trang "trước" bị lỗi.
 
 **Trỏ agent AI vào Norma** bằng cách copy file luật tương ứng với công cụ của bạn vào dự án:
 `AGENTS.md` (Codex/Cline/Gemini/…), `.cursor/rules/norma-design.mdc` (Cursor),
