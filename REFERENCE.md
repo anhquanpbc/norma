@@ -304,7 +304,7 @@ AI coding tools reliably emit two kinds of defect, and it matters which one you 
 |---|---|---|
 | **Nested focus rings** — `border` + `outline` + `box-shadow` stacked | VIOLATION (2.4.11/2.4.13) | one `:focus-visible` ring, ≥2px, ≥3:1 |
 | **Low-contrast gray text** — `#999` on `#fff`; ~84% of home pages (WebAIM Million) | VIOLATION (1.4.3) | ≥4.5:1 (3:1 large/UI) |
-| **Gratuitous animation** — everything animates, ignores reduced-motion | VIOLATION (2.3.3) | animate for meaning; honor `prefers-reduced-motion` |
+| **Gratuitous animation** — everything animates, ignores reduced-motion; incl. typewriter heroes, particle fields, cursor trails | VIOLATION (2.3.3) | animate for meaning; honor `prefers-reduced-motion` |
 | **Emoji as icons** — 🚀🔥 as controls; render + SR-name vary | VIOLATION (1.1.1) | inline SVG + a real label |
 | **Placeholder-as-label** — hint disappears on input | VIOLATION (3.3.2/4.1.2) | persistent associated `<label>` |
 | **Halo / glow overuse** — stacked colored shadows | TELL | neutral elevation scale, one light source |
@@ -312,16 +312,20 @@ AI coding tools reliably emit two kinds of defect, and it matters which one you 
 | **Glassmorphism everywhere** — `backdrop-filter` spam, dynamic-contrast fails, GPU cost | TELL | 2–3 glass surfaces + a scrim, never by default (platform-native material like Apple's Liquid Glass is HIG-governed — decorative CSS glass is not) |
 | **Arbitrary spacing / over-rounding** — `mt-[13px]`, mixed radii | TELL | token scales |
 | **Pure `#000`/`#fff` dark mode** — halation for astigmatism | TELL | `#121212` surface + `#E4E4E7` text |
+| **Default-font monoculture** — reflex Inter/Roboto/Space Grotesk stack, no pairing strategy | TELL | a deliberate typeface pairing tied to the brand (§3) |
+| **Gradient-text headline** — `background-clip: text` over a gradient | TELL | solid ink / brand token — gradient text has no single computable contrast, so 1.4.3 can silently fail |
+| **Stock-AI imagery** — plastic over-symmetric illustrations, 3D gradient blobs, impossibly-lit fake team photos | TELL | real product shots or a deliberate illustration system |
+| **Dead controls** — `href="#"` links, CTAs wired to nothing | TELL | every control does what it says, or ship it disabled with a reason |
 
 **Level 2 — UX & product diseases:**
 
 - **Inaccessible by default** 🔒 — `<div onClick>` instead of `<button>`, no ARIA/keyboard → semantic HTML (4.1.2).
-- **AI slop / sameness** 📐 — apply the "logo-removed test": is it mistakable for a competitor? → build a brand system first.
+- **AI slop / sameness** 📐 — the template skeleton: centered hero + uniform rounded card grid + logo bar + testimonial carousel + bento-by-default, the shadcn/Tailwind default look, dark-glow "premium" theme as a reflex. Apply the "logo-removed test": is it mistakable for a competitor? → build a brand system first; dark mode is a theme, not a default.
 - **Chatbot shoehorning** 📐 — chat bolted where direct manipulation is faster → task UI; chat only to help formulate intent.
 - **AI feature bolt-on** 📐 — ✨ buttons as marketing → gate on user-need × AI-strength (Google PAIR).
 - **Over-automation / lost control** 🔒 — no undo/oversight, automation bias → human-in-the-loop, global controls (MS HAX, HIG).
 - **Dark patterns, unprompted** 🔒 — fake urgency / hidden costs; 55.8% of 1K LLM-generated e-commerce components contained at least one deceptive design (arXiv 2502.13499 v2, "Deception at Scale", 2026) → audit + prohibit.
-- **Hallucinated content shipped** 📐 — lorem ipsum, fabricated stats/terms → never ship placeholder; fact-check.
+- **Hallucinated content shipped** 📐 — lorem ipsum, fabricated stats/terms, invented testimonials or "trusted by" customer logos → never ship placeholder or fabricated social proof; fact-check.
 - **No AI transparency** 🔒 — no disclosure / confidence / verify path → label AI, show sources + undo (HIG, PAIR, MS G11).
 
 **Remediation (three layers):**

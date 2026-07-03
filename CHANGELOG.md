@@ -6,13 +6,55 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
-Post-1.0.0 hardening from an independent multi-dimension audit. The CLI was never published, so these
-land **before the first npm release**.
+Nothing yet.
+
+## [1.1.0] — 2026-07-03
+
+Post-1.0.0 hardening from an independent multi-dimension audit, a **2026 currency refresh**, and the
+rule-catalog gaps that audit proved the standard already promised (standard 1.0.0 → 1.1.0). The CLI was
+never published, so everything below lands **before the first npm release**.
 
 ### Added
 
 - **New rule `a11y.heading-order`** (📐 CONV, WCAG 1.3.1) — flags a skipped heading level (`h2 → h4`).
-  The catalog is now **22 rules (10 SPEC 🔒 / 12 CONV 📐)**.
+- **New static rules** — `a11y.meta-viewport` (🔒 error, WCAG 1.4.4: `user-scalable=no` /
+  `maximum-scale<2` in the viewport meta), `a11y.control-name` (🔒 error, WCAG 4.1.2: every
+  `button`/`a[href]`/`[role=button]` needs an accessible name), `responsive.viewport-meta` (📐 warn:
+  full documents declare a viewport meta).
+- **Agent-verified SPEC rules** (`check: manual` — the engine skips them; the design agent cites them):
+  `a11y.focus-not-obscured` (2.4.11), `a11y.dragging-alternative` (2.5.7), `forms.redundant-entry`
+  (3.3.7), `a11y.color-only-meaning` (1.4.1). The rules.yaml header now documents that severity is
+  agent-weight-only for manual rules. **Catalog: 21 → 29 rules (16 SPEC 🔒 / 13 CONV 📐).**
+- **§14 anti-patterns extended with the 2025–26 tells** — default-font monoculture
+  (Inter/Roboto/Space Grotesk), gradient-text headlines (`background-clip:text`), stock-AI imagery,
+  dead controls (`href="#"`), the landing-template skeleton + dark-by-default sameness, fabricated
+  social proof, and named animation clichés (typewriter/particles/cursor trails); the glassmorphism
+  TELL now separates platform-native material (Liquid Glass) from decorative CSS glass.
+- **Site identity** — the page finally says **Norma**: `<title>`, header brand + GitHub link, hero,
+  meta description + Open Graph + data-URI favicon, and a footer "Adopt the standard" block (repo,
+  npm CLI, AGENTS.md, rule catalog, version). New §05 "Keyboard · ARIA · screen readers" card,
+  Postel's law in §12, a scope note, and attribute-level EN/VI i18n (`document.title`, aria-labels,
+  search placeholder now switch language).
+- **check-drift guards** — shared load-bearing facts must appear verbatim in REFERENCE.md,
+  REFERENCE.vi.md **and** index.html (the 37%→55.8% class of drift), and version integrity
+  (`standard/VERSION` == `rules.json` == README badge == site footer).
+
+### Changed
+
+- **2026 refresh** — WCAG 2.2 updated edition 2024-12-12 + ISO/IEC 40500:2025 (SC count corrected
+  87 → **86**); EU Accessibility Act enforcement (live since 2025-06-28); HTTP Archive **2025**
+  Almanac INP stats (77% mobile good INP); **M3 Expressive**: springs are Material's primary motion
+  system, duration/easing tokens relabeled fallback; **Liquid Glass** system-wide + the iOS 27
+  legibility rollback; Baseline CSS guidance (`text-wrap: balance/pretty`, native `<dialog>` +
+  Popover API over hand-rolled overlays, CSS anchor positioning, `light-dark()`); Chrome
+  soft-navigation measurement noted (thresholds unchanged); DTCG source repointed to the stable
+  v2025.10 URL.
+- **Dark-pattern stat corrected to 55.8%** per arXiv 2502.13499 v2 ("Deception at Scale", 2026) —
+  the shipped ~37% contradicted the current version of its own citation.
+- `a11y.semantic-control` now also flags href-less `<a onclick>` (no link role, not focusable).
+- e2e axe self-test upgraded from WCAG 2.1 to **WCAG 2.2** tags (`wcag22a`/`wcag22aa`).
+- ADOPTERS + linter README wording made accurate ("statically checkable" dogfood; the real
+  `check: manual` rule list instead of a wrong "off" list).
 - **`publish.yml`** — a tag-triggered `npm publish --provenance --access public` behind the full verify
   gate, so releasing the CLI is push-button (set the `NPM_TOKEN` secret once). The package now declares
   `publishConfig.access: "public"`, an `exports` map, and ships its own `LICENSE`.
@@ -42,7 +84,7 @@ land **before the first npm release**.
   the skip link targets the content start (`#top`); code blocks keep a border in dark mode; scroll-spy uses
   `getBoundingClientRect` (robust to positioned ancestors).
 - **REFERENCE** — documented the §10 Forms & Responsive merge (the former §10 + §11) in both languages, so the numbering no longer reads as an accidental gap (the site already labels it "§10–11").
-- **Tests** — **87 unit tests** (was 58); coverage 94% statements / 87% branches.
+- **Tests** — **100 unit tests** (was 58); coverage 94% statements / 87% branches.
 
 ## [1.0.0] — 2026-07-02
 

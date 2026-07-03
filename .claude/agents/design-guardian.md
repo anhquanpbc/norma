@@ -62,7 +62,12 @@ Not compliance failures, but they erase brand distinctiveness and often *induce*
   *(Tailwind's creator publicly apologized in 2025 for the indigo-500 default "leading to every AI generated UI on earth also being indigo.")*
 - **antipattern.pure-dark-mode** — no pure `#000`/`#fff` dark mode; use `#121212` surface + `#E4E4E7` text.
 - **Halo / glow overuse** — neutral elevation scale, one light source; no stacked colored shadows.
-- **Glassmorphism by default** — at most 2–3 glass surfaces + a scrim, never everywhere.
+- **Glassmorphism by default** — at most 2–3 glass surfaces + a scrim, never everywhere (platform-native material like Apple's Liquid Glass is HIG-governed; decorative CSS glass is not).
+- **Default-font monoculture** — no reflex Inter/Roboto/Space Grotesk stack; choose a deliberate typeface pairing.
+- **Gradient-text headlines** — no `background-clip: text` gradient heroes; gradient text has no computable contrast.
+- **Stock-AI imagery** — no plastic AI illustrations, 3D gradient blobs, or fake team photos; real shots or a deliberate illustration system.
+- **Dead controls** — no `href="#"` links or CTAs wired to nothing; every control does what it says.
+- **Dark-by-default** — dark mode is a theme, not a default; no glow-edged dark cards as a premium shortcut.
 - **tokens.color-only / tokens.spacing-scale** — no raw hex, no off-scale px; snap to the 8px scale.
 - **perf.img-dimensions** — set `width`/`height` (or `aspect-ratio`) on every `<img>` to prevent CLS.
 - **responsive.viewport-meta** — full documents include `<meta name="viewport" content="width=device-width, initial-scale=1">`.
@@ -104,7 +109,7 @@ Not compliance failures, but they erase brand distinctiveness and often *induce*
 npx @norma/design-lint "**/*.{html,css}"     # gate SPEC violations; exits non-zero on error-severity
 ```
 
-## Rule index (generated from standard/rules.json v1.0.0)
+## Rule index (generated from standard/rules.json v1.1.0)
 
 - 🔒 SPEC `color.contrast.text` (error) — Body text contrast >= 4.5:1 · [WCAG 2.2 SC 1.4.3 Contrast (Minimum)](https://www.w3.org/TR/WCAG22/#contrast-minimum)
 - 🔒 SPEC `color.contrast.large-ui` (error) — Large text & UI contrast >= 3:1 · [WCAG 2.2 SC 1.4.3 / 1.4.11 Non-text Contrast](https://www.w3.org/TR/WCAG22/#non-text-contrast)

@@ -261,7 +261,7 @@ Công cụ AI thường sinh hai loại lỗi, và cần biết bạn đang xử
 |---|---|---|
 | **Vòng focus chồng** — `border` + `outline` + `box-shadow` chồng nhau | VIOLATION (2.4.11/2.4.13) | một vòng `:focus-visible`, ≥2px, ≥3:1 |
 | **Chữ xám thiếu tương phản** — `#999` trên `#fff`; ~84% trang chủ (WebAIM Million) | VIOLATION (1.4.3) | ≥4.5:1 (3:1 chữ lớn/UI) |
-| **Animation vô tội vạ** — cái gì cũng động, bỏ qua reduced-motion | VIOLATION (2.3.3) | chỉ animate khi có nghĩa; tôn trọng `prefers-reduced-motion` |
+| **Animation vô tội vạ** — cái gì cũng động, bỏ qua reduced-motion; gồm hero gõ chữ, trường hạt, vệt con trỏ | VIOLATION (2.3.3) | chỉ animate khi có nghĩa; tôn trọng `prefers-reduced-motion` |
 | **Emoji làm icon** — 🚀🔥 làm nút; hiển thị + tên đọc màn hình khác nhau | VIOLATION (1.1.1) | SVG inline + nhãn thật |
 | **Placeholder làm nhãn** — gợi ý biến mất khi gõ | VIOLATION (3.3.2/4.1.2) | `<label>` cố định, liên kết theo mã |
 | **Lạm dụng halo / glow** — nhiều bóng màu chồng | TELL | thang độ nổi trung tính, một nguồn sáng |
@@ -269,16 +269,20 @@ Công cụ AI thường sinh hai loại lỗi, và cần biết bạn đang xử
 | **Glassmorphism khắp nơi** — `backdrop-filter` tràn lan, tương phản động fail, tốn GPU | TELL | 2–3 bề mặt kính + lớp phủ, không mặc định (vật liệu nền tảng như Liquid Glass của Apple do HIG quản — kính CSS trang trí thì không) |
 | **Spacing tùy tiện / bo góc quá đà** — `mt-[13px]`, bo góc lẫn lộn | TELL | thang token |
 | **Dark mode `#000`/`#fff` thuần** — chói (halation) với loạn thị | TELL | nền `#121212` + chữ `#E4E4E7` |
+| **Font mặc định na ná nhau** — bộ Inter/Roboto/Space Grotesk theo phản xạ, không chiến lược ghép cặp | TELL | cặp typeface có chủ đích gắn với thương hiệu (§3) |
+| **Tiêu đề chữ-gradient** — `background-clip: text` trên nền gradient | TELL | mực đặc / token thương hiệu — chữ gradient không có tương phản tính được, 1.4.3 có thể fail ngầm |
+| **Ảnh AI công nghiệp** — minh họa bóng nhựa quá đối xứng, blob gradient 3D, ảnh đội ngũ giả ánh sáng phi thực | TELL | ảnh sản phẩm thật hoặc hệ minh họa có chủ đích |
+| **Điều khiển chết** — link `href="#"`, CTA không nối vào đâu | TELL | mọi điều khiển làm đúng điều nó nói, hoặc ship dạng disabled kèm lý do |
 
 **Cấp 2 — bệnh UX & sản phẩm:**
 
 - **Mặc định bất khả tiếp cận** 🔒 — `<div onClick>` thay vì `<button>`, thiếu ARIA/bàn phím → HTML ngữ nghĩa (4.1.2).
-- **"AI slop" / na ná nhau** 📐 — áp "thử bỏ logo": có bị nhầm với đối thủ? → dựng hệ thương hiệu trước.
+- **"AI slop" / na ná nhau** 📐 — bộ khung template: hero căn giữa + lưới card bo tròn đều tăm tắp + dải logo + carousel lời chứng thực + bento-theo-mặc-định, dáng vẻ shadcn/Tailwind mặc định, theme tối viền glow "cao cấp" theo phản xạ. Áp "thử bỏ logo": có bị nhầm với đối thủ? → dựng hệ thương hiệu trước; dark mode là một theme, không phải mặc định.
 - **Nhồi chatbot** 📐 — gắn chat vào nơi thao tác trực tiếp nhanh hơn → UI tác vụ; chỉ dùng chat khi giúp diễn đạt ý định.
 - **Gắn tính năng AI cho có** 📐 — nút ✨ để tiếp thị → chỉ làm khi nhu cầu người dùng × thế mạnh AI (Google PAIR).
 - **Tự động hóa quá / mất kiểm soát** 🔒 — không undo/giám sát, thiên kiến tự động → giữ người trong vòng lặp, điều khiển toàn cục (MS HAX, HIG).
 - **Dark pattern tự phát** 🔒 — khẩn cấp giả / phí ẩn; 55.8% trong 1K thành phần TMĐT do LLM tạo chứa ít nhất một dark pattern (arXiv 2502.13499 v2, "Deception at Scale", 2026) → kiểm toán + cấm.
-- **Nội dung bịa bị phát hành** 📐 — lorem ipsum, số liệu/thuật ngữ bịa → không phát hành placeholder; kiểm chứng.
+- **Nội dung bịa bị phát hành** 📐 — lorem ipsum, số liệu/thuật ngữ bịa, lời chứng thực hay dải logo "được tin dùng" tự chế → không phát hành placeholder hay bằng chứng xã hội bịa; kiểm chứng.
 - **Thiếu minh bạch AI** 🔒 — không tiết lộ / độ tin cậy / cách kiểm chứng → gắn nhãn AI, hiện nguồn + undo (HIG, PAIR, MS G11).
 
 **Khắc phục (ba tầng):**
