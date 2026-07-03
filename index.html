@@ -649,6 +649,41 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
       <p class="note"><span class="en">Values are <code>min-width</code>, px (Material = dp window classes: compact / medium / expanded / large / xlarge). 12-column grid + 24px gutter is the common desktop convention. Use <code>max-width</code>, not fixed <code>width</code>.</span><span class="vi">Giá trị là <code>min-width</code>, px (Material = lớp cửa sổ dp: compact / medium / expanded / large / xlarge). Lưới 12 cột + gutter 24px là quy ước desktop phổ biến. Dùng <code>max-width</code>, không phải <code>width</code> cố định.</span></p>
     </div>
   </div>
+
+  <div class="grid g2" style="margin-top:var(--s-5); align-items:start">
+    <div class="card">
+      <h3><span class="en">Layout &amp; composition</span><span class="vi">Bố cục &amp; thành phần hoá</span> <span class="badge conv">CONV</span></h3>
+      <ul class="spec">
+        <li><span class="en"><b>Engine by axis:</b> <b>Grid</b> for 2-D (page scaffolds, card galleries), <b>Flexbox</b> for 1-D (toolbars, chips). <code>gap</code>, not margin hacks.</span><span class="vi"><b>Engine theo trục:</b> <b>Grid</b> cho 2-D (khung trang, dải card), <b>Flexbox</b> cho 1-D (toolbar, chip). Dùng <code>gap</code>, không mánh margin.</span></li>
+        <li><span class="en"><b>Responsive without breakpoints — RAM:</b> cards wrap to fit their container in one line.</span><span class="vi"><b>Responsive không cần breakpoint — RAM:</b> card tự wrap vừa container trong một dòng.</span></li>
+        <li><span class="en"><b>Primitives</b> (Every Layout): Stack · Cluster · Sidebar · Switcher · Cover · Center.</span><span class="vi"><b>Primitive</b> (Every Layout): Stack · Cluster · Sidebar · Switcher · Cover · Center.</span></li>
+        <li><span class="en"><b>Intrinsic sizing:</b> <code>min()/max()/clamp()</code>, logical axes, <code>aspect-ratio</code> + <code>object-fit</code>.</span><span class="vi"><b>Kích thước nội tại:</b> <code>min()/max()/clamp()</code>, trục logic, <code>aspect-ratio</code> + <code>object-fit</code>.</span></li>
+        <li><span class="en"><b>Container queries</b> (Baseline 2023) so a component adapts to its slot, not the screen.</span><span class="vi"><b>Container query</b> (Baseline 2023) để component thích ứng theo slot, không phải màn hình.</span></li>
+      </ul>
+      <pre tabindex="0" aria-label="RAM grid technique code sample"><code><span class="c-mut">/* RAM: Repeat, Auto, Minmax — a responsive card gallery, no media queries */</span>
+<span class="c-key">.gallery</span> {
+  <span class="c-key">display</span>: grid;
+  <span class="c-key">gap</span>: 1rem;
+  <span class="c-key">grid-template-columns</span>:
+    repeat(auto-fit, minmax(<span class="c-str">min(100%, 16rem)</span>, 1fr));
+}</code></pre>
+    </div>
+    <div class="card tint">
+      <h3><span class="en">z-index token ladder</span><span class="vi">Thang token z-index</span> <span class="badge conv">CONV</span></h3>
+      <p class="note" style="margin-top:0"><span class="en">Named layers end the <code>z-index:9999</code> arms race. A <b>stacking context</b> also forms from <code>opacity&lt;1</code>, <code>transform</code>, <code>filter</code> — a transformed ancestor <b>traps</b> a child's z-index (the #1 "won't go on top" bug). The browser <b>top layer</b> (<code>&lt;dialog&gt;</code>, popover) sits above all of it.</span><span class="vi">Các lớp có tên chấm dứt cuộc đua <code>z-index:9999</code>. <b>Stacking context</b> còn sinh từ <code>opacity&lt;1</code>, <code>transform</code>, <code>filter</code> — ancestor có transform <b>giam</b> z-index của con (lỗi "không nổi lên" số 1). <b>Top layer</b> (<code>&lt;dialog&gt;</code>, popover) nổi trên tất cả.</span></p>
+      <ul class="spec">
+        <li><span class="k">0</span><span>base</span></li>
+        <li><span class="k">1000</span><span>dropdown</span></li>
+        <li><span class="k">1100</span><span>sticky</span></li>
+        <li><span class="k">1300</span><span>overlay</span></li>
+        <li><span class="k">1400</span><span>modal</span></li>
+        <li><span class="k">1500</span><span>popover</span></li>
+        <li><span class="k">1600</span><span>toast</span></li>
+        <li><span class="k">1700</span><span>tooltip</span></li>
+      </ul>
+      <p class="note"><span class="en">Scroll hygiene: <code>scrollbar-gutter:stable</code> (a CLS source), <code>overscroll-behavior:contain</code> in modals, <code>scroll-margin-top</code> so anchors clear sticky headers.</span><span class="vi">Vệ sinh cuộn: <code>scrollbar-gutter:stable</code> (nguồn CLS), <code>overscroll-behavior:contain</code> trong modal, <code>scroll-margin-top</code> để mục neo thoát header dính.</span></p>
+    </div>
+  </div>
 </section>
 
 <!-- ============ 3. TYPOGRAPHY ============ -->

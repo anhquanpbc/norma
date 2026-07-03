@@ -6,7 +6,20 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
-Nothing yet.
+### Added
+
+- **§2 gains a full "Layout & composition" body** (EN + VI + site + agent spec). The section was titled
+  "Spacing, Grid & Layout" but gave layout a single sentence; it now covers the engine choice (Grid for
+  2-D, Flexbox for 1-D), Grid mechanics incl. the RAM technique
+  `repeat(auto-fit, minmax(min(100%,16rem),1fr))` + subgrid + template-areas, box-alignment/`gap`, the
+  named composition primitives (Stack/Cluster/Sidebar/Switcher/Cover/Center — Every Layout / CUBE CSS),
+  intrinsic sizing (`min()/max()/clamp()`, logical axes, `aspect-ratio`+`object-fit`), container queries
+  (Baseline 2023), and a z-index **token ladder** + stacking-context/overflow/scroll model. The site's §2
+  adds a Layout card (with the RAM snippet) and a z-index-ladder card; the reference site's own decorative
+  borders were already logical (`border-inline-start`). No renumbering — expanded in place, so the
+  "13 domains" identity and the section-sync guard are unchanged. First of a broader content-completeness
+  pass (ARIA APG widget catalog, design-every-state, elevation/radius/z-index token scales, forced-colors,
+  data-viz, content/UX-writing are queued next).
 
 ## [1.2.0] — 2026-07-04
 

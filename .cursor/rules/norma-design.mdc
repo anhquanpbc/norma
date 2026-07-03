@@ -20,6 +20,11 @@ the aesthetic "tells" that mark machine-generated work.
    clean `:focus-visible` ring, real `<label>`s, honored `prefers-reduced-motion`.
 4. **Avoid the tells.** No default indigo/purple gradient, no glow/halo stacking, no glassmorphism by
    default, no pure `#000`/`#fff` dark mode, no emoji-as-icons.
+   **Compose layouts deliberately** (see REFERENCE §2): Grid for 2-D, Flexbox for 1-D, `gap` not margin
+   hacks; the RAM technique `repeat(auto-fit, minmax(min(100%,16rem),1fr))` over stacked breakpoints;
+   named primitives (Stack/Cluster/Sidebar/Switcher/Center); intrinsic sizing (`min()/max()/clamp()`);
+   a z-index **token ladder** (never `z-index:9999`); logical properties on the layout axis; and
+   container queries for reusable components — not nested-flex div-soup.
 5. **Cite your work.** When generating, note which token/rule each choice satisfies. When reviewing,
    emit findings as `[SPEC|TELL] <rule.id> — message` so output is greppable and matches the linter.
 6. **Verify.** Recommend / run `npx @norma/design-lint <files>` before committing. Tools catch ~57% of
