@@ -803,6 +803,16 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
     <h3>APCA <span class="en">&amp; the WCAG 3.0 direction</span><span class="vi">&amp; hướng WCAG 3.0</span> <span class="badge conv">CONV</span></h3>
     <p><span class="en">The Accessible Perceptual Contrast Algorithm outputs a polarity- and weight-aware <b>Lc</b> value (≈−108…+106): <b>Lc 90 preferred / 75 min</b> for body text, <b>~60</b> for large/bold. Crucially, WCAG 2.x overstates contrast for near-black colors, so it <b>can't reliably guide dark mode</b> — APCA can. <b>But keep WCAG 2.x</b>: APCA reverted to "Placeholder" in the 2023-06 WCAG 3.0 draft; no release date (~2030). For dark UIs, show elevation with progressively <b>lighter surfaces</b>, not just shadows, and avoid pure black/white pairings.</span><span class="vi">Thuật toán APCA cho ra giá trị <b>Lc</b> có xét cực tính và độ đậm (≈−108…+106): <b>Lc 90 nên có / 75 tối thiểu</b> cho thân bài, <b>~60</b> cho chữ lớn/đậm. Quan trọng: WCAG 2.x phóng đại tương phản với màu gần đen nên <b>không dẫn hướng tốt cho dark mode</b> — APCA thì có. <b>Nhưng giữ WCAG 2.x</b>: APCA bị đưa về "Placeholder" trong nháp WCAG 3.0 06/2023; chưa có ngày phát hành (~2030). Với UI tối, thể hiện độ nổi bằng <b>bề mặt sáng dần</b>, không chỉ đổ bóng, và tránh cặp đen/trắng thuần.</span></p>
   </div>
+
+  <div class="card" style="margin-top:var(--s-5)">
+    <h3><span class="en">Core token scales</span><span class="vi">Các thang token cốt lõi</span> <span class="badge conv">CONV</span> <span class="src" style="margin-inline-start:4px">§01</span></h3>
+    <p class="note" style="margin-top:0"><span class="en">The most-forgotten tokens have no "brand" hook. Define them once so shadows, corners and states are systematic — this closes the §14 halo/glow &amp; mixed-radii tells at the root.</span><span class="vi">Token hay bị quên nhất là những cái không có "hook thương hiệu". Định nghĩa một lần để bóng, bo góc và trạng thái thành hệ thống — chặn tận gốc dấu hiệu halo/glow &amp; bo góc lộn xộn ở §14.</span></p>
+    <ul class="spec">
+      <li><span class="k"><span class="en">elevation</span><span class="vi">độ nổi</span></span><span><span class="en">a 0–5 ladder, one light source, one soft shadow per level (blur ≈ 2× offset) — never stacked colored glows. On dark, use lighter surfaces, not shadows.</span><span class="vi">thang 0–5, một nguồn sáng, một bóng mềm mỗi cấp (blur ≈ 2× offset) — không chồng glow màu. Trên nền tối, dùng bề mặt sáng hơn thay vì bóng.</span></span></li>
+      <li><span class="k">radius</span><span><span class="en"><code>0·2·4·8·12·16·24·full</code>; border <code>1/2/4px</code>. <b>Nested-radius:</b> inner = outer − padding.</span><span class="vi"><code>0·2·4·8·12·16·24·full</code>; viền <code>1/2/4px</code>. <b>Bo góc lồng:</b> trong = ngoài − padding.</span></span></li>
+      <li><span class="k">state</span><span><span class="en">state-layer opacities as tokens: hover <b>8%</b> · focus <b>10%</b> · pressed <b>10%</b> · dragged <b>16%</b>; disabled 38%/12%.</span><span class="vi">độ mờ state-layer dạng token: hover <b>8%</b> · focus <b>10%</b> · pressed <b>10%</b> · dragged <b>16%</b>; disabled 38%/12%.</span></span></li>
+    </ul>
+  </div>
 </section>
 
 <!-- ============ 5. ACCESSIBILITY ============ -->
@@ -1020,6 +1030,28 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
         <li><span class="en"><b>Cards</b> 16–24px padding · 16–24px gaps from the scale.</span><span class="vi"><b>Card</b> padding 16–24px · khoảng cách 16–24px theo thang.</span></li>
       </ul>
       <p class="note"><span class="en"><b>Reference systems:</b> Material 3, Apple HIG, IBM Carbon, Shopify Polaris, Ant Design, Atlassian. <b>Atomic Design:</b> atoms → molecules → organisms → templates → pages (maps to the token tiers).</span><span class="vi"><b>Hệ tham khảo:</b> Material 3, Apple HIG, IBM Carbon, Shopify Polaris, Ant Design, Atlassian. <b>Atomic Design:</b> atom → molecule → organism → template → page (khớp các tầng token).</span></p>
+    </div>
+  </div>
+
+  <div class="grid g2" style="margin-top:var(--s-5); align-items:start">
+    <div class="card">
+      <h3><span class="en">Widget patterns — build to the ARIA APG</span><span class="vi">Widget — dựng theo ARIA APG</span> <span class="badge spec">SPEC</span></h3>
+      <p class="note" style="margin-top:0"><span class="en">Interactive widgets are where generated UI most fails a11y. Every widget has a role, states, and a keyboard contract (full table in <a href="https://github.com/anhquanpbc/norma/blob/main/REFERENCE.md">REFERENCE §9</a>). Three rules AI reliably breaks:</span><span class="vi">Widget tương tác là nơi UI sinh tự động hỏng a11y nhất. Mỗi widget có role, trạng thái và hợp đồng bàn phím (bảng đầy đủ ở <a href="https://github.com/anhquanpbc/norma/blob/main/REFERENCE.md">REFERENCE §9</a>). Ba quy tắc AI hay phá:</span></p>
+      <ul class="spec">
+        <li><span class="k">1</span><span><b><span class="en">Native first.</span><span class="vi">Ưu tiên native.</span></b> <span class="en"><code>&lt;select&gt;</code> / <code>&lt;details&gt;</code> / <code>&lt;dialog&gt;</code> before hand-rolled ARIA — combobox is the most-botched.</span><span class="vi"><code>&lt;select&gt;</code> / <code>&lt;details&gt;</code> / <code>&lt;dialog&gt;</code> trước ARIA tự chế — combobox bị làm sai nhiều nhất.</span></span></li>
+        <li><span class="k">2</span><span><b><span class="en">One tab stop.</span><span class="vi">Một tab-stop.</span></b> <span class="en">A tablist/menu/listbox is <b>one</b> Tab stop; arrow-key within via roving <code>tabindex</code> or <code>aria-activedescendant</code>.</span><span class="vi">Tablist/menu/listbox là <b>một</b> Tab stop; di chuyển trong bằng mũi tên qua roving <code>tabindex</code> hoặc <code>aria-activedescendant</code>.</span></span></li>
+        <li><span class="k">3</span><span><b><span class="en">Accessible name</span><span class="vi">Tên tiếp cận</span></b> <span class="en">on every control, icon buttons included (<code>a11y.control-name</code>). Announce changes via <code>role=status</code>/<code>aria-live</code> (4.1.3).</span><span class="vi">cho mọi điều khiển, kể cả nút icon (<code>a11y.control-name</code>). Thông báo thay đổi qua <code>role=status</code>/<code>aria-live</code> (4.1.3).</span></span></li>
+      </ul>
+    </div>
+    <div class="card tint">
+      <h3><span class="en">Design every state</span><span class="vi">Thiết kế mọi trạng thái</span> <span class="badge spec">SPEC</span></h3>
+      <p class="note" style="margin-top:0"><span class="en">The states above are per-control; a data view must design its whole lifecycle. AI ships only the loaded path, so the product breaks on first (or absent) real data.</span><span class="vi">Các trạng thái trên là của từng điều khiển; một view dữ liệu phải thiết kế cả vòng đời. AI chỉ ship đường đã-tải, nên sản phẩm vỡ khi gặp dữ liệu thật (hoặc không có).</span></p>
+      <ul class="spec">
+        <li><span class="k">empty</span><span><span class="en">first-run (value + CTA) vs no-results (reset/broaden) — a blank screen is a defect.</span><span class="vi">lần đầu (giá trị + CTA) vs không kết quả (reset/mở rộng) — màn trắng là lỗi.</span></span></li>
+        <li><span class="k">loading</span><span><span class="en">a skeleton matching the layout (no CLS), not a bare spinner; <code>aria-busy</code>.</span><span class="vi">skeleton khớp bố cục (không CLS), không phải spinner trơ; <code>aria-busy</code>.</span></span></li>
+        <li><span class="k">error</span><span><span class="en">cause + recovery/retry, never a dead end or bare "Oops".</span><span class="vi">nguyên nhân + phục hồi/thử lại, không ngõ cụt hay "Oops" trơ.</span></span></li>
+        <li><span class="k">+</span><span><span class="en">offline/stale · optimistic · success · 403 · truncation.</span><span class="vi">offline/cũ · optimistic · thành công · 403 · cắt bớt.</span></span></li>
+      </ul>
     </div>
   </div>
 </section>

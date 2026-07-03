@@ -51,6 +51,16 @@ This layering lets you re-theme (light/dark, brand A/B) by remapping the semanti
 
 **Tooling 📐:** Style Dictionary (DTCG support since v4), Tokens Studio for Figma (toggle "W3C DTCG" format), Terrazzo, Figma Variables, Supernova, zeroheight, Penpot. Validate against the DTCG JSON Schema before shipping.
 
+### Core token scales
+
+A design system's most-forgotten tokens are the ones with no obvious "brand" hook. Define these scales once so shadows, corners and interaction states are systematic — not per-component one-offs (this closes the §14 *halo/glow* and *mixed-radii* tells at the root).
+
+**Elevation / shadow ladder 📐:** a 0–5 ladder, one light source, cast **downward**; the y-offset and blur grow with the level (blur ≈ 2× the offset), each level a **single soft shadow + a hairline** — never stacked *colored* shadows. Approximate ladder (light theme): `0` none · `1` `0 1px 2px rgb(0 0 0/.06)` (card) · `2` `0 2px 4px /.08` (raised/sticky bar) · `3` `0 4px 8px /.10` · `4` `0 8px 16px /.12` (dropdown/popover) · `5` `0 16px 32px /.16` (modal). Assign each component a level (card 1, sticky bar 2, dropdown 4, modal 5) instead of ad-hoc shadows. **On dark, shadows barely read — convey elevation with a lighter surface / tonal-tint overlay** (Material dp→overlay opacity), see §4.
+
+**Radius & border scale 📐:** radii `none 0 · xs 2 · sm 4 · md 8 · lg 12 · xl 16 · 2xl 24 · full 9999px`; border widths `1 / 2 / 4px`. **Nested-radius rule:** an inner corner's radius = outer radius − the gap between them (`inner = outer − padding`), so a button inside a card doesn't look pinched. Pick one radius personality per system and hold it; mixed random radii are an AI tell.
+
+**Interaction state-layer opacities 📐 (Material 3, as tokens):** express hover/focus/pressed as a translucent overlay of the foreground color at a fixed opacity so every component reacts identically — **hover 8% · focus 10% · pressed 10% · dragged 16%**; **disabled = content 38% / container 12%**. Selected/activated add their own layer. Tokenizing these keeps `:hover`/`:focus-visible`/`:active`/`[disabled]` from drifting per component (see the states list in §9).
+
 ---
 
 ## 2. Spacing, Grid & Layout
@@ -263,7 +273,49 @@ Ratio = (L1 + 0.05)/(L2 + 0.05), range 1:1–21:1.
 - **Modals/dialogs:** trap focus, restore focus on close, `Esc` to dismiss, backdrop, single clear dismissal path; avoid stacking modals. Prefer the native `<dialog>` element and Popover API (Baseline 2025) — the top layer gives focus management, Esc, backdrop and light-dismiss for free; a hand-rolled overlay `<div>` is the anti-pattern. Position tooltips/menus with CSS anchor positioning as progressive enhancement (Chrome/Edge, Firefox 151+; not yet in Safari — not yet Baseline).
 - **Cards:** 16–24px internal padding; 16–24px gaps between sibling cards from the spacing scale.
 
-**Reference design systems 📐 (study for concrete specs):** Google Material 3, Apple HIG, IBM Carbon, Shopify Polaris, Ant Design, Atlassian Design System, Salesforce Lightning.
+Wire hover/focus/pressed/disabled to the **state-layer opacity tokens** in §1 so states don't drift per component.
+
+### Widget patterns (WAI-ARIA APG) 🔒
+
+Interactive widgets are exactly where AI-generated UI fails a11y (`<div>`-as-button, no keyboard model, wrong roles). Build to the **ARIA Authoring Practices Guide** — every widget has a required role, states, and a keyboard contract. Three rules AI reliably breaks:
+
+1. **Native first.** A `<select>`/`<datalist>`, `<details>`/`<summary>`, `<dialog>`, `<input type=…>` beats any hand-rolled ARIA equivalent — the combobox is the single most-botched widget. Reach for ARIA only when no native element fits.
+2. **One tab stop per composite.** A tablist / menu / listbox / grid is **one** Tab stop; move *within* it using arrow keys via **roving `tabindex`** (only the active child is `tabindex="0"`, the rest `-1`) or **`aria-activedescendant`** — never `tabindex="0"` on every child.
+3. **Every control has an accessible name** (icon-only buttons included — 1.1.1 / 4.1.2, linted as `a11y.control-name`).
+
+| Widget | Role(s) | Key states/props | Keyboard |
+|---|---|---|---|
+| **Tabs** | `tablist`/`tab`/`tabpanel` | `aria-selected`, `aria-controls` | ←/→ move, Home/End, (auto or Enter to activate) |
+| **Disclosure** | `button` | `aria-expanded` | Enter/Space toggle |
+| **Accordion** | `button`+region | `aria-expanded`, `aria-controls` | Enter/Space; ↑/↓ between headers |
+| **Menu / menubar** | `menu`/`menuitem(checkbox/radio)` | `aria-haspopup`, `aria-expanded` | ↑/↓ (menubar ←/→), Enter, Esc closes + restores focus |
+| **Listbox** | `listbox`/`option` | `aria-selected`, `aria-multiselectable` | ↑/↓, Home/End, type-ahead |
+| **Combobox** | `combobox`+`listbox` | `aria-expanded`, `aria-controls`, `aria-activedescendant` | ↓ opens, ↑/↓ move, Enter selects, Esc closes |
+| **Dialog / alertdialog** | `dialog`/`alertdialog` | `aria-modal`, `aria-labelledby` | Tab trapped, Esc closes, focus restored; background `inert` |
+| **Tooltip** | `tooltip` | `aria-describedby` | shows on focus+hover, Esc dismisses |
+| **Switch** | `switch` | `aria-checked` | Enter/Space toggle |
+| **Slider** | `slider` | `aria-valuemin/max/now`, `aria-valuetext` | ←/→/↑/↓, Home/End, PageUp/Down |
+| **Spinbutton** | `spinbutton` | `aria-valuenow` (+min/max) | ↑/↓, Home/End |
+| **Tree** | `tree`/`treeitem` | `aria-expanded`, `aria-selected` | ↑/↓, ←/→ collapse/expand, type-ahead |
+| **Grid / table** | `grid`/`row`/`gridcell` | `aria-selected`, `aria-sort` | arrow-key cell nav, Home/End, PageUp/Down |
+| **Breadcrumb** | `nav`+ordered list | `aria-current="page"` | standard link nav |
+| **Carousel** | group/region | `aria-roledescription`, live region | prev/next buttons, pause control |
+
+Announce dynamic changes with `aria-live` (`polite`/`assertive`) or `role=status`/`alert` — **WCAG 4.1.3 Status Messages (AA)**, i.e. update without moving focus.
+
+### Design every state 🔒/📐
+
+The states list above is per-*control* micro-states; a **data-driven view** must also design its whole **lifecycle** — AI almost always ships only the loaded/happy path, so the product visibly breaks on first (or absent) real data:
+
+- **Empty** — distinguish the four kinds: **first-run** (explain the value + one primary CTA), **user-cleared**, **no-results** (offer reset/broaden — *not* the same as first-run), **error-empty**. Blank screens are a defect.
+- **Loading** — a **skeleton that matches the final layout** (reserves space → no CLS), not a bare centered spinner; use `aria-busy`.
+- **Partial / optimistic** — reflect the action before the server confirms; roll back visibly on failure.
+- **Error** — state the cause **and** the recovery/retry; never a dead end or a bare "Oops".
+- **Offline / stale**, **success/confirmation**, **no-permission (403)**, and **long-list truncation** (expose the full value).
+
+Announce state transitions via **4.1.3 Status Messages** (a `role=status`/`aria-live` region) so they reach screen-reader users without stealing focus.
+
+**Reference design systems 📐 (study for concrete specs):** Google Material 3, Apple HIG, IBM Carbon, Shopify Polaris, Ant Design, Atlassian Design System, Salesforce Lightning, plus the evidence-based GOV.UK Design System and U.S. Web Design System (USWDS).
 
 **Atomic Design (Brad Frost) 📐:** atoms → molecules → organisms → templates → pages. Maps onto the primitive/semantic/component token tiers.
 
@@ -370,6 +422,7 @@ AI coding tools reliably emit two kinds of defect, and it matters which one you 
 ## Sources (authoritative primary sources)
 
 - **W3C WCAG 2.2** — Recommendation 2023-10-05, updated 2024-12-12; ISO/IEC 40500:2025 · https://www.w3.org/TR/WCAG22/
+- **W3C WAI-ARIA Authoring Practices Guide (APG)** — widget roles, states & keyboard patterns · https://www.w3.org/WAI/ARIA/apg/
 - **W3C Design Tokens Format Module** (DTCG), v2025.10 (stable) · https://www.designtokens.org/TR/2025.10/format/
 - **Apple Human Interface Guidelines** · https://developer.apple.com/design/human-interface-guidelines/
 - **Google Material Design 3** · https://m3.material.io/ · Motion tokens: material-components-android (GitHub) `docs/theming/Motion.md`
