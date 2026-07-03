@@ -41,7 +41,16 @@ sources and machine assertions lives in `standard/rules.json`.
 - **a11y.semantic-control** — interactive controls are `<button>`/`<a>`, not `<div onClick>` (4.1.2).
 - **a11y.emoji-icon** — no emoji as an interactive icon without a real text/aria label (1.1.1).
 - **a11y.img-alt** — every `<img>` has an `alt` (descriptive text, or `alt=""` if purely decorative) (1.1.1).
+- **a11y.control-name** — every `<button>`/`<a href>`/`[role=button]` has an accessible name: text, `aria-label`, or a descendant `img[alt]` — an icon-only SVG control without one is announced as just "button" (4.1.2).
+- **a11y.meta-viewport** — the viewport meta never blocks zoom: no `user-scalable=no`, no `maximum-scale` < 2 (1.4.4).
 - **i18n.html-lang** — set `<html lang>` so AT and translation tools pick the right language (WCAG 3.1.1); more under *Internationalization & theming* below.
+
+### Agent-verified mandates (🔒, `check: manual` — the linter cannot see these; you must)
+
+- **a11y.focus-not-obscured** — the element holding keyboard focus is never fully hidden under sticky bars or overlays (2.4.11).
+- **a11y.dragging-alternative** — every drag interaction (slider, reorder, swipe) has a visible single-pointer alternative (2.5.7).
+- **forms.redundant-entry** — never force re-entering information already provided in the same process; autofill or offer "same as above" (3.3.7).
+- **a11y.color-only-meaning** — never encode meaning in color alone; pair color with an icon, text or pattern (1.4.1).
 
 ## Anti-defaults — TELL (📐, actively avoid)
 
@@ -54,6 +63,7 @@ Not compliance failures, but they erase brand distinctiveness and often *induce*
 - **Glassmorphism by default** — at most 2–3 glass surfaces + a scrim, never everywhere.
 - **tokens.color-only / tokens.spacing-scale** — no raw hex, no off-scale px; snap to the 8px scale.
 - **perf.img-dimensions** — set `width`/`height` (or `aspect-ratio`) on every `<img>` to prevent CLS.
+- **responsive.viewport-meta** — full documents include `<meta name="viewport" content="width=device-width, initial-scale=1">`.
 - **a11y.heading-order** — never skip a heading level (`h2 → h4`); descend one at a time so the screen-reader outline stays correct (WCAG 1.3.1, axe best-practice).
 
 ## Internationalization & theming

@@ -6,11 +6,11 @@ import AxeBuilder from "@axe-core/playwright";
 const FREEZE = `*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
 .reveal,[class*="reveal"]{opacity:1!important;transform:none!important}`;
 
-// Rendered-DOM WCAG check across BOTH themes and BOTH languages — the matrix that the
+// Rendered-DOM WCAG 2.2 check across BOTH themes and BOTH languages — the matrix that the
 // static linter cannot cover (computed OKLCH contrast per theme, ARIA on real elements).
 for (const theme of ["light", "dark"] as const) {
   for (const lang of ["en", "vi"] as const) {
-    test(`no axe WCAG 2.1 AA violations (${theme} / ${lang})`, async ({ page }) => {
+    test(`no axe WCAG 2.2 AA violations (${theme} / ${lang})`, async ({ page }) => {
       await page.addInitScript((t) => { try { localStorage.setItem("norma-theme", t); } catch (e) {} }, theme);
       await page.addInitScript((css) => {
         const apply = () => {
@@ -28,7 +28,7 @@ for (const theme of ["light", "dark"] as const) {
       if (lang === "vi") await page.locator("#btn-vi").click();
 
       const { violations } = await new AxeBuilder({ page })
-        .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
+        .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22a", "wcag22aa"])
         .analyze();
 
       for (const v of violations) {

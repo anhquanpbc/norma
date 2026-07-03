@@ -92,6 +92,7 @@ Use `rem` (not `px`) so type respects user font-size. Typically 6–8 steps; neg
 
 - **Line-height / leading 📐:** body ~1.5 (WCAG text-spacing floor is exactly 1.5× 🔒); headings tighter 1.1–1.25. Keep computed line-height on the grid.
 - **Measure (line length) 📐:** **45–75 characters per line** for Latin body (~66 ideal).
+- **Line breaking 📐:** `text-wrap: balance` for headings (Baseline 2024); `text-wrap: pretty` for paragraph rag as progressive enhancement (not yet Baseline).
 - **Minimum body size 📐:** 16px is the practical floor; 12px only for captions, never long-form. WCAG mandates scalability, **not** a pixel size 🔒 (see §5).
 - **Fluid typography:** `font-size: clamp(min, preferred, max)` with linear interpolation between viewport bounds (Utopia method; CSS Values & Units L4). Scales without breakpoints and still passes 200% zoom.
 - **Font loading:** `font-display: swap` (FOUT, protects LCP) for body; `optional` for max performance; `block` only for icon fonts. Best practice: `swap` **+ metric-adjusted fallback** (`size-adjust`, `ascent-override`) to kill CLS on swap. Serve **WOFF2** (~30% smaller than WOFF), self-host with `Cache-Control: public, max-age=31536000, immutable`, preload critical fonts. **Variable fonts** win when you use ≥3 weights (one file replaces many).
@@ -124,7 +125,7 @@ Ratio = (L1 + 0.05)/(L2 + 0.05), range 1:1–21:1.
 
 **APCA (WCAG 3.0 direction) 📐:** the Accessible Perceptual Contrast Algorithm outputs **Lightness Contrast (Lc)** (≈ −108…+106), polarity-aware and font-size/weight-aware. Simple thresholds: **Lc 90 preferred / 75 minimum for body text; ~60 for large/bold**; ~Lc 15 = one perceivable step. WCAG 2.x overstates contrast for near-black colors, so it **cannot reliably guide dark-mode** — APCA can. Status caveat: APCA was reverted to "Placeholder" in the 2023-06-02 WCAG 3.0 Editor's Draft; WCAG 3.0 has no release date (informally ~2030). **Keep WCAG 2.x as the enforceable standard.**
 
-**Dark mode & elevation 📐:** convey elevation with progressively lighter surfaces (not just shadows — shadows are weak on dark). Avoid pure black/white pairings; use near-black surfaces + slightly-off-white text to reduce halation.
+**Dark mode & elevation 📐:** convey elevation with progressively lighter surfaces (not just shadows — shadows are weak on dark). Avoid pure black/white pairings; use near-black surfaces + slightly-off-white text to reduce halation. For token-level theming, pair `color-scheme` with the `light-dark()` function (Baseline 2024) so one custom property expresses both themes.
 
 ---
 
@@ -143,17 +144,17 @@ Ratio = (L1 + 0.05)/(L2 + 0.05), range 1:1–21:1.
 
 **Focus indicators:**
 - 2.4.7 Focus Visible (AA) 🔒 — a visible indicator must exist.
-- 2.4.11 Focus Not Obscured (AA) 🔒 — focused element at least partially visible (not fully hidden by sticky bars).
+- 2.4.11 Focus Not Obscured (AA) 🔒 — focused element at least partially visible (not fully hidden by sticky bars). Agent-verified as `a11y.focus-not-obscured`.
 - 2.4.13 Focus Appearance (AAA) 🔒 — indicator ≥ a **2 CSS px thick perimeter** of the component, **≥3:1 contrast between focused/unfocused states**, plus ≥3:1 vs adjacent. Implement with `:focus-visible`, ≥2px outline, `outline-offset`; never `outline:none` without a compliant replacement.
 
-**Keyboard / ARIA / SR 🔒:** all functionality keyboard-operable (2.1.1); logical focus order (2.4.3); landmark roles (`banner`, `nav`, `main`, `contentinfo`); descriptive labels (not "Button"); DOM reading order matches visual order; `aria-live` (`polite`/`assertive`) for dynamic updates like errors.
+**Keyboard / ARIA / SR 🔒:** all functionality keyboard-operable (2.1.1); logical focus order (2.4.3); landmark roles (`banner`, `nav`, `main`, `contentinfo`); descriptive labels (not "Button"); DOM reading order matches visual order; `aria-live` (`polite`/`assertive`) for dynamic updates like errors. Accessible names on controls are linted statically as `a11y.control-name` (4.1.2).
 
 **Motion 🔒:** honor `prefers-reduced-motion: reduce` (2.3.3 AAA); auto-playing motion that lasts >5s needs a visible pause/stop/hide control for **all** users — an OS preference is not a substitute (2.2.2 A); no content flashes >3×/second (2.3.1 A).
 
 **Text spacing / reflow / resize:**
 - 1.4.12 Text Spacing (AA) 🔒 — no loss when users set line-height **1.5×**, paragraph spacing **2×**, letter-spacing **0.12×**, word-spacing **0.16×** (for 16px: 24 / 32 / 1.92 / 2.56px). Scripts that don't use a property are exempt (e.g. letter-spacing for Chinese).
 - 1.4.10 Reflow (AA) 🔒 — no 2-D scrolling at **320 CSS px** width (≈ 1280px @ 400% zoom). Exceptions: tables, maps, diagrams, games, toolbars.
-- 1.4.4 Resize Text (AA) 🔒 — text resizable to **200%** without loss; no pixel minimum imposed.
+- 1.4.4 Resize Text (AA) 🔒 — text resizable to **200%** without loss; no pixel minimum imposed. Never block zoom in the viewport meta — no `user-scalable=no`, no `maximum-scale` < 2 (linted as `a11y.meta-viewport`).
 
 ---
 
@@ -167,7 +168,7 @@ Ratio = (L1 + 0.05)/(L2 + 0.05), range 1:1–21:1.
 | **INP** (responsiveness) | ≤ 200ms | 200–500ms | > 500ms |
 | **CLS** (visual stability) | ≤ 0.1 | 0.1–0.25 | > 0.25 |
 
-**INP replaced FID on 2024-03-12** (web.dev/Chrome). INP measures every interaction's full latency (input → next paint) across the whole visit and reports the worst (excluding outliers); FID measured only the first interaction's input delay. INP is markedly stricter — at the 2024 switch, ~93% of mobile sites had good FID but only ~65% had good INP; HTTP Archive 2025 Almanac: 77% of mobile origins now have good INP (74% in 2024), and 48% pass all three CWV. Failures trace to heavy JS, long tasks (>50ms), third-party scripts. TTFB (<800ms) and TBT are diagnostics, **not** Core Web Vitals.
+**INP replaced FID on 2024-03-12** (web.dev/Chrome). INP measures every interaction's full latency (input → next paint) across the whole visit and reports the worst (excluding outliers); FID measured only the first interaction's input delay. INP is markedly stricter — at the 2024 switch, ~93% of mobile sites had good FID but only ~65% had good INP; HTTP Archive 2025 Almanac: 77% of mobile origins now have good INP (74% in 2024), and 48% pass all three CWV. Failures trace to heavy JS, long tasks (>50ms), third-party scripts. TTFB (<800ms) and TBT are diagnostics, **not** Core Web Vitals. Soft navigations (SPA route changes) are gaining first-class measurement in Chrome — final origin trial Chrome 147–149, Intent to Ship targeting Chrome 151 (2026); CrUX reporting is still TBD and thresholds are unchanged.
 
 **UX/business impact:** these are the metrics users *feel* (load speed, tap responsiveness, layout stability) and are confirmed ranking signals (a tiebreaker, not dominant vs relevance).
 
@@ -185,16 +186,18 @@ Ratio = (L1 + 0.05)/(L2 + 0.05), range 1:1–21:1.
 
 **Duration 📐:** micro-interactions (buttons, toggles) **100–300ms**; optimal perceived UI range **200–500ms**; <100ms reads instantaneous, >1s feels laggy. Adjustments (Material): desktop 150–200ms (faster), tablet ~+30% vs mobile, wearables ~−30%. Exit < entrance; larger travel → longer duration.
 
-**Material Design 3 motion tokens 🔒 (verbatim):**
+**Material 3 motion — spring-first since M3 Expressive (Google I/O, May 2025) 📐:** the motion *physics* system is now Material's primary system — spring composite tokens (damping + stiffness), organized **Spatial** (position/size/shape; may overshoot) vs **Effects** (color/opacity; high damping), each in fast/default/slow. The duration/easing tokens below remain documented as the **fallback**, still used for transitions.
+
+**Material Design 3 duration/easing tokens 🔒 (verbatim, fallback system):**
 - *Durations (ms):* short1 50 · short2 100 · short3 150 · short4 200 · medium1 250 · medium2 300 · medium3 350 · medium4 400 · long1 450 · long2 500 · long3 550 · long4 600 · extra-long1 700 · extra-long2 800 · extra-long3 900 · extra-long4 1000.
 - *Easing:* standard `cubic-bezier(0.2, 0, 0, 1)` · standard-decelerate `cubic-bezier(0, 0, 0, 1)` · standard-accelerate `cubic-bezier(0.3, 0, 1, 1)` · emphasized-decelerate `cubic-bezier(0.05, 0.7, 0.1, 1)` · emphasized-accelerate `cubic-bezier(0.3, 0, 0.8, 0.15)` · linear `cubic-bezier(0, 0, 1, 1)`. The **emphasized** token is a two-segment path (`M 0,0 C 0.05,0 0.133,0.06 0.166,0.4 C 0.208,0.82 0.25,1 1,1`) and **cannot** be a single cubic-bezier — web approximations are just that.
-- *Legacy:* M2 "standard" easing = `cubic-bezier(0.4, 0, 0.2, 1)` (FastOutSlowIn), still the default interpolator inside M3 transition classes. M3 also added a **spring/physics** system (default in Jetpack Compose for 21+ components; expressive vs standard schemes).
+- *Legacy:* M2 "standard" easing = `cubic-bezier(0.4, 0, 0.2, 1)` (FastOutSlowIn), still the default interpolator inside M3 transition classes. The spring system is the default in Jetpack Compose (21+ components; expressive vs standard schemes).
 
 **Apple 📐:** motion should be fluid, reinforce spatial hierarchy and direct manipulation, never distract; honor Reduce Motion (`UIAccessibility.isReduceMotionEnabled`), swapping large motion for cross-fades.
 
 **When NOT to animate 📐:** high-frequency repetitive actions where motion adds latency; decorative bounce/stretch in utility contexts (IBM Carbon discourages bounce/stretch); anything under `prefers-reduced-motion`.
 
-**Gestures (mobile) 📐:** use the standard vocabulary (tap, long-press, swipe, pinch, rotate). Provide a visible non-gesture alternative for every custom gesture (WCAG 2.5.7 🔒). Never override system-reserved gestures (edge swipes, Control/Notification Center). Add grabber handles to hint draggable sheets.
+**Gestures (mobile) 📐:** use the standard vocabulary (tap, long-press, swipe, pinch, rotate). Provide a visible non-gesture alternative for every custom gesture (WCAG 2.5.7 🔒; agent-verified as `a11y.dragging-alternative`). Never override system-reserved gestures (edge swipes, Control/Notification Center). Add grabber handles to hint draggable sheets.
 
 ---
 
@@ -206,7 +209,8 @@ Ratio = (L1 + 0.05)/(L2 + 0.05), range 1:1–21:1.
 - Spacing: 8pt grid with 4pt subdivisions is a reliable convention 📐 (Apple does not brand-mandate "the 8pt grid" the way Material does).
 - Color: design to **semantic/adaptive system colors** (`systemBlue`, `label`, `systemBackground`) 🔒, not hardcoded hex, so light/dark/contrast come free.
 - Safe areas 🔒: keep interactive/essential content out of status bar, Dynamic Island, notch, home indicator; use `safeAreaLayoutGuide`.
-- Navigation: tab bars for top-level (**3–5 tabs max on iPhone**, "More" overflow); nav bars for drill-down; modals for focused tasks. 2025's "Liquid Glass" (iOS 26) added a translucent material layer.
+- Navigation: tab bars for top-level (**3–5 tabs max on iPhone**, "More" overflow); nav bars for drill-down; modals for focused tasks.
+- Since iOS 26 (2025), **Liquid Glass** is the system-wide material language. iOS 27 (WWDC 2026) dialed default transparency down, added a user-facing clear↔opaque intensity control and retuned content diffusion — a legibility-driven correction that makes contrast-on-glass a first-class compliance risk (§14's glassmorphism TELL separates platform-native material from decorative CSS glass).
 
 **Google Material Design 3 (Material You):**
 - Dynamic color: tonal palettes from a source color into semantic roles; **elevation via tonal surface overlays**, not only shadows.
@@ -224,7 +228,7 @@ Ratio = (L1 + 0.05)/(L2 + 0.05), range 1:1–21:1.
 **Common specs 📐:**
 - **Buttons:** height 40–48px; horizontal padding ~16px; min width ~64–88px; clear primary/secondary/tertiary hierarchy; loading disables + shows spinner; action-specific labels ("Create account", not "Submit").
 - **Inputs/text fields:** ≥44–56px height; visible persistent label above the field; helper/error text below; never placeholder-as-label.
-- **Modals/dialogs:** trap focus, restore focus on close, `Esc` to dismiss, backdrop, single clear dismissal path; avoid stacking modals.
+- **Modals/dialogs:** trap focus, restore focus on close, `Esc` to dismiss, backdrop, single clear dismissal path; avoid stacking modals. Prefer the native `<dialog>` element and Popover API (Baseline 2025) — the top layer gives focus management, Esc, backdrop and light-dismiss for free; a hand-rolled overlay `<div>` is the anti-pattern. Position tooltips/menus with CSS anchor positioning (Baseline 2026).
 - **Cards:** 16–24px internal padding; 16–24px gaps between sibling cards from the spacing scale.
 
 **Reference design systems 📐 (study for concrete specs):** Google Material 3, Apple HIG, IBM Carbon, Shopify Polaris, Ant Design, Atlassian Design System, Salesforce Lightning.
@@ -241,12 +245,12 @@ Ratio = (L1 + 0.05)/(L2 + 0.05), range 1:1–21:1.
 - **Layout:** single-column, top-aligned labels (best for scanning + mobile full-width). Avoid left-aligned labels and placeholder-as-label.
 - **Labels:** every input has a programmatically associated `<label>` (`for`/`id`) 🔒 — improves SR context and enlarges the tap target.
 - **Validation timing:** inline validation **on blur** (after leaving a field), not on every keystroke; show positive confirmation where useful.
-- **Error messaging:** inline, directly below the field, specific and actionable ("Enter a 10-digit phone number, e.g. 123-456-7890" — not "Invalid input"). Don't rely on color alone (color + icon + text) 🔒; announce via `aria-live`.
+- **Error messaging:** inline, directly below the field, specific and actionable ("Enter a 10-digit phone number, e.g. 123-456-7890" — not "Invalid input"). Don't rely on color alone (color + icon + text) 🔒 — agent-verified as `a11y.color-only-meaning`; announce via `aria-live`.
 - **Required fields:** mark clearly; ask only for what's necessary.
-- **Mobile input:** set correct `type`/`inputmode` (email/tel/number/url) to summon the right keyboard; enable `autocomplete`/autofill; support one-time-code autofill. WCAG 3.3.7 Redundant Entry 🔒 — don't force re-entry of provided info.
+- **Mobile input:** set correct `type`/`inputmode` (email/tel/number/url) to summon the right keyboard; enable `autocomplete`/autofill; support one-time-code autofill. WCAG 3.3.7 Redundant Entry 🔒 — don't force re-entry of provided info (agent-verified as `forms.redundant-entry`).
 
 **Responsive & adaptive (📐)**
-- **Mobile-first:** author base styles for the smallest viewport, then layer `min-width` media queries upward (matches Tailwind/Bootstrap). Include `<meta name="viewport" content="width=device-width, initial-scale=1">`.
+- **Mobile-first:** author base styles for the smallest viewport, then layer `min-width` media queries upward (matches Tailwind/Bootstrap). Include `<meta name="viewport" content="width=device-width, initial-scale=1">` (linted as `responsive.viewport-meta`; zoom-blocking values — `user-scalable=no`, `maximum-scale` < 2 — are an `a11y.meta-viewport` error).
 - **Fluid layouts:** `max-width` (not fixed `width`), Flexbox/Grid, relative units, `clamp()` for fluid type/space.
 - **Container queries** (modern CSS): style a component by *its container's* size, not the viewport — the right tool for reusable components in varying contexts (sidebars, grids).
 - **Adaptive vs responsive:** responsive = continuously fluid; adaptive = discrete layouts snapped to breakpoints. Most modern products blend both.
@@ -282,7 +286,7 @@ These predictive models turn "feel" into estimates you can design against. They 
 - AVIF's edge over WebP is ~10–12% (controlled tests), not dramatic; big wins are vs legacy JPEG/PNG.
 - Bounce-rate/conversion claims tied to CWV come from SEO/perf vendors — directional, not exact. Audited pass-rates (77% good INP on mobile, 2025 Almanac) come from HTTP Archive/Google.
 - APCA is a moving target (reverted to "Placeholder" in the 2023-06 WCAG 3.0 draft); its Lc thresholds are from APCA/ARC docs; final WCAG 3.0 role unconfirmed (~2030).
-- Material 3 is mid-transition from easing/duration tokens to a spring system (default in Jetpack Compose) — verify which your toolkit uses.
+- Material 3 motion: since M3 Expressive (May 2025) springs are the documented primary system and the easing/duration tokens are the fallback — verify which your toolkit uses.
 - Breakpoint values differ by framework/version — confirm against the version you deploy.
 
 ---
@@ -305,7 +309,7 @@ AI coding tools reliably emit two kinds of defect, and it matters which one you 
 | **Placeholder-as-label** — hint disappears on input | VIOLATION (3.3.2/4.1.2) | persistent associated `<label>` |
 | **Halo / glow overuse** — stacked colored shadows | TELL | neutral elevation scale, one light source |
 | **Purple→violet gradient** — `#667eea → #764ba2` indigo default | TELL | brand tokens (Tailwind's creator publicly apologized in 2025 for the indigo-500 default "leading to every AI generated UI on earth also being indigo") |
-| **Glassmorphism everywhere** — `backdrop-filter` spam, dynamic-contrast fails, GPU cost | TELL | 2–3 glass surfaces + a scrim, never by default |
+| **Glassmorphism everywhere** — `backdrop-filter` spam, dynamic-contrast fails, GPU cost | TELL | 2–3 glass surfaces + a scrim, never by default (platform-native material like Apple's Liquid Glass is HIG-governed — decorative CSS glass is not) |
 | **Arbitrary spacing / over-rounding** — `mt-[13px]`, mixed radii | TELL | token scales |
 | **Pure `#000`/`#fff` dark mode** — halation for astigmatism | TELL | `#121212` surface + `#E4E4E7` text |
 

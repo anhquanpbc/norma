@@ -29,7 +29,10 @@ export const SURFACE_BY_CHECK: Record<string, Surface[]> = {
   htmlLang: ["html"],
   externalRel: ["html"],
   sri: ["html"],
-  manual: [], // type.body-min / perf.inp-budget — advisory, not a markup/style authoring rule
+  metaViewport: ["html"],
+  viewportPresence: ["html"],
+  controlName: ["html"],
+  manual: [], // spacing-scale / body-min / inp-budget / agent-verified WCAG mandates — not statically checkable
 };
 
 export const onSurface = (checkType: string, surface: Surface): boolean =>

@@ -7,7 +7,9 @@
 #   title       { en, vi } short imperative title.
 #   domain      the REFERENCE.md section it derives from (tokens|spacing|type|color|a11y|perf|motion|platform|components|forms|responsive|hci|antipattern).
 #   tag         SPEC (published mandate, lock) | CONV (industry convention, ruler).
-#   severity    error | warn | off (linter exit behaviour).
+#   severity    error | warn | off (linter exit behaviour). For check:manual rules the engine
+#               skips the rule entirely — severity records the intended agent weight only, and
+#               .normarc severity overrides have no effect on them.
 #   source      short citation.  source_url  primary source (required for SPEC).
 #   rationale   { en, vi } why the rule exists.
 #   check       machine assertion consumed by @norma/design-lint. type: manual = agent-only, not auto-checked.
@@ -179,6 +181,120 @@ rules:
     remediation:
       en: "Promote or demote headings so each level increases by at most one (h1 → h2 → h3, never h2 → h4)."
       vi: "Nâng/hạ tiêu đề để mỗi cấp chỉ tăng tối đa một bậc (h1 → h2 → h3, không h2 → h4)."
+
+  - id: a11y.meta-viewport
+    title: { en: "Viewport meta must not block zoom", vi: "Thẻ viewport không được chặn zoom" }
+    domain: a11y
+    tag: SPEC
+    severity: error
+    source: "WCAG 2.2 SC 1.4.4 Resize Text"
+    source_url: "https://www.w3.org/TR/WCAG22/#resize-text"
+    rationale:
+      en: "user-scalable=no or maximum-scale<2 in the viewport meta disables pinch-zoom, so low-vision users cannot reach the 200% text size SC 1.4.4 guarantees."
+      vi: "user-scalable=no hoặc maximum-scale<2 trong thẻ viewport vô hiệu hoá phóng to, khiến người thị lực kém không đạt mức chữ 200% mà SC 1.4.4 bảo đảm."
+    check:
+      type: metaViewport
+    remediation:
+      en: "Use <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"> — never user-scalable=no, never maximum-scale below 2."
+      vi: "Dùng <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"> — không user-scalable=no, không maximum-scale dưới 2."
+
+  - id: responsive.viewport-meta
+    title: { en: "Full documents declare a viewport meta", vi: "Tài liệu đầy đủ khai báo thẻ viewport" }
+    domain: responsive
+    tag: CONV
+    severity: warn
+    source: "Norma §10–11 Responsive (mobile-first)"
+    source_url: ""
+    rationale:
+      en: "Without <meta name=viewport> mobile browsers render the desktop layout zoomed out — base styles and media queries never apply as designed."
+      vi: "Thiếu <meta name=viewport>, trình duyệt mobile hiển thị bố cục desktop thu nhỏ — style nền và media query không chạy như thiết kế."
+    check:
+      type: viewportPresence
+    remediation:
+      en: "Add <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"> to the <head>."
+      vi: "Thêm <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"> vào <head>."
+
+  - id: a11y.control-name
+    title: { en: "Every control has an accessible name", vi: "Mọi điều khiển có tên tiếp cận" }
+    domain: a11y
+    tag: SPEC
+    severity: error
+    source: "WCAG 2.2 SC 4.1.2 Name, Role, Value"
+    source_url: "https://www.w3.org/TR/WCAG22/#name-role-value"
+    rationale:
+      en: "A <button>, <a href> or [role=button] with no text, aria-label/labelledby, title or img[alt] descendant is announced as just 'button'/'link' — icon-only SVG controls are the common failure."
+      vi: "<button>, <a href> hoặc [role=button] không có chữ, aria-label/labelledby, title hay img[alt] con chỉ được đọc là 'nút'/'liên kết' — nút SVG-chỉ-icon là lỗi phổ biến nhất."
+    check:
+      type: controlName
+    remediation:
+      en: "Add visible text or an aria-label; for icon buttons use aria-label plus aria-hidden=\"true\" on the SVG."
+      vi: "Thêm chữ nhìn thấy hoặc aria-label; với nút icon, dùng aria-label và aria-hidden=\"true\" trên SVG."
+
+  # ---- SPEC mandates that static analysis cannot verify: check:manual (engine skips; the
+  # ---- design agent enforces them and cites these ids, mirroring perf.inp-budget). ----
+  - id: a11y.focus-not-obscured
+    title: { en: "Focused element not fully hidden", vi: "Phần tử focus không bị che hết" }
+    domain: a11y
+    tag: SPEC
+    severity: warn
+    source: "WCAG 2.2 SC 2.4.11 Focus Not Obscured (Minimum)"
+    source_url: "https://www.w3.org/TR/WCAG22/#focus-not-obscured-minimum"
+    rationale:
+      en: "Sticky headers, footers and cookie bars must not fully cover the element that holds keyboard focus; requires rendered layout, so it is agent/e2e-verified, not statically lintable."
+      vi: "Header/footer dính và banner cookie không được che kín phần tử đang giữ focus bàn phím; cần layout đã render nên do agent/e2e kiểm, không lint tĩnh được."
+    check:
+      type: manual
+    remediation:
+      en: "Add scroll-padding matching sticky-bar height, or ensure focus targets scroll clear of overlays."
+      vi: "Thêm scroll-padding bằng chiều cao thanh dính, hoặc bảo đảm phần tử focus cuộn thoát khỏi lớp phủ."
+
+  - id: a11y.dragging-alternative
+    title: { en: "Every drag action has a non-drag alternative", vi: "Mọi thao tác kéo có phương án không-kéo" }
+    domain: motion
+    tag: SPEC
+    severity: warn
+    source: "WCAG 2.2 SC 2.5.7 Dragging Movements"
+    source_url: "https://www.w3.org/TR/WCAG22/#dragging-movements"
+    rationale:
+      en: "Drag-only interactions (sliders, reorder lists, swipe cards) exclude users who cannot perform precise drags; each needs a single-pointer alternative (buttons, tap targets). Interaction semantics are not statically lintable."
+      vi: "Tương tác chỉ-kéo (slider, kéo xếp danh sách, vuốt thẻ) loại trừ người không kéo chính xác được; mỗi thao tác cần phương án một-chạm thay thế (nút, vùng chạm). Ngữ nghĩa tương tác không lint tĩnh được."
+    check:
+      type: manual
+    remediation:
+      en: "Pair every drag gesture with visible single-pointer controls (e.g. up/down buttons for reorder, +/- for sliders)."
+      vi: "Kèm mỗi cử chỉ kéo bằng điều khiển một-chạm nhìn thấy được (vd nút lên/xuống để xếp lại, +/- cho slider)."
+
+  - id: forms.redundant-entry
+    title: { en: "Never force re-entering known info", vi: "Không bắt nhập lại thông tin đã có" }
+    domain: forms
+    tag: SPEC
+    severity: warn
+    source: "WCAG 2.2 SC 3.3.7 Redundant Entry"
+    source_url: "https://www.w3.org/TR/WCAG22/#redundant-entry"
+    rationale:
+      en: "Information already provided in the same process must be auto-populated or selectable, not re-typed — re-entry penalizes users with cognitive or motor impairments. A flow-level property, not statically lintable."
+      vi: "Thông tin đã cung cấp trong cùng quy trình phải được tự điền hoặc chọn lại, không bắt gõ lại — nhập lại gây thiệt cho người khuyết tật nhận thức/vận động. Là thuộc tính của luồng, không lint tĩnh được."
+    check:
+      type: manual
+    remediation:
+      en: "Autofill previously entered values (autocomplete, session state) or offer a 'same as above' choice."
+      vi: "Tự điền giá trị đã nhập (autocomplete, trạng thái phiên) hoặc cho lựa chọn 'giống mục trên'."
+
+  - id: a11y.color-only-meaning
+    title: { en: "Never encode meaning in color alone", vi: "Không truyền nghĩa chỉ bằng màu" }
+    domain: forms
+    tag: SPEC
+    severity: warn
+    source: "WCAG 2.2 SC 1.4.1 Use of Color"
+    source_url: "https://www.w3.org/TR/WCAG22/#use-of-color"
+    rationale:
+      en: "Error states shown only in red, chart series distinguished only by hue, or required fields marked only by color exclude colorblind users. Whether color is the sole carrier of meaning is a semantic judgement — agent-verified, not statically lintable."
+      vi: "Trạng thái lỗi chỉ tô đỏ, dãy biểu đồ chỉ phân biệt bằng màu, hay trường bắt buộc chỉ đánh dấu bằng màu sẽ loại trừ người mù màu. Màu có phải kênh nghĩa duy nhất hay không là phán đoán ngữ nghĩa — do agent kiểm, không lint tĩnh được."
+    check:
+      type: manual
+    remediation:
+      en: "Pair color with a second channel: icon + text for errors, patterns/labels for charts, an asterisk + label for required fields."
+      vi: "Kèm màu bằng kênh thứ hai: icon + chữ cho lỗi, hoa văn/nhãn cho biểu đồ, dấu * + nhãn cho trường bắt buộc."
 
   - id: perf.img-dimensions
     title: { en: "Images set width/height or aspect-ratio", vi: "Ảnh có width/height hoặc aspect-ratio" }
