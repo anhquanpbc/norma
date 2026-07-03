@@ -71,6 +71,36 @@ Recommended spacing scale (tokens, px): **0 · 4 · 8 · 12 · 16 · 24 · 32 ·
 
 **Column grids 📐:** 12-column with a 24px (1.5rem) gutter is the common desktop convention; a 1440px artboard typically uses ~60px side margins. Use `max-width` (not fixed `width`) so containers shrink on narrow viewports.
 
+### Layout & composition
+
+**Choose the engine by dimensionality 📐:** **Flexbox** distributes content along **one** axis (a row or a column that can wrap) and sizes to content — use it for toolbars, button rows, nav, chips, the media object. **Grid** controls **two** axes at once (rows *and* columns) — use it for page scaffolds, card galleries, and any real 2-D arrangement. `gap` works in both and replaces margin hacks. Anti-pattern: nesting flex containers to fake a grid; if you're aligning across both rows and columns, it's Grid.
+
+**CSS Grid mechanics 🔒:**
+- `fr` distributes leftover space; `minmax(min, max)` sets a track's floor/ceiling; `grid-template-areas` names regions in ASCII art (readable holy-grail layouts); named lines (`[content-start]`) anchor placement.
+- **Responsive without media queries — the RAM technique (Repeat, Auto, Minmax):**
+  `grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr))` — cards are ≥16rem, wrap to fit the container, and the inner `min(100%, 16rem)` stops a single card from overflowing a narrow parent. `auto-fit` collapses empty tracks (cards stretch to fill); `auto-fill` keeps them (cards stay their size). One line replaces a stack of breakpoints.
+- **Subgrid** (Baseline 2023) lets a child inherit its parent's tracks, so card titles/bodies/footers align across a gallery.
+
+**Alignment & gap 🔒:** the box-alignment properties work in Flex and Grid — `justify-*` runs along the inline axis, `align-*` along the block axis; `place-content`/`place-items`/`place-self` are shorthands. Center anything with `display:grid; place-items:center` (no `margin:auto`/transform hacks). `justify-content: space-between | space-around | space-evenly` distribute leftover space between/around/evenly around items.
+
+**Composition primitives 📐 (Every Layout / CUBE CSS):** compose layouts from a small vocabulary of self-contained, intrinsically-responsive primitives rather than ad-hoc per-component CSS — it makes layouts reviewable ("this is a Switcher at 30rem"):
+- **Stack** — vertical flow with one owned gap (`display:flex; flex-direction:column; gap`).
+- **Cluster** — items that wrap and stay grouped (`display:flex; flex-wrap:wrap; gap`) — chips, tags, button rows.
+- **Sidebar** — a fixed-ish aside + fluid main that wraps when the main hits a min-width (Flexbox `flex-basis` + `flex-wrap`).
+- **Switcher** — flips row↔column at a **content threshold**, not a viewport breakpoint (`flex-basis: calc((30rem - 100%) * 999)`).
+- **Cover** — vertically centers a payload with header/footer pinned (min-block-size + auto margins).
+- **Grid/RAM** — the auto-fit card gallery above.
+- **Center / Wrapper** — `width: min(100% - 2rem, 65ch); margin-inline: auto` — a fluid, gutter-safe, measure-capped content column.
+- **Reel** — a horizontally scrolling track (scroll-snap); **Frame** — a cropped aspect-ratio box; **Imposter** — a centered overlay.
+
+**Intrinsic, content-driven sizing 📐:** prefer intrinsic sizing over hard pixels. `min-content`/`max-content`/`fit-content()` size to content; `min()`/`max()`/`clamp()` build fluid widths/gaps without breakpoints (the wrapper `width: min(100% - 2rem, 65ch)` above; `clamp()` is documented for type in §3 but applies to any length). Lay out on the **logical axes** — `inline-size`/`block-size`, `margin-inline`, `padding-block`, `inset` — not physical `width`/`left`/`top`, so an EN-authored layout mirrors correctly in the VI/RTL sibling (extends §3's i18n to the layout axis; linted as `i18n.logical-properties`). For media, `aspect-ratio` is a **layout** tool (reserve the box — also a §6 CLS fix) and `object-fit: cover|contain` + `object-position` control focal cropping so images never stretch or squish.
+
+**Container queries 📐 (Baseline 2023):** style a component by **its own container's** size, not the viewport — the reason a component is *truly* reusable (a card adapts to a 300px sidebar slot and a 900px main region identically). Set `container-type: inline-size` (+ optional `container-name`) on the parent, then `@container (min-width: 30rem){ … }`; container units `cqi`/`cqb`/`cqmin` size relative to the container. Reach for container queries over viewport media queries inside reusable components. Style queries (`@container style(--state: active)`) are emerging (not yet Baseline).
+
+**Overflow, scroll & stacking 📐:**
+- **z-index as a token ladder** — stop the `z-index: 9999` arms race with named layers: `base 0 · dropdown 1000 · sticky 1100 · fixed 1200 · overlay 1300 · modal 1400 · popover 1500 · toast 1600 · tooltip 1700`. A **stacking context** is created by `position` + `z-index`, but also by `opacity < 1`, `transform`, `filter`, `will-change`, and `isolation: isolate` — a transformed ancestor **traps** a child's `z-index`, the #1 "why won't this go on top" bug. Use `isolation: isolate` to scope a context deliberately. The browser **top layer** (`<dialog>`, popover) renders above every `z-index`, so prefer native overlays (see §9).
+- **Scroll** — `scroll-snap-type`/`scroll-snap-align` for carousels/reels; `scrollbar-gutter: stable` reserves the scrollbar's space (a hidden §6 CLS source); `overscroll-behavior: contain` stops scroll-chaining out of a modal/drawer; `position: sticky` pins headers within a scroll container; and `scroll-margin-top`/`scroll-padding-top` keep an anchored target from hiding under a sticky header.
+
 ---
 
 ## 3. Typography
