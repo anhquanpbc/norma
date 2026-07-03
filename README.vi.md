@@ -35,6 +35,8 @@ biến chuẩn thành ba tạo phẩm đồng bộ để cả người lẫn age
 | [`agents/`](agents) | Spec agent thiết kế gốc, chiếu ra các bề mặt bên dưới. |
 | [`AGENTS.md`](AGENTS.md) · [`CLAUDE.md`](CLAUDE.md) · [`.cursor/rules`](.cursor/rules) · [`.github/copilot-instructions.md`](.github/copilot-instructions.md) | Các file luật agent **được sinh tự động** (tiếng Anh), mỗi bề mặt AI một file. |
 | [`packages/design-lint`](packages/design-lint) | `@norma/design-lint` — CLI thực thi chuẩn. |
+| [`examples/`](examples) | Một starter sạch (lint xanh) + một trang "trước khi có Norma" gieo lỗi khiến 11 rule kích hoạt, kèm [CI recipe](examples/ci-recipe.yml) copy-paste. |
+| [`action.yml`](action.yml) | GitHub Action tái sử dụng (`uses: anhquanpbc/norma@v1`) — build linter từ chính checkout của nó, nên gate CI được ngay cả trước khi publish npm. |
 
 ## Bắt đầu nhanh
 
@@ -56,11 +58,21 @@ npx @norma/design-lint "**/*.{html,css}"      # thêm --lang vi để có thông
 
 ## Áp dụng vào dự án của bạn
 
-**1. Gate CI bằng linter** — fail build khi có vi phạm thật:
+**1. Gate CI bằng linter** — fail build khi có vi phạm thật. Cách nhanh nhất là GitHub Action tái sử
+dụng, tự build Norma từ checkout của nó (nên chạy được ngay, trước cả khi publish npm):
 
-```bash
-npx @norma/design-lint "**/*.{html,css}"          # exit khác 0 khi có phát hiện mức error
+```yaml
+# .github/workflows/design-lint.yml
+- uses: actions/checkout@v4
+- uses: anhquanpbc/norma@v1
+  with:
+    globs: "src/**/*.{html,htm,css}"   # lang: en|vi · format: stylish|json|sarif
 ```
+
+Workflow sẵn-để-copy nằm ở [`examples/ci-recipe.yml`](examples/ci-recipe.yml). Hoặc chạy CLI trực tiếp
+(sau khi publish: `npx @norma/design-lint "**/*.{html,css}"`; từ mã nguồn hôm nay: `npm ci && npm run build`
+rồi `node packages/design-lint/dist/cli.js "**/*.{html,css}"`) — exit khác 0 khi có phát hiện mức error.
+Xem [`examples/`](examples) để có starter sạch và một trang "trước" bị lỗi.
 
 **2. Nối agent AI của bạn** — copy file luật tương ứng với công cụ vào repo:
 

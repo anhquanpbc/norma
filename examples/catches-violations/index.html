@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<!-- A deliberately broken page: every block below trips a Norma rule so you can see the linter work.
+     Run:  node ../../packages/design-lint/dist/cli.js index.html   (from this folder)
+     Do NOT copy this file into a real project — it is the "before", not the "after". -->
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>AI-scaffolded landing page (before Norma)</title>
+  <style>
+    /* TELL: the AI-default indigo gradient (antipattern.indigo-default) */
+    .hero { background: linear-gradient(135deg, #667eea, #764ba2); padding: 40px; }
+    /* VIOLATION: low-contrast gray text on white (color.contrast.text) */
+    .muted { color: #999999; background: #ffffff; }
+    /* TELL: gradient-clipped headline text — no computable contrast (antipattern.gradient-text) */
+    .fancy { background-image: linear-gradient(90deg, #0af, #f0a); background-clip: text; color: transparent; }
+  </style>
+</head>
+<body>
+  <div class="hero">
+    <h1 class="fancy">Unleash your workflow</h1>
+    <p class="muted">Seamlessly elevate everything, instantly.</p>
+  </div>
+
+  <!-- VIOLATION: a div used as a button — not keyboard-operable, no role (a11y.semantic-control) -->
+  <div class="cta" onclick="signup()">Get started</div>
+
+  <!-- VIOLATION: placeholder used as the only label (a11y.form-label) -->
+  <input type="email" placeholder="Enter your email">
+
+  <!-- VIOLATION: an icon button with no accessible name (a11y.control-name / a11y.emoji-icon) -->
+  <button>🚀</button>
+
+  <!-- TELL: a link wired to nothing (antipattern.dead-href) -->
+  <a href="#">Learn more</a>
+
+  <!-- VIOLATION: forced tab order (a11y.no-positive-tabindex) -->
+  <a href="/pricing" tabindex="3">Pricing</a>
+</body>
+</html>
+<!-- Also flagged at the document level: <html> has no lang (i18n.html-lang) and there is no
+     viewport meta (responsive.viewport-meta). -->
