@@ -76,8 +76,10 @@ Not compliance failures, but they erase brand distinctiveness and often *induce*
 
 ## Internationalization & theming
 
-- **i18n.html-lang** (🔒) — set `<html lang>` (WCAG 3.1.1); add `lang` to inline foreign-language runs (3.1.2).
-- **i18n.logical-properties** (📐) — prefer logical CSS (`margin-inline`, `padding-inline`, `text-align:start/end`) over physical `*-left/right`, `text-align:left/right`, `float:left/right`, so RTL and vertical writing modes work.
+- **i18n.html-lang** (🔒) — set `<html lang>` (WCAG 3.1.1).
+- **i18n.lang-valid** (🔒) — every `lang` value is a well-formed BCP-47 tag (`en`, `vi`, `zh-Hant`), never a spelled-out name (`english`) or an underscore locale (`en_US`) (WCAG 3.1.1/3.1.2).
+- **i18n.inline-lang** (🔒, `check: manual`) — a passage in a different language than the page default carries its own `lang` (WCAG 3.1.2); agent-verified.
+- **i18n.logical-properties** (📐) — prefer logical CSS (`margin-inline`, `padding-inline`, `border-inline-start`, `text-align:start/end`) over physical `margin/padding/border-left/right`, `text-align:left/right`, `float:left/right`, so RTL and vertical writing modes work.
 - **theme.color-scheme** (📐) — declare `color-scheme` so UA-rendered controls/scrollbars match; a dark theme must remap the **semantic token tier** (see `standard/tokens.tokens.json` `color.dark.*` + `$extensions.org.norma.themes`) — near-black surfaces + off-white ink, never pure `#000`/`#fff` (**antipattern.pure-dark-mode**).
 
 ## Frontend-markup security
@@ -110,7 +112,7 @@ Not compliance failures, but they erase brand distinctiveness and often *induce*
 npx @norma/design-lint "**/*.{html,css}"     # gate SPEC violations; exits non-zero on error-severity
 ```
 
-## Rule index (generated from standard/rules.json v1.1.0)
+## Rule index (generated from standard/rules.json v1.2.0)
 
 - 🔒 SPEC `color.contrast.text` (error) — Body text contrast >= 4.5:1 · [WCAG 2.2 SC 1.4.3 Contrast (Minimum)](https://www.w3.org/TR/WCAG22/#contrast-minimum)
 - 🔒 SPEC `color.contrast.large-ui` (error) — Large text & UI contrast >= 3:1 · [WCAG 2.2 SC 1.4.3 / 1.4.11 Non-text Contrast](https://www.w3.org/TR/WCAG22/#non-text-contrast)
@@ -132,6 +134,8 @@ npx @norma/design-lint "**/*.{html,css}"     # gate SPEC violations; exits non-z
 - 📐 CONV `perf.img-dimensions` (warn) — Images set width/height or aspect-ratio · [web.dev — Optimize CLS](https://web.dev/articles/cls)
 - 🔒 SPEC `i18n.html-lang` (error) — <html> declares a lang · [WCAG 2.2 SC 3.1.1 Language of Page](https://www.w3.org/TR/WCAG22/#language-of-page)
 - 📐 CONV `i18n.logical-properties` (warn) — Use logical (inline/block) CSS properties · [W3C CSS Logical Properties and Values L1](https://www.w3.org/TR/css-logical-1/)
+- 🔒 SPEC `i18n.lang-valid` (error) — lang is a well-formed BCP-47 tag · [WCAG 2.2 SC 3.1.1 / 3.1.2 (BCP-47 / RFC 5646)](https://www.w3.org/TR/WCAG22/#language-of-page)
+- 🔒 SPEC `i18n.inline-lang` (warn · manual, agent-verified) — Inline foreign-language runs carry lang · [WCAG 2.2 SC 3.1.2 Language of Parts](https://www.w3.org/TR/WCAG22/#language-of-parts)
 - 📐 CONV `theme.color-scheme` (warn) — Declare color-scheme · [W3C CSS Color Adjustment Module L1](https://www.w3.org/TR/css-color-adjust-1/)
 - 📐 CONV `tokens.color-only` (warn) — Color comes from tokens, not raw hex · Norma §1 Design Tokens
 - 📐 CONV `tokens.spacing-scale` (off · manual, agent-verified) — Spacing snaps to the 8px scale · Norma §2 Spacing & Grid

@@ -1,6 +1,6 @@
 {
   "$generated": "Do not edit. Generated from standard/rules.yaml by scripts/build-rules.ts.",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "rules": [
     {
       "id": "color.contrast.text",
@@ -457,15 +457,61 @@
       "source": "W3C CSS Logical Properties and Values L1",
       "source_url": "https://www.w3.org/TR/css-logical-1/",
       "rationale": {
-        "en": "Physical properties (margin-left, text-align:left, float:left) hard-code left-to-right and break under RTL / vertical writing modes. Logical properties (margin-inline-start, text-align:start) flow with the writing direction.",
-        "vi": "Thuộc tính vật lý (margin-left, text-align:left, float:left) cố định trái-sang-phải và vỡ khi RTL / viết dọc. Thuộc tính logic (margin-inline-start, text-align:start) chảy theo hướng viết."
+        "en": "Physical properties (margin-left, padding-right, border-left, text-align:left, float:left) hard-code left-to-right and break under RTL / vertical writing modes. Logical properties (margin-inline-start, border-inline-start, text-align:start) flow with the writing direction.",
+        "vi": "Thuộc tính vật lý (margin-left, padding-right, border-left, text-align:left, float:left) cố định trái-sang-phải và vỡ khi RTL / viết dọc. Thuộc tính logic (margin-inline-start, border-inline-start, text-align:start) chảy theo hướng viết."
       },
       "check": {
         "type": "logicalProperties"
       },
       "remediation": {
-        "en": "Replace *-left/right with *-inline-start/end; text-align:left/right with start/end; float:left/right with inline-start/end.",
-        "vi": "Thay *-left/right bằng *-inline-start/end; text-align:left/right bằng start/end; float:left/right bằng inline-start/end."
+        "en": "Replace margin/padding/border-left/right with *-inline-start/end; text-align:left/right with start/end; float:left/right with inline-start/end.",
+        "vi": "Thay margin/padding/border-left/right bằng *-inline-start/end; text-align:left/right bằng start/end; float:left/right bằng inline-start/end."
+      }
+    },
+    {
+      "id": "i18n.lang-valid",
+      "title": {
+        "en": "lang is a well-formed BCP-47 tag",
+        "vi": "lang là thẻ BCP-47 hợp lệ"
+      },
+      "domain": "a11y",
+      "tag": "SPEC",
+      "severity": "error",
+      "source": "WCAG 2.2 SC 3.1.1 / 3.1.2 (BCP-47 / RFC 5646)",
+      "source_url": "https://www.w3.org/TR/WCAG22/#language-of-page",
+      "rationale": {
+        "en": "A lang value must be a real language tag (BCP-47), e.g. \"en\", \"vi\", \"zh-Hant\" — not a spelled-out name (\"english\") or an underscore locale (\"en_US\"). A malformed tag leaves assistive tech and translation tools guessing the wrong language.",
+        "vi": "Giá trị lang phải là thẻ ngôn ngữ thật (BCP-47), vd \"en\", \"vi\", \"zh-Hant\" — không phải tên viết đầy đủ (\"english\") hay locale gạch dưới (\"en_US\"). Thẻ sai khiến trợ năng và công cụ dịch đoán nhầm ngôn ngữ."
+      },
+      "check": {
+        "type": "langValid"
+      },
+      "remediation": {
+        "en": "Use a 2-3 letter primary subtag with hyphen-separated region/script, e.g. lang=\"en\", \"vi\", \"zh-Hant-TW\", \"es-419\".",
+        "vi": "Dùng primary subtag 2-3 chữ cái kèm region/script ngăn bằng gạch nối, vd lang=\"en\", \"vi\", \"zh-Hant-TW\", \"es-419\"."
+      }
+    },
+    {
+      "id": "i18n.inline-lang",
+      "title": {
+        "en": "Inline foreign-language runs carry lang",
+        "vi": "Đoạn ngôn ngữ khác xen kẽ có lang"
+      },
+      "domain": "a11y",
+      "tag": "SPEC",
+      "severity": "warn",
+      "source": "WCAG 2.2 SC 3.1.2 Language of Parts",
+      "source_url": "https://www.w3.org/TR/WCAG22/#language-of-parts",
+      "rationale": {
+        "en": "A passage in a different language from the page default needs its own lang attribute so screen readers switch pronunciation. Detecting the language of a text run is a semantic judgement, so this is agent-verified, not statically lintable.",
+        "vi": "Đoạn văn khác ngôn ngữ so với mặc định của trang cần thuộc tính lang riêng để trình đọc màn hình đổi phát âm. Nhận biết ngôn ngữ của một đoạn là phán đoán ngữ nghĩa nên do agent kiểm, không lint tĩnh được."
+      },
+      "check": {
+        "type": "manual"
+      },
+      "remediation": {
+        "en": "Wrap the foreign-language run in an element (or <span>) with the right lang, e.g. <span lang=\"fr\">…</span>.",
+        "vi": "Bọc đoạn ngôn ngữ khác trong một phần tử (hoặc <span>) với lang đúng, vd <span lang=\"fr\">…</span>."
       }
     },
     {
