@@ -107,9 +107,36 @@ for (const r of catalog.rules as unknown as { id: string; severity: string; chec
   }
 }
 
+// 7. Shared load-bearing facts must appear VERBATIM in every surface that states them — body-level
+// content is hand-synced across three files, which is exactly how the 37%→55.8% arXiv stat once
+// drifted apart. Add a fact here whenever a figure/citation is stated on more than one surface.
+const surfaceText: Record<string, string> = { "REFERENCE.md": ref, "REFERENCE.vi.md": refVi, "index.html": html };
+const FACTS: [string, (keyof typeof surfaceText)[]][] = [
+  ["55.8%", ["REFERENCE.md", "REFERENCE.vi.md", "index.html"]],            // arXiv 2502.13499 v2 dark-pattern rate
+  ["2502.13499", ["REFERENCE.md", "REFERENCE.vi.md", "index.html"]],       // the citation id itself
+  ["86 success criteria (31 A, 24 AA, 31 AAA)", ["REFERENCE.md"]],         // WCAG 2.2 count (4.1.1 removed)
+  ["86 tiêu chí (31 A, 24 AA, 31 AAA)", ["REFERENCE.vi.md"]],
+  ["ISO/IEC 40500:2025", ["REFERENCE.md", "REFERENCE.vi.md", "index.html"]],
+  ["2024-12-12", ["REFERENCE.md", "REFERENCE.vi.md", "index.html"]],       // WCAG 2.2 updated edition
+];
+for (const [needle, files] of FACTS) {
+  for (const f of files) {
+    if (!surfaceText[f].includes(needle)) fail.push(`${f} lost the shared fact "${needle}" (see FACTS in check-drift.ts)`);
+  }
+}
+
+// 8. Version integrity: standard/VERSION is the standard's version; rules.json, the README badge and
+// the site footer must all state the same string (two rule catalogs must never share a version).
+const version = read("standard/VERSION").trim();
+const catalogVersion = (JSON.parse(read("standard/rules.json")) as { version: string }).version;
+if (catalogVersion !== version) fail.push(`standard/rules.json version ${catalogVersion} != standard/VERSION ${version} (bump rules.yaml + npm run build:rules)`);
+if (!readme.includes(`standard-v${version}`)) fail.push(`README.md badge does not say standard-v${version}`);
+if (!read("README.vi.md").includes(`standard-v${version}`)) fail.push(`README.vi.md badge does not say standard-v${version}`);
+if (!html.includes(`standard v${version}`)) fail.push(`index.html footer does not say "standard v${version}"`);
+
 if (fail.length) {
   console.error("✗ drift check failed:");
   for (const f of fail) console.error("  - " + f);
   process.exit(1);
 }
-console.log(`✓ drift check passed — ${catalog.rules.length} rules, brand ${brand}, generated files in sync`);
+console.log(`✓ drift check passed — ${catalog.rules.length} rules, brand ${brand}, standard v${version}, facts + generated files in sync`);

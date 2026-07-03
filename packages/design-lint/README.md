@@ -49,8 +49,19 @@ Sound, low-false-positive static checks mapped to the Norma rule catalog (`stand
 contrast (co-located resolvable pairs, incl. `var()` + OKLCH), single focus ring,
 reduced-motion presence, form labels / placeholder-as-label, semantic controls (`<div onclick>`),
 emoji-as-icon, image dimensions, target size, and the indigo-default gradient tell. Rules that
-static analysis cannot verify soundly (rendered target size, spacing scale, dark-mode surfaces) are
-`off` by default and enforced by the Norma design agent instead.
+static analysis cannot verify soundly (the 8px spacing scale, the 16px body-text floor, runtime
+performance budgets, and four agent-verified WCAG 2.2 mandates such as 2.4.11 Focus Not Obscured)
+are `check: manual` in the catalog — the engine skips them and the Norma design agent enforces
+them instead.
+
+## What it can and cannot see
+
+The linter parses **HTML and CSS** (including `<style>` blocks and inline `style="…"` attributes).
+It does **not** understand JSX/TSX, Vue/Svelte templates, CSS-in-JS, or Tailwind utility classes — in
+a React/Next/Tailwind project the `**/*.{html,css}` glob matches little, and `className` strings,
+styled-components and utility classes are invisible to every check. For those stacks, rely on the
+**agent layer** (`AGENTS.md`, the Cursor/Copilot/Claude rule files) — generated from the same catalog
+— and lint your built HTML/CSS output where you can. A JSX/template extractor is on the roadmap.
 
 ## Programmatic API
 

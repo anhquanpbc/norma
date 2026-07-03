@@ -196,16 +196,28 @@ const formLabel: Check = (ctx, rules) => {
   return out;
 };
 
-const SEMANTIC = new Set(["BUTTON", "A", "INPUT", "SELECT", "TEXTAREA", "LABEL", "SUMMARY", "OPTION", "DETAILS"]);
+const SEMANTIC = new Set(["BUTTON", "INPUT", "SELECT", "TEXTAREA", "LABEL", "SUMMARY", "OPTION", "DETAILS"]);
 const semanticControl: Check = (ctx, rules) => {
   if (!ctx.dom) return [];
   const r = rules[0];
   const out: Finding[] = [];
   ctx.dom.querySelectorAll("[onclick]").forEach((el) => {
-    if (SEMANTIC.has(el.rawTagName?.toUpperCase() ?? "") || elDisabled(el, r.id)) return;
-    out.push(mk(ctx, r, elementLine(ctx, el),
-      `<${el.rawTagName} onclick> is not a semantic control — use <button> or <a>.`,
-      `<${el.rawTagName} onclick> không phải điều khiển ngữ nghĩa — dùng <button> hoặc <a>.`));
+    const tag = el.rawTagName?.toUpperCase() ?? "";
+    // <a> counts as semantic only with an href — an href-less <a onclick> has no link role
+    // (mirrors the a[href] in the INTERACTIVE selector below). An explicit ARIA retrofit
+    // (role + tabindex) satisfies 4.1.2, so conforming markup is not flagged.
+    const retrofitted = el.hasAttribute("tabindex") && (el.getAttribute("role") ?? "").trim() !== "";
+    const isSemantic = tag === "A" ? (el.hasAttribute("href") || retrofitted) : SEMANTIC.has(tag);
+    if (isSemantic || elDisabled(el, r.id)) return;
+    if (tag === "A") {
+      out.push(mk(ctx, r, elementLine(ctx, el),
+        `<a onclick> without href exposes no link role — use <button> or add a real href.`,
+        `<a onclick> không có href nên không có role liên kết — dùng <button> hoặc thêm href thật.`));
+    } else {
+      out.push(mk(ctx, r, elementLine(ctx, el),
+        `<${el.rawTagName} onclick> is not a semantic control — use <button> or <a>.`,
+        `<${el.rawTagName} onclick> không phải điều khiển ngữ nghĩa — dùng <button> hoặc <a>.`));
+    }
   });
   return out;
 };
@@ -314,6 +326,78 @@ const targetSize: Check = (ctx, rules) => {
   return out;
 };
 
+// ---------- document-level checks (full documents only, never fragments) ----------
+const isFullDocument = (ctx: FileContext): boolean => !!ctx.dom && /<html\b/i.test(ctx.source);
+
+const metaViewport: Check = (ctx, rules) => {
+  if (!isFullDocument(ctx)) return [];
+  const r = rules[0];
+  const out: Finding[] = [];
+  ctx.dom!.querySelectorAll("meta").forEach((el) => {
+    if ((el.getAttribute("name") ?? "").toLowerCase() !== "viewport" || elDisabled(el, r.id)) return;
+    const content = (el.getAttribute("content") ?? "").toLowerCase();
+    // Browsers accept ',' AND ';' as viewport property separators.
+    const noScale = /user-scalable\s*=\s*(no|0)(\s|,|;|$)/.exec(content);
+    const maxScale = /maximum-scale\s*=\s*([\d.]+)/.exec(content);
+    const zoomCapped = maxScale != null && parseFloat(maxScale[1]) < 2;
+    if (!noScale && !zoomCapped) return;
+    const what = noScale ? `user-scalable=${noScale[1]}` : `maximum-scale=${maxScale![1]}`;
+    out.push(mk(ctx, r, elementLine(ctx, el),
+      `Viewport meta blocks zoom (${what}) — users must be able to zoom text to 200%.`,
+      `Thẻ viewport chặn zoom (${what}) — người dùng phải phóng to chữ được tới 200%.`));
+  });
+  return out;
+};
+
+const viewportPresence: Check = (ctx, rules) => {
+  if (!isFullDocument(ctx)) return [];
+  const r = rules[0];
+  const has = ctx.dom!.querySelectorAll("meta").some((m) =>
+    (m.getAttribute("name") ?? "").toLowerCase() === "viewport" && (m.getAttribute("content") ?? "").trim() !== "");
+  if (has) return [];
+  const html = ctx.dom!.querySelector("html");
+  if (!html || elDisabled(html, r.id)) return [];
+  return [mk(ctx, r, elementLine(ctx, html),
+    `Document has no <meta name="viewport"> — mobile browsers will render the desktop layout zoomed out.`,
+    `Tài liệu thiếu <meta name="viewport"> — trình duyệt mobile sẽ hiển thị bố cục desktop thu nhỏ.`)];
+};
+
+// Name-from-content per accname: descendant text EXCLUDING aria-hidden subtrees, with a
+// descendant <img alt> contributing its alt (an <svg><title> counts only while the svg
+// itself is not aria-hidden).
+function accessibleText(el: HTMLElement): string {
+  let s = "";
+  for (const child of el.childNodes) {
+    if (child.nodeType === 3) { s += (child as { text?: string }).text ?? ""; }
+    else if (child.nodeType === 1) {
+      const c = child as HTMLElement;
+      if (c.getAttribute("aria-hidden") === "true") continue;
+      if ((c.rawTagName ?? "").toUpperCase() === "IMG") { s += c.getAttribute("alt") ?? ""; continue; }
+      s += accessibleText(c);
+    }
+  }
+  return s;
+}
+const nonEmptyAttr = (el: HTMLElement, name: string): boolean => (el.getAttribute(name) ?? "").trim().length > 0;
+
+const controlName: Check = (ctx, rules) => {
+  if (!ctx.dom) return [];
+  const r = rules[0];
+  const out: Finding[] = [];
+  ctx.dom.querySelectorAll("button, a[href], [role=button]").forEach((el) => {
+    // aria-hidden controls are out of the a11y tree; <template> content is inert (named at clone time).
+    if (el.getAttribute("aria-hidden") === "true" || el.closest("template") || elDisabled(el, r.id)) return;
+    // An EMPTY aria-label/labelledby/title contributes no name per accname — require non-empty.
+    const named = nonEmptyAttr(el, "aria-label") || nonEmptyAttr(el, "aria-labelledby") || nonEmptyAttr(el, "title")
+      || accessibleText(el).trim().length > 0;
+    if (named) return;
+    out.push(mk(ctx, r, elementLine(ctx, el),
+      `<${el.rawTagName}> has no accessible name — add text content or an aria-label (SR users hear only "${(el.rawTagName ?? "").toLowerCase() === "a" ? "link" : "button"}").`,
+      `<${el.rawTagName}> không có tên tiếp cận — thêm chữ hoặc aria-label (trình đọc màn hình chỉ đọc "${(el.rawTagName ?? "").toLowerCase() === "a" ? "liên kết" : "nút"}").`));
+  });
+  return out;
+};
+
 // ---------- i18n / theme checks ----------
 const htmlLang: Check = (ctx, rules) => {
   if (!ctx.dom || !/<html\b/i.test(ctx.source)) return []; // only a full document, not a fragment
@@ -410,6 +494,55 @@ const colorTokenOnly: Check = (ctx, rules) => {
   return out;
 };
 
+// ---------- AI-tell markup/style checks ----------
+const deadHref: Check = (ctx, rules) => {
+  if (!ctx.dom) return [];
+  const r = rules[0];
+  const out: Finding[] = [];
+  ctx.dom.querySelectorAll("a[href]").forEach((el) => {
+    const href = (el.getAttribute("href") ?? "").trim();
+    if ((href !== "#" && href !== "") || elDisabled(el, r.id)) return;
+    out.push(mk(ctx, r, elementLine(ctx, el),
+      `<a href="${href}"> is wired to nothing — link to a real target or use a <button>.`,
+      `<a href="${href}"> không nối vào đâu — trỏ tới đích thật hoặc dùng <button>.`));
+  });
+  return out;
+};
+
+const gradientText: Check = (ctx, rules) => {
+  const r = rules[0];
+  const out: Finding[] = [];
+  for (const block of ctx.css) {
+    block.root.walkRules((rule) => {
+      const d = decls(rule);
+      // background-clip can be per-layer (e.g. "padding-box, text") — any layer clipping to text counts.
+      const clipsText = [d.get("background-clip"), d.get("-webkit-background-clip")]
+        .some((v) => (v ?? "").toLowerCase().split(",").some((layer) => layer.trim() === "text"));
+      if (!clipsText) return;
+      const bg = `${d.get("background") ?? ""} ${d.get("background-image") ?? ""}`;
+      if (!/gradient\(/i.test(bg) || ruleDisabled(rule, r.id)) return;
+      out.push(mk(ctx, r, cssLine(block, rule),
+        `"${rule.selector}" clips a gradient to text — gradient text has no single computable contrast (WCAG 1.4.3 can silently fail).`,
+        `"${rule.selector}" cắt gradient vào chữ — chữ gradient không có tương phản tính được (WCAG 1.4.3 có thể fail ngầm).`));
+    });
+  }
+  return out;
+};
+
+const positiveTabindex: Check = (ctx, rules) => {
+  if (!ctx.dom) return [];
+  const r = rules[0];
+  const out: Finding[] = [];
+  ctx.dom.querySelectorAll("[tabindex]").forEach((el) => {
+    const n = parseInt((el.getAttribute("tabindex") ?? "").trim(), 10);
+    if (!(n >= 1) || elDisabled(el, r.id)) return;
+    out.push(mk(ctx, r, elementLine(ctx, el),
+      `<${el.rawTagName} tabindex="${n}"> forces tab order — use tabindex="0"/"-1" and DOM order instead.`,
+      `<${el.rawTagName} tabindex="${n}"> ép thứ tự tab — dùng tabindex="0"/"-1" và thứ tự DOM.`));
+  });
+  return out;
+};
+
 // ---------- frontend-markup security checks ----------
 const isExternalUrl = (u: string): boolean => /^(https?:)?\/\//i.test(u);
 
@@ -454,4 +587,5 @@ const sri: Check = (ctx, rules) => {
 export const CHECKS: Record<string, Check> = {
   contrast, focusRing, reducedMotion, forbiddenValue, formLabel, semanticControl, emojiIcon, imgDimensions, imgAlt, targetSize,
   headingOrder, htmlLang, logicalProperties, colorScheme, colorTokenOnly, externalRel, sri,
+  metaViewport, viewportPresence, controlName, deadHref, gradientText, positiveTabindex,
 };

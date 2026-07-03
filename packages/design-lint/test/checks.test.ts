@@ -365,3 +365,172 @@ describe("dogfood: index.html has zero errors", () => {
     expect(res.errorCount).toBe(0);
   });
 });
+
+describe("a11y.meta-viewport — zoom-blocking viewport", () => {
+  const doc = (meta: string) =>
+    `<!DOCTYPE html><html lang="en"><head><title>t</title>${meta}</head><body><p>x</p></body></html>`;
+  it("flags user-scalable=no", () => {
+    const f = lint(doc(`<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">`), "html");
+    expect(ids(f)).toContain("a11y.meta-viewport");
+  });
+  it("flags maximum-scale below 2", () => {
+    const f = lint(doc(`<meta name="viewport" content="width=device-width, maximum-scale=1">`), "html");
+    expect(ids(f)).toContain("a11y.meta-viewport");
+  });
+  it("passes the standard viewport meta", () => {
+    const f = lint(doc(`<meta name="viewport" content="width=device-width, initial-scale=1">`), "html");
+    expect(ids(f)).not.toContain("a11y.meta-viewport");
+    expect(ids(f)).not.toContain("responsive.viewport-meta");
+  });
+  it("allows maximum-scale >= 2", () => {
+    const f = lint(doc(`<meta name="viewport" content="width=device-width, maximum-scale=5">`), "html");
+    expect(ids(f)).not.toContain("a11y.meta-viewport");
+  });
+});
+
+describe("responsive.viewport-meta — presence in full documents", () => {
+  it("warns when a full document has no viewport meta", () => {
+    const f = lint(`<!DOCTYPE html><html lang="en"><head><title>t</title></head><body><p>x</p></body></html>`, "html");
+    expect(ids(f)).toContain("responsive.viewport-meta");
+  });
+  it("ignores fragments", () => {
+    expect(ids(lint(`<p>snippet</p>`, "html"))).not.toContain("responsive.viewport-meta");
+  });
+});
+
+describe("a11y.control-name — accessible names on controls", () => {
+  it("flags an svg-only button with no accessible name", () => {
+    const f = lint(`<button><svg viewBox="0 0 16 16"><path d="M0 0h16v16z"/></svg></button>`, "html");
+    expect(ids(f)).toContain("a11y.control-name");
+  });
+  it("flags an empty link", () => {
+    expect(ids(lint(`<a href="/x"></a>`, "html"))).toContain("a11y.control-name");
+  });
+  it("passes text content, aria-label, svg title, and img alt names", () => {
+    const f = lint(
+      `<button>Save</button><a href="/x" aria-label="Docs"></a>` +
+      `<button><svg viewBox="0 0 16 16"><title>Close</title></svg></button>` +
+      `<a href="/y"><img src="l.png" alt="Logo" width="10" height="10"></a>`, "html");
+    expect(ids(f)).not.toContain("a11y.control-name");
+  });
+  it("respects data-norma-disable", () => {
+    const f = lint(`<a href="/x" data-norma-disable="a11y.control-name"></a>`, "html");
+    expect(ids(f)).not.toContain("a11y.control-name");
+  });
+});
+
+describe("a11y.semantic-control — href-less <a onclick>", () => {
+  it("flags <a onclick> without href (no link role, not focusable)", () => {
+    expect(ids(lint(`<a onclick="go()">Go</a>`, "html"))).toContain("a11y.semantic-control");
+  });
+  it("passes <a href> with onclick", () => {
+    expect(ids(lint(`<a href="/x" onclick="track()">Go</a>`, "html"))).not.toContain("a11y.semantic-control");
+  });
+});
+
+describe("review hardening — viewport + control-name edge cases", () => {
+  const doc = (meta: string) =>
+    `<!DOCTYPE html><html lang="en"><head><title>t</title>${meta}</head><body><p>x</p></body></html>`;
+  it("flags user-scalable=0 and reports the matched value", () => {
+    const f = lint(doc(`<meta name="viewport" content="width=device-width, user-scalable=0">`), "html");
+    const hit = f.find((x) => x.ruleId === "a11y.meta-viewport");
+    expect(hit).toBeDefined();
+    expect(hit!.message.en).toContain("user-scalable=0");
+  });
+  it("flags semicolon-separated user-scalable=no", () => {
+    const f = lint(doc(`<meta name="viewport" content="width=device-width, user-scalable=no;initial-scale=1">`), "html");
+    expect(ids(f)).toContain("a11y.meta-viewport");
+  });
+  it("passes maximum-scale=2 exactly (the 200% boundary)", () => {
+    const f = lint(doc(`<meta name="viewport" content="width=device-width, maximum-scale=2">`), "html");
+    expect(ids(f)).not.toContain("a11y.meta-viewport");
+  });
+  it("ignores fragments for the viewport check", () => {
+    const f = lint(`<meta name="viewport" content="user-scalable=no">`, "html");
+    expect(ids(f)).not.toContain("a11y.meta-viewport");
+  });
+  it("respects data-norma-disable on the viewport meta", () => {
+    const f = lint(doc(`<meta name="viewport" content="user-scalable=no" data-norma-disable="a11y.meta-viewport">`), "html");
+    expect(ids(f)).not.toContain("a11y.meta-viewport");
+  });
+  it("an empty-content viewport meta does not satisfy presence", () => {
+    const f = lint(doc(`<meta name="viewport" content="">`), "html");
+    expect(ids(f)).toContain("responsive.viewport-meta");
+  });
+  it("flags an empty aria-label as no accessible name", () => {
+    expect(ids(lint(`<button aria-label=""></button>`, "html"))).toContain("a11y.control-name");
+  });
+  it("flags aria-hidden-only content (icon button missing its aria-label)", () => {
+    const f = lint(`<button><span aria-hidden="true">×</span></button><button><svg aria-hidden="true"><title>Close</title></svg></button>`, "html");
+    expect(f.filter((x) => x.ruleId === "a11y.control-name").length).toBe(2);
+  });
+  it("does not flag controls inside <template>", () => {
+    const f = lint(`<template><button><svg viewBox="0 0 1 1"><path d="M0 0"/></svg></button></template>`, "html");
+    expect(ids(f)).not.toContain("a11y.control-name");
+  });
+  it("passes an <a onclick> retrofitted with role + tabindex", () => {
+    const f = lint(`<a role="button" tabindex="0" onclick="f()">Go</a>`, "html");
+    expect(ids(f)).not.toContain("a11y.semantic-control");
+  });
+});
+
+describe("antipattern.dead-href — links wired to nothing", () => {
+  it('flags <a href="#">', () => {
+    expect(ids(lint(`<a href="#">Learn more</a>`, "html"))).toContain("antipattern.dead-href");
+  });
+  it('flags <a href="">', () => {
+    expect(ids(lint(`<a href="">Go</a>`, "html"))).toContain("antipattern.dead-href");
+  });
+  it('passes a real fragment link (#section)', () => {
+    expect(ids(lint(`<a href="#s3">Type</a>`, "html"))).not.toContain("antipattern.dead-href");
+  });
+  it("passes a real URL", () => {
+    expect(ids(lint(`<a href="/docs">Docs</a>`, "html"))).not.toContain("antipattern.dead-href");
+  });
+  it("respects data-norma-disable", () => {
+    expect(ids(lint(`<a href="#" data-norma-disable="antipattern.dead-href">x</a>`, "html"))).not.toContain("antipattern.dead-href");
+  });
+});
+
+describe("antipattern.gradient-text — background-clip:text over a gradient", () => {
+  it("flags a -webkit-background-clip:text gradient headline", () => {
+    const f = lint(`.h{ background:linear-gradient(90deg,#0af,#f0a); -webkit-background-clip:text; color:transparent; }`, "css");
+    expect(ids(f)).toContain("antipattern.gradient-text");
+  });
+  it("flags the standard background-clip:text form", () => {
+    const f = lint(`.h{ background-image:radial-gradient(#0af,#f0a); background-clip:text; }`, "css");
+    expect(ids(f)).toContain("antipattern.gradient-text");
+  });
+  it("flags a per-layer background-clip (padding-box, text) over a gradient", () => {
+    const f = lint(`.h{ background-image:linear-gradient(#fff,#000); background-clip:padding-box, text; }`, "css");
+    expect(ids(f)).toContain("antipattern.gradient-text");
+  });
+  it("passes background-clip:text without a gradient (solid fill)", () => {
+    const f = lint(`.h{ background:#0af; background-clip:text; }`, "css");
+    expect(ids(f)).not.toContain("antipattern.gradient-text");
+  });
+  it("passes a gradient background with no text clip", () => {
+    const f = lint(`.bar{ background:linear-gradient(90deg,#0af,#f0a); }`, "css");
+    expect(ids(f)).not.toContain("antipattern.gradient-text");
+  });
+  it("respects a norma-disable comment", () => {
+    const f = lint(`/* norma-disable antipattern.gradient-text */\n.h{ background:linear-gradient(90deg,#0af,#f0a); background-clip:text; }`, "css");
+    expect(ids(f)).not.toContain("antipattern.gradient-text");
+  });
+});
+
+describe("a11y.no-positive-tabindex — tabindex >= 1", () => {
+  it("flags tabindex=1", () => {
+    expect(ids(lint(`<div tabindex="1">x</div>`, "html"))).toContain("a11y.no-positive-tabindex");
+  });
+  it("flags a large positive tabindex", () => {
+    expect(ids(lint(`<button tabindex="99">x</button>`, "html"))).toContain("a11y.no-positive-tabindex");
+  });
+  it("passes tabindex=0 and tabindex=-1", () => {
+    const f = lint(`<div tabindex="0">a</div><span tabindex="-1">b</span>`, "html");
+    expect(ids(f)).not.toContain("a11y.no-positive-tabindex");
+  });
+  it("respects data-norma-disable", () => {
+    expect(ids(lint(`<div tabindex="1" data-norma-disable="a11y.no-positive-tabindex">x</div>`, "html"))).not.toContain("a11y.no-positive-tabindex");
+  });
+});

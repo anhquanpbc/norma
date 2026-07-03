@@ -1,6 +1,8 @@
 [English](REFERENCE.md) · **Tiếng Việt**
 
-# Quy chuẩn Kỹ thuật Thiết kế UX/UI — Tài liệu Hợp nhất (2025)
+# Quy chuẩn Kỹ thuật Thiết kế UX/UI — Tài liệu Hợp nhất (2026)
+
+> Kiểm chứng lần cuối với các nguồn sơ cấp: 03/07/2026.
 
 > **Chú thích:** 🔒 = yêu cầu bắt buộc trong một spec đã ban hành (mandate) · 📐 = quy ước/heuristic ngành (không phải mandate của vendor).
 
@@ -84,6 +86,7 @@ Thang khoảng cách khuyến nghị (token, px): **0 · 4 · 8 · 12 · 16 · 2
 
 - **Line-height 📐:** thân bài ~1.5 (mức sàn WCAG đúng bằng 1.5× 🔒); tiêu đề chặt hơn 1.1–1.25.
 - **Độ dài dòng (measure) 📐:** **45–75 ký tự/dòng** cho chữ Latin (~66 lý tưởng).
+- **Ngắt dòng 📐:** `text-wrap: balance` cho tiêu đề (Baseline 2024); `text-wrap: pretty` cho rìa đoạn văn, dạng cải tiến lũy tiến (chưa Baseline).
 - **Cỡ chữ thân tối thiểu 📐:** sàn thực tế 16px; 12px chỉ cho chú thích, không dùng cho văn bản dài. WCAG bắt buộc khả năng phóng to, **không** quy định cỡ pixel 🔒 (xem §5).
 - **Chữ co giãn (fluid):** `font-size: clamp(min, ưu_tiên, max)`, nội suy tuyến tính theo bề rộng khung nhìn (phương pháp Utopia). Co giãn không cần breakpoint và vẫn qua zoom 200%.
 - **Tải font:** `font-display: swap` cho thân bài (FOUT, bảo vệ LCP); `optional` cho hiệu năng tối đa; `block` chỉ cho font icon. Tốt nhất: `swap` **+ font dự phòng đã chỉnh số đo** (`size-adjust`, `ascent-override`) để triệt CLS khi hoán font. Dùng **WOFF2** (nhỏ hơn WOFF ~30%), tự host, cache bất biến 1 năm, preload font quan trọng. **Variable font** lợi khi dùng ≥3 độ đậm.
@@ -114,13 +117,13 @@ Thang khoảng cách khuyến nghị (token, px): **0 · 4 · 8 · 12 · 16 · 2
 
 **APCA (hướng WCAG 3.0) 📐:** cho ra giá trị **Lc** (≈ −108…+106), có xét cực tính và cỡ/độ đậm chữ. Ngưỡng đơn giản: **Lc 90 nên có / 75 tối thiểu cho thân bài; ~60 cho chữ lớn/đậm**. WCAG 2.x phóng đại tương phản với màu gần đen nên **không dẫn hướng tốt cho dark-mode** — APCA thì có. Lưu ý: APCA bị đưa về "Placeholder" trong bản nháp WCAG 3.0 ngày 02/06/2023; WCAG 3.0 chưa có ngày phát hành (ước chừng ~2030). **Giữ WCAG 2.x làm chuẩn bắt buộc.**
 
-**Dark mode & độ nổi 📐:** thể hiện độ nổi bằng bề mặt sáng dần (không chỉ đổ bóng — bóng yếu trên nền tối). Tránh cặp đen/trắng thuần; dùng bề mặt gần-đen + chữ hơi-ngà để giảm chói (halation).
+**Dark mode & độ nổi 📐:** thể hiện độ nổi bằng bề mặt sáng dần (không chỉ đổ bóng — bóng yếu trên nền tối). Tránh cặp đen/trắng thuần; dùng bề mặt gần-đen + chữ hơi-ngà để giảm chói (halation). Với theming ở tầng token, ghép `color-scheme` với hàm `light-dark()` (Baseline 2024) để một custom property biểu diễn cả hai theme.
 
 ---
 
 ## 5. Khả năng tiếp cận (đo được)
 
-**WCAG 2.2** — Khuyến nghị W3C ngày **05/10/2023**, 87 tiêu chí (32 A, 24 AA, 31 AAA); mức **AA** là mục tiêu pháp lý gần như phổ quát (Đạo luật Tiếp cận EU / Chỉ thị 2019/882, Section 508, EN 301 549, án lệ ADA). Mới trong 2.2: 2.4.11/2.4.12 Focus không bị che, 2.4.13 Hình thức Focus, 2.5.7 Thao tác kéo, 2.5.8 Kích thước vùng chạm (tối thiểu), 3.2.6 Trợ giúp nhất quán, 3.3.7 Nhập trùng lặp, 3.3.8/3.3.9 Xác thực tiếp cận. Bỏ 4.1.1 Parsing.
+**WCAG 2.2** — Khuyến nghị W3C ngày **05/10/2023** (bản cập nhật **12/12/2024**; được phê duyệt thành **ISO/IEC 40500:2025**), 86 tiêu chí (31 A, 24 AA, 31 AAA); mức **AA** là mục tiêu pháp lý gần như phổ quát (Đạo luật Tiếp cận EU / Chỉ thị 2019/882 — có hiệu lực thi hành tại mọi nước thành viên EU từ **28/06/2025**; Section 508; EN 301 549; án lệ ADA). Mới trong 2.2: 2.4.11/2.4.12 Focus không bị che, 2.4.13 Hình thức Focus, 2.5.7 Thao tác kéo, 2.5.8 Kích thước vùng chạm (tối thiểu), 3.2.6 Trợ giúp nhất quán, 3.3.7 Nhập trùng lặp, 3.3.8/3.3.9 Xác thực tiếp cận. Bỏ 4.1.1 Parsing.
 
 **Kích thước vùng chạm:** WCAG 2.5.8 (AA) 🔒 **24×24 CSS px** (5 ngoại lệ: khoảng cách/tương đương/inline/UA/thiết yếu); WCAG 2.5.5 (AAA) 🔒 44×44px; **Apple HIG** 🔒 **44×44pt**; **Material** 📐 **48×48dp**. Xây theo nền nghiêm ngặt nhất: native iOS = 44pt, Android = 48dp — không phải sàn 24px.
 
@@ -131,13 +134,13 @@ Thang khoảng cách khuyến nghị (token, px): **0 · 4 · 8 · 12 · 16 · 2
 | **Apple HIG** 🔒 | **44×44 pt** (≈59px) | visionOS 60pt |
 | **Material** 📐 | **48×48 dp** (≈9mm) | pointer ≥44dp; ≥8dp separation |
 
-**Chỉ báo focus:** 2.4.7 (AA) 🔒 phải có chỉ báo nhìn thấy; 2.4.11 (AA) 🔒 phần tử focus phải thấy được ít nhất một phần; 2.4.13 (AAA) 🔒 chỉ báo ≥ **viền dày 2 CSS px** quanh thành phần, **tương phản ≥3:1 giữa trạng thái có/không focus** và ≥3:1 với màu kề. Dùng `:focus-visible`, outline ≥2px, `outline-offset`; đừng bao giờ `outline:none` mà không thay thế hợp chuẩn.
+**Chỉ báo focus:** 2.4.7 (AA) 🔒 phải có chỉ báo nhìn thấy; 2.4.11 (AA) 🔒 phần tử focus phải thấy được ít nhất một phần (agent kiểm qua `a11y.focus-not-obscured`); 2.4.13 (AAA) 🔒 chỉ báo ≥ **viền dày 2 CSS px** quanh thành phần, **tương phản ≥3:1 giữa trạng thái có/không focus** và ≥3:1 với màu kề. Dùng `:focus-visible`, outline ≥2px, `outline-offset`; đừng bao giờ `outline:none` mà không thay thế hợp chuẩn.
 
-**Bàn phím / ARIA / trình đọc màn hình 🔒:** mọi chức năng thao tác được bằng bàn phím (2.1.1); thứ tự focus hợp lý (2.4.3); landmark (`banner`, `nav`, `main`, `contentinfo`); nhãn mô tả (không phải "Button"); thứ tự đọc DOM khớp thứ tự thị giác; `aria-live` cho cập nhật động như lỗi.
+**Bàn phím / ARIA / trình đọc màn hình 🔒:** mọi chức năng thao tác được bằng bàn phím (2.1.1); thứ tự focus hợp lý (2.4.3); landmark (`banner`, `nav`, `main`, `contentinfo`); nhãn mô tả (không phải "Button"); thứ tự đọc DOM khớp thứ tự thị giác; `aria-live` cho cập nhật động như lỗi. Tên tiếp cận của điều khiển được lint tĩnh qua `a11y.control-name` (4.1.2).
 
-**Chuyển động 🔒:** tôn trọng `prefers-reduced-motion: reduce` (2.3.3 AAA); không chớp >3 lần/giây (2.3.1 A).
+**Chuyển động 🔒:** tôn trọng `prefers-reduced-motion: reduce` (2.3.3 AAA); chuyển động tự chạy kéo dài >5s phải có nút tạm dừng/dừng/ẩn nhìn thấy được cho **mọi** người dùng — thiết lập hệ điều hành không thay thế được (2.2.2 A); không chớp >3 lần/giây (2.3.1 A).
 
-**Giãn chữ / reflow / phóng to:** 1.4.12 (AA) 🔒 không mất nội dung khi line-height **1.5×**, cách đoạn **2×**, giãn chữ **0.12×**, giãn từ **0.16×**; 1.4.10 Reflow (AA) 🔒 không cuộn 2 chiều ở **320 CSS px** (≈ 1280px @ zoom 400%); 1.4.4 (AA) 🔒 phóng chữ tới **200%** không mất nội dung.
+**Giãn chữ / reflow / phóng to:** 1.4.12 (AA) 🔒 không mất nội dung khi line-height **1.5×**, cách đoạn **2×**, giãn chữ **0.12×**, giãn từ **0.16×**; 1.4.10 Reflow (AA) 🔒 không cuộn 2 chiều ở **320 CSS px** (≈ 1280px @ zoom 400%); 1.4.4 (AA) 🔒 phóng chữ tới **200%** không mất nội dung. Không chặn zoom trong thẻ viewport — không `user-scalable=no`, không `maximum-scale` < 2 (lint qua `a11y.meta-viewport`).
 
 ---
 
@@ -151,7 +154,7 @@ Thang khoảng cách khuyến nghị (token, px): **0 · 4 · 8 · 12 · 16 · 2
 | **INP** (responsiveness) | ≤ 200ms | 200–500ms | > 500ms |
 | **CLS** (visual stability) | ≤ 0.1 | 0.1–0.25 | > 0.25 |
 
-**INP thay FID từ 12/03/2024** (web.dev/Chrome). INP đo toàn bộ độ trễ của MỌI tương tác (input → lần vẽ kế tiếp) suốt phiên và báo giá trị tệ nhất (loại ngoại lệ); FID chỉ đo độ trễ đầu vào của tương tác đầu tiên. INP khó hơn hẳn — ~93% site mobile đạt FID tốt nhưng chỉ ~65% đạt INP tốt; HTTP Archive 2024: 48% qua CWV với FID so với 43% với INP (mobile). Nguyên nhân trượt: JS nặng, tác vụ dài (>50ms), script bên thứ ba. TTFB (<800ms) và TBT là chỉ số chẩn đoán, **không** phải Core Web Vitals.
+**INP thay FID từ 12/03/2024** (web.dev/Chrome). INP đo toàn bộ độ trễ của MỌI tương tác (input → lần vẽ kế tiếp) suốt phiên và báo giá trị tệ nhất (loại ngoại lệ); FID chỉ đo độ trễ đầu vào của tương tác đầu tiên. INP khó hơn hẳn — tại thời điểm chuyển đổi 2024, ~93% site mobile đạt FID tốt nhưng chỉ ~65% đạt INP tốt; HTTP Archive Almanac 2025: 77% origin mobile nay đạt INP tốt (2024: 74%), và 48% qua cả ba CWV. Nguyên nhân trượt: JS nặng, tác vụ dài (>50ms), script bên thứ ba. TTFB (<800ms) và TBT là chỉ số chẩn đoán, **không** phải Core Web Vitals. Soft navigation (đổi route trong SPA) đang được Chrome đo lường chính thức — origin trial cuối ở Chrome 147–149, Intent to Ship nhắm Chrome 151 (2026); cách CrUX báo cáo còn bỏ ngỏ, các ngưỡng không đổi.
 
 **Tác động UX/kinh doanh:** đây là những chỉ số người dùng *cảm nhận trực tiếp* và là tín hiệu xếp hạng đã xác nhận (yếu tố phân định, không lấn át độ liên quan).
 
@@ -165,22 +168,24 @@ Thang khoảng cách khuyến nghị (token, px): **0 · 4 · 8 · 12 · 16 · 2
 
 **Thời lượng 📐:** vi tương tác (nút, toggle) **100–300ms**; dải cảm nhận tối ưu **200–500ms**; <100ms thấy như tức thời, >1s thấy ì. Điều chỉnh (Material): desktop 150–200ms (nhanh hơn), tablet ~+30% so mobile, thiết bị đeo ~−30%. Thoát < vào; quãng di chuyển lớn hơn → lâu hơn.
 
-**Token chuyển động Material 3 🔒 (nguyên văn):**
+**Chuyển động Material 3 — spring là chính từ M3 Expressive (Google I/O, 05/2025) 📐:** hệ *vật lý* motion nay là hệ chính của Material — token spring tổ hợp (damping + stiffness), chia **Spatial** (vị trí/kích thước/hình dạng; có thể vượt đà) vs **Effects** (màu/độ mờ; damping cao), mỗi nhóm fast/default/slow. Các token thời lượng/easing bên dưới vẫn được tài liệu hoá làm **dự phòng**, hiện dùng cho transition.
+
+**Token thời lượng/easing Material 3 🔒 (nguyên văn, hệ dự phòng):**
 - *Thời lượng (ms):* short1 50 · short2 100 · short3 150 · short4 200 · medium1 250 · medium2 300 · medium3 350 · medium4 400 · long1 450 · long2 500 · long3 550 · long4 600 · extra-long1 700 · extra-long2 800 · extra-long3 900 · extra-long4 1000.
 - *Easing:* standard `cubic-bezier(0.2, 0, 0, 1)` · standard-decelerate `cubic-bezier(0, 0, 0, 1)` · standard-accelerate `cubic-bezier(0.3, 0, 1, 1)` · emphasized-decelerate `cubic-bezier(0.05, 0.7, 0.1, 1)` · emphasized-accelerate `cubic-bezier(0.3, 0, 0.8, 0.15)` · linear `cubic-bezier(0, 0, 1, 1)`. Token **emphasized** là đường hai đoạn (`M 0,0 C 0.05,0 0.133,0.06 0.166,0.4 C 0.208,0.82 0.25,1 1,1`) và **không thể** biểu diễn bằng một cubic-bezier duy nhất — các xấp xỉ trên web chỉ là xấp xỉ.
-- *Cũ:* easing "standard" M2 = `cubic-bezier(0.4, 0, 0.2, 1)` (FastOutSlowIn), vẫn là interpolator mặc định trong các lớp transition của M3. M3 cũng thêm hệ **spring/vật lý** (mặc định trong Jetpack Compose cho 21+ component; scheme expressive vs standard).
+- *Cũ:* easing "standard" M2 = `cubic-bezier(0.4, 0, 0.2, 1)` (FastOutSlowIn), vẫn là interpolator mặc định trong các lớp transition của M3. Hệ spring là mặc định trong Jetpack Compose (21+ component; scheme expressive vs standard).
 
 **Apple 📐:** chuyển động mượt, củng cố phân cấp không gian và thao tác trực tiếp, không gây phân tâm; tôn trọng Reduce Motion (thay chuyển động lớn bằng cross-fade).
 
 **Khi nào KHÔNG animate 📐:** hành động lặp tần suất cao (motion thêm độ trễ); bounce/stretch trang trí trong ngữ cảnh công cụ (IBM Carbon khuyến cáo tránh); mọi thứ dưới `prefers-reduced-motion`.
 
-**Cử chỉ (mobile) 📐:** dùng bộ từ vựng chuẩn (chạm, giữ, vuốt, chụm, xoay). Mỗi cử chỉ tùy biến phải có phương án thay thế nhìn thấy được (WCAG 2.5.7 🔒). Đừng ghi đè cử chỉ hệ thống (vuốt mép, Trung tâm điều khiển/Thông báo). Thêm tay nắm (grabber) để gợi ý sheet kéo được.
+**Cử chỉ (mobile) 📐:** dùng bộ từ vựng chuẩn (chạm, giữ, vuốt, chụm, xoay). Mỗi cử chỉ tùy biến phải có phương án một-chạm thay thế nhìn thấy được (WCAG 2.5.1 cho cử chỉ theo đường vẽ 🔒; 2.5.7 cho thao tác kéo, agent kiểm qua `a11y.dragging-alternative`). Đừng ghi đè cử chỉ hệ thống (vuốt mép, Trung tâm điều khiển/Thông báo). Thêm tay nắm (grabber) để gợi ý sheet kéo được.
 
 ---
 
 ## 8. Quy chuẩn Nền tảng
 
-**Apple HIG (iOS):** font hệ thống **SF Pro** (Text ≤19pt, Display ≥20pt); Dynamic Type Body **17pt**, Large Title **34pt**, các text style phải co giãn theo Dynamic Type. Vùng chạm **44×44pt**, hàng list tối thiểu 44pt. Lưới 8pt + chia nhỏ 4pt là quy ước tin cậy 📐. Thiết kế theo **màu hệ thống semantic/thích ứng** 🔒 thay vì hex cứng để sáng/tối/tương phản tự có. Vùng an toàn 🔒: né status bar, Dynamic Island, tai thỏ, home indicator. Điều hướng: tab bar cho cấp cao nhất (**tối đa 3–5 tab trên iPhone**), nav bar cho đi sâu, modal cho tác vụ tập trung. "Liquid Glass" (iOS 26, 2025) thêm lớp vật liệu trong mờ.
+**Apple HIG (iOS):** font hệ thống **SF Pro** (Text ≤19pt, Display ≥20pt); Dynamic Type Body **17pt**, Large Title **34pt**, các text style phải co giãn theo Dynamic Type. Vùng chạm **44×44pt**, hàng list tối thiểu 44pt. Lưới 8pt + chia nhỏ 4pt là quy ước tin cậy 📐. Thiết kế theo **màu hệ thống semantic/thích ứng** 🔒 thay vì hex cứng để sáng/tối/tương phản tự có. Vùng an toàn 🔒: né status bar, Dynamic Island, tai thỏ, home indicator. Điều hướng: tab bar cho cấp cao nhất (**tối đa 3–5 tab trên iPhone**), nav bar cho đi sâu, modal cho tác vụ tập trung. Từ iOS 26 (2025), **Liquid Glass** là ngôn ngữ vật liệu toàn hệ thống; iOS 27 (WWDC 2026) giảm độ trong suốt mặc định, thêm thanh chỉnh trong↔đục cho người dùng và tinh chỉnh khuếch tán nội dung — một bước hiệu chỉnh vì độ dễ đọc, khiến tương phản-trên-kính thành rủi ro tuân thủ hạng nhất (TELL glassmorphism ở §14 phân biệt vật liệu nền tảng với kính CSS trang trí).
 
 **Material Design 3 (Material You):** dynamic color sinh dải tông từ màu nguồn thành vai trò semantic; **độ nổi thể hiện bằng lớp phủ bề mặt tông màu**, không chỉ đổ bóng. Thông số 📐: nút chuẩn ~40dp thị giác / vùng chạm 48dp / padding ngang 16dp; text field ~56dp (outlined) / 48dp (filled); checkbox/radio 40dp trong vùng 48dp; chip ≥32dp (khuyến nghị 40dp); FAB nhỏ 40 / thường 56 / lớn 96dp. Lưới nền 4px, thành phần bội số của 8, thang chữ 1.25.
 
@@ -192,7 +197,7 @@ Thang khoảng cách khuyến nghị (token, px): **0 · 4 · 8 · 12 · 16 · 2
 
 **Trạng thái cần thiết kế cho mọi thành phần tương tác 🔒/📐:** mặc định, hover (chỉ chuột), focus (`:focus-visible`), active/nhấn, vô hiệu (disabled), đang tải (loading), lỗi (error) — cùng selected/checked, read-only khi cần. Material thêm **state layer** (lớp phủ tông) phủ trọn vùng chạm 48dp.
 
-**Thông số phổ biến 📐:** Nút cao 40–48px, padding ngang ~16px, rộng tối thiểu ~64–88px, phân cấp chính/phụ/ba rõ ràng, loading vô hiệu + hiện spinner, nhãn theo hành động. Input ≥44–56px, nhãn hiển thị cố định phía trên, chữ trợ giúp/lỗi phía dưới, không dùng placeholder làm nhãn. Modal: bẫy focus, khôi phục focus khi đóng, `Esc` để đóng, có backdrop, một lối đóng rõ ràng, tránh chồng modal. Card: padding trong 16–24px, khoảng cách giữa các card 16–24px.
+**Thông số phổ biến 📐:** Nút cao 40–48px, padding ngang ~16px, rộng tối thiểu ~64–88px, phân cấp chính/phụ/ba rõ ràng, loading vô hiệu + hiện spinner, nhãn theo hành động. Input ≥44–56px, nhãn hiển thị cố định phía trên, chữ trợ giúp/lỗi phía dưới, không dùng placeholder làm nhãn. Modal: bẫy focus, khôi phục focus khi đóng, `Esc` để đóng, có backdrop, một lối đóng rõ ràng, tránh chồng modal. Ưu tiên phần tử `<dialog>` gốc và Popover API (Baseline 2025) — top layer cho sẵn quản lý focus, Esc, backdrop, light-dismiss; tự chế overlay `<div>` mới là phản mẫu. Định vị tooltip/menu bằng CSS anchor positioning ở dạng cải tiến lũy tiến (Chrome/Edge, Firefox 151+; Safari chưa hỗ trợ — chưa Baseline). Card: padding trong 16–24px, khoảng cách giữa các card 16–24px.
 
 **Hệ thống thiết kế tham khảo 📐:** Material 3, Apple HIG, IBM Carbon, Shopify Polaris, Ant Design, Atlassian, Salesforce Lightning.
 
@@ -204,9 +209,9 @@ Thang khoảng cách khuyến nghị (token, px): **0 · 4 · 8 · 12 · 16 · 2
 
 > *§10 (Biểu mẫu) và §11 (Đáp ứng) được gộp làm một mục — không có §11 riêng; trang tham chiếu ghi là "§10–11".*
 
-**📐** Bố cục một cột, nhãn căn trên (dễ quét + full-width mobile); tránh nhãn căn trái và placeholder làm nhãn. Mỗi input có `<label>` liên kết theo mã (`for`/`id`) 🔒. Kiểm tra hợp lệ **khi rời trường (on blur)**, không phải mỗi lần gõ; hiện xác nhận tích cực khi hữu ích. Thông báo lỗi: đặt ngay dưới trường, cụ thể và hành động được ("Nhập số điện thoại 10 chữ số, ví dụ 0912 345 678" — không phải "Dữ liệu không hợp lệ"); không chỉ dựa vào màu (màu + icon + chữ) 🔒; thông báo qua `aria-live`. Đánh dấu trường bắt buộc rõ ràng; chỉ hỏi thông tin cần thiết. Mobile: đặt đúng `type`/`inputmode` để gọi đúng bàn phím; bật `autocomplete`/tự điền; hỗ trợ tự điền mã OTP. WCAG 3.3.7 🔒 — đừng bắt nhập lại thông tin đã cung cấp.
+**📐** Bố cục một cột, nhãn căn trên (dễ quét + full-width mobile); tránh nhãn căn trái và placeholder làm nhãn. Mỗi input có `<label>` liên kết theo mã (`for`/`id`) 🔒. Kiểm tra hợp lệ **khi rời trường (on blur)**, không phải mỗi lần gõ; hiện xác nhận tích cực khi hữu ích. Thông báo lỗi: đặt ngay dưới trường, cụ thể và hành động được ("Nhập số điện thoại 10 chữ số, ví dụ 0912 345 678" — không phải "Dữ liệu không hợp lệ"); không chỉ dựa vào màu (màu + icon + chữ) 🔒 — agent kiểm qua `a11y.color-only-meaning`; thông báo qua `aria-live`. Đánh dấu trường bắt buộc rõ ràng; chỉ hỏi thông tin cần thiết. Mobile: đặt đúng `type`/`inputmode` để gọi đúng bàn phím; bật `autocomplete`/tự điền; hỗ trợ tự điền mã OTP. WCAG 3.3.7 🔒 — đừng bắt nhập lại thông tin đã cung cấp (agent kiểm qua `forms.redundant-entry`).
 
-**Đáp ứng & thích ứng (📐)** Mobile-first: viết style nền cho khung nhỏ nhất, rồi thêm media query `min-width` đi lên (khớp Tailwind/Bootstrap); nhớ thẻ `viewport`. Bố cục co giãn: `max-width` (không `width` cố định), Flexbox/Grid, đơn vị tương đối, `clamp()` cho chữ/khoảng cách co giãn. **Container query** (CSS hiện đại): tạo kiểu theo kích thước *container* thay vì khung nhìn — công cụ đúng cho thành phần tái sử dụng ở nhiều ngữ cảnh. Adaptive vs responsive: responsive = co giãn liên tục; adaptive = các bố cục rời khớp theo breakpoint; sản phẩm hiện đại thường trộn cả hai. Bề rộng cần test: 320 (điện thoại nhỏ / sàn reflow WCAG), 360–414 (điện thoại thường), 768 (tablet dọc), 1024 (tablet ngang / laptop nhỏ), 1280–1440 (desktop), 1536+ (desktop lớn).
+**Đáp ứng & thích ứng (📐)** Mobile-first: viết style nền cho khung nhỏ nhất, rồi thêm media query `min-width` đi lên (khớp Tailwind/Bootstrap); nhớ thẻ `viewport` (lint qua `responsive.viewport-meta`; giá trị chặn zoom — `user-scalable=no`, `maximum-scale` < 2 — là lỗi `a11y.meta-viewport`). Bố cục co giãn: `max-width` (không `width` cố định), Flexbox/Grid, đơn vị tương đối, `clamp()` cho chữ/khoảng cách co giãn. **Container query** (CSS hiện đại): tạo kiểu theo kích thước *container* thay vì khung nhìn — công cụ đúng cho thành phần tái sử dụng ở nhiều ngữ cảnh. Adaptive vs responsive: responsive = co giãn liên tục; adaptive = các bố cục rời khớp theo breakpoint; sản phẩm hiện đại thường trộn cả hai. Bề rộng cần test: 320 (điện thoại nhỏ / sàn reflow WCAG), 360–414 (điện thoại thường), 768 (tablet dọc), 1024 (tablet ngang / laptop nhỏ), 1280–1440 (desktop), 1536+ (desktop lớn).
 
 ---
 
@@ -236,9 +241,9 @@ Các mô hình dự báo này biến "cảm giác" thành ước lượng có th
 **Lưu ý (bắt buộc vs quy ước):**
 - Lưới 8pt là bắt buộc ở Material nhưng chỉ là *quy ước* ở Apple; "45–75 ký tự/dòng" và "200–500ms tối ưu" là kinh nghiệm, không phải hằng số chuẩn.
 - Lợi thế AVIF so với WebP ~10–12% (thử nghiệm có kiểm soát), không lớn; lợi lớn là so với JPEG/PNG cũ.
-- Con số tỷ lệ thoát/chuyển đổi gắn với CWV đến từ nhà cung cấp SEO/hiệu năng — mang tính định hướng, không chính xác. Tỷ lệ đạt đã kiểm toán (43% INP tốt trên mobile) đến từ HTTP Archive/Google.
+- Con số tỷ lệ thoát/chuyển đổi gắn với CWV đến từ nhà cung cấp SEO/hiệu năng — mang tính định hướng, không chính xác. Tỷ lệ đạt đã kiểm toán (77% INP tốt trên mobile, Almanac 2025) đến từ HTTP Archive/Google.
 - APCA là mục tiêu di động (bị đưa về "Placeholder" trong nháp WCAG 3.0 06/2023); ngưỡng Lc từ tài liệu APCA/ARC; vai trò cuối trong WCAG 3.0 chưa chốt (~2030).
-- Material 3 đang chuyển tiếp từ token easing/duration sang hệ spring (mặc định trong Jetpack Compose) — kiểm tra bộ công cụ của bạn dùng loại nào.
+- Chuyển động Material 3: từ M3 Expressive (05/2025), spring là hệ chính được tài liệu hoá, easing/duration là dự phòng — kiểm tra bộ công cụ của bạn dùng loại nào.
 - Giá trị breakpoint khác nhau theo framework/phiên bản — xác nhận theo bản bạn triển khai.
 
 ---
@@ -256,24 +261,28 @@ Công cụ AI thường sinh hai loại lỗi, và cần biết bạn đang xử
 |---|---|---|
 | **Vòng focus chồng** — `border` + `outline` + `box-shadow` chồng nhau | VIOLATION (2.4.11/2.4.13) | một vòng `:focus-visible`, ≥2px, ≥3:1 |
 | **Chữ xám thiếu tương phản** — `#999` trên `#fff`; ~84% trang chủ (WebAIM Million) | VIOLATION (1.4.3) | ≥4.5:1 (3:1 chữ lớn/UI) |
-| **Animation vô tội vạ** — cái gì cũng động, bỏ qua reduced-motion | VIOLATION (2.3.3) | chỉ animate khi có nghĩa; tôn trọng `prefers-reduced-motion` |
+| **Animation vô tội vạ** — cái gì cũng động, bỏ qua reduced-motion; gồm hero gõ chữ, trường hạt, vệt con trỏ | VIOLATION (2.3.3) | chỉ animate khi có nghĩa; tôn trọng `prefers-reduced-motion` |
 | **Emoji làm icon** — 🚀🔥 làm nút; hiển thị + tên đọc màn hình khác nhau | VIOLATION (1.1.1) | SVG inline + nhãn thật |
 | **Placeholder làm nhãn** — gợi ý biến mất khi gõ | VIOLATION (3.3.2/4.1.2) | `<label>` cố định, liên kết theo mã |
 | **Lạm dụng halo / glow** — nhiều bóng màu chồng | TELL | thang độ nổi trung tính, một nguồn sáng |
-| **Gradient tím→chàm** — `#667eea → #764ba2` indigo mặc định | TELL | token thương hiệu (tác giả Tailwind đã công khai xin lỗi năm 2025 vì "mọi UI do AI tạo đều tím indigo") |
-| **Glassmorphism khắp nơi** — `backdrop-filter` tràn lan, tương phản động fail, tốn GPU | TELL | 2–3 bề mặt kính + lớp phủ, không mặc định |
+| **Gradient tím→chàm** — `#667eea → #764ba2` indigo mặc định | TELL | token thương hiệu (tác giả Tailwind đã công khai xin lỗi năm 2025 vì mặc định indigo-500 "khiến mọi UI do AI tạo trên đời cũng tím indigo") |
+| **Glassmorphism khắp nơi** — `backdrop-filter` tràn lan, tương phản động fail, tốn GPU | TELL | 2–3 bề mặt kính + lớp phủ, không mặc định (vật liệu nền tảng như Liquid Glass của Apple do HIG quản — kính CSS trang trí thì không) |
 | **Spacing tùy tiện / bo góc quá đà** — `mt-[13px]`, bo góc lẫn lộn | TELL | thang token |
 | **Dark mode `#000`/`#fff` thuần** — chói (halation) với loạn thị | TELL | nền `#121212` + chữ `#E4E4E7` |
+| **Font mặc định na ná nhau** — bộ Inter/Roboto/Space Grotesk theo phản xạ, không chiến lược ghép cặp | TELL | cặp typeface có chủ đích gắn với thương hiệu (§3) |
+| **Tiêu đề chữ-gradient** — `background-clip: text` trên nền gradient | TELL | mực đặc / token thương hiệu — chữ gradient không có tương phản tính được, 1.4.3 có thể fail ngầm |
+| **Ảnh AI công nghiệp** — minh họa bóng nhựa quá đối xứng, blob gradient 3D, ảnh đội ngũ giả ánh sáng phi thực | TELL | ảnh sản phẩm thật hoặc hệ minh họa có chủ đích |
+| **Điều khiển chết** — link `href="#"`, CTA không nối vào đâu | TELL | mọi điều khiển làm đúng điều nó nói, hoặc ship dạng disabled kèm lý do |
 
 **Cấp 2 — bệnh UX & sản phẩm:**
 
 - **Mặc định bất khả tiếp cận** 🔒 — `<div onClick>` thay vì `<button>`, thiếu ARIA/bàn phím → HTML ngữ nghĩa (4.1.2).
-- **"AI slop" / na ná nhau** 📐 — áp "thử bỏ logo": có bị nhầm với đối thủ? → dựng hệ thương hiệu trước.
+- **"AI slop" / na ná nhau** 📐 — bộ khung template: hero căn giữa + lưới card bo tròn đều tăm tắp + dải logo + carousel lời chứng thực + bento-theo-mặc-định, dáng vẻ shadcn/Tailwind mặc định, theme tối viền glow "cao cấp" theo phản xạ. Áp "thử bỏ logo": có bị nhầm với đối thủ? → dựng hệ thương hiệu trước; dark mode là một theme, không phải mặc định.
 - **Nhồi chatbot** 📐 — gắn chat vào nơi thao tác trực tiếp nhanh hơn → UI tác vụ; chỉ dùng chat khi giúp diễn đạt ý định.
 - **Gắn tính năng AI cho có** 📐 — nút ✨ để tiếp thị → chỉ làm khi nhu cầu người dùng × thế mạnh AI (Google PAIR).
 - **Tự động hóa quá / mất kiểm soát** 🔒 — không undo/giám sát, thiên kiến tự động → giữ người trong vòng lặp, điều khiển toàn cục (MS HAX, HIG).
-- **Dark pattern tự phát** 🔒 — khẩn cấp giả / phí ẩn; ~37% thành phần TMĐT do AI tạo (arXiv 2502.13499) → kiểm toán + cấm.
-- **Nội dung bịa bị phát hành** 📐 — lorem ipsum, số liệu/thuật ngữ bịa → không phát hành placeholder; kiểm chứng.
+- **Dark pattern tự phát** 🔒 — khẩn cấp giả / phí ẩn; 55.8% trong 1K thành phần TMĐT do LLM tạo chứa ít nhất một dark pattern (arXiv 2502.13499 v2, "Deception at Scale", 2026) → kiểm toán + cấm.
+- **Nội dung bịa bị phát hành** 📐 — lorem ipsum, số liệu/thuật ngữ bịa, lời chứng thực hay dải logo "được tin dùng" tự chế → không phát hành placeholder hay bằng chứng xã hội bịa; kiểm chứng.
 - **Thiếu minh bạch AI** 🔒 — không tiết lộ / độ tin cậy / cách kiểm chứng → gắn nhãn AI, hiện nguồn + undo (HIG, PAIR, MS G11).
 
 **Khắc phục (ba tầng):**
@@ -285,12 +294,12 @@ Công cụ AI thường sinh hai loại lỗi, và cần biết bạn đang xử
 
 ## Nguồn (authoritative primary sources)
 
-- **W3C WCAG 2.2** — Recommendation, 2023-10-05 · https://www.w3.org/TR/WCAG22/
-- **W3C Design Tokens Format Module** (DTCG), v2025.10 · https://tr.designtokens.org/format/
+- **W3C WCAG 2.2** — Recommendation 2023-10-05, updated 2024-12-12; ISO/IEC 40500:2025 · https://www.w3.org/TR/WCAG22/
+- **W3C Design Tokens Format Module** (DTCG), v2025.10 (stable) · https://www.designtokens.org/TR/2025.10/format/
 - **Apple Human Interface Guidelines** · https://developer.apple.com/design/human-interface-guidelines/
 - **Google Material Design 3** · https://m3.material.io/ · Motion tokens: material-components-android (GitHub) `docs/theming/Motion.md`
 - **web.dev / Chrome — Core Web Vitals & INP** · https://web.dev/articles/vitals · "INP becomes a Core Web Vital on March 12" (2024-01-31)
-- **HTTP Archive Web Almanac 2024 — Performance** · https://almanac.httparchive.org/en/2024/performance
+- **HTTP Archive Web Almanac 2025 — Performance** · https://almanac.httparchive.org/en/2025/performance
 - **OKLCH / OKLab** — Björn Ottosson (2020) · https://bottosson.github.io/posts/oklab/ · APCA: https://git.apcacontrast.com/
 - **CSS Values and Units Level 4** (clamp/fluid) · https://www.w3.org/TR/css-values-4/
 - **Laws of UX** (Fitts, Hick, Miller, Doherty, Jakob, Tesler) · https://lawsofux.com/

@@ -10,4 +10,4 @@ third-party repository is worth more than any badge.
 
 | Project | How they use Norma | Link |
 |---------|--------------------|------|
-| Norma (this repo) | Dogfoods every rule; CI gates the reference site on its own linter + axe self-test | [index.html](index.html) |
+| Norma (this repo) | Dogfoods every statically checkable rule (agent-verified rules are enforced in review); CI gates the reference site on its own linter + axe self-test | [index.html](index.html) |

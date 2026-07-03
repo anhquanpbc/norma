@@ -41,26 +41,44 @@ sources and machine assertions lives in `standard/rules.json`.
 - **a11y.semantic-control** — interactive controls are `<button>`/`<a>`, not `<div onClick>` (4.1.2).
 - **a11y.emoji-icon** — no emoji as an interactive icon without a real text/aria label (1.1.1).
 - **a11y.img-alt** — every `<img>` has an `alt` (descriptive text, or `alt=""` if purely decorative) (1.1.1).
+- **a11y.control-name** — every `<button>`/`<a href>`/`[role=button]` has an accessible name: text, `aria-label`, or a descendant `img[alt]` — an icon-only SVG control without one is announced as just "button" (4.1.2).
+- **a11y.meta-viewport** — the viewport meta never blocks zoom: no `user-scalable=no`, no `maximum-scale` < 2 (1.4.4).
 - **i18n.html-lang** — set `<html lang>` so AT and translation tools pick the right language (WCAG 3.1.1); more under *Internationalization & theming* below.
+
+### Agent-verified mandates (🔒, `check: manual` — the linter cannot see these; you must)
+
+- **a11y.focus-not-obscured** — the element holding keyboard focus is never fully hidden under sticky bars or overlays (2.4.11).
+- **a11y.dragging-alternative** — every drag interaction (slider, reorder, swipe) has a visible single-pointer alternative (2.5.7).
+- **forms.redundant-entry** — never force re-entering information already provided in the same process; autofill or offer "same as above" (3.3.7).
+- **a11y.color-only-meaning** — never encode meaning in color alone; pair color with an icon, text or pattern (1.4.1).
 
 ## Anti-defaults — TELL (📐, actively avoid)
 
 Not compliance failures, but they erase brand distinctiveness and often *induce* a violation.
 
 - **antipattern.indigo-default** — no `#667eea → #764ba2` (indigo-500) default gradient; use brand tokens.
-  *(Tailwind's creator publicly apologized in 2025 for "every AI-generated UI being indigo.")*
+  *(Tailwind's creator publicly apologized in 2025 for the indigo-500 default "leading to every AI generated UI on earth also being indigo.")*
 - **antipattern.pure-dark-mode** — no pure `#000`/`#fff` dark mode; use `#121212` surface + `#E4E4E7` text.
 - **Halo / glow overuse** — neutral elevation scale, one light source; no stacked colored shadows.
-- **Glassmorphism by default** — at most 2–3 glass surfaces + a scrim, never everywhere.
+- **Glassmorphism by default** — at most 2–3 glass surfaces + a scrim, never everywhere (platform-native material like Apple's Liquid Glass is HIG-governed; decorative CSS glass is not).
+- **Default-font monoculture** — no reflex Inter/Roboto/Space Grotesk stack; choose a deliberate typeface pairing.
+- **Gradient-text headlines** — no `background-clip: text` gradient heroes; gradient text has no computable contrast.
+- **Stock-AI imagery** — no plastic AI illustrations, 3D gradient blobs, or fake team photos; real shots or a deliberate illustration system.
+- **antipattern.dead-href** — no `href="#"` / empty-href links wired to nothing; use a real destination or a `<button>`.
+- **antipattern.gradient-text** — no `background-clip:text` gradient headlines; gradient text has no computable contrast.
+- **a11y.no-positive-tabindex** — never `tabindex >= 1`; use `0`/`-1` and DOM order (WCAG 2.4.3).
+- **Dead controls** — no CTAs wired to nothing; every control does what it says.
+- **Dark-by-default** — dark mode is a theme, not a default; no glow-edged dark cards as a premium shortcut.
 - **tokens.color-only / tokens.spacing-scale** — no raw hex, no off-scale px; snap to the 8px scale.
 - **perf.img-dimensions** — set `width`/`height` (or `aspect-ratio`) on every `<img>` to prevent CLS.
+- **responsive.viewport-meta** — full documents include `<meta name="viewport" content="width=device-width, initial-scale=1">`.
 - **a11y.heading-order** — never skip a heading level (`h2 → h4`); descend one at a time so the screen-reader outline stays correct (WCAG 1.3.1, axe best-practice).
 
 ## Internationalization & theming
 
 - **i18n.html-lang** (🔒) — set `<html lang>` (WCAG 3.1.1); add `lang` to inline foreign-language runs (3.1.2).
 - **i18n.logical-properties** (📐) — prefer logical CSS (`margin-inline`, `padding-inline`, `text-align:start/end`) over physical `*-left/right`, `text-align:left/right`, `float:left/right`, so RTL and vertical writing modes work.
-- **theme.color-scheme** (📐) — declare `color-scheme` so UA-rendered controls/scrollbars match; a dark theme must remap the **semantic token tier** (see `standard/tokens.tokens.json` `color.dark.*` + `$themes`) — near-black surfaces + off-white ink, never pure `#000`/`#fff` (**antipattern.pure-dark-mode**).
+- **theme.color-scheme** (📐) — declare `color-scheme` so UA-rendered controls/scrollbars match; a dark theme must remap the **semantic token tier** (see `standard/tokens.tokens.json` `color.dark.*` + `$extensions.org.norma.themes`) — near-black surfaces + off-white ink, never pure `#000`/`#fff` (**antipattern.pure-dark-mode**).
 
 ## Frontend-markup security
 

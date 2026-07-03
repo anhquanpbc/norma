@@ -17,5 +17,6 @@ Use tokens from `standard/tokens.tokens.json`. Color and spacing come from token
 - 📐 CONV `i18n.logical-properties` (warn) — Use logical (inline/block) CSS properties · [W3C CSS Logical Properties and Values L1](https://www.w3.org/TR/css-logical-1/)
 - 📐 CONV `theme.color-scheme` (warn) — Declare color-scheme · [W3C CSS Color Adjustment Module L1](https://www.w3.org/TR/css-color-adjust-1/)
 - 📐 CONV `tokens.color-only` (warn) — Color comes from tokens, not raw hex · Norma §1 Design Tokens
-- 📐 CONV `antipattern.indigo-default` (warn) — No default indigo/purple gradient · Norma §14 AI-era Anti-patterns (TELL)
+- 📐 CONV `antipattern.indigo-default` (warn) — No default indigo/purple gradient · [Norma §14 AI-era Anti-patterns (TELL); Adam Wathan's 2025 indigo apology](https://x.com/adamwathan/status/1953510802159219096)
 - 📐 CONV `antipattern.pure-dark-mode` (warn) — No pure #000/#fff dark mode · Norma §14 AI-era Anti-patterns (TELL)
+- 📐 CONV `antipattern.gradient-text` (warn) — No gradient-clipped text headlines · Norma §14 AI-era Anti-patterns (TELL)

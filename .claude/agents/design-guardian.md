@@ -43,26 +43,44 @@ sources and machine assertions lives in `standard/rules.json`.
 - **a11y.semantic-control** — interactive controls are `<button>`/`<a>`, not `<div onClick>` (4.1.2).
 - **a11y.emoji-icon** — no emoji as an interactive icon without a real text/aria label (1.1.1).
 - **a11y.img-alt** — every `<img>` has an `alt` (descriptive text, or `alt=""` if purely decorative) (1.1.1).
+- **a11y.control-name** — every `<button>`/`<a href>`/`[role=button]` has an accessible name: text, `aria-label`, or a descendant `img[alt]` — an icon-only SVG control without one is announced as just "button" (4.1.2).
+- **a11y.meta-viewport** — the viewport meta never blocks zoom: no `user-scalable=no`, no `maximum-scale` < 2 (1.4.4).
 - **i18n.html-lang** — set `<html lang>` so AT and translation tools pick the right language (WCAG 3.1.1); more under *Internationalization & theming* below.
+
+### Agent-verified mandates (🔒, `check: manual` — the linter cannot see these; you must)
+
+- **a11y.focus-not-obscured** — the element holding keyboard focus is never fully hidden under sticky bars or overlays (2.4.11).
+- **a11y.dragging-alternative** — every drag interaction (slider, reorder, swipe) has a visible single-pointer alternative (2.5.7).
+- **forms.redundant-entry** — never force re-entering information already provided in the same process; autofill or offer "same as above" (3.3.7).
+- **a11y.color-only-meaning** — never encode meaning in color alone; pair color with an icon, text or pattern (1.4.1).
 
 ## Anti-defaults — TELL (📐, actively avoid)
 
 Not compliance failures, but they erase brand distinctiveness and often *induce* a violation.
 
 - **antipattern.indigo-default** — no `#667eea → #764ba2` (indigo-500) default gradient; use brand tokens.
-  *(Tailwind's creator publicly apologized in 2025 for "every AI-generated UI being indigo.")*
+  *(Tailwind's creator publicly apologized in 2025 for the indigo-500 default "leading to every AI generated UI on earth also being indigo.")*
 - **antipattern.pure-dark-mode** — no pure `#000`/`#fff` dark mode; use `#121212` surface + `#E4E4E7` text.
 - **Halo / glow overuse** — neutral elevation scale, one light source; no stacked colored shadows.
-- **Glassmorphism by default** — at most 2–3 glass surfaces + a scrim, never everywhere.
+- **Glassmorphism by default** — at most 2–3 glass surfaces + a scrim, never everywhere (platform-native material like Apple's Liquid Glass is HIG-governed; decorative CSS glass is not).
+- **Default-font monoculture** — no reflex Inter/Roboto/Space Grotesk stack; choose a deliberate typeface pairing.
+- **Gradient-text headlines** — no `background-clip: text` gradient heroes; gradient text has no computable contrast.
+- **Stock-AI imagery** — no plastic AI illustrations, 3D gradient blobs, or fake team photos; real shots or a deliberate illustration system.
+- **antipattern.dead-href** — no `href="#"` / empty-href links wired to nothing; use a real destination or a `<button>`.
+- **antipattern.gradient-text** — no `background-clip:text` gradient headlines; gradient text has no computable contrast.
+- **a11y.no-positive-tabindex** — never `tabindex >= 1`; use `0`/`-1` and DOM order (WCAG 2.4.3).
+- **Dead controls** — no CTAs wired to nothing; every control does what it says.
+- **Dark-by-default** — dark mode is a theme, not a default; no glow-edged dark cards as a premium shortcut.
 - **tokens.color-only / tokens.spacing-scale** — no raw hex, no off-scale px; snap to the 8px scale.
 - **perf.img-dimensions** — set `width`/`height` (or `aspect-ratio`) on every `<img>` to prevent CLS.
+- **responsive.viewport-meta** — full documents include `<meta name="viewport" content="width=device-width, initial-scale=1">`.
 - **a11y.heading-order** — never skip a heading level (`h2 → h4`); descend one at a time so the screen-reader outline stays correct (WCAG 1.3.1, axe best-practice).
 
 ## Internationalization & theming
 
 - **i18n.html-lang** (🔒) — set `<html lang>` (WCAG 3.1.1); add `lang` to inline foreign-language runs (3.1.2).
 - **i18n.logical-properties** (📐) — prefer logical CSS (`margin-inline`, `padding-inline`, `text-align:start/end`) over physical `*-left/right`, `text-align:left/right`, `float:left/right`, so RTL and vertical writing modes work.
-- **theme.color-scheme** (📐) — declare `color-scheme` so UA-rendered controls/scrollbars match; a dark theme must remap the **semantic token tier** (see `standard/tokens.tokens.json` `color.dark.*` + `$themes`) — near-black surfaces + off-white ink, never pure `#000`/`#fff` (**antipattern.pure-dark-mode**).
+- **theme.color-scheme** (📐) — declare `color-scheme` so UA-rendered controls/scrollbars match; a dark theme must remap the **semantic token tier** (see `standard/tokens.tokens.json` `color.dark.*` + `$extensions.org.norma.themes`) — near-black surfaces + off-white ink, never pure `#000`/`#fff` (**antipattern.pure-dark-mode**).
 
 ## Frontend-markup security
 
@@ -94,7 +112,7 @@ Not compliance failures, but they erase brand distinctiveness and often *induce*
 npx @norma/design-lint "**/*.{html,css}"     # gate SPEC violations; exits non-zero on error-severity
 ```
 
-## Rule index (generated from standard/rules.json v1.0.0)
+## Rule index (generated from standard/rules.json v1.1.0)
 
 - 🔒 SPEC `color.contrast.text` (error) — Body text contrast >= 4.5:1 · [WCAG 2.2 SC 1.4.3 Contrast (Minimum)](https://www.w3.org/TR/WCAG22/#contrast-minimum)
 - 🔒 SPEC `color.contrast.large-ui` (error) — Large text & UI contrast >= 3:1 · [WCAG 2.2 SC 1.4.3 / 1.4.11 Non-text Contrast](https://www.w3.org/TR/WCAG22/#non-text-contrast)
@@ -106,15 +124,25 @@ npx @norma/design-lint "**/*.{html,css}"     # gate SPEC violations; exits non-z
 - 🔒 SPEC `a11y.emoji-icon` (warn) — No emoji as interactive icons · [WCAG 2.2 SC 1.1.1 Non-text Content](https://www.w3.org/TR/WCAG22/#non-text-content)
 - 🔒 SPEC `a11y.img-alt` (error) — Every <img> has an alt attribute · [WCAG 2.2 SC 1.1.1 Non-text Content](https://www.w3.org/TR/WCAG22/#non-text-content)
 - 📐 CONV `a11y.heading-order` (warn) — Headings don't skip a level · [WCAG 2.2 SC 1.3.1 Info and Relationships](https://www.w3.org/TR/WCAG22/#info-and-relationships)
+- 🔒 SPEC `a11y.meta-viewport` (error) — Viewport meta must not block zoom · [WCAG 2.2 SC 1.4.4 Resize Text](https://www.w3.org/TR/WCAG22/#resize-text)
+- 📐 CONV `responsive.viewport-meta` (warn) — Full documents declare a viewport meta · Norma §10–11 Responsive (mobile-first)
+- 🔒 SPEC `a11y.control-name` (error) — Every control has an accessible name · [WCAG 2.2 SC 4.1.2 Name, Role, Value](https://www.w3.org/TR/WCAG22/#name-role-value)
+- 🔒 SPEC `a11y.focus-not-obscured` (warn · manual, agent-verified) — Focused element not fully hidden · [WCAG 2.2 SC 2.4.11 Focus Not Obscured (Minimum)](https://www.w3.org/TR/WCAG22/#focus-not-obscured-minimum)
+- 🔒 SPEC `a11y.dragging-alternative` (warn · manual, agent-verified) — Every drag action has a non-drag alternative · [WCAG 2.2 SC 2.5.7 Dragging Movements](https://www.w3.org/TR/WCAG22/#dragging-movements)
+- 🔒 SPEC `forms.redundant-entry` (warn · manual, agent-verified) — Never force re-entering known info · [WCAG 2.2 SC 3.3.7 Redundant Entry](https://www.w3.org/TR/WCAG22/#redundant-entry)
+- 🔒 SPEC `a11y.color-only-meaning` (warn · manual, agent-verified) — Never encode meaning in color alone · [WCAG 2.2 SC 1.4.1 Use of Color](https://www.w3.org/TR/WCAG22/#use-of-color)
 - 📐 CONV `perf.img-dimensions` (warn) — Images set width/height or aspect-ratio · [web.dev — Optimize CLS](https://web.dev/articles/cls)
 - 🔒 SPEC `i18n.html-lang` (error) — <html> declares a lang · [WCAG 2.2 SC 3.1.1 Language of Page](https://www.w3.org/TR/WCAG22/#language-of-page)
 - 📐 CONV `i18n.logical-properties` (warn) — Use logical (inline/block) CSS properties · [W3C CSS Logical Properties and Values L1](https://www.w3.org/TR/css-logical-1/)
 - 📐 CONV `theme.color-scheme` (warn) — Declare color-scheme · [W3C CSS Color Adjustment Module L1](https://www.w3.org/TR/css-color-adjust-1/)
 - 📐 CONV `tokens.color-only` (warn) — Color comes from tokens, not raw hex · Norma §1 Design Tokens
-- 📐 CONV `tokens.spacing-scale` (off) — Spacing snaps to the 8px scale · Norma §2 Spacing & Grid
-- 📐 CONV `antipattern.indigo-default` (warn) — No default indigo/purple gradient · Norma §14 AI-era Anti-patterns (TELL)
+- 📐 CONV `tokens.spacing-scale` (off · manual, agent-verified) — Spacing snaps to the 8px scale · Norma §2 Spacing & Grid
+- 📐 CONV `antipattern.indigo-default` (warn) — No default indigo/purple gradient · [Norma §14 AI-era Anti-patterns (TELL); Adam Wathan's 2025 indigo apology](https://x.com/adamwathan/status/1953510802159219096)
 - 📐 CONV `antipattern.pure-dark-mode` (warn) — No pure #000/#fff dark mode · Norma §14 AI-era Anti-patterns (TELL)
+- 📐 CONV `antipattern.dead-href` (warn) — No dead links (href="#" or empty) · Norma §14 AI-era Anti-patterns (TELL)
+- 📐 CONV `antipattern.gradient-text` (warn) — No gradient-clipped text headlines · Norma §14 AI-era Anti-patterns (TELL)
+- 📐 CONV `a11y.no-positive-tabindex` (warn) — No positive tabindex (>= 1) · [WCAG 2.2 SC 2.4.3 Focus Order](https://www.w3.org/TR/WCAG22/#focus-order)
 - 📐 CONV `security.external-rel` (warn) — target=_blank has rel=noopener · [WHATWG HTML — noopener link type (OWASP: reverse tabnabbing)](https://html.spec.whatwg.org/multipage/links.html#link-type-noopener)
 - 📐 CONV `security.sri` (warn) — External subresources use SRI · [W3C Subresource Integrity](https://www.w3.org/TR/SRI/)
-- 📐 CONV `type.body-min` (off) — Body text >= 16px · Norma §3 Typography
-- 📐 CONV `perf.inp-budget` (off) — INP budget <= 200ms · [web.dev / Chrome — Core Web Vitals (INP)](https://web.dev/articles/inp)
+- 📐 CONV `type.body-min` (off · manual, agent-verified) — Body text >= 16px · Norma §3 Typography
+- 📐 CONV `perf.inp-budget` (off · manual, agent-verified) — INP budget <= 200ms · [web.dev / Chrome — Core Web Vitals (INP)](https://web.dev/articles/inp)
