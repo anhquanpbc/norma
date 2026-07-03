@@ -47,6 +47,16 @@ Phân tầng này cho phép đổi theme (sáng/tối, thương hiệu A/B) bằ
 
 **Công cụ 📐:** Style Dictionary (hỗ trợ DTCG từ v4), Tokens Studio for Figma (bật định dạng "W3C DTCG"), Terrazzo, Figma Variables, Supernova, zeroheight, Penpot. Kiểm tra bằng DTCG JSON Schema trước khi phát hành.
 
+### Các thang token cốt lõi
+
+Token hay bị quên nhất là những cái không có "hook thương hiệu" rõ ràng. Định nghĩa các thang này một lần để bóng, bo góc và trạng thái tương tác trở nên hệ thống — không phải làm lẻ từng component (điều này chặn tận gốc các "dấu hiệu" *halo/glow* và *bo góc lẫn lộn* ở §14).
+
+**Thang elevation / bóng 📐:** thang 0–5, một nguồn sáng, đổ **xuống dưới**; y-offset và blur tăng theo cấp (blur ≈ 2× offset), mỗi cấp một **bóng mềm + một đường hairline** — không chồng bóng *màu*. Thang xấp xỉ (theme sáng): `0` không · `1` `0 1px 2px rgb(0 0 0/.06)` (card) · `2` `0 2px 4px /.08` (thanh nổi/dính) · `3` `0 4px 8px /.10` · `4` `0 8px 16px /.12` (dropdown/popover) · `5` `0 16px 32px /.16` (modal). Gán mỗi component một cấp (card 1, thanh dính 2, dropdown 4, modal 5). **Trên nền tối, bóng gần như không thấy — thể hiện độ nổi bằng bề mặt sáng hơn / lớp phủ tông** (Material dp→độ mờ overlay), xem §4.
+
+**Thang bo góc & viền 📐:** bo góc `none 0 · xs 2 · sm 4 · md 8 · lg 12 · xl 16 · 2xl 24 · full 9999px`; độ dày viền `1 / 2 / 4px`. **Quy tắc bo góc lồng nhau:** bán kính góc trong = bán kính ngoài − khoảng cách giữa chúng (`trong = ngoài − padding`), để nút bên trong card không bị "bóp". Chọn một "cá tính" bo góc cho cả hệ và giữ nó; bo góc lộn xộn là dấu hiệu AI.
+
+**Độ mờ state-layer tương tác 📐 (Material 3, dạng token):** biểu diễn hover/focus/pressed bằng lớp phủ mờ của màu foreground ở độ mờ cố định để mọi component phản ứng như nhau — **hover 8% · focus 10% · pressed 10% · dragged 16%**; **disabled = nội dung 38% / container 12%**. Selected/activated thêm lớp riêng. Token hoá các giá trị này giữ `:hover`/`:focus-visible`/`:active`/`[disabled]` không lệch giữa các component (xem danh sách trạng thái ở §9).
+
 ---
 
 ## 2. Khoảng cách, Lưới & Bố cục
@@ -217,7 +227,31 @@ Thang khoảng cách khuyến nghị (token, px): **0 · 4 · 8 · 12 · 16 · 2
 
 **Thông số phổ biến 📐:** Nút cao 40–48px, padding ngang ~16px, rộng tối thiểu ~64–88px, phân cấp chính/phụ/ba rõ ràng, loading vô hiệu + hiện spinner, nhãn theo hành động. Input ≥44–56px, nhãn hiển thị cố định phía trên, chữ trợ giúp/lỗi phía dưới, không dùng placeholder làm nhãn. Modal: bẫy focus, khôi phục focus khi đóng, `Esc` để đóng, có backdrop, một lối đóng rõ ràng, tránh chồng modal. Ưu tiên phần tử `<dialog>` gốc và Popover API (Baseline 2025) — top layer cho sẵn quản lý focus, Esc, backdrop, light-dismiss; tự chế overlay `<div>` mới là phản mẫu. Định vị tooltip/menu bằng CSS anchor positioning ở dạng cải tiến lũy tiến (Chrome/Edge, Firefox 151+; Safari chưa hỗ trợ — chưa Baseline). Card: padding trong 16–24px, khoảng cách giữa các card 16–24px.
 
-**Hệ thống thiết kế tham khảo 📐:** Material 3, Apple HIG, IBM Carbon, Shopify Polaris, Ant Design, Atlassian, Salesforce Lightning.
+Nối hover/focus/pressed/disabled với **token độ mờ state-layer** ở §1 để trạng thái không lệch giữa các component.
+
+### Widget patterns (WAI-ARIA APG) 🔒
+
+Widget tương tác là nơi UI do AI tạo hỏng a11y nhất (`<div>`-làm-nút, không có mô hình bàn phím, sai role). Dựng theo **ARIA Authoring Practices Guide** — mỗi widget có role, trạng thái và hợp đồng bàn phím bắt buộc (bảng đầy đủ ở khối tiếng Anh). Ba quy tắc AI hay phá:
+
+1. **Ưu tiên native.** `<select>`/`<datalist>`, `<details>`/`<summary>`, `<dialog>`, `<input type=…>` hơn mọi ARIA tự chế — combobox là widget bị làm sai nhiều nhất. Chỉ dùng ARIA khi không có phần tử native phù hợp.
+2. **Mỗi composite một tab-stop.** Một tablist / menu / listbox / grid là **một** Tab stop; di chuyển *bên trong* bằng phím mũi tên qua **roving `tabindex`** (chỉ con đang active là `tabindex="0"`, còn lại `-1`) hoặc **`aria-activedescendant`** — không đặt `tabindex="0"` trên mọi con.
+3. **Mọi điều khiển có tên tiếp cận** (kể cả nút chỉ-icon — 1.1.1 / 4.1.2, lint qua `a11y.control-name`).
+
+Thông báo thay đổi động bằng `aria-live` (`polite`/`assertive`) hoặc `role=status`/`alert` — **WCAG 4.1.3 Status Messages (AA)**, tức cập nhật mà không dời focus.
+
+### Thiết kế mọi trạng thái 🔒/📐
+
+Danh sách trạng thái ở trên là micro-state của từng *điều khiển*; một **view chạy theo dữ liệu** còn phải thiết kế cả **vòng đời** — AI gần như luôn chỉ ship đường "đã tải/hạnh phúc", nên sản phẩm vỡ ngay khi gặp dữ liệu thật (hoặc không có dữ liệu):
+
+- **Rỗng (empty)** — phân biệt bốn loại: **lần đầu** (giải thích giá trị + một CTA chính), **người dùng đã xoá**, **không kết quả** (mời reset/mở rộng — *không* giống lần đầu), **rỗng do lỗi**. Màn hình trắng là lỗi.
+- **Đang tải** — **skeleton khớp bố cục cuối** (đặt sẵn chỗ → không CLS), không phải spinner giữa màn trơ; dùng `aria-busy`.
+- **Một phần / lạc quan (optimistic)** — phản ánh hành động trước khi server xác nhận; hoàn tác nhìn thấy khi thất bại.
+- **Lỗi** — nêu nguyên nhân **và** cách phục hồi/thử lại; không ngõ cụt hay "Oops" trơ.
+- **Offline / cũ**, **thành công/xác nhận**, **không có quyền (403)**, và **cắt danh sách dài** (lộ giá trị đầy đủ).
+
+Thông báo chuyển trạng thái qua **4.1.3 Status Messages** (vùng `role=status`/`aria-live`) để tới người dùng trình đọc màn hình mà không cướp focus.
+
+**Hệ thống thiết kế tham khảo 📐:** Material 3, Apple HIG, IBM Carbon, Shopify Polaris, Ant Design, Atlassian, Salesforce Lightning, cùng GOV.UK Design System và U.S. Web Design System (USWDS) dựa trên bằng chứng.
 
 **Atomic Design (Brad Frost) 📐:** atom → molecule → organism → template → page. Ánh xạ đúng với ba tầng token primitive/semantic/component.
 
@@ -313,6 +347,7 @@ Công cụ AI thường sinh hai loại lỗi, và cần biết bạn đang xử
 ## Nguồn (authoritative primary sources)
 
 - **W3C WCAG 2.2** — Recommendation 2023-10-05, updated 2024-12-12; ISO/IEC 40500:2025 · https://www.w3.org/TR/WCAG22/
+- **W3C WAI-ARIA Authoring Practices Guide (APG)** — role, trạng thái & mẫu bàn phím của widget · https://www.w3.org/WAI/ARIA/apg/
 - **W3C Design Tokens Format Module** (DTCG), v2025.10 (stable) · https://www.designtokens.org/TR/2025.10/format/
 - **Apple Human Interface Guidelines** · https://developer.apple.com/design/human-interface-guidelines/
 - **Google Material Design 3** · https://m3.material.io/ · Motion tokens: material-components-android (GitHub) `docs/theming/Motion.md`

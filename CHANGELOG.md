@@ -8,6 +8,19 @@ All notable changes to this project are documented here. The format is based on
 
 ### Added
 
+- **Content-completeness pass, batch 2 — the three P0 gaps beyond layout** (§1 + §9 + agent spec + site).
+  **§1 core token scales**: an elevation/shadow ladder (0–5, one light source, one soft shadow per level,
+  never stacked colored glows; lighter-surface elevation on dark), a radius scale (`0·2·4·8·12·16·24·full`)
+  + border-width tokens + the nested-radius rule (`inner = outer − padding`), and interaction state-layer
+  opacities as tokens (hover 8% / focus 10% / pressed 10% / dragged 16%; disabled 38%/12%) — §1 *named*
+  elevation/radius as token types but never gave values; this closes the §14 halo/glow + mixed-radii tells
+  at the root. **§9 ARIA APG widget catalog**: a per-widget role / state / keyboard table (tabs, menu,
+  combobox, listbox, dialog, switch, slider, tree, grid, breadcrumb, carousel, …) plus the three rules AI
+  breaks (native-first `<select>`, one-tab-stop composites via roving `tabindex`/`aria-activedescendant`,
+  accessible name on every control) and 4.1.3 status messages; **WAI-ARIA APG added to Sources**.
+  **§9 "Design every state"**: the view lifecycle — empty (first-run vs no-results), loading (a skeleton
+  matching the layout, not a spinner), error (cause + recovery), offline/optimistic/success/403/truncation.
+  Site adds Widget-patterns, Design-every-state, and Core-token-scales cards.
 - **§2 gains a full "Layout & composition" body** (EN + VI + site + agent spec). The section was titled
   "Spacing, Grid & Layout" but gave layout a single sentence; it now covers the engine choice (Grid for
   2-D, Flexbox for 1-D), Grid mechanics incl. the RAM technique

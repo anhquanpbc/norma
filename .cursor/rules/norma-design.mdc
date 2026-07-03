@@ -18,6 +18,9 @@ the aesthetic "tells" that mark machine-generated work.
    `standard/tokens.tokens.json`.
 3. **Accessible by construction.** Semantic HTML first (`<button>`/`<a>`, never `<div onClick>`), one
    clean `:focus-visible` ring, real `<label>`s, honored `prefers-reduced-motion`.
+   **Widgets follow the ARIA APG** (see REFERENCE §9): native first (`<select>`/`<details>`/`<dialog>` before hand-rolled ARIA — the combobox is the most-botched); a composite is **one** tab stop (roving `tabindex` or `aria-activedescendant`, never `tabindex=0` on every child); announce dynamic changes via `role=status`/`aria-live` (4.1.3).
+   **Design every state**, not just the happy path: empty (first-run vs no-results), loading (a skeleton matching the layout, not a spinner), error (cause + recovery), offline, success — a blank/dead-end screen is a defect.
+   **Use the core token scales** (REFERENCE §1): the elevation ladder (one soft shadow per level, never stacked colored glows), the radius scale + nested-radius rule, and the interaction state-layer opacities — don't invent per-component shadows/radii/hover tints.
 4. **Avoid the tells.** No default indigo/purple gradient, no glow/halo stacking, no glassmorphism by
    default, no pure `#000`/`#fff` dark mode, no emoji-as-icons.
    **Compose layouts deliberately** (see REFERENCE §2): Grid for 2-D, Flexbox for 1-D, `gap` not margin
