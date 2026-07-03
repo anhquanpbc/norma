@@ -1,0 +1,31 @@
+# Copy this into your project's .github/workflows/ to gate CI on the Norma standard.
+# It fails the build on any error-severity finding (contrast, focus, labels, semantic roles,
+# accessible names, viewport zoom-blocking, …). Warnings are reported but don't fail.
+name: Design lint (Norma)
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  norma:
+    name: Norma design lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # --- Option A: the reusable action (works today; builds Norma from its checkout) ---
+      - uses: anhquanpbc/norma@v1
+        with:
+          globs: "**/*.{html,htm,css}"   # narrow to e.g. "src/**/*.{html,css}"
+          lang: en                        # or vi
+          format: stylish                 # or sarif for GitHub code scanning
+
+      # --- Option B: once @norma/design-lint is on npm, drop the action and run directly ---
+      # - uses: actions/setup-node@v4
+      #   with: { node-version: 22 }
+      # - run: npx @norma/design-lint "**/*.{html,htm,css}"

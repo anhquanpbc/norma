@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Norma starter — a page that lints clean</title>
+  <style>
+    /* Design decisions come from tokens; UA widgets follow the theme. */
+    :root {
+      color-scheme: light;
+      --ink: oklch(0.20 0.02 258);
+      --paper: oklch(0.98 0.004 250);
+      --accent: oklch(0.45 0.15 258); /* AA (>=4.5:1) as text on --paper */
+      --line: oklch(0.84 0.01 258);
+    }
+    body {
+      margin: 0;
+      padding-inline: clamp(1rem, 4vw, 3rem); /* logical properties, fluid space */
+      padding-block: 2rem;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: system-ui, "Segoe UI", Roboto, "Be Vietnam Pro", sans-serif;
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+    h1 { font-size: 1.953rem; line-height: 1.15; } /* modular scale, base 16 x 1.25 */
+    a { color: var(--accent); }
+    /* one clean focus ring — never outline:none without a replacement */
+    a:focus-visible, button:focus-visible, input:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+    label { display: block; font-weight: 600; margin-block-end: 4px; }
+    input {
+      min-height: 44px; /* comfortable target */
+      padding-inline: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+    .btn {
+      min-height: 44px;
+      padding-inline: 16px;
+      border: 0;
+      border-radius: 8px;
+      background: var(--accent);
+      color: #fff; /* white on the darker accent fill = AA */
+      font: inherit;
+      cursor: pointer;
+      transition: transform 150ms ease;
+    }
+    .btn:hover { transform: translateY(-1px); }
+    /* motion is opt-out for users who ask */
+    @media (prefers-reduced-motion: reduce) {
+      * { transition-duration: 0.001ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Your product, built to the standard</h1>
+    <p>
+      This tiny page passes <a href="https://github.com/anhquanpbc/norma">Norma</a>'s linter with zero
+      findings: semantic HTML, a real label, one focus ring, token-driven color, logical properties,
+      and honored reduced-motion.
+    </p>
+
+    <h2>Join the waitlist</h2>
+    <form>
+      <label for="email">Email address</label>
+      <input id="email" type="email" name="email" autocomplete="email" inputmode="email">
+      <p>
+        <button class="btn" type="submit">Notify me</button>
+      </p>
+    </form>
+  </main>
+</body>
+</html>

@@ -6,6 +6,16 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+### Added
+
+- **`examples/`** — a runnable adoption surface: `minimal-pass/` (a clean starter page that lints with
+  zero findings) and `catches-violations/` (an AI-scaffolded "before" page seeded with 11 rules' worth
+  of defects), plus a copy-paste `ci-recipe.yml`. A new **Examples & action self-test** CI job proves
+  both: the starter lints clean through the action, the broken page fails and trips its seeded rules.
+- **`action.yml`** — a reusable GitHub Action (`uses: anhquanpbc/norma@v1`) that builds the linter from
+  its own checkout, so a team can gate CI **today**, before `@norma/design-lint` is published to npm.
+  The README "Adopt in your project" now leads with it (EN + VI).
+
 ### Fixed
 
 - **Directory arguments no longer silently lint zero files.** `norma-design-lint src` (a directory,

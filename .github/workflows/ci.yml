@@ -60,6 +60,28 @@ jobs:
           path: playwright-report/
           retention-days: 7
 
+  examples:
+    name: Examples & action self-test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      # The reusable action must lint the clean starter with zero findings (exit 0).
+      # This exercises action.yml end-to-end AND proves examples/minimal-pass is clean.
+      - name: minimal-pass must lint clean via the action
+        uses: ./
+        with:
+          globs: examples/minimal-pass/index.html
+      # The seeded "before" page must fail (non-zero) and trip the rules it advertises.
+      - name: catches-violations must fail and hit the seeded rules
+        shell: bash
+        run: |
+          set +e
+          node packages/design-lint/dist/cli.js examples/catches-violations/index.html --format json > out.json
+          code=$?
+          set -e
+          test "$code" -ne 0 || { echo "expected a non-zero exit on the broken page"; exit 1; }
+          node -e 'const d=require("./out.json"); if(d.errorCount<1){console.error("expected error-severity findings");process.exit(1)} const ids=[...new Set(d.findings.map(f=>f.ruleId))]; const need=["color.contrast.text","a11y.semantic-control","a11y.form-label","antipattern.indigo-default","antipattern.dead-href"]; const miss=need.filter(r=>!ids.includes(r)); if(miss.length){console.error("missing seeded rules: "+miss.join(", "));process.exit(1)} console.log("OK — "+ids.length+" rules hit, "+d.errorCount+" errors")'
+
   dependency-review:
     name: Dependency review
     runs-on: ubuntu-latest

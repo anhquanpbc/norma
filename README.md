@@ -40,6 +40,8 @@ Norma turns the standard into three aligned artifacts so both people and agents 
 | [`agents/`](agents) | The canonical design-agent spec, projected into the surfaces below. |
 | [`AGENTS.md`](AGENTS.md) · [`CLAUDE.md`](CLAUDE.md) · [`.cursor/rules`](.cursor/rules) · [`.github/copilot-instructions.md`](.github/copilot-instructions.md) | **Generated** agent rule files (English), one per AI surface. |
 | [`packages/design-lint`](packages/design-lint) | `@norma/design-lint` — the CLI that enforces the standard. |
+| [`examples/`](examples) | A clean starter that lints green + a seeded "before" page that trips 11 rules, with a copy-paste [CI recipe](examples/ci-recipe.yml). |
+| [`action.yml`](action.yml) | A reusable GitHub Action (`uses: anhquanpbc/norma@v1`) — builds the linter from its checkout, so it gates CI even before the npm release. |
 
 ## Quick start
 
@@ -61,11 +63,21 @@ npx @norma/design-lint "**/*.{html,css}"      # add --lang vi for Vietnamese mes
 
 ## Adopt in your project
 
-**1. Gate CI with the linter** — fail the build on real violations:
+**1. Gate CI with the linter** — fail the build on real violations. The quickest path is the reusable
+GitHub Action, which builds Norma from its own checkout (so it works today, before the npm release):
 
-```bash
-npx @norma/design-lint "**/*.{html,css}"          # non-zero exit on any error-severity finding
+```yaml
+# .github/workflows/design-lint.yml
+- uses: actions/checkout@v4
+- uses: anhquanpbc/norma@v1
+  with:
+    globs: "src/**/*.{html,htm,css}"   # lang: en|vi · format: stylish|json|sarif
 ```
+
+A ready-to-copy workflow is in [`examples/ci-recipe.yml`](examples/ci-recipe.yml). Or run the CLI directly
+(once published: `npx @norma/design-lint "**/*.{html,css}"`; from source today: `npm ci && npm run build`
+then `node packages/design-lint/dist/cli.js "**/*.{html,css}"`) — non-zero exit on any error-severity finding.
+See [`examples/`](examples) for a clean starter and a broken "before" page.
 
 **2. Wire your AI coding agent** — copy the generated rule file for your tool into your repo:
 
