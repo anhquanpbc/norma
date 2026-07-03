@@ -515,7 +515,9 @@ const gradientText: Check = (ctx, rules) => {
   for (const block of ctx.css) {
     block.root.walkRules((rule) => {
       const d = decls(rule);
-      const clipsText = [d.get("background-clip"), d.get("-webkit-background-clip")].some((v) => (v ?? "").trim().toLowerCase() === "text");
+      // background-clip can be per-layer (e.g. "padding-box, text") — any layer clipping to text counts.
+      const clipsText = [d.get("background-clip"), d.get("-webkit-background-clip")]
+        .some((v) => (v ?? "").toLowerCase().split(",").some((layer) => layer.trim() === "text"));
       if (!clipsText) return;
       const bg = `${d.get("background") ?? ""} ${d.get("background-image") ?? ""}`;
       if (!/gradient\(/i.test(bg) || ruleDisabled(rule, r.id)) return;

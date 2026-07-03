@@ -501,6 +501,10 @@ describe("antipattern.gradient-text — background-clip:text over a gradient", (
     const f = lint(`.h{ background-image:radial-gradient(#0af,#f0a); background-clip:text; }`, "css");
     expect(ids(f)).toContain("antipattern.gradient-text");
   });
+  it("flags a per-layer background-clip (padding-box, text) over a gradient", () => {
+    const f = lint(`.h{ background-image:linear-gradient(#fff,#000); background-clip:padding-box, text; }`, "css");
+    expect(ids(f)).toContain("antipattern.gradient-text");
+  });
   it("passes background-clip:text without a gradient (solid fill)", () => {
     const f = lint(`.h{ background:#0af; background-clip:text; }`, "css");
     expect(ids(f)).not.toContain("antipattern.gradient-text");
