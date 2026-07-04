@@ -16,7 +16,7 @@
 #   rationale   { en, vi } why the rule exists.
 #   check       machine assertion consumed by @norma/design-lint. type: manual = agent-only, not auto-checked.
 #   remediation { en, vi } how to fix.
-version: "1.3.0"
+version: "1.4.0"
 rules:
   - id: color.contrast.text
     title: { en: "Body text contrast >= 4.5:1", vi: "Tương phản chữ thân >= 4.5:1" }
@@ -620,6 +620,54 @@ rules:
     remediation:
       en: "Add container-type: inline-size (and optionally container-name) to the parent you want to query against."
       vi: "Thêm container-type: inline-size (và container-name nếu cần) vào phần tử cha bạn muốn truy vấn."
+
+  - id: a11y.iframe-title
+    title: { en: "Every <iframe> has a title", vi: "Mọi <iframe> có title" }
+    domain: a11y
+    tag: CONV
+    severity: warn
+    source: "WCAG 2.2 SC 4.1.2 / 2.4.1; axe frame-title"
+    source_url: "https://www.w3.org/TR/WCAG22/#name-role-value"
+    rationale:
+      en: "An <iframe> with no title (or aria-label) is announced to screen-reader users as an unnamed frame, so they can't tell what it embeds. Decorative iframes should be aria-hidden instead."
+      vi: "<iframe> không có title (hay aria-label) được đọc cho người dùng trình đọc màn hình là frame vô danh, nên họ không biết nó nhúng gì. Iframe trang trí nên aria-hidden thay vì để trống."
+    check:
+      type: iframeTitle
+    remediation:
+      en: "Add a descriptive title (title=\"Location map\"); mark a purely decorative iframe aria-hidden=\"true\"."
+      vi: "Thêm title mô tả (title=\"Bản đồ vị trí\"); iframe chỉ trang trí thì đánh dấu aria-hidden=\"true\"."
+
+  - id: a11y.table-headers
+    title: { en: "Data tables have <th> headers", vi: "Bảng dữ liệu có <th>" }
+    domain: a11y
+    tag: CONV
+    severity: warn
+    source: "WCAG 2.2 SC 1.3.1 Info and Relationships (H51)"
+    source_url: "https://www.w3.org/TR/WCAG22/#info-and-relationships"
+    rationale:
+      en: "A data table with cells but no <th> gives screen-reader users a grid of values with no row/column names, so the relationships are lost. (Layout tables with role=presentation are exempt.)"
+      vi: "Bảng dữ liệu có ô nhưng không có <th> cho người dùng trình đọc màn hình một lưới giá trị không tên hàng/cột, làm mất quan hệ. (Bảng bố cục role=presentation được miễn.)"
+    check:
+      type: tableHeaders
+    remediation:
+      en: "Add <th scope=\"col\">/<th scope=\"row\"> header cells; if the table is purely layout, set role=\"presentation\"."
+      vi: "Thêm ô tiêu đề <th scope=\"col\">/<th scope=\"row\">; nếu bảng chỉ để bố cục, đặt role=\"presentation\"."
+
+  - id: a11y.duplicate-id-refs
+    title: { en: "Referenced ids are unique", vi: "id được tham chiếu là duy nhất" }
+    domain: a11y
+    tag: CONV
+    severity: warn
+    source: "WCAG 2.2 SC 1.3.1 / 4.1.2; axe duplicate-id-aria"
+    source_url: "https://www.w3.org/TR/WCAG22/#info-and-relationships"
+    rationale:
+      en: "An id targeted by a label[for] or aria-labelledby/describedby/controls must be unique — if it appears twice the association resolves to the first match only, so a control is mislabelled. (WCAG 2.2 removed the blanket 4.1.1 duplicate-id rule; this covers the id references that still matter.)"
+      vi: "Một id được label[for] hay aria-labelledby/describedby/controls trỏ tới phải duy nhất — nếu xuất hiện hai lần, liên kết chỉ giải về khớp đầu tiên nên điều khiển bị gán nhãn sai. (WCAG 2.2 đã bỏ rule 4.1.1 duplicate-id chung; đây phủ các tham chiếu id còn quan trọng.)"
+    check:
+      type: duplicateIdRefs
+    remediation:
+      en: "Make each referenced id unique (unique ids per control/label/region)."
+      vi: "Làm mỗi id được tham chiếu là duy nhất (id riêng cho từng control/label/vùng)."
 
   - id: security.external-rel
     title: { en: "target=_blank has rel=noopener", vi: "target=_blank có rel=noopener" }

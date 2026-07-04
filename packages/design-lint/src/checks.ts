@@ -766,9 +766,66 @@ const containerQuery: Check = (ctx, rules) => {
     "Dùng @container nhưng không phần tử nào khai báo container-type — container query không bao giờ khớp.")];
 };
 
+const iframeTitle: Check = (ctx, rules) => {
+  if (!ctx.dom) return [];
+  const r = rules[0];
+  const out: Finding[] = [];
+  ctx.dom.querySelectorAll("iframe").forEach((el) => {
+    if (el.getAttribute("aria-hidden") === "true" || el.hasAttribute("hidden") || elDisabled(el, r.id)) return;
+    if (nonEmptyAttr(el, "title") || nonEmptyAttr(el, "aria-label") || nonEmptyAttr(el, "aria-labelledby")) return;
+    out.push(mk(ctx, r, elementLine(ctx, el),
+      "<iframe> has no title — screen readers announce it as an unnamed frame (WCAG 4.1.2).",
+      "<iframe> không có title — trình đọc màn hình đọc là frame vô danh (WCAG 4.1.2)."));
+  });
+  return out;
+};
+
+const tableHeaders: Check = (ctx, rules) => {
+  if (!ctx.dom) return [];
+  const r = rules[0];
+  const out: Finding[] = [];
+  ctx.dom.querySelectorAll("table").forEach((el) => {
+    const role = (el.getAttribute("role") ?? "").toLowerCase();
+    if (role === "presentation" || role === "none" || elDisabled(el, r.id)) return; // layout tables exempt
+    if (el.querySelectorAll("td").length === 0 || el.querySelectorAll("th").length > 0) return; // no data cells, or has headers
+    out.push(mk(ctx, r, elementLine(ctx, el),
+      "<table> has data cells but no <th> — add header cells (with scope) so the data is navigable (1.3.1).",
+      "<table> có ô dữ liệu nhưng không có <th> — thêm ô tiêu đề (kèm scope) để dữ liệu điều hướng được (1.3.1)."));
+  });
+  return out;
+};
+
+const duplicateIdRefs: Check = (ctx, rules) => {
+  if (!ctx.dom) return [];
+  const r = rules[0];
+  const referenced = new Set<string>();
+  ctx.dom.querySelectorAll("label[for]").forEach((l) => { const v = l.getAttribute("for"); if (v) referenced.add(v); });
+  for (const attr of ["aria-labelledby", "aria-describedby", "aria-controls"]) {
+    ctx.dom.querySelectorAll(`[${attr}]`).forEach((el) => {
+      (el.getAttribute(attr) ?? "").trim().split(/\s+/).forEach((id) => { if (id) referenced.add(id); });
+    });
+  }
+  if (referenced.size === 0) return [];
+  const byId = new Map<string, HTMLElement[]>();
+  ctx.dom.querySelectorAll("[id]").forEach((el) => {
+    const id = el.getAttribute("id");
+    if (id) (byId.get(id) ?? byId.set(id, []).get(id)!).push(el);
+  });
+  const out: Finding[] = [];
+  for (const id of referenced) {
+    const els = byId.get(id);
+    if (!els || els.length < 2 || elDisabled(els[1], r.id)) continue;
+    out.push(mk(ctx, r, elementLine(ctx, els[1]),
+      `id="${id}" is referenced by a label/aria attribute but appears ${els.length} times — the association is ambiguous.`,
+      `id="${id}" được tham chiếu bởi label/aria nhưng xuất hiện ${els.length} lần — liên kết mơ hồ.`));
+  }
+  return out;
+};
+
 export const CHECKS: Record<string, Check> = {
   contrast, focusRing, reducedMotion, forbiddenValue, formLabel, semanticControl, emojiIcon, imgDimensions, imgAlt, targetSize,
   headingOrder, htmlLang, logicalProperties, colorScheme, colorTokenOnly, externalRel, sri,
   metaViewport, viewportPresence, controlName, deadHref, gradientText, positiveTabindex, langValid,
   landmarkMain, singleH1, fieldsetGroup, genericLinkText, focusForcedColors, zindexScale, containerQuery,
+  iframeTitle, tableHeaders, duplicateIdRefs,
 };

@@ -30,5 +30,8 @@ real `<label>`. Touch targets ≥ 24 CSS px. Set `width`/`height` on images. No 
 - 📐 CONV `a11y.single-h1` (warn) — Exactly one <h1> per page · [WCAG 2.2 SC 1.3.1 / 2.4.6; axe page-has-heading-one](https://www.w3.org/TR/WCAG22/#headings-and-labels)
 - 📐 CONV `forms.fieldset-group` (warn) — Group radios/checkboxes in a fieldset · [WCAG 2.2 SC 1.3.1 Info and Relationships (H71)](https://www.w3.org/TR/WCAG22/#info-and-relationships)
 - 📐 CONV `a11y.generic-link-text` (warn) — No non-descriptive link/button text · [WCAG 2.2 SC 2.4.4 Link Purpose (In Context)](https://www.w3.org/TR/WCAG22/#link-purpose-in-context)
+- 📐 CONV `a11y.iframe-title` (warn) — Every <iframe> has a title · [WCAG 2.2 SC 4.1.2 / 2.4.1; axe frame-title](https://www.w3.org/TR/WCAG22/#name-role-value)
+- 📐 CONV `a11y.table-headers` (warn) — Data tables have <th> headers · [WCAG 2.2 SC 1.3.1 Info and Relationships (H51)](https://www.w3.org/TR/WCAG22/#info-and-relationships)
+- 📐 CONV `a11y.duplicate-id-refs` (warn) — Referenced ids are unique · [WCAG 2.2 SC 1.3.1 / 4.1.2; axe duplicate-id-aria](https://www.w3.org/TR/WCAG22/#info-and-relationships)
 - 📐 CONV `security.external-rel` (warn) — target=_blank has rel=noopener · [WHATWG HTML — noopener link type (OWASP: reverse tabnabbing)](https://html.spec.whatwg.org/multipage/links.html#link-type-noopener)
 - 📐 CONV `security.sri` (warn) — External subresources use SRI · [W3C Subresource Integrity](https://www.w3.org/TR/SRI/)
