@@ -8,6 +8,21 @@ All notable changes to this project are documented here. The format is based on
 
 Nothing yet.
 
+## [1.6.0] — 2026-07-04
+
+### Added
+
+- **Technical-SEO layer (§5) — the front-end/markup surface of SEO.** REFERENCE (EN+VI) + a new site card
+  cover: crawlable-is-accessible (the SEO and a11y surfaces are the *same DOM* — one `<h1>`, real
+  `<a href>`, descriptive link text, `alt`, `<html lang>` — all already linted); document metadata
+  (unique `<title>`, meta description, one canonical); Open Graph + `twitter:card`; JSON-LD structured
+  data; crawl directives (`robots` meta / `robots.txt` / `sitemap.xml`, never ship a staging `noindex`);
+  `hreflang` tied to §3 BCP-47; and CWV/mobile as ranking signals. Keyword/link/content strategy is
+  explicitly **out of scope** for a design standard. **3 new rules (catalog 45→48):** `a11y.document-title`
+  (a non-empty `<title>` — WCAG 2.4.2 Level A *and* the top SEO signal), `seo.meta-description` (present),
+  `seo.canonical` (at most one). All CONV/warn, full-document scoped, low-FP. The reference site now
+  dogfoods a `rel=canonical` + a JSON-LD `TechArticle` block (practising what it documents).
+
 ## [1.5.0] — 2026-07-04
 
 ### Added

@@ -44,7 +44,14 @@ These structural/enforcement rules back the guidance above (📐 CONV, staticall
 `tokens.zindex-scale` (no raw `z-index >= 1000`; use the ladder), `responsive.container-query`
 (`@container` needs a `container-type`), `a11y.iframe-title` (every `<iframe>` has a title),
 `a11y.table-headers` (data tables have `<th>`), `a11y.duplicate-id-refs` (a label/aria-referenced id is unique),
-`responsive.viewport-fit` (`env(safe-area-inset-*)` needs `viewport-fit=cover`, else it's inert).
+`responsive.viewport-fit` (`env(safe-area-inset-*)` needs `viewport-fit=cover`, else it's inert),
+`a11y.document-title` (a non-empty `<title>`), `seo.meta-description` (a `<meta name="description">`),
+`seo.canonical` (at most one `<link rel="canonical">`).
+
+**Technical SEO is the same DOM as a11y** (markup only — keyword/link strategy is out of scope): one `<h1>`,
+real `<a href>` (not `<div onClick>`), descriptive link text, `alt`, plus a unique `<title>`, a meta
+description, one self-referencing canonical, Open Graph + `twitter:card`, JSON-LD structured data, and
+`hreflang` tied to `<html lang>`. Never ship a staging `noindex`.
 
 Design for **device capability, not just screen width**: query `pointer`/`hover` (never hide a critical action
 behind `:hover` — unreachable on touch); use `dvh`/`svh` not `100vh` (which overflows past the mobile URL bar);
