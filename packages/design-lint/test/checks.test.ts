@@ -774,3 +774,21 @@ describe("a11y.duplicate-id-refs", () => {
     expect(ids(lint(`<div id="x"></div><div id="x"></div>`, "html"))).not.toContain("a11y.duplicate-id-refs");
   });
 });
+
+describe("review FP/FN fixes — template inertness + nested-table scoping", () => {
+  it("duplicate-id-refs: an id inside a <template> does NOT collide with the live document", () => {
+    const f = lint(`<label for="row-name">Name</label><input id="row-name"><template><input id="row-name"></template>`, "html");
+    expect(ids(f)).not.toContain("a11y.duplicate-id-refs");
+  });
+  it("iframe-title: an untitled <iframe> inside a <template> is not flagged (inert until cloned)", () => {
+    expect(ids(lint(`<template><iframe src="/x"></iframe></template>`, "html"))).not.toContain("a11y.iframe-title");
+  });
+  it("table-headers: flags an outer data table whose only <th> is in a nested table", () => {
+    const f = lint(`<table><tr><td><table><tr><th>h</th><td>x</td></tr></table></td><td>outer</td></tr></table>`, "html");
+    expect(ids(f)).toContain("a11y.table-headers");
+  });
+  it("table-headers: the inner table (which has a <th>) still passes on its own", () => {
+    const f = lint(`<table role="presentation"><tr><td><table><tr><th>h</th><td>x</td></tr></table></td></tr></table>`, "html");
+    expect(ids(f)).not.toContain("a11y.table-headers");
+  });
+});

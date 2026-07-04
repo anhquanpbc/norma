@@ -771,7 +771,7 @@ const iframeTitle: Check = (ctx, rules) => {
   const r = rules[0];
   const out: Finding[] = [];
   ctx.dom.querySelectorAll("iframe").forEach((el) => {
-    if (el.getAttribute("aria-hidden") === "true" || el.hasAttribute("hidden") || elDisabled(el, r.id)) return;
+    if (el.closest("template") || el.getAttribute("aria-hidden") === "true" || el.hasAttribute("hidden") || elDisabled(el, r.id)) return;
     if (nonEmptyAttr(el, "title") || nonEmptyAttr(el, "aria-label") || nonEmptyAttr(el, "aria-labelledby")) return;
     out.push(mk(ctx, r, elementLine(ctx, el),
       "<iframe> has no title — screen readers announce it as an unnamed frame (WCAG 4.1.2).",
@@ -787,7 +787,9 @@ const tableHeaders: Check = (ctx, rules) => {
   ctx.dom.querySelectorAll("table").forEach((el) => {
     const role = (el.getAttribute("role") ?? "").toLowerCase();
     if (role === "presentation" || role === "none" || elDisabled(el, r.id)) return; // layout tables exempt
-    if (el.querySelectorAll("td").length === 0 || el.querySelectorAll("th").length > 0) return; // no data cells, or has headers
+    // Attribute cells to their nearest enclosing <table> so a nested table's <th> doesn't mask a header-less outer table.
+    const owns = (tag: string) => el.querySelectorAll(tag).filter((c) => c.closest("table") === el);
+    if (owns("td").length === 0 || owns("th").length > 0) return; // no data cells, or has its own headers
     out.push(mk(ctx, r, elementLine(ctx, el),
       "<table> has data cells but no <th> — add header cells (with scope) so the data is navigable (1.3.1).",
       "<table> có ô dữ liệu nhưng không có <th> — thêm ô tiêu đề (kèm scope) để dữ liệu điều hướng được (1.3.1)."));
@@ -798,16 +800,17 @@ const tableHeaders: Check = (ctx, rules) => {
 const duplicateIdRefs: Check = (ctx, rules) => {
   if (!ctx.dom) return [];
   const r = rules[0];
+  // <template> content is an inert, separate node tree — its ids don't collide with the live document.
   const referenced = new Set<string>();
-  ctx.dom.querySelectorAll("label[for]").forEach((l) => { const v = l.getAttribute("for"); if (v) referenced.add(v); });
+  ctx.dom.querySelectorAll("label[for]").filter(notInTemplate).forEach((l) => { const v = l.getAttribute("for"); if (v) referenced.add(v); });
   for (const attr of ["aria-labelledby", "aria-describedby", "aria-controls"]) {
-    ctx.dom.querySelectorAll(`[${attr}]`).forEach((el) => {
+    ctx.dom.querySelectorAll(`[${attr}]`).filter(notInTemplate).forEach((el) => {
       (el.getAttribute(attr) ?? "").trim().split(/\s+/).forEach((id) => { if (id) referenced.add(id); });
     });
   }
   if (referenced.size === 0) return [];
   const byId = new Map<string, HTMLElement[]>();
-  ctx.dom.querySelectorAll("[id]").forEach((el) => {
+  ctx.dom.querySelectorAll("[id]").filter(notInTemplate).forEach((el) => {
     const id = el.getAttribute("id");
     if (id) (byId.get(id) ?? byId.set(id, []).get(id)!).push(el);
   });
