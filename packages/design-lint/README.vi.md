@@ -26,6 +26,13 @@ Mã thoát khác 0 khi có bất kỳ phát hiện mức `error`, nên nó chặ
 | `--rules <path>` | Đường dẫn catalog rule (mặc định: `standard/rules.json` đóng kèm). |
 | `--quiet` | Chỉ báo lỗi. |
 | `--max-warnings <n>` | Exit khác 0 nếu số cảnh báo vượt `n` (để CI gate 26 rule mức warn). |
+| `--fix` | Tự sửa các rule xác định ngay tại chỗ, rồi lint phần còn lại. |
+
+`--fix` chỉ đụng các sửa **không cần phán đoán**: thuộc tính CSS vật lý→logic
+(`margin-left`→`margin-inline-start`, `text-align:left`→`start`, …) trong file `.css`, và trong HTML là
+`tabindex` dương→`0` cùng `rel="noopener noreferrer"` cho link ngoài `target="_blank"` chưa có `rel`.
+Mọi thứ khác (tương phản, vùng chạm, nhãn, `lang`, alt, link chết) cần con người quyết định nên chỉ báo,
+không tự viết lại. Sửa HTML là phẫu-thuật-từng-byte — phần còn lại của file không đổi.
 
 ### Cấu hình (`.normarc.json`)
 

@@ -1,8 +1,8 @@
 #!/usr/bin/env node
-import { readFileSync, existsSync, statSync, globSync } from "node:fs";
-import { join } from "node:path";
+import { readFileSync, writeFileSync, existsSync, statSync, globSync } from "node:fs";
+import { extname, join } from "node:path";
 import { pathToFileURL } from "node:url";
-import { lintFiles, loadRules } from "./index.js";
+import { lintFiles, loadRules, fixSource } from "./index.js";
 import { stylish, json, sarif, type Lang } from "./formatters.js";
 import type { Severity } from "./types.js";
 
@@ -18,6 +18,7 @@ Options:
   --rules <path>                  rule catalog path (default: bundled standard/rules.json)
   --quiet                         only report errors
   --max-warnings <n>              exit non-zero if warnings exceed n (default: unlimited)
+  --fix                           auto-fix the deterministic rules in place, then lint the rest
   -h, --help                      show this help
 
 Exit code is non-zero when any error-severity finding is present (or warnings exceed --max-warnings).`;
@@ -98,6 +99,21 @@ function main(argv: string[]): number {
   const files = expand(patterns.length ? patterns : ["**/*.{html,htm,css}"]);
 
   if (!files.length) { console.error("No HTML/CSS files matched."); return 1; }
+
+  // --fix: apply the safe auto-fixes in place first, then lint what remains.
+  if (args.includes("--fix")) {
+    let totalFixed = 0;
+    for (const file of files) {
+      const ext = extname(file).toLowerCase();
+      const type = ext === ".html" || ext === ".htm" ? "html" : ext === ".css" ? "css" : null;
+      if (!type) continue;
+      try {
+        const { output, fixed } = fixSource(readFileSync(file, "utf8"), type);
+        if (fixed > 0) { writeFileSync(file, output); totalFixed += fixed; }
+      } catch { /* skip unreadable/unwritable files, mirrors lintFiles resilience */ }
+    }
+    console.error(lang === "vi" ? `✓ Đã tự sửa ${totalFixed} vấn đề.` : `✓ Auto-fixed ${totalFixed} issue(s).`);
+  }
 
   let res = lintFiles(files, { rulesPath, overrides: config.rules });
   if (quiet) {
