@@ -8,6 +8,14 @@ All notable changes to this project are documented here. The format is based on
 
 ### Added
 
+- **Content pass, batch 3 — document structure, forced-colors & navigation** (§5 + agent spec + site).
+  §5 gains **Document structure & bypass** (a visible-on-focus **skip link** — WCAG 2.4.1 Level A, the
+  cheapest a11y win and usually missing; landmarks; one `<h1>` + no skipped heading levels; `aria-current`
+  on the active item), **Forced colors & user-preference media** (`forced-colors: active` strips
+  shadow/background/gradients → never signal state/focus by shadow alone, re-assert with system-colour
+  keywords, SVG `currentColor`; plus `prefers-contrast`/`prefers-reduced-transparency`/`prefers-reduced-data`
+  — the last directly serves the §14 glass tell), and **Navigation & discoverability** (breadcrumb pattern,
+  pagination-vs-infinite-scroll tradeoff, per-page title/description/Open Graph). Site adds two §5 cards.
 - **Content-completeness pass, batch 2 — the three P0 gaps beyond layout** (§1 + §9 + agent spec + site).
   **§1 core token scales**: an elevation/shadow ladder (0–5, one light source, one soft shadow per level,
   never stacked colored glows; lighter-surface elevation on dark), a radius scale (`0·2·4·8·12·16·24·full`)
