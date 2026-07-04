@@ -6,10 +6,11 @@ export type Lang = "en" | "vi";
 
 /** Human-readable, grouped by file. */
 export function stylish(res: LintResult, lang: Lang): string {
+  const skip = res.skipped ? (lang === "vi" ? `, ${res.skipped} bỏ qua` : `, ${res.skipped} skipped`) : "";
   if (!res.findings.length) {
     return lang === "vi"
-      ? `✓ Không có vi phạm (${res.fileCount} file, chuẩn v${res.version}).`
-      : `✓ No violations (${res.fileCount} files, standard v${res.version}).`;
+      ? `✓ Không có vi phạm (${res.fileCount} file${skip}, chuẩn v${res.version}).`
+      : `✓ No violations (${res.fileCount} files${skip}, standard v${res.version}).`;
   }
   const byFile = new Map<string, Finding[]>();
   for (const f of res.findings) (byFile.get(f.file) ?? byFile.set(f.file, []).get(f.file)!).push(f);
@@ -23,8 +24,8 @@ export function stylish(res: LintResult, lang: Lang): string {
     }
   }
   const summary = lang === "vi"
-    ? `\n✗ ${res.errorCount} lỗi, ${res.warnCount} cảnh báo (chuẩn v${res.version}).`
-    : `\n✗ ${res.errorCount} errors, ${res.warnCount} warnings (standard v${res.version}).`;
+    ? `\n✗ ${res.errorCount} lỗi, ${res.warnCount} cảnh báo${skip} (chuẩn v${res.version}).`
+    : `\n✗ ${res.errorCount} errors, ${res.warnCount} warnings${skip} (standard v${res.version}).`;
   return lines.join("\n") + "\n" + summary;
 }
 

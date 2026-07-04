@@ -2,7 +2,7 @@
 import { readFileSync, existsSync, statSync, globSync } from "node:fs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
-import { lintFiles } from "./index.js";
+import { lintFiles, loadRules } from "./index.js";
 import { stylish, json, sarif, type Lang } from "./formatters.js";
 import type { Severity } from "./types.js";
 
@@ -17,9 +17,10 @@ Options:
   --config <path>                 config file (default: .normarc.json if present)
   --rules <path>                  rule catalog path (default: bundled standard/rules.json)
   --quiet                         only report errors
+  --max-warnings <n>              exit non-zero if warnings exceed n (default: unlimited)
   -h, --help                      show this help
 
-Exit code is non-zero when any error-severity finding is present.`;
+Exit code is non-zero when any error-severity finding is present (or warnings exceed --max-warnings).`;
 
 interface Config { lang?: Lang; rules?: Record<string, Severity>; }
 
@@ -75,14 +76,30 @@ function main(argv: string[]): number {
   }
   const lang = (opt("--lang") ?? config.lang ?? process.env.NORMA_LANG ?? "en") as Lang;
   const quiet = args.includes("--quiet");
+  const maxWarningsRaw = opt("--max-warnings");
+  const maxWarnings = maxWarningsRaw != null ? Number(maxWarningsRaw) : null;
+  if (maxWarnings != null && !Number.isInteger(maxWarnings)) {
+    console.error(`Invalid --max-warnings "${maxWarningsRaw}" — expected a non-negative integer.`);
+    return 1;
+  }
+  const rulesPath = opt("--rules");
 
-  const flagVals = new Set(["--format", "--lang", "--config", "--rules"]);
+  // Warn (don't fail) on config overrides that name a rule id not in the catalog — a typo would
+  // otherwise silently do nothing.
+  if (config.rules && Object.keys(config.rules).length) {
+    const known = new Set(loadRules({ path: rulesPath }).rules.map((r) => r.id));
+    for (const id of Object.keys(config.rules)) {
+      if (!known.has(id)) console.error(`Warning: unknown rule id "${id}" in ${configPath} — ignored.`);
+    }
+  }
+
+  const flagVals = new Set(["--format", "--lang", "--config", "--rules", "--max-warnings"]);
   const patterns = args.filter((a, i) => !a.startsWith("-") && !flagVals.has(args[i - 1]));
   const files = expand(patterns.length ? patterns : ["**/*.{html,htm,css}"]);
 
   if (!files.length) { console.error("No HTML/CSS files matched."); return 1; }
 
-  let res = lintFiles(files, { rulesPath: opt("--rules"), overrides: config.rules });
+  let res = lintFiles(files, { rulesPath, overrides: config.rules });
   if (quiet) {
     res = { ...res, findings: res.findings.filter((f) => f.severity === "error"), warnCount: 0 };
   }
@@ -91,7 +108,13 @@ function main(argv: string[]): number {
   else if (format === "sarif") console.log(sarif(res));
   else console.log(stylish(res, lang));
 
-  return res.errorCount > 0 ? 1 : 0;
+  const overWarnings = maxWarnings != null && res.warnCount > maxWarnings;
+  if (overWarnings && format === "stylish") {
+    console.error(lang === "vi"
+      ? `✗ ${res.warnCount} cảnh báo vượt ngưỡng --max-warnings ${maxWarnings}.`
+      : `✗ ${res.warnCount} warnings exceed the --max-warnings ${maxWarnings} threshold.`);
+  }
+  return res.errorCount > 0 || overWarnings ? 1 : 0;
 }
 
 export { main };

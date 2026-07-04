@@ -6,7 +6,12 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
-Nothing yet.
+### Added
+
+- **CLI DX** — `--max-warnings <n>` exits non-zero when warnings exceed `n` (so CI can gate the 26
+  warn-severity rules, not just errors); the CLI now **warns on an unknown rule id** in `.normarc`
+  (a typo silently did nothing before); and lint runs are **resilient per file** — one unreadable /
+  binary / malformed file is recorded as `skipped` in the result instead of aborting the whole run.
 
 ## [1.4.0] — 2026-07-04
 
