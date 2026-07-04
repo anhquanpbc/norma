@@ -616,10 +616,13 @@ const sri: Check = (ctx, rules) => {
 };
 
 // ---------- structure / enforcement of the expanded reference content ----------
+// <template> content is inert — not part of the rendered landmark/heading tree until cloned.
+const notInTemplate = (el: HTMLElement): boolean => !el.closest("template");
+
 const landmarkMain: Check = (ctx, rules) => {
   if (!isFullDocument(ctx)) return [];
   const r = rules[0];
-  const mains = ctx.dom!.querySelectorAll("main, [role=main]");
+  const mains = ctx.dom!.querySelectorAll("main, [role=main]").filter(notInTemplate);
   if (mains.length === 1) return [];
   const html = ctx.dom!.querySelector("html");
   if (!html || elDisabled(html, r.id)) return [];
@@ -636,7 +639,7 @@ const landmarkMain: Check = (ctx, rules) => {
 const singleH1: Check = (ctx, rules) => {
   if (!isFullDocument(ctx)) return [];
   const r = rules[0];
-  const h1s = ctx.dom!.querySelectorAll("h1");
+  const h1s = ctx.dom!.querySelectorAll("h1").filter(notInTemplate);
   if (h1s.length === 1) return [];
   const html = ctx.dom!.querySelector("html");
   if (!html || elDisabled(html, r.id)) return [];
@@ -654,12 +657,20 @@ const fieldsetGroup: Check = (ctx, rules) => {
   if (!ctx.dom) return [];
   const r = rules[0];
   const out: Finding[] = [];
-  const groups = new Map<string, HTMLElement[]>();
+  // Radio/checkbox grouping is scoped to the owning <form> (or the document for form-less controls),
+  // so key by (form, name) — two separate forms sharing a name are NOT one group.
+  const DOC = {};
+  const groups = new Map<unknown, Map<string, HTMLElement[]>>();
   ctx.dom.querySelectorAll("input[type=radio], input[type=checkbox]").forEach((el) => {
     const name = el.getAttribute("name");
-    if (name) (groups.get(name) ?? groups.set(name, []).get(name)!).push(el);
+    if (!name || el.closest("template")) return;
+    const formKey = el.closest("form") ?? DOC;
+    let byName = groups.get(formKey);
+    if (!byName) { byName = new Map(); groups.set(formKey, byName); }
+    (byName.get(name) ?? byName.set(name, []).get(name)!).push(el);
   });
-  for (const [name, els] of groups) {
+  const allGroups = [...groups.values()].flatMap((byName) => [...byName.entries()]);
+  for (const [name, els] of allGroups) {
     if (els.length < 2) continue;
     const grouped = els.every((el) => el.closest("fieldset") || el.closest("[role=group]") || el.closest("[role=radiogroup]"));
     if (grouped || elDisabled(els[0], r.id)) continue;
@@ -689,6 +700,18 @@ const genericLinkText: Check = (ctx, rules) => {
 const focusForcedColors: Check = (ctx, rules) => {
   const r = rules[0];
   const out: Finding[] = [];
+  // The recommended pattern removes outline for aesthetics + restores it in @media (forced-colors: active).
+  // If the file handles forced-colors with an outline fallback, the box-shadow ring is fine — don't flag.
+  let forcedColorsHandled = false;
+  for (const block of ctx.css) {
+    block.root.walkAtRules(/^media$/i, (at) => {
+      if (!/forced-colors\s*:\s*active/i.test(at.params)) return;
+      at.walkDecls(/^outline(-width|-style|-color)?$/i, (d) => {
+        if (!/^(none|0(px|rem|em)?)\b/.test(d.value.trim())) forcedColorsHandled = true;
+      });
+    });
+  }
+  if (forcedColorsHandled) return [];
   for (const block of ctx.css) {
     block.root.walkRules((rule) => {
       if (!/:focus(-visible)?(?![\w-])/.test(rule.selector) || /:focus-within/.test(rule.selector)) return;

@@ -707,3 +707,31 @@ describe("responsive.container-query — @container needs a container-type", () 
     expect(ids(f)).not.toContain("responsive.container-query");
   });
 });
+
+describe("review FP fixes — template inertness, form scope, forced-colors fallback", () => {
+  const fd = (body: string) => `<!DOCTYPE html><html lang="en"><head><title>t</title></head><body>${body}</body></html>`;
+  it("single-h1: does NOT count an <h1> inside an inert <template>", () => {
+    const f = lint(fd(`<main><h1>Real</h1></main><template><article><h1>placeholder</h1></article></template>`), "html");
+    expect(ids(f)).not.toContain("a11y.single-h1");
+  });
+  it("landmark-main: does NOT count a <main> inside a <template>", () => {
+    const f = lint(fd(`<main><h1>x</h1></main><template><main>placeholder</main></template>`), "html");
+    expect(ids(f)).not.toContain("a11y.landmark-main");
+  });
+  it("fieldset-group: two separate <form>s each with one same-name checkbox is NOT a group", () => {
+    const f = lint(fd(`<main><h1>x</h1><form><input type="checkbox" name="compare"></form><form><input type="checkbox" name="compare"></form></main>`), "html");
+    expect(ids(f)).not.toContain("forms.fieldset-group");
+  });
+  it("fieldset-group: still flags a real 2-radio group in one form", () => {
+    const f = lint(`<form><input type="radio" name="p"><input type="radio" name="p"></form>`, "html");
+    expect(ids(f)).toContain("forms.fieldset-group");
+  });
+  it("focus-forced-colors: does NOT flag a box-shadow ring with a forced-colors outline fallback", () => {
+    const f = lint(`.b:focus-visible{ outline:none; box-shadow:0 0 0 3px blue } @media (forced-colors: active){ .b:focus-visible{ outline:2px solid CanvasText } }`, "css");
+    expect(ids(f)).not.toContain("a11y.focus-forced-colors");
+  });
+  it("focus-forced-colors: still flags a box-shadow-only ring with no forced-colors handling", () => {
+    const f = lint(`.b:focus-visible{ outline:none; box-shadow:0 0 0 3px blue }`, "css");
+    expect(ids(f)).toContain("a11y.focus-forced-colors");
+  });
+});
