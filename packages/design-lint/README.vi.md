@@ -25,6 +25,7 @@ Mã thoát khác 0 khi có bất kỳ phát hiện mức `error`, nên nó chặ
 | `--config <path>` | File cấu hình (mặc định `.normarc.json` nếu có). |
 | `--rules <path>` | Đường dẫn catalog rule (mặc định: `standard/rules.json` đóng kèm). |
 | `--quiet` | Chỉ báo lỗi. |
+| `--max-warnings <n>` | Exit khác 0 nếu số cảnh báo vượt `n` (để CI gate 26 rule mức warn). |
 
 ### Cấu hình (`.normarc.json`)
 

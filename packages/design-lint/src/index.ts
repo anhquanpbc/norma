@@ -19,6 +19,8 @@ export interface LintResult {
   warnCount: number;
   version: string;
   fileCount: number;
+  /** Files that could not be read/parsed (unreadable, binary, malformed) — skipped, not fatal. */
+  skipped: number;
 }
 
 function typeOf(path: string): FileType | null {
@@ -35,13 +37,20 @@ export function lintFiles(paths: string[], opts: LintOptions = {}): LintResult {
     : loadRules({ path: opts.rulesPath, overrides: opts.overrides });
   const findings: Finding[] = [];
   let fileCount = 0;
+  let skipped = 0;
   for (const path of paths) {
     const type = typeOf(path);
     if (!type) continue;
-    fileCount++;
-    const source = readFileSync(path, "utf8");
-    const ctx = buildContext(path, source, type);
-    findings.push(...lintContext(ctx, catalog.rules));
+    // One unreadable/binary/malformed file must not abort the whole run — record it as skipped.
+    try {
+      const source = readFileSync(path, "utf8");
+      const ctx = buildContext(path, source, type);
+      findings.push(...lintContext(ctx, catalog.rules));
+      fileCount++;
+    } catch (e) {
+      skipped++;
+      if (process.env.NORMA_DEBUG) console.error(`[norma] skipped ${path}: ${(e as Error).message}`);
+    }
   }
   return {
     findings,
@@ -49,5 +58,6 @@ export function lintFiles(paths: string[], opts: LintOptions = {}): LintResult {
     warnCount: findings.filter((f) => f.severity === "warn").length,
     version: catalog.version,
     fileCount,
+    skipped,
   };
 }

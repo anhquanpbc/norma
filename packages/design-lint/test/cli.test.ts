@@ -104,4 +104,31 @@ describe("cli", () => {
     expect(code).toBe(1);
     expect(err).toContain("No HTML/CSS files matched");
   });
+
+  it("--max-warnings 0 fails a warnings-only file (exit 1)", () => {
+    const { code } = run(["--max-warnings", "0", fx("warns.html")]);
+    expect(code).toBe(1);
+  });
+
+  it("--max-warnings above the count passes a warnings-only file (exit 0)", () => {
+    const { code } = run(["--max-warnings", "5", fx("warns.html")]);
+    expect(code).toBe(0);
+  });
+
+  it("rejects a non-integer --max-warnings", () => {
+    const { code, err } = run(["--max-warnings", "abc", fx("warns.html")]);
+    expect(code).toBe(1);
+    expect(err).toContain("Invalid --max-warnings");
+  });
+
+  it("warns (not fails) on an unknown rule id in the config", () => {
+    const { err } = run(["--config", fx("unknownid.normarc.json"), fx("good.html")]);
+    expect(err).toContain("unknown rule id");
+    expect(err).toContain("a11y.nonexistent-rule");
+  });
+
+  it("reports skipped=0 for a normal file", () => {
+    const { out } = run(["--format", "json", fx("good.html")]);
+    expect(JSON.parse(out).skipped).toBe(0);
+  });
 });
