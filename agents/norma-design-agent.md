@@ -43,7 +43,12 @@ These structural/enforcement rules back the guidance above (📐 CONV, staticall
 `a11y.focus-forced-colors` (a focus ring must not be box-shadow-only — it's stripped in forced-colors),
 `tokens.zindex-scale` (no raw `z-index >= 1000`; use the ladder), `responsive.container-query`
 (`@container` needs a `container-type`), `a11y.iframe-title` (every `<iframe>` has a title),
-`a11y.table-headers` (data tables have `<th>`), `a11y.duplicate-id-refs` (a label/aria-referenced id is unique).
+`a11y.table-headers` (data tables have `<th>`), `a11y.duplicate-id-refs` (a label/aria-referenced id is unique),
+`responsive.viewport-fit` (`env(safe-area-inset-*)` needs `viewport-fit=cover`, else it's inert).
+
+Design for **device capability, not just screen width**: query `pointer`/`hover` (never hide a critical action
+behind `:hover` — unreachable on touch); use `dvh`/`svh` not `100vh` (which overflows past the mobile URL bar);
+handle safe-area insets and `@media print`; pick `srcset`/`sizes` (resolution) vs `<picture media>` (art-direction).
 
 ## Hard rules — SPEC (🔒, never violate)
 

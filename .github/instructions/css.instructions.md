@@ -23,3 +23,4 @@ Use tokens from `standard/tokens.tokens.json`. Color and spacing come from token
 - 📐 CONV `a11y.focus-forced-colors` (warn) — Focus ring survives forced-colors · [WCAG 2.2 SC 2.4.7 / 1.4.11; CSS Color Adjustment L1 (forced-colors)](https://www.w3.org/TR/css-color-adjust-1/#forced-colors-properties)
 - 📐 CONV `tokens.zindex-scale` (warn) — No arbitrary high z-index · Norma §2 Layout — z-index token ladder
 - 📐 CONV `responsive.container-query` (warn) — @container needs a container-type · [W3C CSS Containment Module L3 (container queries)](https://www.w3.org/TR/css-contain-3/)
+- 📐 CONV `responsive.viewport-fit` (warn) — safe-area insets need viewport-fit=cover · [CSS Round Display L1 (env safe-area-inset-*); WHATWG viewport-fit](https://drafts.csswg.org/css-round-display/#viewport-fit-descriptor)

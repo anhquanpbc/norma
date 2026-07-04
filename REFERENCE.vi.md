@@ -291,6 +291,16 @@ Chữ trong giao diện là thiết kế — mọi hệ trưởng thành (HIG, M
 
 **Đáp ứng & thích ứng (📐)** Mobile-first: viết style nền cho khung nhỏ nhất, rồi thêm media query `min-width` đi lên (khớp Tailwind/Bootstrap); nhớ thẻ `viewport` (lint qua `responsive.viewport-meta`; giá trị chặn zoom — `user-scalable=no`, `maximum-scale` < 2 — là lỗi `a11y.meta-viewport`). Bố cục co giãn: `max-width` (không `width` cố định), Flexbox/Grid, đơn vị tương đối, `clamp()` cho chữ/khoảng cách co giãn. **Container query** (CSS hiện đại): tạo kiểu theo kích thước *container* thay vì khung nhìn — công cụ đúng cho thành phần tái sử dụng ở nhiều ngữ cảnh. Adaptive vs responsive: responsive = co giãn liên tục; adaptive = các bố cục rời khớp theo breakpoint; sản phẩm hiện đại thường trộn cả hai. Bề rộng cần test: 320 (điện thoại nhỏ / sàn reflow WCAG), 360–414 (điện thoại thường), 768 (tablet dọc), 1024 (tablet ngang / laptop nhỏ), 1280–1440 (desktop), 1536+ (desktop lớn).
 
+**Năng lực thiết bị — kích thước màn hình chỉ là một nửa (📐).** Hai thiết bị cùng bề rộng có thể ngược nhau về *input*, *hành vi viewport* và *safe area*. Hãy truy vấn năng lực, không phải bề rộng:
+
+- **Kiểu nhập — `pointer` / `hover`.** `@media (pointer: coarse)` = ngón tay (target ≥44px, giãn hơn); `(pointer: fine)` = chuột/bút. `@media (hover: hover)` = thiết bị hover được; **đừng bao giờ giấu hành động quan trọng sau `:hover`** — trên `(hover: none)` cảm ứng nó không tới được. Dùng `any-pointer`/`any-hover` cho máy lai. Thiết kế tap-first, tăng cường cho hover.
+- **Đơn vị viewport hiện đại — `dvh` / `svh` / `lvh`.** `100vh` **tràn trên mobile**: nó bằng viewport *lớn nhất* nên thanh URL co lại che phần đáy. Dùng **`dvh`** (động — co theo chrome) cho layout full-height, **`svh`** (nhỏ — có chrome) khi nội dung phải chắc chắn thấy được. Anh em logic `vi`/`vb` tôn trọng chiều viết. Baseline 2023.
+- **Safe area & tai thỏ.** Muốn UI tràn-viền trên máy notch/bo góc, đặt `<meta name="viewport" content="…, viewport-fit=cover">` **và** đệm nội dung tương tác bằng `env(safe-area-inset-top|right|bottom|left)` (kèm fallback `0px`) để không có gì lọt dưới tai thỏ hay thanh home. Thiếu `viewport-fit=cover` thì insets bằng `0` và padding vô hiệu (lint qua `responsive.viewport-fit`).
+- **Hướng & reflow.** `@media (orientation: landscape)` chỉnh layout, nhưng **đừng khoá hướng** và đừng chỉ scale — hãy reflow. Nội dung phải sống được ở cả hai hướng tại 320 CSS px (WCAG 1.4.10 Reflow).
+- **In.** Ship `@media print` cho trang dạng tài liệu: ẩn nav/chrome, ép đen-trên-trắng, mở `a[href]::after{ content:" (" attr(href) ")" }` để URL còn trên giấy, tránh `break-inside` cắt lửng.
+- **Ảnh đáp ứng — độ phân giải vs art-direction.** Dùng `srcset` + `sizes` (w-descriptor, 3–5 biến thể) cho *cùng* ảnh ở độ phân giải/DPR khác nhau; dùng `<picture><source media="…">` khi khung/bố cục ảnh phải **đổi** theo breakpoint. Đặt sẵn `width`/`height` (CLS, §6); `loading="lazy"` + `decoding="async"` dưới màn, `fetchpriority="high"` + `loading="eager"` chỉ cho ảnh LCP.
+- **Máy gập & hai màn** đang nổi: biến `viewport-segments` và `@media (spanning: …)` giúp nội dung tránh khe gập — hướng tới tương lai, chưa Baseline.
+
 ---
 
 ## 12. Định luật Toán học Tương tác (HCI)

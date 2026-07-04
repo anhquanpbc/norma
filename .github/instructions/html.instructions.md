@@ -33,5 +33,6 @@ real `<label>`. Touch targets ≥ 24 CSS px. Set `width`/`height` on images. No 
 - 📐 CONV `a11y.iframe-title` (warn) — Every <iframe> has a title · [WCAG 2.2 SC 4.1.2 / 2.4.1; axe frame-title](https://www.w3.org/TR/WCAG22/#name-role-value)
 - 📐 CONV `a11y.table-headers` (warn) — Data tables have <th> headers · [WCAG 2.2 SC 1.3.1 Info and Relationships (H51)](https://www.w3.org/TR/WCAG22/#info-and-relationships)
 - 📐 CONV `a11y.duplicate-id-refs` (warn) — Referenced ids are unique · [WCAG 2.2 SC 1.3.1 / 4.1.2; axe duplicate-id-aria](https://www.w3.org/TR/WCAG22/#info-and-relationships)
+- 📐 CONV `responsive.viewport-fit` (warn) — safe-area insets need viewport-fit=cover · [CSS Round Display L1 (env safe-area-inset-*); WHATWG viewport-fit](https://drafts.csswg.org/css-round-display/#viewport-fit-descriptor)
 - 📐 CONV `security.external-rel` (warn) — target=_blank has rel=noopener · [WHATWG HTML — noopener link type (OWASP: reverse tabnabbing)](https://html.spec.whatwg.org/multipage/links.html#link-type-noopener)
 - 📐 CONV `security.sri` (warn) — External subresources use SRI · [W3C Subresource Integrity](https://www.w3.org/TR/SRI/)

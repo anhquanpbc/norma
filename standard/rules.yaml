@@ -16,7 +16,7 @@
 #   rationale   { en, vi } why the rule exists.
 #   check       machine assertion consumed by @norma/design-lint. type: manual = agent-only, not auto-checked.
 #   remediation { en, vi } how to fix.
-version: "1.4.0"
+version: "1.5.0"
 rules:
   - id: color.contrast.text
     title: { en: "Body text contrast >= 4.5:1", vi: "Tương phản chữ thân >= 4.5:1" }
@@ -668,6 +668,22 @@ rules:
     remediation:
       en: "Make each referenced id unique (unique ids per control/label/region)."
       vi: "Làm mỗi id được tham chiếu là duy nhất (id riêng cho từng control/label/vùng)."
+
+  - id: responsive.viewport-fit
+    title: { en: "safe-area insets need viewport-fit=cover", vi: "safe-area insets cần viewport-fit=cover" }
+    domain: responsive
+    tag: CONV
+    severity: warn
+    source: "CSS Round Display L1 (env safe-area-inset-*); WHATWG viewport-fit"
+    source_url: "https://drafts.csswg.org/css-round-display/#viewport-fit-descriptor"
+    rationale:
+      en: "env(safe-area-inset-*) only resolves to a non-zero value when the viewport meta opts into edge-to-edge with viewport-fit=cover. Without it the insets are 0, so padding meant to clear a notch or the home indicator silently does nothing on the devices it targets."
+      vi: "env(safe-area-inset-*) chỉ trả giá trị khác 0 khi viewport meta bật tràn-viền bằng viewport-fit=cover. Thiếu nó thì insets bằng 0, nên padding để tránh tai thỏ hay home-indicator âm thầm vô hiệu đúng trên thiết bị nó nhắm tới."
+    check:
+      type: viewportFit
+    remediation:
+      en: "Add viewport-fit=cover to <meta name=\"viewport\"> (…, initial-scale=1, viewport-fit=cover)."
+      vi: "Thêm viewport-fit=cover vào <meta name=\"viewport\"> (…, initial-scale=1, viewport-fit=cover)."
 
   - id: security.external-rel
     title: { en: "target=_blank has rel=noopener", vi: "target=_blank có rel=noopener" }
