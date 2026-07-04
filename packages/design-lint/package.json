@@ -22,7 +22,8 @@
     "html"
   ],
   "bin": {
-    "norma-design-lint": "dist/cli.js"
+    "norma-design-lint": "dist/cli.js",
+    "norma-mcp": "dist/mcp.js"
   },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
