@@ -6,6 +6,11 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+### Added
+
+- **`.gitattributes`** normalizes line endings to LF, ending the "LF will be replaced by CRLF" warning
+  that fired on every commit from a Windows checkout.
+
 ### Fixed
 
 - **Reference site: uneven-height cards in the same row no longer leave a gap.** Nine two-card /
