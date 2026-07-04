@@ -33,35 +33,61 @@ function fixCss(css: string): [string, number] {
 
 export interface FixResult { output: string; fixed: number; }
 
+const elRange = (el: HTMLElement): [number, number] | undefined =>
+  (el as unknown as { range?: [number, number] }).range;
+
+// The offset of the opening tag's real `>` (or self-closing `/`), scanning from the element start and
+// skipping any `>` that sits inside a quoted attribute value — so a title="a > b" can't fool us.
+function openTagCloseOffset(source: string, from: number): number {
+  let quote = "";
+  for (let i = from; i < source.length; i++) {
+    const ch = source[i];
+    if (quote) { if (ch === quote) quote = ""; }
+    else if (ch === '"' || ch === "'") quote = ch;
+    else if (ch === ">") return source[i - 1] === "/" ? i - 1 : i;
+  }
+  return -1;
+}
+
 /** Apply the safe auto-fixes to a source file. Returns the new source and the number of edits. */
 export function fixSource(source: string, type: FileType): FixResult {
   if (type === "css") {
     const [output, fixed] = fixCss(source);
     return { output, fixed };
   }
-  // HTML: surgical, offset-based edits so the rest of the file is byte-for-byte preserved.
+  // HTML: DOM-driven, offset-based edits — we only ever edit inside a real element's opening tag, never
+  // text nodes / comments / other attributes, and the rest of the file is byte-for-byte preserved.
   let fixed = 0;
   const edits: { start: number; end: number; text: string }[] = [];
+  const dom = parseHtml(source, { comment: true });
 
-  // a11y.no-positive-tabindex → tabindex="0" (an unambiguous value swap).
-  for (const m of source.matchAll(/tabindex\s*=\s*(["'])[1-9]\d*\1/gi)) {
-    const start = m.index!;
+  // a11y.no-positive-tabindex → tabindex="0". Scoped to elements that genuinely have a positive
+  // tabindex attribute (so data-tabindex, <pre> text, comments and other attrs are never touched);
+  // the (?<![\w-]) boundary picks the real attr even when a data-tabindex is also present.
+  dom.querySelectorAll("[tabindex]").forEach((el: HTMLElement) => {
+    if (!/^[1-9]\d*$/.test((el.getAttribute("tabindex") ?? "").trim())) return;
+    const range = elRange(el);
+    if (!range) return;
+    const close = openTagCloseOffset(source, range[0]);
+    if (close < 0) return;
+    const tag = source.slice(range[0], close);
+    const m = /(?<![\w-])tabindex\s*=\s*(["'])[1-9]\d*\1/i.exec(tag);
+    if (!m) return;
+    const start = range[0] + m.index;
     edits.push({ start, end: start + m[0].length, text: m[0].replace(/[1-9]\d*/, "0") });
     fixed++;
-  }
+  });
 
-  // security.external-rel → insert rel="noopener noreferrer" on an external target="_blank" link
-  // that has NO rel yet (a partial rel is left for manual review to avoid clobbering it).
-  const dom = parseHtml(source, { comment: true });
+  // security.external-rel → insert rel="noopener noreferrer" on an external target="_blank" link with
+  // NO rel yet (a partial rel is left for manual review to avoid clobbering it).
   dom.querySelectorAll("a[target]").forEach((el: HTMLElement) => {
     if ((el.getAttribute("target") ?? "").toLowerCase() !== "_blank") return;
     if (!/^(https?:)?\/\//i.test(el.getAttribute("href") ?? "")) return;
     if (el.hasAttribute("rel")) return;
-    const range = (el as unknown as { range?: [number, number] }).range;
+    const range = elRange(el);
     if (!range) return;
-    const gt = source.indexOf(">", range[0]);
-    if (gt < 0) return;
-    const at = source[gt - 1] === "/" ? gt - 1 : gt; // before a self-closing slash if present
+    const at = openTagCloseOffset(source, range[0]);
+    if (at < 0) return;
     edits.push({ start: at, end: at, text: ` rel="noopener noreferrer"` });
     fixed++;
   });

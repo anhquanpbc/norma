@@ -51,3 +51,28 @@ describe("fixSource — HTML", () => {
     expect(fixSource(once, "html").fixed).toBe(0);
   });
 });
+
+describe("fixSource — corruption cases from adversarial review", () => {
+  it("external-rel: a '>' inside an attribute value doesn't misplace the rel", () => {
+    const { output } = fixSource(`<a title="x > y" href="https://z.com" target="_blank">t</a>`, "html");
+    expect(output).toBe(`<a title="x > y" href="https://z.com" target="_blank" rel="noopener noreferrer">t</a>`);
+  });
+  it("external-rel: single-quoted attr with '>' handled", () => {
+    const { output } = fixSource(`<a title='a > b' href="https://z.com" target="_blank">t</a>`, "html");
+    expect(output).toContain(`target="_blank" rel="noopener noreferrer">`);
+    expect(output).toContain(`title='a > b'`);
+  });
+  it("tabindex: does NOT touch data-tabindex, <pre> text, comments, or other attribute values", () => {
+    expect(fixSource(`<div data-tabindex="3">x</div>`, "html").fixed).toBe(0);
+    expect(fixSource(`<pre>tabindex="3"</pre>`, "html").fixed).toBe(0);
+    expect(fixSource(`<!-- tabindex="3" -->`, "html").fixed).toBe(0);
+    expect(fixSource(`<div title='set tabindex="3" here'>x</div>`, "html").fixed).toBe(0);
+  });
+  it("tabindex: still fixes a real positive tabindex attribute", () => {
+    expect(fixSource(`<a href="/x" tabindex="3">go</a>`, "html").output).toContain(`tabindex="0"`);
+  });
+  it("tabindex: fixes the real attr even when a data-tabindex is also present", () => {
+    const { output } = fixSource(`<div data-tabindex="5" tabindex="3">x</div>`, "html");
+    expect(output).toBe(`<div data-tabindex="5" tabindex="0">x</div>`);
+  });
+});
