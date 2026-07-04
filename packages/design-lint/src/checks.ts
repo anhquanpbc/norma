@@ -301,7 +301,10 @@ function semanticControlJsx(ctx: FileContext, rules: Rule[]): Finding[] {
   for (const t of jsxOpenTags(maskComments(ctx.source))) {
     const TAG = t.tag.toUpperCase();
     if (TAG === "A" || SEMANTIC.has(TAG)) continue;
-    if (!CLICK_HANDLER.test(t.body) || /\brole\s*=/.test(t.body)) continue;
+    // A click handler / role is an attribute NAME — never inside a quoted value. Strip quoted values first
+    // so `title="a@click.com"` isn't read as a handler and `title="role=x"` doesn't fake an ARIA retrofit.
+    const attrs = t.body.replace(/"[^"]*"|'[^']*'/g, "");
+    if (!CLICK_HANDLER.test(attrs) || /\brole\s*=/.test(attrs)) continue;
     out.push(mk(ctx, r, lineOf(ctx.source, t.start),
       `<${t.tag}> has a click handler but is not a semantic control — use <button> or <a>.`,
       `<${t.tag}> có xử lý click nhưng không phải điều khiển ngữ nghĩa — dùng <button> hoặc <a>.`));

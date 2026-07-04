@@ -112,3 +112,21 @@ describe("vue/svelte — HTML comments must be masked", () => {
     expect(vue(`<template><!-- <span @click="a"/> --><div @click="b">x</div></template>`)).toContain("a11y.semantic-control");
   });
 });
+
+describe("vue/svelte — handler/role must be attribute NAMES, not string values (review FP+FN)", () => {
+  const vue = (src: string) => lintContext(buildContext("C.vue", src, "jsx"), rules).map((f) => f.ruleId);
+  const svelte = (src: string) => lintContext(buildContext("C.svelte", src, "jsx"), rules).map((f) => f.ruleId);
+  it("does NOT flag @click / on:click appearing inside a quoted attribute value", () => {
+    expect(vue(`<template><span title="Email us at hello@click.com">Contact</span></template>`)).not.toContain("a11y.semantic-control");
+    expect(vue(`<template><div aria-label="Follow @click for news">Social</div></template>`)).not.toContain("a11y.semantic-control");
+    expect(svelte(`<div data-tooltip="test@click.io">hover</div>`)).not.toContain("a11y.semantic-control");
+  });
+  it("does NOT let a role= inside a string value suppress a real handler (FN)", () => {
+    expect(vue(`<template><div title="role=admin" @click="realHandler">x</div></template>`)).toContain("a11y.semantic-control");
+  });
+  it("still flags real handlers (with modifiers) and still honours a real role attribute", () => {
+    expect(vue(`<template><div @click.stop="a">x</div></template>`)).toContain("a11y.semantic-control");
+    expect(svelte(`<div on:click|preventDefault={h}>x</div>`)).toContain("a11y.semantic-control");
+    expect(vue(`<template><div role="button" tabindex="0" @click="a">x</div></template>`)).not.toContain("a11y.semantic-control");
+  });
+});
