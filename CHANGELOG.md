@@ -8,6 +8,17 @@ All notable changes to this project are documented here. The format is based on
 
 Nothing yet.
 
+## [1.7.0] — 2026-07-04
+
+### Added
+
+- **3 more sound static a11y rules (catalog 48→51):** `a11y.invalid-role` (a `role` value that isn't a
+  defined WAI-ARIA 1.2 role — a typo like `role="buton"` exposes no role at all; `doc-*`/`graphics-*`
+  extension roles accepted), `a11y.nested-interactive` (an interactive element inside another — `<button>`
+  in `<a>` etc. — has no valid HTML content model and breaks keyboard/AT semantics), `a11y.list-structure`
+  (a `<ul>`/`<ol>` with a non-`<li>` element child; role-repurposed lists exempt). All CONV/warn, low-FP,
+  `<template>`-aware; the reference site dogfoods clean.
+
 ## [1.6.0] — 2026-07-04
 
 ### Added

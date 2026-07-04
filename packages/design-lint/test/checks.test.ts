@@ -860,3 +860,45 @@ describe("metadata rules — FPs from the adversarial review", () => {
     expect(ids(lint(`<!DOCTYPE html><html lang="en"><title>Foo</title><body><main><h1>x</h1></main></body></html>`, "html"))).not.toContain("a11y.document-title");
   });
 });
+
+describe("a11y.invalid-role", () => {
+  it("flags a misspelled/invalid role", () => {
+    expect(ids(lint(`<div role="buton">x</div>`, "html"))).toContain("a11y.invalid-role");
+  });
+  it("passes a valid role", () => {
+    expect(ids(lint(`<div role="navigation">x</div>`, "html"))).not.toContain("a11y.invalid-role");
+  });
+  it("passes DPUB/graphics extension roles and multi-token fallback", () => {
+    expect(ids(lint(`<section role="doc-chapter">x</section><div role="graphics-document">y</div><div role="foo button">z</div>`, "html"))).not.toContain("a11y.invalid-role");
+  });
+});
+
+describe("a11y.nested-interactive", () => {
+  it("flags a <button> nested inside an <a>", () => {
+    expect(ids(lint(`<a href="/x"><button>Go</button></a>`, "html"))).toContain("a11y.nested-interactive");
+  });
+  it("does not flag a label wrapping an input", () => {
+    expect(ids(lint(`<label>Email <input type="email"></label>`, "html"))).not.toContain("a11y.nested-interactive");
+  });
+  it("does not flag sibling interactives", () => {
+    expect(ids(lint(`<div><a href="/a">A</a><button>B</button></div>`, "html"))).not.toContain("a11y.nested-interactive");
+  });
+});
+
+describe("a11y.list-structure", () => {
+  it("flags a <ul> with a non-<li> element child", () => {
+    expect(ids(lint(`<ul><div>not an li</div></ul>`, "html"))).toContain("a11y.list-structure");
+  });
+  it("passes a proper list", () => {
+    expect(ids(lint(`<ul><li>a</li><li>b</li></ul>`, "html"))).not.toContain("a11y.list-structure");
+  });
+  it("ignores a role-repurposed list", () => {
+    expect(ids(lint(`<ul role="tablist"><div role="tab">t</div></ul>`, "html"))).not.toContain("a11y.list-structure");
+  });
+});
+
+describe("a11y.invalid-role — WAI-ARIA 1.2 completeness (review)", () => {
+  it("accepts role=\"code\" (a valid 1.2 Document Structure role)", () => {
+    expect(ids(lint(`<span role="code">x = 1</span>`, "html"))).not.toContain("a11y.invalid-role");
+  });
+});
