@@ -1,6 +1,6 @@
 {
   "$generated": "Do not edit. Generated from standard/rules.yaml by scripts/build-rules.ts.",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "rules": [
     {
       "id": "color.contrast.text",
@@ -936,6 +936,75 @@
       "remediation": {
         "en": "Make each referenced id unique (unique ids per control/label/region).",
         "vi": "Làm mỗi id được tham chiếu là duy nhất (id riêng cho từng control/label/vùng)."
+      }
+    },
+    {
+      "id": "a11y.document-title",
+      "title": {
+        "en": "Every page has a descriptive <title>",
+        "vi": "Mọi trang có <title> mô tả"
+      },
+      "domain": "a11y",
+      "tag": "CONV",
+      "severity": "warn",
+      "source": "WCAG 2.2 SC 2.4.2 Page Titled (Level A); also the primary SEO title",
+      "source_url": "https://www.w3.org/TR/WCAG22/#page-titled",
+      "rationale": {
+        "en": "A page with no non-empty <title> is announced to screen-reader users as its raw URL, shows the URL in the browser tab/history, and gives search and social results no name — one string that is both a Level-A a11y mandate and the single most important on-page SEO element.",
+        "vi": "Trang không có <title> khác rỗng bị trình đọc màn hình đọc là URL thô, hiện URL ở tab/lịch sử, và không cho kết quả tìm kiếm/chia sẻ một cái tên — một chuỗi vừa là mandate a11y mức A vừa là yếu tố SEO on-page quan trọng nhất."
+      },
+      "check": {
+        "type": "documentTitle"
+      },
+      "remediation": {
+        "en": "Add a unique, descriptive <title> (front-load the distinctive words; ~50–60 chars renders untruncated).",
+        "vi": "Thêm <title> mô tả, duy nhất (đưa từ đặc trưng lên đầu; ~50–60 ký tự hiển thị không bị cắt)."
+      }
+    },
+    {
+      "id": "seo.meta-description",
+      "title": {
+        "en": "Every page has a meta description",
+        "vi": "Mọi trang có meta description"
+      },
+      "domain": "a11y",
+      "tag": "CONV",
+      "severity": "warn",
+      "source": "Google Search Central — snippets & meta descriptions",
+      "source_url": "https://developers.google.com/search/docs/appearance/snippet",
+      "rationale": {
+        "en": "With no <meta name=\"description\"> a search engine synthesises the results snippet from arbitrary page text — usually less compelling and less accurate than an authored ~150-character summary, costing click-through.",
+        "vi": "Không có <meta name=\"description\"> thì máy tìm kiếm tự ghép đoạn mô tả từ chữ bất kỳ trên trang — thường kém hấp dẫn và kém chính xác hơn một tóm tắt ~150 ký tự do bạn viết, làm giảm click."
+      },
+      "check": {
+        "type": "metaDescription"
+      },
+      "remediation": {
+        "en": "Add <meta name=\"description\" content=\"…\"> — a unique, compelling ~150–160 char summary, not keyword-stuffed.",
+        "vi": "Thêm <meta name=\"description\" content=\"…\"> — tóm tắt ~150–160 ký tự, duy nhất, hấp dẫn, không nhồi từ khoá."
+      }
+    },
+    {
+      "id": "seo.canonical",
+      "title": {
+        "en": "At most one canonical link",
+        "vi": "Nhiều nhất một link canonical"
+      },
+      "domain": "a11y",
+      "tag": "CONV",
+      "severity": "warn",
+      "source": "Google Search Central — consolidate duplicate URLs (rel=canonical)",
+      "source_url": "https://developers.google.com/search/docs/crawling-indexing/consolidate-duplicate-urls",
+      "rationale": {
+        "en": "A page must declare at most one <link rel=\"canonical\">. Multiple conflicting canonicals are ignored by search engines (they pick one, often not the intended URL), so duplicate-content consolidation and ranking signals leak to the wrong URL.",
+        "vi": "Một trang chỉ được khai báo nhiều nhất một <link rel=\"canonical\">. Nhiều canonical mâu thuẫn bị máy tìm kiếm bỏ qua (chúng tự chọn một, thường không phải URL bạn muốn), nên hợp nhất trùng lặp và tín hiệu xếp hạng rò sang URL sai."
+      },
+      "check": {
+        "type": "canonicalUnique"
+      },
+      "remediation": {
+        "en": "Keep exactly one self-referencing <link rel=\"canonical\" href=\"<absolute-url>\"> per page.",
+        "vi": "Giữ đúng một <link rel=\"canonical\" href=\"<url-tuyệt-đối>\"> tự trỏ mỗi trang."
       }
     },
     {

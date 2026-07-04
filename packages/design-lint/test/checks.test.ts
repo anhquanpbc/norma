@@ -811,3 +811,38 @@ describe("responsive.viewport-fit", () => {
     expect(ids(lint(`.b{ padding: env(safe-area-inset-top) }`, "css"))).not.toContain("responsive.viewport-fit");
   });
 });
+
+describe("a11y.document-title / seo.meta-description / seo.canonical", () => {
+  const doc = (head: string) => `<!DOCTYPE html><html lang="en"><head>${head}</head><body><main><h1>x</h1></main></body></html>`;
+  it("document-title: flags a full doc with no <title>", () => {
+    expect(ids(lint(doc(`<meta name="description" content="d">`), "html"))).toContain("a11y.document-title");
+  });
+  it("document-title: flags an empty <title>", () => {
+    expect(ids(lint(doc(`<title>   </title><meta name="description" content="d">`), "html"))).toContain("a11y.document-title");
+  });
+  it("document-title: passes a real title", () => {
+    expect(ids(lint(doc(`<title>Pricing — Acme</title><meta name="description" content="d">`), "html"))).not.toContain("a11y.document-title");
+  });
+  it("document-title: ignores fragments", () => {
+    expect(ids(lint(`<section><h2>x</h2></section>`, "html"))).not.toContain("a11y.document-title");
+  });
+  it("meta-description: flags a full doc with no meta description", () => {
+    expect(ids(lint(doc(`<title>t</title>`), "html"))).toContain("seo.meta-description");
+  });
+  it("meta-description: passes when present and non-empty", () => {
+    expect(ids(lint(doc(`<title>t</title><meta name="description" content="A concise page summary.">`), "html"))).not.toContain("seo.meta-description");
+  });
+  it("canonical: flags two canonical links", () => {
+    expect(ids(lint(doc(`<title>t</title><meta name="description" content="d"><link rel="canonical" href="/a"><link rel="canonical" href="/b">`), "html"))).toContain("seo.canonical");
+  });
+  it("canonical: passes a single canonical", () => {
+    expect(ids(lint(doc(`<title>t</title><meta name="description" content="d"><link rel="canonical" href="/a">`), "html"))).not.toContain("seo.canonical");
+  });
+});
+
+describe("a11y.document-title — SVG <title> edge", () => {
+  it("does NOT accept an inline SVG <title> in the body as the document title", () => {
+    const f = lint(`<!DOCTYPE html><html lang="en"><head><meta name="description" content="d"></head><body><main><h1>x</h1><svg><title>Icon</title></svg></main></body></html>`, "html");
+    expect(ids(f)).toContain("a11y.document-title");
+  });
+});

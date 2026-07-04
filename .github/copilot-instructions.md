@@ -40,7 +40,14 @@ These structural/enforcement rules back the guidance above (📐 CONV, staticall
 `tokens.zindex-scale` (no raw `z-index >= 1000`; use the ladder), `responsive.container-query`
 (`@container` needs a `container-type`), `a11y.iframe-title` (every `<iframe>` has a title),
 `a11y.table-headers` (data tables have `<th>`), `a11y.duplicate-id-refs` (a label/aria-referenced id is unique),
-`responsive.viewport-fit` (`env(safe-area-inset-*)` needs `viewport-fit=cover`, else it's inert).
+`responsive.viewport-fit` (`env(safe-area-inset-*)` needs `viewport-fit=cover`, else it's inert),
+`a11y.document-title` (a non-empty `<title>`), `seo.meta-description` (a `<meta name="description">`),
+`seo.canonical` (at most one `<link rel="canonical">`).
+
+**Technical SEO is the same DOM as a11y** (markup only — keyword/link strategy is out of scope): one `<h1>`,
+real `<a href>` (not `<div onClick>`), descriptive link text, `alt`, plus a unique `<title>`, a meta
+description, one self-referencing canonical, Open Graph + `twitter:card`, JSON-LD structured data, and
+`hreflang` tied to `<html lang>`. Never ship a staging `noindex`.
 
 Design for **device capability, not just screen width**: query `pointer`/`hover` (never hide a critical action
 behind `:hover` — unreachable on touch); use `dvh`/`svh` not `100vh` (which overflows past the mobile URL bar);
@@ -132,7 +139,7 @@ Not compliance failures, but they erase brand distinctiveness and often *induce*
 npx @norma/design-lint "**/*.{html,css}"     # gate SPEC violations; exits non-zero on error-severity
 ```
 
-## Rule index (generated from standard/rules.json v1.5.0)
+## Rule index (generated from standard/rules.json v1.6.0)
 
 - 🔒 SPEC `color.contrast.text` (error) — Body text contrast >= 4.5:1 · [WCAG 2.2 SC 1.4.3 Contrast (Minimum)](https://www.w3.org/TR/WCAG22/#contrast-minimum)
 - 🔒 SPEC `color.contrast.large-ui` (error) — Large text & UI contrast >= 3:1 · [WCAG 2.2 SC 1.4.3 / 1.4.11 Non-text Contrast](https://www.w3.org/TR/WCAG22/#non-text-contrast)
@@ -174,6 +181,9 @@ npx @norma/design-lint "**/*.{html,css}"     # gate SPEC violations; exits non-z
 - 📐 CONV `a11y.iframe-title` (warn) — Every <iframe> has a title · [WCAG 2.2 SC 4.1.2 / 2.4.1; axe frame-title](https://www.w3.org/TR/WCAG22/#name-role-value)
 - 📐 CONV `a11y.table-headers` (warn) — Data tables have <th> headers · [WCAG 2.2 SC 1.3.1 Info and Relationships (H51)](https://www.w3.org/TR/WCAG22/#info-and-relationships)
 - 📐 CONV `a11y.duplicate-id-refs` (warn) — Referenced ids are unique · [WCAG 2.2 SC 1.3.1 / 4.1.2; axe duplicate-id-aria](https://www.w3.org/TR/WCAG22/#info-and-relationships)
+- 📐 CONV `a11y.document-title` (warn) — Every page has a descriptive <title> · [WCAG 2.2 SC 2.4.2 Page Titled (Level A); also the primary SEO title](https://www.w3.org/TR/WCAG22/#page-titled)
+- 📐 CONV `seo.meta-description` (warn) — Every page has a meta description · [Google Search Central — snippets & meta descriptions](https://developers.google.com/search/docs/appearance/snippet)
+- 📐 CONV `seo.canonical` (warn) — At most one canonical link · [Google Search Central — consolidate duplicate URLs (rel=canonical)](https://developers.google.com/search/docs/crawling-indexing/consolidate-duplicate-urls)
 - 📐 CONV `responsive.viewport-fit` (warn) — safe-area insets need viewport-fit=cover · [CSS Round Display L1 (env safe-area-inset-*); WHATWG viewport-fit](https://drafts.csswg.org/css-round-display/#viewport-fit-descriptor)
 - 📐 CONV `security.external-rel` (warn) — target=_blank has rel=noopener · [WHATWG HTML — noopener link type (OWASP: reverse tabnabbing)](https://html.spec.whatwg.org/multipage/links.html#link-type-noopener)
 - 📐 CONV `security.sri` (warn) — External subresources use SRI · [W3C Subresource Integrity](https://www.w3.org/TR/SRI/)

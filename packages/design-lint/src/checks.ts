@@ -925,6 +925,38 @@ const duplicateIdRefs: Check = (ctx, rules) => {
   return out;
 };
 
+// ---------- Document metadata / technical-SEO checks (full-document scoped) ----------
+const documentTitle: Check = (ctx, rules) => {
+  if (!isFullDocument(ctx)) return [];
+  const r = rules[0];
+  // Scope to the document <head> — an inline SVG's <title> in the body must not satisfy the page title.
+  const title = ctx.dom!.querySelector("head")?.querySelector("title");
+  if ((title?.text ?? "").trim()) return [];
+  return [mk(ctx, r, title ? elementLine(ctx, title) : 1,
+    "The document has no non-empty <title> — screen readers announce it as the URL and search/social results have no name (WCAG 2.4.2).",
+    "Tài liệu không có <title> khác rỗng — trình đọc màn hình đọc là URL, kết quả tìm kiếm/chia sẻ không có tên (WCAG 2.4.2).")];
+};
+
+const metaDescription: Check = (ctx, rules) => {
+  if (!isFullDocument(ctx)) return [];
+  const r = rules[0];
+  const meta = ctx.dom!.querySelector('meta[name="description"]');
+  if ((meta?.getAttribute("content") ?? "").trim()) return [];
+  return [mk(ctx, r, meta ? elementLine(ctx, meta) : 1,
+    "The document has no <meta name=\"description\"> — search engines invent a snippet from the page, usually worse than an authored summary.",
+    "Tài liệu không có <meta name=\"description\"> — máy tìm kiếm tự bịa đoạn mô tả từ trang, thường tệ hơn một tóm tắt do bạn viết.")];
+};
+
+const canonicalUnique: Check = (ctx, rules) => {
+  if (!ctx.dom) return [];
+  const r = rules[0];
+  const canon = ctx.dom.querySelectorAll("link[rel]").filter((l) => (l.getAttribute("rel") ?? "").trim().toLowerCase() === "canonical");
+  if (canon.length < 2) return [];
+  return [mk(ctx, r, elementLine(ctx, canon[1]),
+    `The document has ${canon.length} <link rel="canonical"> — search engines ignore all but one (often the wrong one). Keep exactly one.`,
+    `Tài liệu có ${canon.length} <link rel="canonical"> — máy tìm kiếm chỉ giữ một (thường là cái sai). Chỉ để đúng một.`)];
+};
+
 const viewportFit: Check = (ctx, rules) => {
   if (!isFullDocument(ctx)) return [];
   const r = rules[0];
@@ -944,4 +976,5 @@ export const CHECKS: Record<string, Check> = {
   metaViewport, viewportPresence, controlName, deadHref, gradientText, positiveTabindex, langValid,
   landmarkMain, singleH1, fieldsetGroup, genericLinkText, focusForcedColors, zindexScale, containerQuery,
   iframeTitle, tableHeaders, duplicateIdRefs, viewportFit,
+  documentTitle, metaDescription, canonicalUnique,
 };
