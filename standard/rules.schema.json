@@ -46,7 +46,7 @@
           "properties": {
             "type": {
               "type": "string",
-              "enum": ["contrast", "targetSize", "focusRing", "reducedMotion", "formLabel", "semanticControl", "emojiIcon", "imgDimensions", "imgAlt", "headingOrder", "colorTokenOnly", "spacingScale", "forbiddenValue", "htmlLang", "logicalProperties", "colorScheme", "externalRel", "sri", "metaViewport", "viewportPresence", "controlName", "deadHref", "gradientText", "positiveTabindex", "langValid", "manual"]
+              "enum": ["contrast", "targetSize", "focusRing", "reducedMotion", "formLabel", "semanticControl", "emojiIcon", "imgDimensions", "imgAlt", "headingOrder", "colorTokenOnly", "spacingScale", "forbiddenValue", "htmlLang", "logicalProperties", "colorScheme", "externalRel", "sri", "metaViewport", "viewportPresence", "controlName", "deadHref", "gradientText", "positiveTabindex", "langValid", "landmarkMain", "singleH1", "fieldsetGroup", "genericLinkText", "focusForcedColors", "zindexScale", "containerQuery", "manual"]
             }
           }
         }

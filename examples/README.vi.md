@@ -6,7 +6,7 @@ Hai project nhỏ cho thấy linter hoạt động — copy cái đầu, học t
 | Thư mục | Là gì | Kết quả linter |
 |--------|-----------|---------------|
 | [`minimal-pass/`](minimal-pass) | Trang khởi đầu sạch, dựng đúng chuẩn (HTML ngữ nghĩa, một vòng focus, màu token, thuộc tính logic, tôn trọng reduced-motion). | **0 lỗi, exit 0** — copy cái này để bắt đầu. |
-| [`catches-violations/`](catches-violations) | Trang "trước khi có Norma" do AI dựng, gieo sẵn các lỗi phổ biến nhất. | **4 lỗi + 7 cảnh báo trên 11 rule, exit 1** — bản "trước", không phải "sau". |
+| [`catches-violations/`](catches-violations) | Trang "trước khi có Norma" do AI dựng, gieo sẵn các lỗi phổ biến nhất. | **4 lỗi + 9 cảnh báo trên 13 rule, exit 1** — bản "trước", không phải "sau". |
 
 ## Chạy thử
 

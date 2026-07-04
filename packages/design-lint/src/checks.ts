@@ -615,8 +615,137 @@ const sri: Check = (ctx, rules) => {
   return out;
 };
 
+// ---------- structure / enforcement of the expanded reference content ----------
+const landmarkMain: Check = (ctx, rules) => {
+  if (!isFullDocument(ctx)) return [];
+  const r = rules[0];
+  const mains = ctx.dom!.querySelectorAll("main, [role=main]");
+  if (mains.length === 1) return [];
+  const html = ctx.dom!.querySelector("html");
+  if (!html || elDisabled(html, r.id)) return [];
+  const line = mains.length > 1 ? elementLine(ctx, mains[1]) : elementLine(ctx, html);
+  return [mk(ctx, r, line,
+    mains.length === 0
+      ? "Document has no <main> landmark — SR users can't jump to the main content."
+      : `Document has ${mains.length} <main> landmarks — there must be exactly one.`,
+    mains.length === 0
+      ? "Tài liệu không có landmark <main> — người dùng SR không nhảy tới nội dung chính được."
+      : `Tài liệu có ${mains.length} landmark <main> — phải đúng một.`)];
+};
+
+const singleH1: Check = (ctx, rules) => {
+  if (!isFullDocument(ctx)) return [];
+  const r = rules[0];
+  const h1s = ctx.dom!.querySelectorAll("h1");
+  if (h1s.length === 1) return [];
+  const html = ctx.dom!.querySelector("html");
+  if (!html || elDisabled(html, r.id)) return [];
+  const line = h1s.length > 1 ? elementLine(ctx, h1s[1]) : elementLine(ctx, html);
+  return [mk(ctx, r, line,
+    h1s.length === 0
+      ? "Document has no <h1> — every page needs one top-level heading."
+      : `Document has ${h1s.length} <h1> headings — use exactly one; demote the rest.`,
+    h1s.length === 0
+      ? "Tài liệu không có <h1> — mỗi trang cần một tiêu đề cấp cao nhất."
+      : `Tài liệu có ${h1s.length} <h1> — chỉ dùng một; hạ cấp phần còn lại.`)];
+};
+
+const fieldsetGroup: Check = (ctx, rules) => {
+  if (!ctx.dom) return [];
+  const r = rules[0];
+  const out: Finding[] = [];
+  const groups = new Map<string, HTMLElement[]>();
+  ctx.dom.querySelectorAll("input[type=radio], input[type=checkbox]").forEach((el) => {
+    const name = el.getAttribute("name");
+    if (name) (groups.get(name) ?? groups.set(name, []).get(name)!).push(el);
+  });
+  for (const [name, els] of groups) {
+    if (els.length < 2) continue;
+    const grouped = els.every((el) => el.closest("fieldset") || el.closest("[role=group]") || el.closest("[role=radiogroup]"));
+    if (grouped || elDisabled(els[0], r.id)) continue;
+    out.push(mk(ctx, r, elementLine(ctx, els[0]),
+      `The "${name}" radio/checkbox group isn't in a <fieldset> + <legend> — the group name is lost to screen readers (1.3.1).`,
+      `Nhóm radio/checkbox "${name}" không nằm trong <fieldset> + <legend> — trình đọc màn hình mất tên nhóm (1.3.1).`));
+  }
+  return out;
+};
+
+const GENERIC_NAMES = new Set(["click here", "here", "read more", "more", "learn more", "link", "this link", "details"]);
+const genericLinkText: Check = (ctx, rules) => {
+  if (!ctx.dom) return [];
+  const r = rules[0];
+  const out: Finding[] = [];
+  ctx.dom.querySelectorAll("a[href], button").forEach((el) => {
+    if (el.getAttribute("aria-hidden") === "true" || elDisabled(el, r.id)) return;
+    const label = (el.getAttribute("aria-label") ?? "").trim() || accessibleText(el).trim();
+    if (!GENERIC_NAMES.has(label.toLowerCase())) return;
+    out.push(mk(ctx, r, elementLine(ctx, el),
+      `<${el.rawTagName}> text "${label}" isn't descriptive out of context — say where it goes (WCAG 2.4.4).`,
+      `Chữ "${label}" của <${el.rawTagName}> không mô tả khi tách ngữ cảnh — nói rõ nó dẫn tới đâu (WCAG 2.4.4).`));
+  });
+  return out;
+};
+
+const focusForcedColors: Check = (ctx, rules) => {
+  const r = rules[0];
+  const out: Finding[] = [];
+  for (const block of ctx.css) {
+    block.root.walkRules((rule) => {
+      if (!/:focus(-visible)?(?![\w-])/.test(rule.selector) || /:focus-within/.test(rule.selector)) return;
+      const d = decls(rule);
+      const outline = (d.get("outline") ?? "").trim();
+      const removed = /^(none|0(px|rem|em)?)\b/.test(outline) || /^0(px|rem|em)?$/.test((d.get("outline-width") ?? "").trim());
+      if (!removed) return; // an outline is present → survives forced-colors
+      const shadow = (d.get("box-shadow") ?? "").trim();
+      if (!shadow || shadow === "none") return;
+      let hasBorder = false;
+      for (const [prop, val] of d) {
+        const v = val.trim();
+        if (BORDER_PROP.test(prop) && v && v !== "none" && !/^0(px|rem|em)?\b/.test(v)) hasBorder = true;
+      }
+      if (hasBorder || ruleDisabled(rule, r.id)) return; // border survives forced-colors; box-shadow does not
+      out.push(mk(ctx, r, cssLine(block, rule),
+        `"${rule.selector}" signals focus with box-shadow only — forced-colors mode strips it. Add an outline.`,
+        `"${rule.selector}" báo focus chỉ bằng box-shadow — chế độ forced-colors sẽ xoá nó. Thêm outline.`));
+    });
+  }
+  return out;
+};
+
+const zindexScale: Check = (ctx, rules) => {
+  const r = rules[0];
+  const out: Finding[] = [];
+  for (const block of ctx.css) {
+    block.root.walkDecls(/^z-index$/i, (d) => {
+      const v = d.value.trim();
+      if (!/^\d+$/.test(v) || parseInt(v, 10) < 1000) return; // only raw ints >= 1000 (var()/small values are fine)
+      const parent = d.parent;
+      if (parent && parent.type === "rule" && ruleDisabled(parent as PostcssRule, r.id)) return;
+      out.push(mk(ctx, r, cssLine(block, d),
+        `z-index: ${v} — avoid arbitrary high values; use a z-index token scale (base…tooltip).`,
+        `z-index: ${v} — tránh giá trị cao tuỳ tiện; dùng thang token z-index (base…tooltip).`));
+    });
+  }
+  return out;
+};
+
+const containerQuery: Check = (ctx, rules) => {
+  const r = rules[0];
+  let atLine: number | null = null;
+  let hasType = false;
+  for (const block of ctx.css) {
+    block.root.walkAtRules(/^container$/i, (at) => { if (atLine === null) atLine = cssLine(block, at); });
+    block.root.walkDecls(/^container(-type)?$/i, () => { hasType = true; });
+  }
+  if (atLine === null || hasType) return [];
+  return [mk(ctx, r, atLine,
+    "@container is used but no element declares container-type — the container query never matches.",
+    "Dùng @container nhưng không phần tử nào khai báo container-type — container query không bao giờ khớp.")];
+};
+
 export const CHECKS: Record<string, Check> = {
   contrast, focusRing, reducedMotion, forbiddenValue, formLabel, semanticControl, emojiIcon, imgDimensions, imgAlt, targetSize,
   headingOrder, htmlLang, logicalProperties, colorScheme, colorTokenOnly, externalRel, sri,
   metaViewport, viewportPresence, controlName, deadHref, gradientText, positiveTabindex, langValid,
+  landmarkMain, singleH1, fieldsetGroup, genericLinkText, focusForcedColors, zindexScale, containerQuery,
 };

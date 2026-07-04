@@ -1,6 +1,6 @@
 {
   "$generated": "Do not edit. Generated from standard/rules.yaml by scripts/build-rules.ts.",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "rules": [
     {
       "id": "color.contrast.text",
@@ -706,6 +706,167 @@
       "remediation": {
         "en": "Remove the positive value (use tabindex=\"0\" to add to natural order, \"-1\" for programmatic focus) and order the DOM to match the visual flow.",
         "vi": "Bỏ giá trị dương (dùng tabindex=\"0\" để thêm vào thứ tự tự nhiên, \"-1\" cho focus theo mã) và sắp DOM khớp luồng thị giác."
+      }
+    },
+    {
+      "id": "a11y.landmark-main",
+      "title": {
+        "en": "Exactly one <main> landmark",
+        "vi": "Đúng một landmark <main>"
+      },
+      "domain": "a11y",
+      "tag": "CONV",
+      "severity": "warn",
+      "source": "WCAG 2.2 SC 1.3.1 / ARIA landmarks; axe landmark-one-main",
+      "source_url": "https://www.w3.org/TR/WCAG22/#info-and-relationships",
+      "rationale": {
+        "en": "A full document needs one and only one <main> (or role=main) so screen-reader users can jump straight to the primary content and the skip link has a target. Zero mains or duplicates break that.",
+        "vi": "Tài liệu đầy đủ cần đúng một <main> (hoặc role=main) để người dùng trình đọc màn hình nhảy thẳng tới nội dung chính và skip link có đích. Không có hoặc trùng lặp đều hỏng."
+      },
+      "check": {
+        "type": "landmarkMain"
+      },
+      "remediation": {
+        "en": "Wrap the primary content in a single <main> (with id=main as the skip-link target).",
+        "vi": "Bọc nội dung chính trong một <main> duy nhất (với id=main làm đích skip-link)."
+      }
+    },
+    {
+      "id": "a11y.single-h1",
+      "title": {
+        "en": "Exactly one <h1> per page",
+        "vi": "Đúng một <h1> mỗi trang"
+      },
+      "domain": "a11y",
+      "tag": "CONV",
+      "severity": "warn",
+      "source": "WCAG 2.2 SC 1.3.1 / 2.4.6; axe page-has-heading-one",
+      "source_url": "https://www.w3.org/TR/WCAG22/#headings-and-labels",
+      "rationale": {
+        "en": "Every page needs one top-level <h1> naming the page; zero leaves no anchor for the outline, and several fragment the document structure screen-reader users navigate by.",
+        "vi": "Mỗi trang cần một <h1> cấp cao nhất đặt tên trang; không có thì mất neo cho bố cục, còn nhiều <h1> làm vỡ cấu trúc tài liệu mà người dùng trình đọc màn hình điều hướng theo."
+      },
+      "check": {
+        "type": "singleH1"
+      },
+      "remediation": {
+        "en": "Keep exactly one <h1>; demote the others to <h2>+ (headings describe structure, not size — style with CSS).",
+        "vi": "Giữ đúng một <h1>; hạ các cái khác xuống <h2>+ (tiêu đề mô tả cấu trúc, không phải cỡ chữ — tạo kiểu bằng CSS)."
+      }
+    },
+    {
+      "id": "forms.fieldset-group",
+      "title": {
+        "en": "Group radios/checkboxes in a fieldset",
+        "vi": "Nhóm radio/checkbox trong fieldset"
+      },
+      "domain": "forms",
+      "tag": "CONV",
+      "severity": "warn",
+      "source": "WCAG 2.2 SC 1.3.1 Info and Relationships (H71)",
+      "source_url": "https://www.w3.org/TR/WCAG22/#info-and-relationships",
+      "rationale": {
+        "en": "A set of radios/checkboxes sharing a name is one question; without a <fieldset> + <legend> (or role=group) the group's name isn't announced with each option, so a screen-reader user hears the options with no question.",
+        "vi": "Bộ radio/checkbox cùng name là một câu hỏi; không có <fieldset> + <legend> (hoặc role=group) thì tên nhóm không được đọc kèm mỗi lựa chọn, khiến người dùng trình đọc màn hình nghe các lựa chọn mà không có câu hỏi."
+      },
+      "check": {
+        "type": "fieldsetGroup"
+      },
+      "remediation": {
+        "en": "Wrap the group in <fieldset><legend>Question</legend> … </fieldset> (or a role=group with an accessible name).",
+        "vi": "Bọc nhóm trong <fieldset><legend>Câu hỏi</legend> … </fieldset> (hoặc role=group có tên tiếp cận)."
+      }
+    },
+    {
+      "id": "a11y.generic-link-text",
+      "title": {
+        "en": "No non-descriptive link/button text",
+        "vi": "Không chữ link/nút vô nghĩa"
+      },
+      "domain": "a11y",
+      "tag": "CONV",
+      "severity": "warn",
+      "source": "WCAG 2.2 SC 2.4.4 Link Purpose (In Context)",
+      "source_url": "https://www.w3.org/TR/WCAG22/#link-purpose-in-context",
+      "rationale": {
+        "en": "\"Click here\", \"read more\", \"learn more\" tell a screen-reader user nothing when links are read out of context (a common SR navigation mode). The accessible name should describe the destination.",
+        "vi": "\"Click here\", \"read more\", \"learn more\" không cho người dùng trình đọc màn hình biết gì khi link được đọc tách ngữ cảnh (một chế độ điều hướng SR phổ biến). Tên tiếp cận phải mô tả đích đến."
+      },
+      "check": {
+        "type": "genericLinkText"
+      },
+      "remediation": {
+        "en": "Name the destination (\"Read the 2026 report\") or add an aria-label; reserve generic phrases for supplementary context only.",
+        "vi": "Đặt tên đích (\"Đọc báo cáo 2026\") hoặc thêm aria-label; chỉ để cụm từ chung cho ngữ cảnh bổ sung."
+      }
+    },
+    {
+      "id": "a11y.focus-forced-colors",
+      "title": {
+        "en": "Focus ring survives forced-colors",
+        "vi": "Vòng focus sống sót forced-colors"
+      },
+      "domain": "a11y",
+      "tag": "CONV",
+      "severity": "warn",
+      "source": "WCAG 2.2 SC 2.4.7 / 1.4.11; CSS Color Adjustment L1 (forced-colors)",
+      "source_url": "https://www.w3.org/TR/css-color-adjust-1/#forced-colors-properties",
+      "rationale": {
+        "en": "In forced-colors mode (Windows High Contrast) the UA strips box-shadow, so a :focus-visible indicator that relies on box-shadow alone (outline removed, no border) leaves keyboard users with no visible focus. An outline survives.",
+        "vi": "Trong chế độ forced-colors (Windows High Contrast) UA xoá box-shadow, nên chỉ báo :focus-visible chỉ dựa vào box-shadow (đã bỏ outline, không border) khiến người dùng bàn phím không thấy focus. Outline thì sống sót."
+      },
+      "check": {
+        "type": "focusForcedColors"
+      },
+      "remediation": {
+        "en": "Keep (or add) an outline on :focus-visible; box-shadow can enhance it but must not be the only indicator.",
+        "vi": "Giữ (hoặc thêm) outline trên :focus-visible; box-shadow có thể tô điểm nhưng không được là chỉ báo duy nhất."
+      }
+    },
+    {
+      "id": "tokens.zindex-scale",
+      "title": {
+        "en": "No arbitrary high z-index",
+        "vi": "Không z-index cao tuỳ tiện"
+      },
+      "domain": "tokens",
+      "tag": "CONV",
+      "severity": "warn",
+      "source": "Norma §2 Layout — z-index token ladder",
+      "source_url": "",
+      "rationale": {
+        "en": "A raw z-index >= 1000 (the z-index:9999 arms race) signals ad-hoc stacking. Use a named z-index token ladder (base…tooltip) so layers are systematic and a transformed ancestor's trapped context is visible.",
+        "vi": "z-index thô >= 1000 (cuộc đua z-index:9999) là dấu hiệu xếp lớp tuỳ tiện. Dùng thang token z-index có tên (base…tooltip) để các lớp hệ thống và context bị giam bởi ancestor có transform nhìn thấy được."
+      },
+      "check": {
+        "type": "zindexScale"
+      },
+      "remediation": {
+        "en": "Reference a z-index token (var(--z-modal)); reserve raw values for small local stacking (1–99).",
+        "vi": "Tham chiếu token z-index (var(--z-modal)); chỉ dùng giá trị thô cho xếp lớp cục bộ nhỏ (1–99)."
+      }
+    },
+    {
+      "id": "responsive.container-query",
+      "title": {
+        "en": "@container needs a container-type",
+        "vi": "@container cần container-type"
+      },
+      "domain": "responsive",
+      "tag": "CONV",
+      "severity": "warn",
+      "source": "W3C CSS Containment Module L3 (container queries)",
+      "source_url": "https://www.w3.org/TR/css-contain-3/",
+      "rationale": {
+        "en": "An @container rule only matches when an ancestor establishes a query container via container-type (or the container shorthand). Using @container with no container-type anywhere is inert — the styles never apply.",
+        "vi": "Quy tắc @container chỉ khớp khi một ancestor thiết lập query container qua container-type (hoặc shorthand container). Dùng @container mà không có container-type ở đâu cả là vô hiệu — style không bao giờ áp."
+      },
+      "check": {
+        "type": "containerQuery"
+      },
+      "remediation": {
+        "en": "Add container-type: inline-size (and optionally container-name) to the parent you want to query against.",
+        "vi": "Thêm container-type: inline-size (và container-name nếu cần) vào phần tử cha bạn muốn truy vấn."
       }
     },
     {

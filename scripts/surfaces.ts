@@ -36,6 +36,13 @@ export const SURFACE_BY_CHECK: Record<string, Surface[]> = {
   positiveTabindex: ["html"],
   gradientText: ["css"],
   langValid: ["html"],
+  landmarkMain: ["html"],
+  singleH1: ["html"],
+  fieldsetGroup: ["html"],
+  genericLinkText: ["html"],
+  focusForcedColors: ["css"],
+  zindexScale: ["css"],
+  containerQuery: ["css"],
   manual: [], // spacing-scale / body-min / inp-budget / agent-verified WCAG mandates — not statically checkable
 };
 

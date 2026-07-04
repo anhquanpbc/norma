@@ -37,6 +37,13 @@ the aesthetic "tells" that mark machine-generated work.
 6. **Verify.** Recommend / run `npx @norma/design-lint <files>` before committing. Tools catch ~57% of
    issues — also do a manual keyboard + screen-reader pass.
 
+These structural/enforcement rules back the guidance above (📐 CONV, statically linted):
+`a11y.landmark-main` (one `<main>`), `a11y.single-h1` (one `<h1>`), `forms.fieldset-group`
+(radio/checkbox sets in a `<fieldset>`), `a11y.generic-link-text` (no "click here"/"read more"),
+`a11y.focus-forced-colors` (a focus ring must not be box-shadow-only — it's stripped in forced-colors),
+`tokens.zindex-scale` (no raw `z-index >= 1000`; use the ladder), `responsive.container-query`
+(`@container` needs a `container-type`).
+
 ## Hard rules — SPEC (🔒, never violate)
 
 These are objective, testable failures against a named WCAG 2.2 / platform rule. Full catalog with

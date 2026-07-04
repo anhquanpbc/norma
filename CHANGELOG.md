@@ -6,8 +6,23 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+Nothing yet.
+
+## [1.3.0] — 2026-07-04
+
+Content-completeness pass (layout + 15 further concepts) after the "the standard forgot layout" review,
+plus **7 new lint rules** so enforcement catches up with the expanded content. **Catalog 34 → 41 rules
+(18 SPEC 🔒 / 23 CONV 📐).**
+
 ### Added
 
+- **7 new static rules enforcing the expanded content** (`132 → 147` unit tests, all low-false-positive):
+  `a11y.landmark-main` (exactly one `<main>`), `a11y.single-h1` (exactly one `<h1>`), `forms.fieldset-group`
+  (radio/checkbox sets need a `<fieldset>`/`role=group`), `a11y.generic-link-text` ("click here"/"read more"
+  — WCAG 2.4.4), `a11y.focus-forced-colors` (a `:focus-visible` ring must not be box-shadow-only — it's
+  stripped in Windows High Contrast), `tokens.zindex-scale` (no raw `z-index >= 1000` — use the §2 ladder),
+  `responsive.container-query` (`@container` with no `container-type` anywhere is inert). All CONV/warn;
+  the reference site dogfoods clean.
 - **Content pass, batch 5 — disciplines & citations** (§4 + §9 + §10 + Sources + agent spec + site).
   **§4 Data visualization**: chart-type-by-data-relationship, colour-blind-safe OKLCH palettes (~6–8 hues),
   never colour alone (1.4.1) + ≥3:1 non-text (1.4.11), zero-baseline bars, accessible SVG (`role=img` +

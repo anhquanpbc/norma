@@ -601,3 +601,109 @@ describe("i18n.logical-properties — extended to border-left/right", () => {
     expect(ids(lint(`.x{ border-bottom: 1px solid #000 }`, "css"))).not.toContain("i18n.logical-properties");
   });
 });
+
+const fulldoc = (body: string) => `<!DOCTYPE html><html lang="en"><head><title>t</title></head><body>${body}</body></html>`;
+
+describe("a11y.landmark-main — exactly one <main>", () => {
+  it("flags a full document with no <main>", () => {
+    expect(ids(lint(fulldoc(`<p>x</p>`), "html"))).toContain("a11y.landmark-main");
+  });
+  it("flags two <main> landmarks", () => {
+    expect(ids(lint(fulldoc(`<main>a</main><main>b</main>`), "html"))).toContain("a11y.landmark-main");
+  });
+  it("passes exactly one <main> (or role=main)", () => {
+    expect(ids(lint(fulldoc(`<main>a</main>`), "html"))).not.toContain("a11y.landmark-main");
+    expect(ids(lint(fulldoc(`<div role="main">a</div>`), "html"))).not.toContain("a11y.landmark-main");
+  });
+  it("ignores fragments (no <html>)", () => {
+    expect(ids(lint(`<p>snippet</p>`, "html"))).not.toContain("a11y.landmark-main");
+  });
+});
+
+describe("a11y.single-h1 — exactly one <h1>", () => {
+  it("flags zero h1", () => {
+    expect(ids(lint(fulldoc(`<main><h2>x</h2></main>`), "html"))).toContain("a11y.single-h1");
+  });
+  it("flags two h1", () => {
+    expect(ids(lint(fulldoc(`<main><h1>a</h1><h1>b</h1></main>`), "html"))).toContain("a11y.single-h1");
+  });
+  it("passes exactly one h1", () => {
+    expect(ids(lint(fulldoc(`<main><h1>a</h1><h2>b</h2></main>`), "html"))).not.toContain("a11y.single-h1");
+  });
+  it("ignores fragments", () => {
+    expect(ids(lint(`<h2>x</h2>`, "html"))).not.toContain("a11y.single-h1");
+  });
+});
+
+describe("forms.fieldset-group — grouped radios/checkboxes need a fieldset", () => {
+  it("flags 2+ radios sharing a name outside a fieldset", () => {
+    const f = lint(`<input type="radio" name="plan"><input type="radio" name="plan">`, "html");
+    expect(ids(f)).toContain("forms.fieldset-group");
+  });
+  it("passes radios wrapped in a fieldset", () => {
+    const f = lint(`<fieldset><legend>Plan</legend><input type="radio" name="plan"><input type="radio" name="plan"></fieldset>`, "html");
+    expect(ids(f)).not.toContain("forms.fieldset-group");
+  });
+  it("passes a role=radiogroup wrapper", () => {
+    const f = lint(`<div role="radiogroup"><input type="radio" name="p"><input type="radio" name="p"></div>`, "html");
+    expect(ids(f)).not.toContain("forms.fieldset-group");
+  });
+  it("does not flag a single lone checkbox", () => {
+    expect(ids(lint(`<input type="checkbox" name="tos">`, "html"))).not.toContain("forms.fieldset-group");
+  });
+});
+
+describe("a11y.generic-link-text — non-descriptive link/button names", () => {
+  it('flags "click here" and "read more"', () => {
+    expect(ids(lint(`<a href="/x">Click here</a>`, "html"))).toContain("a11y.generic-link-text");
+    expect(ids(lint(`<a href="/y">Read more</a>`, "html"))).toContain("a11y.generic-link-text");
+  });
+  it("passes a descriptive link", () => {
+    expect(ids(lint(`<a href="/pricing">See pricing plans</a>`, "html"))).not.toContain("a11y.generic-link-text");
+  });
+  it("uses aria-label when present", () => {
+    expect(ids(lint(`<a href="/x" aria-label="Read the 2026 report">Read more</a>`, "html"))).not.toContain("a11y.generic-link-text");
+  });
+});
+
+describe("a11y.focus-forced-colors — box-shadow-only focus is stripped in forced-colors", () => {
+  it("flags outline:none + only a box-shadow ring", () => {
+    const f = lint(`.x:focus-visible{ outline:none; box-shadow:0 0 0 3px blue; }`, "css");
+    expect(ids(f)).toContain("a11y.focus-forced-colors");
+  });
+  it("passes when a real outline is kept", () => {
+    const f = lint(`.x:focus-visible{ outline:2px solid blue; box-shadow:0 0 0 3px blue; }`, "css");
+    expect(ids(f)).not.toContain("a11y.focus-forced-colors");
+  });
+  it("passes outline:none replaced by a border (border survives forced-colors)", () => {
+    const f = lint(`.x:focus-visible{ outline:none; border:2px solid blue; }`, "css");
+    expect(ids(f)).not.toContain("a11y.focus-forced-colors");
+  });
+});
+
+describe("tokens.zindex-scale — no arbitrary high z-index", () => {
+  it("flags a raw z-index >= 1000 (the 9999 arms race)", () => {
+    expect(ids(lint(`.x{ z-index: 9999 }`, "css"))).toContain("tokens.zindex-scale");
+  });
+  it("passes small local z-index", () => {
+    expect(ids(lint(`.x{ z-index: 5 } .y{ z-index: 50 }`, "css"))).not.toContain("tokens.zindex-scale");
+  });
+  it("passes a var()/token z-index", () => {
+    expect(ids(lint(`.x{ z-index: var(--z-modal) }`, "css"))).not.toContain("tokens.zindex-scale");
+  });
+});
+
+describe("responsive.container-query — @container needs a container-type", () => {
+  it("flags @container with no container-type anywhere", () => {
+    const f = lint(`@container (min-width: 30rem){ .card{ color:red } }`, "css");
+    expect(ids(f)).toContain("responsive.container-query");
+  });
+  it("passes when a container-type is declared", () => {
+    const f = lint(`.wrap{ container-type: inline-size } @container (min-width: 30rem){ .card{ color:red } }`, "css");
+    expect(ids(f)).not.toContain("responsive.container-query");
+  });
+  it("passes the container shorthand", () => {
+    const f = lint(`.wrap{ container: layout / inline-size } @container layout (min-width: 30rem){ .card{ color:red } }`, "css");
+    expect(ids(f)).not.toContain("responsive.container-query");
+  });
+});
