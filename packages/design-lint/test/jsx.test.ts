@@ -49,3 +49,30 @@ describe("jsx — line accuracy & clean files", () => {
     expect(ids(`export const C = () => (<button className="rounded bg-slate-800" onClick={save}>Save</button>);`)).toEqual([]);
   });
 });
+
+describe("jsx — false positives from adversarial review (scan only real tag regions, strip comments)", () => {
+  it("indigo: NOT flagged in a code comment", () => {
+    expect(ids(`export const C = () => {\n  // TODO: drop the old indigo-500 gradient\n  return <div className="card"/>;\n};`)).not.toContain("antipattern.indigo-default");
+  });
+  it("indigo: NOT flagged in a non-className string literal", () => {
+    expect(ids(`const note = "don't use indigo-500 or #667eea"; export const C = () => <div>{note}</div>;`)).not.toContain("antipattern.indigo-default");
+  });
+  it("indigo: NOT flagged in JSX text or an import path", () => {
+    expect(ids(`import x from "./indigo-500-legacy";\nexport const C = () => <p>We replaced indigo-500 with a token.</p>;`)).not.toContain("antipattern.indigo-default");
+  });
+  it("indigo: STILL flagged inside a real className / style / template-literal / clsx", () => {
+    expect(ids(`const C = () => <div className="bg-indigo-500"/>;`)).toContain("antipattern.indigo-default");
+    expect(ids(`const C = () => <div className={\`bg-indigo-500\`}/>;`)).toContain("antipattern.indigo-default");
+    expect(ids(`const C = () => <div className={clsx("bg-indigo-500")}/>;`)).toContain("antipattern.indigo-default");
+    expect(ids(`const C = () => <div style={{ background: "#667eea" }}/>;`)).toContain("antipattern.indigo-default");
+  });
+  it("semantic-control: NOT flagged inside a JSX block comment", () => {
+    expect(ids(`export const B = () => (\n  <section>\n    {/* <div onClick={h}> */}\n    <span>hi</span>\n  </section>\n);`)).not.toContain("a11y.semantic-control");
+  });
+  it("semantic-control: NOT flagged inside a line comment", () => {
+    expect(ids(`export const B = () => {\n  // legacy: <div onClick={go}>Go</div>\n  return <button type="button" onClick={go}>Go</button>;\n};`)).not.toContain("a11y.semantic-control");
+  });
+  it("semantic-control: NOT flagged when the tag is written as string text", () => {
+    expect(ids(`export const A = () => <pre>{"<div onClick=...>"}</pre>;`)).not.toContain("a11y.semantic-control");
+  });
+});
