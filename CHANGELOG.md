@@ -8,6 +8,10 @@ All notable changes to this project are documented here. The format is based on
 
 ### Added
 
+- **Runtime Core Web Vitals gate.** A new Playwright spec (`e2e/perf.spec.ts`, Chromium) measures the
+  reference site's **LCP** and **CLS** and asserts the §6 "good" thresholds (LCP < 2.5s, CLS < 0.1) — so
+  the "we measure CWV" claim is dogfooded on every CI run. Dependency-free (uses the existing Playwright
+  setup, no Lighthouse-CI), matching the project's dependency minimalism.
 - **Vue & Svelte template reach.** The component scanner now recognises `.vue`/`.svelte` (default glob +
   dir-expand include them) and the two tells transfer verbatim: `antipattern.indigo-default` (colour tell in
   `class`/`:class`/`style`) and `a11y.semantic-control`, whose click-handler detection now covers `@click`,
