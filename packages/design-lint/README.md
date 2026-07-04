@@ -9,7 +9,7 @@ AI-generated design "tells". Bilingual (EN/VI) messages via `--lang`, SARIF outp
 ## Usage
 
 ```bash
-npx @norma/design-lint "**/*.{html,css}"
+npx @norma/design-lint "**/*.{html,css,jsx,tsx}"
 npx @norma/design-lint index.html --lang vi
 npx @norma/design-lint src --format sarif > design-lint.sarif
 ```
@@ -64,12 +64,21 @@ them instead.
 
 ## What it can and cannot see
 
-The linter parses **HTML and CSS** (including `<style>` blocks and inline `style="…"` attributes).
-It does **not** understand JSX/TSX, Vue/Svelte templates, CSS-in-JS, or Tailwind utility classes — in
-a React/Next/Tailwind project the `**/*.{html,css}` glob matches little, and `className` strings,
-styled-components and utility classes are invisible to every check. For those stacks, rely on the
-**agent layer** (`AGENTS.md`, the Cursor/Copilot/Claude rule files) — generated from the same catalog
-— and lint your built HTML/CSS output where you can. A JSX/template extractor is on the roadmap.
+The linter fully parses **HTML and CSS** (including `<style>` blocks and inline `style="…"` attributes) —
+every rule runs there.
+
+**JSX/TSX (`.jsx`/`.tsx`) has partial support (MVP):** the source is scanned, line-accurately, for the
+two tells that transfer cleanly without a full DOM — the **indigo-default colour tell**
+(`antipattern.indigo-default`: `#667eea`/`#764ba2`/`indigo-500` in a `className`, `style` object, or
+arbitrary Tailwind value like `bg-[#667eea]`) and the **`<div onClick>` semantic-control tell**
+(`a11y.semantic-control`: a lowercase intrinsic element with `onClick` and no ARIA `role`; `<Component>`
+wrappers are skipped). Structural a11y that depends on the rendered tree — landmarks, heading order,
+labels, contrast — is **not** evaluated on JSX, because a component file isn't a page; run those against
+your built HTML/CSS.
+
+Vue/Svelte templates, CSS-in-JS, and general Tailwind class semantics are still out of scope. For those,
+lean on the **agent layer** (`AGENTS.md`, the Cursor/Copilot/Claude rule files) generated from the same
+catalog. A deeper AST-based extractor is the next step.
 
 ## Programmatic API
 

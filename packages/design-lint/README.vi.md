@@ -9,7 +9,7 @@ Thông báo song ngữ (EN/VI) qua `--lang`, xuất SARIF cho GitHub.
 ## Cách dùng
 
 ```bash
-npx @norma/design-lint "**/*.{html,css}"
+npx @norma/design-lint "**/*.{html,css,jsx,tsx}"
 npx @norma/design-lint index.html --lang vi
 npx @norma/design-lint src --format sarif > design-lint.sarif
 ```
@@ -63,12 +63,20 @@ trong catalog — engine bỏ qua chúng và agent thiết kế Norma thực thi
 
 ## Kiểm được gì và không kiểm được gì
 
-Linter phân tích **HTML và CSS** (gồm cả khối `<style>` và thuộc tính `style="…"` inline). Nó **không**
-hiểu JSX/TSX, template Vue/Svelte, CSS-in-JS, hay class tiện ích Tailwind — trong dự án React/Next/Tailwind,
-glob `**/*.{html,css}` khớp rất ít, và chuỗi `className`, styled-components, class tiện ích đều vô hình với
-mọi kiểm tra. Với các stack đó, hãy dựa vào **tầng agent** (`AGENTS.md`, các file rule Cursor/Copilot/Claude)
-— sinh ra từ cùng một catalog — và lint phần HTML/CSS đã build khi có thể. Bộ trích xuất JSX/template nằm
-trong lộ trình.
+Linter phân tích đầy đủ **HTML và CSS** (gồm cả khối `<style>` và thuộc tính `style="…"` inline) — mọi rule
+chạy ở đó.
+
+**JSX/TSX (`.jsx`/`.tsx`) hỗ trợ một phần (MVP):** source được quét, chính xác theo dòng, cho hai "dấu hiệu"
+chuyển được sang JSX mà không cần DOM đầy đủ — **dấu hiệu màu indigo mặc định**
+(`antipattern.indigo-default`: `#667eea`/`#764ba2`/`indigo-500` trong `className`, object `style`, hay giá
+trị Tailwind tùy ý như `bg-[#667eea]`) và **dấu hiệu `<div onClick>`** (`a11y.semantic-control`: phần tử
+HTML thường có `onClick` mà không có `role` ARIA; `<Component>` được bỏ qua). A11y cấu trúc phụ thuộc cây
+render — landmark, thứ tự heading, nhãn, tương phản — **không** kiểm trên JSX, vì file component không phải
+một trang; hãy chạy chúng trên HTML/CSS đã build.
+
+Template Vue/Svelte, CSS-in-JS, và ngữ nghĩa class Tailwind tổng quát vẫn ngoài phạm vi. Với chúng, dựa vào
+**tầng agent** (`AGENTS.md`, các file rule Cursor/Copilot/Claude) sinh từ cùng catalog. Bộ trích xuất dựa
+trên AST sâu hơn là bước kế tiếp.
 
 ## API lập trình
 

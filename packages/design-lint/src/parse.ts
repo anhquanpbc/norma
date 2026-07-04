@@ -46,6 +46,11 @@ function collectVars(blocks: CssBlock[], dom?: HTMLElement): Map<string, string>
 }
 
 export function buildContext(file: string, source: string, type: FileType): FileContext {
+  if (type === "jsx") {
+    // JSX/TSX is not a DOM and not CSS — the jsx-aware checks scan the raw source directly
+    // (className/style/JSX-tag tells). No node-html-parser (JSX expressions break it), no postcss.
+    return { file, type, source, css: [], vars: new Map() };
+  }
   if (type === "css") {
     const block = parseCss(source, 1);
     const css = block ? [block] : [];

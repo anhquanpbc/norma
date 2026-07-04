@@ -8,6 +8,14 @@ All notable changes to this project are documented here. The format is based on
 
 ### Added
 
+- **JSX/TSX support (MVP)** — the linter now recognises `.jsx`/`.tsx` and scans them (line-accurate,
+  no DOM/AST) for the two tells that transfer cleanly from CSS/HTML: `antipattern.indigo-default`
+  (`#667eea`/`#764ba2`/`indigo-500` in a `className`, `style` object, or arbitrary Tailwind value) and
+  `a11y.semantic-control` (a lowercase intrinsic element with `onClick` and no ARIA `role`; `<Component>`
+  wrappers skipped). A brace/quote-aware tag tokenizer means `onClick={() => a > b}` and `title="a>b"`
+  don't fool it. Structural a11y (landmarks/headings/labels/contrast) stays HTML/CSS-only — a component
+  file isn't a page. This is the first reach onto the React/Tailwind stack the docs previously disclosed
+  as unsupported; the default glob now includes `jsx,tsx`.
 - **CLI DX** — `--max-warnings <n>` exits non-zero when warnings exceed `n` (so CI can gate the 26
   warn-severity rules, not just errors); **`--fix`** auto-fixes the deterministic rules in place
   (physical→logical CSS properties; a positive `tabindex`→`0`; `rel="noopener noreferrer"` on a

@@ -143,7 +143,90 @@ function canonHex(h: string): string | null {
   const s = m[1].toLowerCase();
   return s.length === 3 ? s.split("").map((c) => c + c).join("") : s;
 }
+// ---------- JSX/TSX source scanning (MVP: className / style / JSX-tag tells; no DOM, no postcss) ----------
+const lineOf = (source: string, index: number): number => source.slice(0, index).split("\n").length;
+const escapeRe = (s: string): string => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+// Blank //… and /*…*/ (incl. JSX {/* … */}) comments with spaces — preserving offsets and newlines —
+// so the scanners never match a color/tag inside a commented-out or discussed-in-prose region. String
+// literals are left intact (a className value lives in a string and must still be scanned); `\` escapes
+// and `https://` inside a string are respected so they aren't mistaken for a comment.
+function maskComments(src: string): string {
+  const out = src.split("");
+  let i = 0, quote = "";
+  while (i < src.length) {
+    const c = src[i];
+    if (quote) {
+      if (c === "\\") { i += 2; continue; }
+      if (c === quote) quote = "";
+      i++; continue;
+    }
+    if (c === '"' || c === "'" || c === "`") { quote = c; i++; continue; }
+    if (c === "/" && src[i + 1] === "/") { while (i < src.length && src[i] !== "\n") out[i++] = " "; continue; }
+    if (c === "/" && src[i + 1] === "*") {
+      out[i++] = " "; out[i++] = " ";
+      while (i < src.length && !(src[i] === "*" && src[i + 1] === "/")) { if (src[i] !== "\n") out[i] = " "; i++; }
+      if (i < src.length) { out[i++] = " "; out[i++] = " "; }
+      continue;
+    }
+    i++;
+  }
+  return out.join("");
+}
+
+/**
+ * Opening tags in JSX source. The OUTER walk tracks string state so a `<div` written inside a string
+ * literal (`{"<div onClick>"}`) is never taken for a tag; the INNER body scan is brace/quote-aware so
+ * onClick={()=>a>b} and title="a>b" don't split the tag early. Run on comment-masked source.
+ */
+function jsxOpenTags(src: string): { tag: string; start: number; body: string }[] {
+  const tags: { tag: string; start: number; body: string }[] = [];
+  let i = 0, quote = "";
+  while (i < src.length) {
+    const c = src[i];
+    if (quote) { if (c === "\\") { i += 2; continue; } if (c === quote) quote = ""; i++; continue; }
+    if (c === '"' || c === "'" || c === "`") { quote = c; i++; continue; }
+    const m = c === "<" ? /^<([a-z][a-z0-9]*)\b/.exec(src.slice(i, i + 40)) : null;
+    if (!m) { i++; continue; }
+    let j = i + m[0].length, depth = 0, q2 = "";
+    for (; j < src.length; j++) {
+      const cc = src[j];
+      if (q2) { if (cc === q2) q2 = ""; }
+      else if (cc === '"' || cc === "'" || cc === "`") q2 = cc;
+      else if (cc === "{") depth++;
+      else if (cc === "}") depth = Math.max(0, depth - 1);
+      else if (cc === ">" && depth === 0) break;
+    }
+    tags.push({ tag: m[1], start: i, body: src.slice(i, j) });
+    i = j + 1;
+  }
+  return tags;
+}
+
+// The colour/value tells (indigo-default) transfer to JSX — a hex or `indigo-500` in a className /
+// style / arbitrary value is the same tell. Scanned ONLY inside real opening-tag bodies (not comments,
+// import paths, JSX text or unrelated string literals), so documenting the tell isn't itself a violation.
+function forbiddenValueJsx(ctx: FileContext, rules: Rule[]): Finding[] {
+  const out: Finding[] = [];
+  const tags = jsxOpenTags(maskComments(ctx.source));
+  for (const r of rules) {
+    if ((r.check as { context?: string }).context) continue; // dark-surface etc. need a CSS scope
+    for (const p of (r.check as { patterns?: string[] }).patterns ?? []) {
+      const re = new RegExp(escapeRe(p) + (canonHex(p) ? "\\b" : ""), "gi");
+      for (const t of tags) {
+        for (const m of t.body.matchAll(re)) {
+          out.push(mk(ctx, r, lineOf(ctx.source, t.start + m.index!),
+            `Forbidden value "${m[0]}" — ${r.title.en}.`,
+            `Giá trị bị cấm "${m[0]}" — ${r.title.vi}.`));
+        }
+      }
+    }
+  }
+  return out;
+}
+
 const forbiddenValue: Check = (ctx, rules) => {
+  if (ctx.type === "jsx") return forbiddenValueJsx(ctx, rules);
   const out: Finding[] = [];
   for (const block of ctx.css) {
     block.root.walkDecls((d) => {
@@ -202,7 +285,24 @@ const formLabel: Check = (ctx, rules) => {
 };
 
 const SEMANTIC = new Set(["BUTTON", "INPUT", "SELECT", "TEXTAREA", "LABEL", "SUMMARY", "OPTION", "DETAILS"]);
+// JSX: a lowercase intrinsic element (<div>, <span>, <li> …, never a <Component>) with an onClick and
+// no ARIA role is the div-as-button tell. Component wrappers are skipped — we can't judge their semantics.
+function semanticControlJsx(ctx: FileContext, rules: Rule[]): Finding[] {
+  const r = rules[0];
+  const out: Finding[] = [];
+  for (const t of jsxOpenTags(maskComments(ctx.source))) {
+    const TAG = t.tag.toUpperCase();
+    if (TAG === "A" || SEMANTIC.has(TAG)) continue;
+    if (!/\bonClick\b/.test(t.body) || /\brole\s*=/.test(t.body)) continue;
+    out.push(mk(ctx, r, lineOf(ctx.source, t.start),
+      `<${t.tag} onClick> is not a semantic control — use <button> or <a>.`,
+      `<${t.tag} onClick> không phải điều khiển ngữ nghĩa — dùng <button> hoặc <a>.`));
+  }
+  return out;
+}
+
 const semanticControl: Check = (ctx, rules) => {
+  if (ctx.type === "jsx") return semanticControlJsx(ctx, rules);
   if (!ctx.dom) return [];
   const r = rules[0];
   const out: Finding[] = [];
