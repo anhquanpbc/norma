@@ -1075,6 +1075,25 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
       </ul>
     </div>
   </div>
+
+  <div class="grid g2" style="margin-top:var(--s-5); align-items:start">
+    <div class="card">
+      <h3><span class="en">Feedback &amp; status</span><span class="vi">Phản hồi &amp; trạng thái</span> <span class="badge spec">SPEC</span></h3>
+      <ul class="spec">
+        <li><span class="k">toast</span><span><span class="en">auto-dismiss 4–10s for non-critical only; <b>never</b> auto-dismiss anything actionable (2.2.1); pause on hover/focus.</span><span class="vi">tự đóng 4–10s chỉ cho tin không quan trọng; <b>không bao giờ</b> tự đóng thứ thao tác được (2.2.1); dừng khi hover/focus.</span></span></li>
+        <li><span class="k">role</span><span><code>role=status</code> <span class="en">(info) vs</span><span class="vi">(thông tin) vs</span> <code>role=alert</code> <span class="en">(errors) — announce without moving focus (4.1.3).</span><span class="vi">(lỗi) — thông báo mà không dời focus (4.1.3).</span></span></li>
+        <li><span class="k">undo</span><span><span class="en">prefer Undo (soft-delete + persistent toast) over a confirm dialog for reversible actions; name the action.</span><span class="vi">ưu tiên Undo (soft-delete + toast bền) hơn hộp xác nhận cho hành động hoàn tác được; gọi tên hành động.</span></span></li>
+      </ul>
+    </div>
+    <div class="card tint">
+      <h3><span class="en">Overlays</span><span class="vi">Overlay</span> <span class="badge spec">SPEC</span></h3>
+      <p class="note" style="margin-top:0"><span class="en">Pick by interruption + dismissal: <code>dialog</code> (Esc/backdrop) · <code>alertdialog</code> (explicit choice) · popover (light-dismiss) · drawer · bottom sheet.</span><span class="vi">Chọn theo mức ngắt + cách đóng: <code>dialog</code> (Esc/backdrop) · <code>alertdialog</code> (lựa chọn rõ) · popover (light-dismiss) · drawer · bottom sheet.</span></p>
+      <ul class="spec">
+        <li><span class="en">Mark the background <code>inert</code> (not just "trap focus"), restore focus on close, lock body scroll.</span><span class="vi">Đánh dấu nền <code>inert</code> (không chỉ "bẫy focus"), khôi phục focus khi đóng, khoá cuộn body.</span></li>
+        <li><span class="en">Prefer native <code>&lt;dialog&gt;</code> + Popover API — the top layer handles all of it and sits above every <code>z-index</code>.</span><span class="vi">Ưu tiên <code>&lt;dialog&gt;</code> gốc + Popover API — top layer lo hết và nổi trên mọi <code>z-index</code>.</span></li>
+      </ul>
+    </div>
+  </div>
 </section>
 
 <!-- ============ 10. FORMS + 11. RESPONSIVE ============ -->

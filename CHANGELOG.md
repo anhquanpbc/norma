@@ -8,6 +8,13 @@ All notable changes to this project are documented here. The format is based on
 
 ### Added
 
+- **Content pass, batch 4 — feedback/status family & overlay taxonomy** (§9 + agent spec + site).
+  §9 gains **Feedback & status** (toast timing 4–10s non-critical only, **never** auto-dismiss actionable
+  content [2.2.1], pause-on-hover, `role=status` vs `role=alert` + 4.1.3; `role=progressbar`; banner vs
+  badge vs skeleton; **Undo over confirm** for reversible destructive actions, name the action) and an
+  **Overlays** decision table (dialog / alertdialog / non-modal / popover / tooltip / drawer / bottom sheet)
+  with the mechanics AI hand-rolls wrong — mark the background `inert`, restore focus, lock body scroll,
+  deliberate initial focus, prefer native `<dialog>`/popover (top layer). Site adds two §9 cards.
 - **Content pass, batch 3 — document structure, forced-colors & navigation** (§5 + agent spec + site).
   §5 gains **Document structure & bypass** (a visible-on-focus **skip link** — WCAG 2.4.1 Level A, the
   cheapest a11y win and usually missing; landmarks; one `<h1>` + no skipped heading levels; `aria-current`
