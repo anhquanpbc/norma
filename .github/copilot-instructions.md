@@ -33,6 +33,13 @@ the aesthetic "tells" that mark machine-generated work.
 6. **Verify.** Recommend / run `npx @norma/design-lint <files>` before committing. Tools catch ~57% of
    issues — also do a manual keyboard + screen-reader pass.
 
+These structural/enforcement rules back the guidance above (📐 CONV, statically linted):
+`a11y.landmark-main` (one `<main>`), `a11y.single-h1` (one `<h1>`), `forms.fieldset-group`
+(radio/checkbox sets in a `<fieldset>`), `a11y.generic-link-text` (no "click here"/"read more"),
+`a11y.focus-forced-colors` (a focus ring must not be box-shadow-only — it's stripped in forced-colors),
+`tokens.zindex-scale` (no raw `z-index >= 1000`; use the ladder), `responsive.container-query`
+(`@container` needs a `container-type`).
+
 ## Hard rules — SPEC (🔒, never violate)
 
 These are objective, testable failures against a named WCAG 2.2 / platform rule. Full catalog with
@@ -119,7 +126,7 @@ Not compliance failures, but they erase brand distinctiveness and often *induce*
 npx @norma/design-lint "**/*.{html,css}"     # gate SPEC violations; exits non-zero on error-severity
 ```
 
-## Rule index (generated from standard/rules.json v1.2.0)
+## Rule index (generated from standard/rules.json v1.3.0)
 
 - 🔒 SPEC `color.contrast.text` (error) — Body text contrast >= 4.5:1 · [WCAG 2.2 SC 1.4.3 Contrast (Minimum)](https://www.w3.org/TR/WCAG22/#contrast-minimum)
 - 🔒 SPEC `color.contrast.large-ui` (error) — Large text & UI contrast >= 3:1 · [WCAG 2.2 SC 1.4.3 / 1.4.11 Non-text Contrast](https://www.w3.org/TR/WCAG22/#non-text-contrast)
@@ -151,6 +158,13 @@ npx @norma/design-lint "**/*.{html,css}"     # gate SPEC violations; exits non-z
 - 📐 CONV `antipattern.dead-href` (warn) — No dead links (href="#" or empty) · Norma §14 AI-era Anti-patterns (TELL)
 - 📐 CONV `antipattern.gradient-text` (warn) — No gradient-clipped text headlines · Norma §14 AI-era Anti-patterns (TELL)
 - 📐 CONV `a11y.no-positive-tabindex` (warn) — No positive tabindex (>= 1) · [WCAG 2.2 SC 2.4.3 Focus Order](https://www.w3.org/TR/WCAG22/#focus-order)
+- 📐 CONV `a11y.landmark-main` (warn) — Exactly one <main> landmark · [WCAG 2.2 SC 1.3.1 / ARIA landmarks; axe landmark-one-main](https://www.w3.org/TR/WCAG22/#info-and-relationships)
+- 📐 CONV `a11y.single-h1` (warn) — Exactly one <h1> per page · [WCAG 2.2 SC 1.3.1 / 2.4.6; axe page-has-heading-one](https://www.w3.org/TR/WCAG22/#headings-and-labels)
+- 📐 CONV `forms.fieldset-group` (warn) — Group radios/checkboxes in a fieldset · [WCAG 2.2 SC 1.3.1 Info and Relationships (H71)](https://www.w3.org/TR/WCAG22/#info-and-relationships)
+- 📐 CONV `a11y.generic-link-text` (warn) — No non-descriptive link/button text · [WCAG 2.2 SC 2.4.4 Link Purpose (In Context)](https://www.w3.org/TR/WCAG22/#link-purpose-in-context)
+- 📐 CONV `a11y.focus-forced-colors` (warn) — Focus ring survives forced-colors · [WCAG 2.2 SC 2.4.7 / 1.4.11; CSS Color Adjustment L1 (forced-colors)](https://www.w3.org/TR/css-color-adjust-1/#forced-colors-properties)
+- 📐 CONV `tokens.zindex-scale` (warn) — No arbitrary high z-index · Norma §2 Layout — z-index token ladder
+- 📐 CONV `responsive.container-query` (warn) — @container needs a container-type · [W3C CSS Containment Module L3 (container queries)](https://www.w3.org/TR/css-contain-3/)
 - 📐 CONV `security.external-rel` (warn) — target=_blank has rel=noopener · [WHATWG HTML — noopener link type (OWASP: reverse tabnabbing)](https://html.spec.whatwg.org/multipage/links.html#link-type-noopener)
 - 📐 CONV `security.sri` (warn) — External subresources use SRI · [W3C Subresource Integrity](https://www.w3.org/TR/SRI/)
 - 📐 CONV `type.body-min` (off · manual, agent-verified) — Body text >= 16px · Norma §3 Typography

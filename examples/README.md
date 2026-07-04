@@ -6,7 +6,7 @@ Two tiny projects that show the linter working — copy the first, learn from th
 | Folder | What it is | Linter result |
 |--------|-----------|---------------|
 | [`minimal-pass/`](minimal-pass) | A clean, well-formed starter page built to the standard (semantic HTML, one focus ring, token color, logical properties, honored reduced-motion). | **0 findings, exits 0** — copy this to start. |
-| [`catches-violations/`](catches-violations) | An AI-scaffolded "before" page seeded with the most common defects. | **4 errors + 7 warnings across 11 rules, exits 1** — the "before", not the "after". |
+| [`catches-violations/`](catches-violations) | An AI-scaffolded "before" page seeded with the most common defects. | **4 errors + 9 warnings across 13 rules, exits 1** — the "before", not the "after". |
 
 ## Run it
 
@@ -41,6 +41,8 @@ Each block trips a specific rule, so the output maps defect → rule id → fix:
 | `tabindex="3"` forces tab order | `a11y.no-positive-tabindex` | VIOLATION (2.4.3) |
 | `<html>` has no `lang` | `i18n.html-lang` | VIOLATION (3.1.1) |
 | No `<meta name="viewport">` | `responsive.viewport-meta` | CONV |
+| "Learn more" link text | `a11y.generic-link-text` | VIOLATION (2.4.4) |
+| No `<main>` landmark | `a11y.landmark-main` | CONV |
 
 ## Gate it in CI
 
