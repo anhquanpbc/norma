@@ -8,6 +8,20 @@ All notable changes to this project are documented here. The format is based on
 
 ### Added
 
+- **Content pass, batch 5 — disciplines & citations** (§4 + §9 + §10 + Sources + agent spec + site).
+  **§4 Data visualization**: chart-type-by-data-relationship, colour-blind-safe OKLCH palettes (~6–8 hues),
+  never colour alone (1.4.1) + ≥3:1 non-text (1.4.11), zero-baseline bars, accessible SVG (`role=img` +
+  `<title>`/`<desc>` or a `<table>` fallback). **§9 Content & UX writing**: sentence case, action-first
+  labels, the *what+why+how* error formula, empty-state copy, and a banned-generic-copy list
+  ("Click here"/"Submit"/"Oops"). **§10 Form structure & validation**: `<fieldset>`/`<legend>` grouping,
+  the error-summary pattern (G83), required/optional marking, the **disabled-submit anti-pattern**,
+  multi-step/password UX. **Sources** gains WAI-ARIA APG, the CSS module specs, web-features/Baseline,
+  ACT Rules + ARIA-in-HTML, GOV.UK/USWDS, ECMA-402/CLDR/BCP-47, and ISO 9241/Nielsen heuristics — closing
+  the citation voids. Site adds a §4 data-viz card + APG/Baseline footer sources.
+
+  **This completes the content-completeness roadmap** (layout + 15 further concepts) opened after the
+  "the standard forgot layout" review — all folded into existing sections (no renumbering; "13 domains"
+  and the section-sync guard unchanged).
 - **Content pass, batch 4 — feedback/status family & overlay taxonomy** (§9 + agent spec + site).
   §9 gains **Feedback & status** (toast timing 4–10s non-critical only, **never** auto-dismiss actionable
   content [2.2.1], pause-on-hover, `role=status` vs `role=alert` + 4.1.3; `role=progressbar`; banner vs
