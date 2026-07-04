@@ -162,6 +162,12 @@ function maskComments(src: string): string {
       i++; continue;
     }
     if (c === '"' || c === "'" || c === "`") { quote = c; i++; continue; }
+    if (c === "<" && src[i + 1] === "!" && src[i + 2] === "-" && src[i + 3] === "-") { // HTML comment (Vue/Svelte templates)
+      out[i++] = " "; out[i++] = " "; out[i++] = " "; out[i++] = " ";
+      while (i < src.length && !(src[i] === "-" && src[i + 1] === "-" && src[i + 2] === ">")) { if (src[i] !== "\n") out[i] = " "; i++; }
+      if (i < src.length) { out[i++] = " "; out[i++] = " "; out[i++] = " "; }
+      continue;
+    }
     if (c === "/" && src[i + 1] === "/") { while (i < src.length && src[i] !== "\n") out[i++] = " "; continue; }
     if (c === "/" && src[i + 1] === "*") {
       out[i++] = " "; out[i++] = " ";
@@ -285,18 +291,20 @@ const formLabel: Check = (ctx, rules) => {
 };
 
 const SEMANTIC = new Set(["BUTTON", "INPUT", "SELECT", "TEXTAREA", "LABEL", "SUMMARY", "OPTION", "DETAILS"]);
-// JSX: a lowercase intrinsic element (<div>, <span>, <li> …, never a <Component>) with an onClick and
-// no ARIA role is the div-as-button tell. Component wrappers are skipped — we can't judge their semantics.
+// A lowercase intrinsic element (<div>, <span>, <li> …, never a <Component>) carrying a click handler and
+// no ARIA role is the div-as-button tell — across JSX (onClick), Vue (@click / v-on:click) and Svelte
+// (on:click). Component wrappers are skipped — we can't judge their semantics.
+const CLICK_HANDLER = /@click\b|\bv-on:click\b|\bon:click\b|\bonClick\b/;
 function semanticControlJsx(ctx: FileContext, rules: Rule[]): Finding[] {
   const r = rules[0];
   const out: Finding[] = [];
   for (const t of jsxOpenTags(maskComments(ctx.source))) {
     const TAG = t.tag.toUpperCase();
     if (TAG === "A" || SEMANTIC.has(TAG)) continue;
-    if (!/\bonClick\b/.test(t.body) || /\brole\s*=/.test(t.body)) continue;
+    if (!CLICK_HANDLER.test(t.body) || /\brole\s*=/.test(t.body)) continue;
     out.push(mk(ctx, r, lineOf(ctx.source, t.start),
-      `<${t.tag} onClick> is not a semantic control — use <button> or <a>.`,
-      `<${t.tag} onClick> không phải điều khiển ngữ nghĩa — dùng <button> hoặc <a>.`));
+      `<${t.tag}> has a click handler but is not a semantic control — use <button> or <a>.`,
+      `<${t.tag}> có xử lý click nhưng không phải điều khiển ngữ nghĩa — dùng <button> hoặc <a>.`));
   }
   return out;
 }

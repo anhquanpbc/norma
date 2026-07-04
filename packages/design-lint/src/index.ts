@@ -28,7 +28,8 @@ function typeOf(path: string): FileType | null {
   const ext = extname(path).toLowerCase();
   if (ext === ".html" || ext === ".htm") return "html";
   if (ext === ".css") return "css";
-  if (ext === ".jsx" || ext === ".tsx") return "jsx";
+  // .jsx/.tsx/.vue/.svelte are all component templates scanned the same lightweight way (the "jsx" strategy).
+  if (ext === ".jsx" || ext === ".tsx" || ext === ".vue" || ext === ".svelte") return "jsx";
   return null;
 }
 

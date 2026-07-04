@@ -67,18 +67,19 @@ them instead.
 The linter fully parses **HTML and CSS** (including `<style>` blocks and inline `style="…"` attributes) —
 every rule runs there.
 
-**JSX/TSX (`.jsx`/`.tsx`) has partial support (MVP):** the source is scanned, line-accurately, for the
-two tells that transfer cleanly without a full DOM — the **indigo-default colour tell**
-(`antipattern.indigo-default`: `#667eea`/`#764ba2`/`indigo-500` in a `className`, `style` object, or
-arbitrary Tailwind value like `bg-[#667eea]`) and the **`<div onClick>` semantic-control tell**
-(`a11y.semantic-control`: a lowercase intrinsic element with `onClick` and no ARIA `role`; `<Component>`
+**Component templates (`.jsx`/`.tsx`/`.vue`/`.svelte`) have partial support (MVP):** the source is
+scanned, line-accurately, for the two tells that transfer cleanly without a full DOM — the
+**indigo-default colour tell** (`antipattern.indigo-default`: `#667eea`/`#764ba2`/`indigo-500` in a
+`class`/`className`/`:class`, `style` object, or arbitrary Tailwind value like `bg-[#667eea]`) and the
+**click-on-a-`<div>` semantic-control tell** (`a11y.semantic-control`: a lowercase intrinsic element with
+a click handler — `onClick` / `@click` / `v-on:click` / `on:click` — and no ARIA `role`; `<Component>`
 wrappers are skipped). Structural a11y that depends on the rendered tree — landmarks, heading order,
-labels, contrast — is **not** evaluated on JSX, because a component file isn't a page; run those against
-your built HTML/CSS.
+labels, contrast — is **not** evaluated here, because a component file isn't a page; run those against
+your built HTML/CSS. A Vue/Svelte SFC's `<style>` block is not yet linted as CSS.
 
-Vue/Svelte templates, CSS-in-JS, and general Tailwind class semantics are still out of scope. For those,
-lean on the **agent layer** (`AGENTS.md`, the Cursor/Copilot/Claude rule files) generated from the same
-catalog. A deeper AST-based extractor is the next step.
+CSS-in-JS and general Tailwind class semantics are still out of scope. For those, lean on the **agent
+layer** (`AGENTS.md`, the Cursor/Copilot/Claude rule files) generated from the same catalog. A deeper
+AST-based extractor is the next step.
 
 ## MCP server (for AI agents)
 

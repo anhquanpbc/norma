@@ -8,6 +8,12 @@ All notable changes to this project are documented here. The format is based on
 
 ### Added
 
+- **Vue & Svelte template reach.** The component scanner now recognises `.vue`/`.svelte` (default glob +
+  dir-expand include them) and the two tells transfer verbatim: `antipattern.indigo-default` (colour tell in
+  `class`/`:class`/`style`) and `a11y.semantic-control`, whose click-handler detection now covers `@click`,
+  `v-on:click` and `on:click` alongside JSX `onClick`. The comment masker gained **HTML comments**
+  (`<!-- … -->`) so commented-out template markup (which Vue/Svelte use, unlike JSX) is never mis-flagged.
+  A Vue/Svelte SFC `<style>` block is not yet linted as CSS (roadmap).
 - **MCP server (`norma-mcp`)** — a zero-dependency Model Context Protocol server over stdio (JSON-RPC 2.0,
   no SDK) so an AI agent can use Norma in the loop: `lint_source` (lint an HTML/CSS/JSX string → findings),
   `list_rules` (the catalog, filterable by `domain`/`tag`), `get_rule` (one rule by id, with rationale +

@@ -66,17 +66,18 @@ trong catalog — engine bỏ qua chúng và agent thiết kế Norma thực thi
 Linter phân tích đầy đủ **HTML và CSS** (gồm cả khối `<style>` và thuộc tính `style="…"` inline) — mọi rule
 chạy ở đó.
 
-**JSX/TSX (`.jsx`/`.tsx`) hỗ trợ một phần (MVP):** source được quét, chính xác theo dòng, cho hai "dấu hiệu"
-chuyển được sang JSX mà không cần DOM đầy đủ — **dấu hiệu màu indigo mặc định**
-(`antipattern.indigo-default`: `#667eea`/`#764ba2`/`indigo-500` trong `className`, object `style`, hay giá
-trị Tailwind tùy ý như `bg-[#667eea]`) và **dấu hiệu `<div onClick>`** (`a11y.semantic-control`: phần tử
-HTML thường có `onClick` mà không có `role` ARIA; `<Component>` được bỏ qua). A11y cấu trúc phụ thuộc cây
-render — landmark, thứ tự heading, nhãn, tương phản — **không** kiểm trên JSX, vì file component không phải
-một trang; hãy chạy chúng trên HTML/CSS đã build.
+**Template component (`.jsx`/`.tsx`/`.vue`/`.svelte`) hỗ trợ một phần (MVP):** source được quét, chính xác
+theo dòng, cho hai "dấu hiệu" chuyển được mà không cần DOM đầy đủ — **dấu hiệu màu indigo mặc định**
+(`antipattern.indigo-default`: `#667eea`/`#764ba2`/`indigo-500` trong `class`/`className`/`:class`, object
+`style`, hay giá trị Tailwind tùy ý như `bg-[#667eea]`) và **dấu hiệu click trên `<div>`**
+(`a11y.semantic-control`: phần tử HTML thường có xử lý click — `onClick` / `@click` / `v-on:click` /
+`on:click` — mà không có `role` ARIA; `<Component>` được bỏ qua). A11y cấu trúc phụ thuộc cây render —
+landmark, thứ tự heading, nhãn, tương phản — **không** kiểm ở đây, vì file component không phải một trang;
+hãy chạy chúng trên HTML/CSS đã build. Khối `<style>` trong SFC Vue/Svelte chưa được lint như CSS.
 
-Template Vue/Svelte, CSS-in-JS, và ngữ nghĩa class Tailwind tổng quát vẫn ngoài phạm vi. Với chúng, dựa vào
-**tầng agent** (`AGENTS.md`, các file rule Cursor/Copilot/Claude) sinh từ cùng catalog. Bộ trích xuất dựa
-trên AST sâu hơn là bước kế tiếp.
+CSS-in-JS và ngữ nghĩa class Tailwind tổng quát vẫn ngoài phạm vi. Với chúng, dựa vào **tầng agent**
+(`AGENTS.md`, các file rule Cursor/Copilot/Claude) sinh từ cùng catalog. Bộ trích xuất dựa trên AST sâu hơn
+là bước kế tiếp.
 
 ## MCP server (cho AI agent)
 
