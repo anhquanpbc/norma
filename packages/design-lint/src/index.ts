@@ -28,6 +28,7 @@ function typeOf(path: string): FileType | null {
   const ext = extname(path).toLowerCase();
   if (ext === ".html" || ext === ".htm") return "html";
   if (ext === ".css") return "css";
+  if (ext === ".jsx" || ext === ".tsx") return "jsx";
   return null;
 }
 

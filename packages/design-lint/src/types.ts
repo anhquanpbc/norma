@@ -2,7 +2,7 @@ import type { HTMLElement } from "node-html-parser";
 import type { Root } from "postcss";
 
 export type Severity = "error" | "warn" | "off";
-export type FileType = "html" | "css";
+export type FileType = "html" | "css" | "jsx";
 
 export interface I18n { en: string; vi: string; }
 
