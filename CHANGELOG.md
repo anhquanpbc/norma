@@ -6,7 +6,13 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
-Nothing yet.
+### Fixed
+
+- **Reference site: uneven-height cards in the same row no longer leave a gap.** Nine two-card /
+  two-widget grids carried an inline `align-items: start`, so a shorter card sat at its natural height
+  beside a taller sibling — a ragged bottom edge and an ugly gap. They now stretch to equal height (the
+  grid default). The five *widget + stacked-column* grids keep `align-items: start` on purpose (stretching
+  a stacked column would push a gap below its last card). Verified visually across §3/§4/§9; e2e 60/60.
 
 ## [1.3.0] — 2026-07-04
 
