@@ -43,6 +43,9 @@ export const SURFACE_BY_CHECK: Record<string, Surface[]> = {
   focusForcedColors: ["css"],
   zindexScale: ["css"],
   containerQuery: ["css"],
+  iframeTitle: ["html"],
+  tableHeaders: ["html"],
+  duplicateIdRefs: ["html"],
   manual: [], // spacing-scale / body-min / inp-budget / agent-verified WCAG mandates — not statically checkable
 };
 

@@ -6,8 +6,18 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+Nothing yet.
+
+## [1.4.0] — 2026-07-04
+
 ### Added
 
+- **3 more sound static a11y rules** (catalog 41 → 44; 163 check tests): `a11y.iframe-title` (every
+  `<iframe>` needs a title; decorative ones `aria-hidden`), `a11y.table-headers` (a data `<table>` with
+  cells but no `<th>` — layout tables with `role=presentation` exempt), `a11y.duplicate-id-refs` (an id
+  targeted by `label[for]`/`aria-labelledby`/`describedby`/`controls` must be unique — the reference
+  subset that still matters after WCAG 2.2 dropped the blanket 4.1.1 duplicate-id rule). All CONV/warn,
+  low-FP, reference site dogfoods clean.
 - **`.gitattributes`** normalizes line endings to LF, ending the "LF will be replaced by CRLF" warning
   that fired on every commit from a Windows checkout.
 

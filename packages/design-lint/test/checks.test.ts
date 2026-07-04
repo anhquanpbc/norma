@@ -735,3 +735,60 @@ describe("review FP fixes — template inertness, form scope, forced-colors fall
     expect(ids(f)).toContain("a11y.focus-forced-colors");
   });
 });
+
+describe("a11y.iframe-title", () => {
+  it("flags an <iframe> with no title", () => {
+    expect(ids(lint(`<iframe src="/map"></iframe>`, "html"))).toContain("a11y.iframe-title");
+  });
+  it("passes an <iframe> with a title", () => {
+    expect(ids(lint(`<iframe src="/map" title="Office location map"></iframe>`, "html"))).not.toContain("a11y.iframe-title");
+  });
+  it("ignores an aria-hidden iframe", () => {
+    expect(ids(lint(`<iframe src="/ad" aria-hidden="true"></iframe>`, "html"))).not.toContain("a11y.iframe-title");
+  });
+});
+
+describe("a11y.table-headers", () => {
+  it("flags a data table with <td> but no <th>", () => {
+    expect(ids(lint(`<table><tr><td>a</td><td>b</td></tr></table>`, "html"))).toContain("a11y.table-headers");
+  });
+  it("passes a table with <th>", () => {
+    expect(ids(lint(`<table><tr><th>Name</th></tr><tr><td>a</td></tr></table>`, "html"))).not.toContain("a11y.table-headers");
+  });
+  it("ignores a role=presentation (layout) table", () => {
+    expect(ids(lint(`<table role="presentation"><tr><td>a</td></tr></table>`, "html"))).not.toContain("a11y.table-headers");
+  });
+});
+
+describe("a11y.duplicate-id-refs", () => {
+  it("flags a referenced id that appears twice", () => {
+    expect(ids(lint(`<label for="e">Email</label><input id="e"><input id="e">`, "html"))).toContain("a11y.duplicate-id-refs");
+  });
+  it("flags a duplicated aria-labelledby target", () => {
+    expect(ids(lint(`<h2 id="t">Title</h2><h2 id="t">Dup</h2><div role="region" aria-labelledby="t">x</div>`, "html"))).toContain("a11y.duplicate-id-refs");
+  });
+  it("passes unique referenced ids", () => {
+    expect(ids(lint(`<label for="e">Email</label><input id="e">`, "html"))).not.toContain("a11y.duplicate-id-refs");
+  });
+  it("does not flag a duplicate id that is NOT referenced (4.1.1 was removed in WCAG 2.2)", () => {
+    expect(ids(lint(`<div id="x"></div><div id="x"></div>`, "html"))).not.toContain("a11y.duplicate-id-refs");
+  });
+});
+
+describe("review FP/FN fixes — template inertness + nested-table scoping", () => {
+  it("duplicate-id-refs: an id inside a <template> does NOT collide with the live document", () => {
+    const f = lint(`<label for="row-name">Name</label><input id="row-name"><template><input id="row-name"></template>`, "html");
+    expect(ids(f)).not.toContain("a11y.duplicate-id-refs");
+  });
+  it("iframe-title: an untitled <iframe> inside a <template> is not flagged (inert until cloned)", () => {
+    expect(ids(lint(`<template><iframe src="/x"></iframe></template>`, "html"))).not.toContain("a11y.iframe-title");
+  });
+  it("table-headers: flags an outer data table whose only <th> is in a nested table", () => {
+    const f = lint(`<table><tr><td><table><tr><th>h</th><td>x</td></tr></table></td><td>outer</td></tr></table>`, "html");
+    expect(ids(f)).toContain("a11y.table-headers");
+  });
+  it("table-headers: the inner table (which has a <th>) still passes on its own", () => {
+    const f = lint(`<table role="presentation"><tr><td><table><tr><th>h</th><td>x</td></tr></table></td></tr></table>`, "html");
+    expect(ids(f)).not.toContain("a11y.table-headers");
+  });
+});
