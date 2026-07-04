@@ -7,6 +7,7 @@ import { lintContext } from "./engine.js";
 
 export * from "./types.js";
 export { loadRules } from "./loadRules.js";
+export { fixSource, type FixResult } from "./fix.js";
 
 export interface LintOptions {
   rulesPath?: string;

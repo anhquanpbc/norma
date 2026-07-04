@@ -26,6 +26,13 @@ Exit code is non-zero when any `error`-severity finding is present, so it gates 
 | `--rules <path>` | Rule catalog path (default: bundled `standard/rules.json`). |
 | `--quiet` | Only report errors. |
 | `--max-warnings <n>` | Exit non-zero if warnings exceed `n` (lets CI gate the 26 warn-severity rules). |
+| `--fix` | Auto-fix the deterministic rules in place, then lint the rest. |
+
+`--fix` only touches edits with **no judgement call**: physical→logical CSS properties
+(`margin-left`→`margin-inline-start`, `text-align:left`→`start`, …) in `.css` files, and in HTML a
+positive `tabindex`→`0` plus `rel="noopener noreferrer"` on an external `target="_blank"` link that has
+no `rel`. Everything else (contrast, target size, labels, `lang`, alt text, dead hrefs) needs a human
+decision and is reported, never rewritten. HTML edits are byte-surgical — the rest of the file is untouched.
 
 ### Config (`.normarc.json`)
 
