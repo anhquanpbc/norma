@@ -147,6 +147,8 @@ Thang khoảng cách khuyến nghị (token, px): **0 · 4 · 8 · 12 · 16 · 2
 
 **Dark mode & độ nổi 📐:** thể hiện độ nổi bằng bề mặt sáng dần (không chỉ đổ bóng — bóng yếu trên nền tối). Tránh cặp đen/trắng thuần; dùng bề mặt gần-đen + chữ hơi-ngà để giảm chói (halation). Với theming ở tầng token, ghép `color-scheme` với hàm `light-dark()` (Baseline 2024) để một custom property biểu diễn cả hai theme.
 
+**Trực quan hoá dữ liệu (data-viz) 📐/🔒:** biểu đồ là một phần của hệ thiết kế, không phải phần phụ — và là nơi AI hay ship palette cầu vồng, legend chỉ-bằng-màu, trục không nhãn, pie 10 lát. **Loại biểu đồ theo quan hệ dữ liệu:** so sánh → bar; xu hướng theo thời gian → line; phần-trong-tổng → stacked/100% bar (**tránh pie quá ~5 lát**); phân bố → histogram/box; tương quan → scatter. **Palette:** tối đa ~**6–8** tông phân loại, kiểm cho mù màu deuteranopia/protanopia (~8% nam giới); ramp tuần tự/phân kỳ theo thứ tự tri giác (ColorBrewer, viridis) — dựng bằng OKLCH theo mục này. **Không mã hoá dãy chỉ bằng màu** (1.4.1) — thêm nhãn trực tiếp, dash/pattern, hoặc marker hình. **Tương phản & cấu trúc:** thanh/đường/ô legend đạt **≥3:1 non-text** (1.4.11); ghi nhãn trục, trục bar bắt đầu từ **0** (không cắt trục đánh lừa); định dạng số bằng `Intl` (§3). **SVG tiếp cận:** `role="img"` + `<title>`/`<desc>`, hoặc `<table>` dữ liệu ẩn — biểu đồ `<canvas>` không có văn bản thay thế là vô hình với trợ năng.
+
 ---
 
 ## 5. Khả năng tiếp cận (đo được)
@@ -269,6 +271,10 @@ Mỗi hành động async và thông điệp hệ thống cần đúng bề mặ
 
 Chọn overlay theo mức độ ngắt quãng + cách đóng, không theo thói quen — **bảng quyết định đầy đủ ở khối tiếng Anh** (dialog / alertdialog / non-modal dialog / popover / tooltip / drawer-side-sheet / bottom-sheet). **Cơ chế AI hay tự chế sai:** đánh dấu nền **`inert`** (không chỉ "bẫy focus" — `inert` gỡ khỏi thứ tự tab *và* cây a11y), **khôi phục focus** về điều khiển gọi khi đóng, **khoá cuộn body** (`overflow:hidden` + `overscroll-behavior:contain`), và đặt **focus ban đầu** có chủ đích (phần tử focus đầu tiên, hoặc mặc định an toàn cho alertdialog). Ưu tiên `<dialog>` gốc + Popover API — **top layer** của trình duyệt lo sẵn nền-inert, Esc và focus (§2), và nổi trên mọi `z-index`. Với trường hợp "confirm-đè-form" mà "không chồng modal" cấm, dùng thang z-index (§2) — nhưng chỉ một cấp lồng.
 
+### Content & UX writing 📐
+
+Chữ trong giao diện là thiết kế — mọi hệ trưởng thành (HIG, Material, Polaris, GOV.UK) đều có chương content, và chữ là nơi các "dấu hiệu AI-slop" §14 trú ngụ. **Sentence case** cho nhãn/nút/tiêu đề (không Title Case); **nhãn nút theo hành động** ("Xoá tệp", "Tạo tài khoản" — không phải "OK"/"Gửi" trơ). **Công thức thông báo lỗi:** *chuyện gì + vì sao + cách sửa*, cụ thể và không đổ lỗi — không "Oops, có gì đó sai". **Chữ trạng thái rỗng** giải thích giá trị và mời một hành động kế; **placeholder không phải nhãn hay hướng dẫn**. **Số** định dạng bằng `Intl` (§3); ngôn ngữ đơn giản; cắt ở cuối và giữ giá trị đầy đủ tiếp cận được; dự trù giãn ~30% khi dịch (§3). **Cấm copy generic:** "Click here", "Learn more", "Submit", "Oops" — cùng lối chữ có-thể-thay-thế trượt bài "thử bỏ logo" (§14).
+
 **Hệ thống thiết kế tham khảo 📐:** Material 3, Apple HIG, IBM Carbon, Shopify Polaris, Ant Design, Atlassian, Salesforce Lightning, cùng GOV.UK Design System và U.S. Web Design System (USWDS) dựa trên bằng chứng.
 
 **Atomic Design (Brad Frost) 📐:** atom → molecule → organism → template → page. Ánh xạ đúng với ba tầng token primitive/semantic/component.
@@ -280,6 +286,8 @@ Chọn overlay theo mức độ ngắt quãng + cách đóng, không theo thói 
 > *§10 (Biểu mẫu) và §11 (Đáp ứng) được gộp làm một mục — không có §11 riêng; trang tham chiếu ghi là "§10–11".*
 
 **📐** Bố cục một cột, nhãn căn trên (dễ quét + full-width mobile); tránh nhãn căn trái và placeholder làm nhãn. Mỗi input có `<label>` liên kết theo mã (`for`/`id`) 🔒. Kiểm tra hợp lệ **khi rời trường (on blur)**, không phải mỗi lần gõ; hiện xác nhận tích cực khi hữu ích. Thông báo lỗi: đặt ngay dưới trường, cụ thể và hành động được ("Nhập số điện thoại 10 chữ số, ví dụ 0912 345 678" — không phải "Dữ liệu không hợp lệ"); không chỉ dựa vào màu (màu + icon + chữ) 🔒 — agent kiểm qua `a11y.color-only-meaning`; thông báo qua `aria-live`. Đánh dấu trường bắt buộc rõ ràng; chỉ hỏi thông tin cần thiết. Mobile: đặt đúng `type`/`inputmode` để gọi đúng bàn phím; bật `autocomplete`/tự điền; hỗ trợ tự điền mã OTP. WCAG 3.3.7 🔒 — đừng bắt nhập lại thông tin đã cung cấp (agent kiểm qua `forms.redundant-entry`).
+
+**Cấu trúc biểu mẫu & kiểm tra hợp lệ đầy đủ 🔒/📐** (nửa mà form do AI tạo hay bỏ): **Nhóm điều khiển liên quan** — bộ radio/checkbox và khối địa chỉ đặt trong `<fieldset>` + `<legend>` để trình đọc màn hình đọc tên nhóm kèm mỗi lựa chọn (1.3.1). **Bảng tóm tắt lỗi (kỹ thuật G83 / GOV.UK):** khi submit, hiện hộp tóm tắt ở đầu liệt kê từng lỗi thành link trong trang, **dời focus tới đó**, và lặp lại thông báo inline tại từng trường; báo qua `aria-live`. **Bắt buộc vs tuỳ chọn** — đánh dấu **phần thiểu số**; dùng chữ + `required`/`aria-required`, không chỉ dấu * bằng màu (gắn với 1.4.1). **Nút submit bị vô hiệu là phản mẫu** — giữ submit bật, kiểm khi submit, và dời focus tới bảng tóm tắt lỗi; nút disabled không cho lý do và không focus/đọc được. **Nhiều bước** — hiện tiến độ + số bước, lưu giữa các bước; **mật khẩu** — nút hiện/ẩn, `autocomplete="new-password"`, và **không chặn paste**.
 
 **Đáp ứng & thích ứng (📐)** Mobile-first: viết style nền cho khung nhỏ nhất, rồi thêm media query `min-width` đi lên (khớp Tailwind/Bootstrap); nhớ thẻ `viewport` (lint qua `responsive.viewport-meta`; giá trị chặn zoom — `user-scalable=no`, `maximum-scale` < 2 — là lỗi `a11y.meta-viewport`). Bố cục co giãn: `max-width` (không `width` cố định), Flexbox/Grid, đơn vị tương đối, `clamp()` cho chữ/khoảng cách co giãn. **Container query** (CSS hiện đại): tạo kiểu theo kích thước *container* thay vì khung nhìn — công cụ đúng cho thành phần tái sử dụng ở nhiều ngữ cảnh. Adaptive vs responsive: responsive = co giãn liên tục; adaptive = các bố cục rời khớp theo breakpoint; sản phẩm hiện đại thường trộn cả hai. Bề rộng cần test: 320 (điện thoại nhỏ / sàn reflow WCAG), 360–414 (điện thoại thường), 768 (tablet dọc), 1024 (tablet ngang / laptop nhỏ), 1280–1440 (desktop), 1536+ (desktop lớn).
 
@@ -373,6 +381,12 @@ Công cụ AI thường sinh hai loại lỗi, và cần biết bạn đang xử
 - **HTTP Archive Web Almanac 2025 — Performance** · https://almanac.httparchive.org/en/2025/performance
 - **OKLCH / OKLab** — Björn Ottosson (2020) · https://bottosson.github.io/posts/oklab/ · APCA: https://git.apcacontrast.com/
 - **CSS Values and Units Level 4** (clamp/fluid) · https://www.w3.org/TR/css-values-4/
+- **Các module CSS dựa vào** — Grid L1/L2 (subgrid), Flexbox L1, Containment L3 (container query), Color 4 & 5 (oklch/color-mix/light-dark), Logical Properties L1, Media Queries L5 (forced-colors/prefers-*), Cascade Layers & Nesting · https://www.w3.org/TR/?tag=css
+- **Web Platform Baseline / web-features** — nguồn xác định trạng thái interop "feature X có Baseline tính đến NGÀY" · https://web.dev/baseline
+- **W3C ACT Rules + ARIA in HTML** — chuẩn hoá các kiểm tra a11y tĩnh · https://www.w3.org/WAI/standards-guidelines/act/rules/ · https://www.w3.org/TR/html-aria/
+- **GOV.UK Design System & U.S. Web Design System (USWDS)** — hướng dẫn component + biểu mẫu dựa trên bằng chứng · https://design-system.service.gov.uk/ · https://designsystem.digital.gov/
+- **ECMA-402 (Intl) · Unicode CLDR · RFC 5646 (BCP-47) · UAX #9 (bidi) / #14 (ngắt dòng)** — nguồn i18n · https://tc39.es/ecma402/ · https://cldr.unicode.org/
+- **ISO 9241** (ergonomics tương tác người–hệ thống) & **10 Heuristic của Nielsen** — tầng chuẩn dưới Laws of UX · https://www.nngroup.com/articles/ten-usability-heuristics/
 - **Laws of UX** (Fitts, Hick, Miller, Doherty, Jakob, Tesler) · https://lawsofux.com/
 
 > **Ghi chú về trích dẫn:** Các mandate số (tỷ lệ WCAG, ngưỡng CWV, kích thước vùng chạm, token chuyển động Material, khóa DTCG) đều truy được về các spec gốc ở trên. Một số con số (thang khoảng cách, tỷ lệ thang chữ, dải animation "tối ưu", số ký tự mỗi dòng) là quy ước được áp dụng rộng rãi, không có một cơ quan chuẩn duy nhất, và được đánh dấu 📐 xuyên suốt.

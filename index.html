@@ -813,6 +813,16 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
       <li><span class="k">state</span><span><span class="en">state-layer opacities as tokens: hover <b>8%</b> · focus <b>10%</b> · pressed <b>10%</b> · dragged <b>16%</b>; disabled 38%/12%.</span><span class="vi">độ mờ state-layer dạng token: hover <b>8%</b> · focus <b>10%</b> · pressed <b>10%</b> · dragged <b>16%</b>; disabled 38%/12%.</span></span></li>
     </ul>
   </div>
+
+  <div class="card tint" style="margin-top:var(--s-5)">
+    <h3><span class="en">Data visualization</span><span class="vi">Trực quan hoá dữ liệu</span> <span class="badge conv">CONV</span> <span class="badge spec">SPEC 1.4.1</span></h3>
+    <p class="note" style="margin-top:0"><span class="en">Charts are part of the design system — and where AI ships rainbow palettes, colour-only legends and unlabeled axes.</span><span class="vi">Biểu đồ là một phần của hệ thiết kế — và là nơi AI ship palette cầu vồng, legend chỉ-bằng-màu, trục không nhãn.</span></p>
+    <ul class="spec">
+      <li><span class="k"><span class="en">type</span><span class="vi">loại</span></span><span><span class="en">by data relationship: comparison → bar · trend → line · part-to-whole → stacked bar (not a 10-slice pie) · correlation → scatter.</span><span class="vi">theo quan hệ dữ liệu: so sánh → bar · xu hướng → line · phần-trong-tổng → stacked bar (không pie 10 lát) · tương quan → scatter.</span></span></li>
+      <li><span class="k"><span class="en">palette</span><span class="vi">palette</span></span><span><span class="en">colour-blind-safe, ~6–8 hues, in OKLCH; <b>never colour alone</b> (1.4.1) — add labels/patterns; ≥3:1 non-text (1.4.11).</span><span class="vi">an toàn mù màu, ~6–8 tông, bằng OKLCH; <b>không chỉ bằng màu</b> (1.4.1) — thêm nhãn/pattern; ≥3:1 non-text (1.4.11).</span></span></li>
+      <li><span class="k">SVG</span><span><span class="en"><code>role="img"</code> + <code>&lt;title&gt;</code>/<code>&lt;desc&gt;</code> or a hidden data <code>&lt;table&gt;</code>; label axes, bars start at zero.</span><span class="vi"><code>role="img"</code> + <code>&lt;title&gt;</code>/<code>&lt;desc&gt;</code> hoặc <code>&lt;table&gt;</code> dữ liệu ẩn; ghi nhãn trục, bar từ 0.</span></span></li>
+    </ul>
+  </div>
 </section>
 
 <!-- ============ 5. ACCESSIBILITY ============ -->
@@ -1320,6 +1330,8 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
       <div>OKLCH — Björn Ottosson (2020) · APCA · git.apcacontrast.com</div>
       <div>Laws of UX (Fitts, Hick, Miller…) · lawsofux.com</div>
       <div>CSS Values &amp; Units Level 4 (clamp/fluid) · w3.org/TR/css-values-4</div>
+      <div>W3C WAI-ARIA Authoring Practices (APG) · w3.org/WAI/ARIA/apg</div>
+      <div>web-features / Baseline · GOV.UK &amp; USWDS · ECMA-402 (Intl)</div>
     </div>
     <p class="fine"><span class="en"><b>On the numbers:</b> mandates (WCAG ratios, CWV thresholds, target sizes, Material motion tokens, DTCG keys) trace to the specs above and are tagged <span class="badge spec">SPEC</span>. Conventions (spacing scales, type ratios, "optimal" motion ranges, characters-per-line) have no single canonical authority and are tagged <span class="badge conv">CONV</span>. This page is self-contained: no external fonts, no CDN, no network requests, no tracking — view source to verify.</span><span class="vi"><b>Về các con số:</b> mục bắt buộc (tỷ lệ WCAG, ngưỡng CWV, vùng chạm, token motion Material, khóa DTCG) truy về các chuẩn trên và gắn nhãn <span class="badge spec">SPEC</span>. Quy ước (thang khoảng cách, tỷ lệ chữ, dải motion "tối ưu", ký tự/dòng) không có nguồn chuẩn duy nhất và gắn nhãn <span class="badge conv">CONV</span>. Trang này tự chứa: không font ngoài, không CDN, không request mạng, không theo dõi — xem mã nguồn để kiểm chứng.</span></p>
     <p class="fine"><span class="en"><b>Scope:</b> Norma is a front-end <i>design</i> standard. Frontend-markup security is in scope — rel="noopener" on external target="_blank" links (security.external-rel) and Subresource Integrity on any CDN asset (security.sri; this page ships zero external resources). Header/runtime security (CSP, HSTS, frame-ancestors, Trusted Types) is a server concern — enforce it there, not from HTML/CSS.</span><span class="vi"><b>Phạm vi:</b> Norma là chuẩn <i>thiết kế</i> front-end. Bảo mật markup front-end thuộc phạm vi — rel="noopener" cho link ngoài target="_blank" (security.external-rel) và Subresource Integrity cho tài nguyên CDN (security.sri; trang này không có tài nguyên ngoài nào). Bảo mật tầng header/runtime (CSP, HSTS, frame-ancestors, Trusted Types) là việc của server — thực thi ở đó, không phải từ HTML/CSS.</span></p>

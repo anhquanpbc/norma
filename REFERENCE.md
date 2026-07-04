@@ -169,6 +169,12 @@ Ratio = (L1 + 0.05)/(L2 + 0.05), range 1:1–21:1.
 
 **Dark mode & elevation 📐:** convey elevation with progressively lighter surfaces (not just shadows — shadows are weak on dark). Avoid pure black/white pairings; use near-black surfaces + slightly-off-white text to reduce halation. For token-level theming, pair `color-scheme` with the `light-dark()` function (Baseline 2024) so one custom property expresses both themes.
 
+**Data visualization 📐/🔒:** charts are part of the design system, not an afterthought — and where AI most reliably ships rainbow palettes, color-only legends, unlabeled axes, and 10-slice pies.
+- **Chart type follows the data relationship:** comparison → bar; trend over time → line; part-to-whole → stacked/100% bar (**avoid pie beyond ~5 slices**); distribution → histogram/box; correlation → scatter.
+- **Palettes:** categorical hues capped at ~**6–8** and tested for deuteranopia/protanopia (~8% of men); sequential/diverging ramps perceptually ordered (ColorBrewer, viridis) — build them in OKLCH per this section. **Never encode a series by colour alone** (1.4.1) — add direct labels, a dash/pattern, or a shape marker.
+- **Contrast & structure:** bars/lines/legend swatches meet **≥3:1 non-text contrast** (1.4.11); label axes, start bar axes at **zero** (no truncated-axis deception), avoid dual-axis tricks; format numbers with `Intl` per §3.
+- **Accessible SVG:** `role="img"` + `<title>`/`<desc>`, or a visually-hidden `<table>` data fallback — a `<canvas>` chart with no text alternative is invisible to AT.
+
 ---
 
 ## 5. Accessibility (measurable)
@@ -351,6 +357,15 @@ Pick the overlay by interruption + dismissal, not by habit:
 
 **Mechanics AI hand-rolls wrong:** mark the background **`inert`** (not merely "trap focus" — `inert` removes it from tab order *and* the a11y tree), **restore focus** to the invoking control on close, **lock body scroll** (`overflow:hidden` + `overscroll-behavior:contain`), and set **initial focus** deliberately (first focusable, or a destructive-safe default for alertdialog). Prefer the native `<dialog>` + Popover API — the browser **top layer** gives inert-background, Esc and focus handling for free (§2), and sits above all `z-index`. For the real "confirm-over-form" case §9's "don't stack" forbids, use the z-index ladder (§2) — but keep it to one level of nesting.
 
+### Content & UX writing 📐
+
+Interface copy is design — every mature system (HIG, Material, Polaris, GOV.UK) ships a content chapter, and copy is where the §14 AI-slop tells live.
+- **Sentence case** for labels, buttons and headings (not Title Case); **action-first button labels** ("Delete file", "Create account" — never bare "OK"/"Submit").
+- **Error-message formula:** *what happened + why + how to fix*, specific and blame-free — never "Oops, something went wrong".
+- **Empty-state copy** explains the value and offers one next action; **placeholders are not labels or instructions**.
+- **Numbers** formatted via `Intl` (§3); plain language (~grade 8); truncate at the end and keep the full value accessible; expect ~30% text expansion in translation (§3).
+- **Banned generic copy:** "Click here", "Learn more", "Submit", "Oops" — the same interchangeable phrasing that fails the logo-removed test (§14).
+
 **Reference design systems 📐 (study for concrete specs):** Google Material 3, Apple HIG, IBM Carbon, Shopify Polaris, Ant Design, Atlassian Design System, Salesforce Lightning, plus the evidence-based GOV.UK Design System and U.S. Web Design System (USWDS).
 
 **Atomic Design (Brad Frost) 📐:** atoms → molecules → organisms → templates → pages. Maps onto the primitive/semantic/component token tiers.
@@ -368,6 +383,13 @@ Pick the overlay by interruption + dismissal, not by habit:
 - **Error messaging:** inline, directly below the field, specific and actionable ("Enter a 10-digit phone number, e.g. 123-456-7890" — not "Invalid input"). Don't rely on color alone (color + icon + text) 🔒 — agent-verified as `a11y.color-only-meaning`; announce via `aria-live`.
 - **Required fields:** mark clearly; ask only for what's necessary.
 - **Mobile input:** set correct `type`/`inputmode` (email/tel/number/url) to summon the right keyboard; enable `autocomplete`/autofill; support one-time-code autofill. WCAG 3.3.7 Redundant Entry 🔒 — don't force re-entry of provided info (agent-verified as `forms.redundant-entry`).
+
+**Form structure & validation completeness 🔒/📐** (the half AI-generated forms skip):
+- **Group related controls** — radio/checkbox sets and address blocks go in a `<fieldset>` + `<legend>` so a screen reader reads the group name with each option (1.3.1).
+- **Error summary (technique G83 / GOV.UK):** on submit, render a summary box at the top listing each error as an in-page link, **move focus to it**, and mirror the message inline at each field. Announce via `aria-live`.
+- **Required vs optional** — mark the **minority**; use text + `required`/`aria-required`, never asterisk-colour alone (ties to 1.4.1).
+- **Disabled-submit is an anti-pattern** — keep submit enabled, validate on submit, and route focus to the error summary; a disabled button gives no reason and isn't focusable/announced.
+- **Multi-step** — show progress + step count, save between steps; **password** — a show/hide toggle, `autocomplete="new-password"`, and **never block paste**.
 
 **Responsive & adaptive (📐)**
 - **Mobile-first:** author base styles for the smallest viewport, then layer `min-width` media queries upward (matches Tailwind/Bootstrap). Include `<meta name="viewport" content="width=device-width, initial-scale=1">` (linted as `responsive.viewport-meta`; zoom-blocking values — `user-scalable=no`, `maximum-scale` < 2 — are an `a11y.meta-viewport` error).
@@ -466,6 +488,12 @@ AI coding tools reliably emit two kinds of defect, and it matters which one you 
 - **HTTP Archive Web Almanac 2025 — Performance** · https://almanac.httparchive.org/en/2025/performance
 - **OKLCH / OKLab** — Björn Ottosson (2020) · https://bottosson.github.io/posts/oklab/ · APCA: https://git.apcacontrast.com/
 - **CSS Values and Units Level 4** (clamp/fluid) · https://www.w3.org/TR/css-values-4/
+- **CSS modules relied on** — Grid L1/L2 (subgrid), Flexbox L1, Containment L3 (container queries), Color 4 & 5 (oklch/color-mix/light-dark), Logical Properties L1, Media Queries L5 (forced-colors/prefers-*), Cascade Layers & Nesting · https://www.w3.org/TR/?tag=css
+- **Web Platform Baseline / web-features** — the interop-status oracle for "is feature X Baseline as of DATE" · https://web.dev/baseline · https://github.com/web-platform-dx/web-features
+- **W3C ACT Rules + ARIA in HTML** — make static a11y checks standards-conformant · https://www.w3.org/WAI/standards-guidelines/act/rules/ · https://www.w3.org/TR/html-aria/
+- **GOV.UK Design System & U.S. Web Design System (USWDS)** — evidence-based, legally-aligned component + forms guidance · https://design-system.service.gov.uk/ · https://designsystem.digital.gov/
+- **ECMA-402 (Intl) · Unicode CLDR · RFC 5646 (BCP-47) · UAX #9 (bidi) / #14 (line breaking)** — i18n primaries · https://tc39.es/ecma402/ · https://cldr.unicode.org/
+- **ISO 9241** (ergonomics of human–system interaction) & **Nielsen's 10 Usability Heuristics** — the standards layer beneath the Laws of UX · https://www.nngroup.com/articles/ten-usability-heuristics/
 - **Laws of UX** (Fitts, Hick, Miller, Doherty, Jakob, Tesler) · https://lawsofux.com/
 
 > **Note on citations:** Numeric mandates (WCAG ratios, CWV thresholds, target sizes, Material motion tokens, DTCG keys) are traceable to the primary specs above. Some figures (spacing scales, type-scale ratios, "optimal" animation ranges, characters-per-line) are widely-adopted conventions with no single canonical authority and are marked 📐 throughout.
