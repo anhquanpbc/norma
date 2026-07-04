@@ -198,6 +198,18 @@ Ratio = (L1 + 0.05)/(L2 + 0.05), range 1:1–21:1.
 - 1.4.10 Reflow (AA) 🔒 — no 2-D scrolling at **320 CSS px** width (≈ 1280px @ 400% zoom). Exceptions: tables, maps, diagrams, games, toolbars.
 - 1.4.4 Resize Text (AA) 🔒 — text resizable to **200%** without loss; no pixel minimum imposed. Never block zoom in the viewport meta — no `user-scalable=no`, no `maximum-scale` < 2 (linted as `a11y.meta-viewport`).
 
+**Document structure & bypass 🔒:**
+- **Skip link (2.4.1 Bypass Blocks, Level A)** — a first-focusable "Skip to main content" link to `#main` that becomes visible on focus. Absent from most AI output despite being **Level A** — the cheapest a11y win there is.
+- **Landmarks** — one `<header>`(banner), `<nav>`, one `<main>` (the skip target), `<footer>`(contentinfo); SR users jump between them. Never a page of `<div>`s.
+- **Headings (1.3.1 / 2.4.6 / 2.4.10)** — exactly one `<h1>`; never skip a level (`h2→h4`); headings describe *structure*, not size — style with CSS. Linted as `a11y.heading-order`.
+- **Current location (aria-current)** — mark the active item in nav/steppers/pagination with `aria-current="page"|"step"|"true"`, not colour alone.
+
+**Forced colors & user-preference media 📐:** honor what the OS/user asked for — pure in-scope CSS.
+- **Forced colors (Windows High Contrast, `forced-colors: active`)** — the UA replaces author colours with the system palette and **strips `box-shadow`, `background-image` and gradients**. So (a) never encode state or focus with shadow/background *alone* — always add an `outline` (outlines survive); (b) inside `@media (forced-colors: active)` re-assert meaning with the **system colour keywords** (`Canvas`, `CanvasText`, `ButtonText`, `ButtonBorder`, `Highlight`, `LinkText`, `GrayText`); (c) give SVG icons `fill`/`stroke: currentColor`; (d) reserve `forced-color-adjust: none` for surfaces where colour *is* the content (charts, swatches).
+- **`prefers-contrast: more`** — thicken borders and raise contrast. **`prefers-reduced-transparency`** — swap glass/`backdrop-filter` for an opaque surface (directly serves the §14 glassmorphism tell and §8's Liquid-Glass legibility risk). **`prefers-reduced-data`** — drop non-essential imagery/fonts. Cite CSS Media Queries L5 + CSS Color Adjustment L1.
+
+**Navigation & discoverability 📐:** a **breadcrumb** is a `<nav aria-label="Breadcrumb">` + an ordered list with `aria-current="page"` on the last crumb. Choose **pagination vs "load more" vs infinite scroll** deliberately: infinite scroll breaks the Back button, footer access and deep-linking, and needs a keyboard/`aria-live` fallback — prefer pagination or an explicit "load more" for content users navigate. Give every page a descriptive `<title>` + `<meta name="description">` and Open Graph tags for link previews; tie `hreflang`/`lang` into §3's BCP-47.
+
 ---
 
 ## 6. Performance & Core Web Vitals
