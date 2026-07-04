@@ -896,3 +896,9 @@ describe("a11y.list-structure", () => {
     expect(ids(lint(`<ul role="tablist"><div role="tab">t</div></ul>`, "html"))).not.toContain("a11y.list-structure");
   });
 });
+
+describe("a11y.invalid-role — WAI-ARIA 1.2 completeness (review)", () => {
+  it("accepts role=\"code\" (a valid 1.2 Document Structure role)", () => {
+    expect(ids(lint(`<span role="code">x = 1</span>`, "html"))).not.toContain("a11y.invalid-role");
+  });
+});

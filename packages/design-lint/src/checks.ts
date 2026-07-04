@@ -980,7 +980,7 @@ const VALID_ROLES = new Set([
   "button", "checkbox", "gridcell", "link", "menuitem", "menuitemcheckbox", "menuitemradio", "option",
   "progressbar", "radio", "scrollbar", "searchbox", "separator", "slider", "spinbutton", "switch", "tab",
   "tabpanel", "textbox", "treeitem", "combobox", "grid", "listbox", "menu", "menubar", "radiogroup",
-  "tablist", "tree", "treegrid", "application", "article", "blockquote", "caption", "cell", "columnheader",
+  "tablist", "tree", "treegrid", "application", "article", "blockquote", "caption", "cell", "code", "columnheader",
   "definition", "deletion", "directory", "document", "emphasis", "feed", "figure", "generic", "group",
   "heading", "img", "insertion", "list", "listitem", "math", "meter", "none", "note", "paragraph",
   "presentation", "row", "rowgroup", "rowheader", "strong", "subscript", "superscript", "table", "term",
