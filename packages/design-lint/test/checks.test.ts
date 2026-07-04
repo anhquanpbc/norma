@@ -792,3 +792,22 @@ describe("review FP/FN fixes — template inertness + nested-table scoping", () 
     expect(ids(f)).not.toContain("a11y.table-headers");
   });
 });
+
+describe("responsive.viewport-fit", () => {
+  const fd = (head: string, style: string) => `<!DOCTYPE html><html lang="en"><head><title>t</title>${head}<style>${style}</style></head><body><main><h1>x</h1></main></body></html>`;
+  it("flags env(safe-area-inset) used without viewport-fit=cover", () => {
+    const f = lint(fd(`<meta name="viewport" content="width=device-width, initial-scale=1">`, `.b{ padding-bottom: env(safe-area-inset-bottom) }`), "html");
+    expect(ids(f)).toContain("responsive.viewport-fit");
+  });
+  it("passes when viewport-fit=cover is present", () => {
+    const f = lint(fd(`<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">`, `.b{ padding-bottom: env(safe-area-inset-bottom) }`), "html");
+    expect(ids(f)).not.toContain("responsive.viewport-fit");
+  });
+  it("does not fire when safe-area insets are not used", () => {
+    const f = lint(fd(`<meta name="viewport" content="width=device-width, initial-scale=1">`, `.b{ padding-bottom: 1rem }`), "html");
+    expect(ids(f)).not.toContain("responsive.viewport-fit");
+  });
+  it("ignores CSS fragments (no full document / viewport meta to check)", () => {
+    expect(ids(lint(`.b{ padding: env(safe-area-inset-top) }`, "css"))).not.toContain("responsive.viewport-fit");
+  });
+});

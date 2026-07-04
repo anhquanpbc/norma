@@ -39,7 +39,12 @@ These structural/enforcement rules back the guidance above (📐 CONV, staticall
 `a11y.focus-forced-colors` (a focus ring must not be box-shadow-only — it's stripped in forced-colors),
 `tokens.zindex-scale` (no raw `z-index >= 1000`; use the ladder), `responsive.container-query`
 (`@container` needs a `container-type`), `a11y.iframe-title` (every `<iframe>` has a title),
-`a11y.table-headers` (data tables have `<th>`), `a11y.duplicate-id-refs` (a label/aria-referenced id is unique).
+`a11y.table-headers` (data tables have `<th>`), `a11y.duplicate-id-refs` (a label/aria-referenced id is unique),
+`responsive.viewport-fit` (`env(safe-area-inset-*)` needs `viewport-fit=cover`, else it's inert).
+
+Design for **device capability, not just screen width**: query `pointer`/`hover` (never hide a critical action
+behind `:hover` — unreachable on touch); use `dvh`/`svh` not `100vh` (which overflows past the mobile URL bar);
+handle safe-area insets and `@media print`; pick `srcset`/`sizes` (resolution) vs `<picture media>` (art-direction).
 
 ## Hard rules — SPEC (🔒, never violate)
 
@@ -127,7 +132,7 @@ Not compliance failures, but they erase brand distinctiveness and often *induce*
 npx @norma/design-lint "**/*.{html,css}"     # gate SPEC violations; exits non-zero on error-severity
 ```
 
-## Rule index (generated from standard/rules.json v1.4.0)
+## Rule index (generated from standard/rules.json v1.5.0)
 
 - 🔒 SPEC `color.contrast.text` (error) — Body text contrast >= 4.5:1 · [WCAG 2.2 SC 1.4.3 Contrast (Minimum)](https://www.w3.org/TR/WCAG22/#contrast-minimum)
 - 🔒 SPEC `color.contrast.large-ui` (error) — Large text & UI contrast >= 3:1 · [WCAG 2.2 SC 1.4.3 / 1.4.11 Non-text Contrast](https://www.w3.org/TR/WCAG22/#non-text-contrast)
@@ -169,6 +174,7 @@ npx @norma/design-lint "**/*.{html,css}"     # gate SPEC violations; exits non-z
 - 📐 CONV `a11y.iframe-title` (warn) — Every <iframe> has a title · [WCAG 2.2 SC 4.1.2 / 2.4.1; axe frame-title](https://www.w3.org/TR/WCAG22/#name-role-value)
 - 📐 CONV `a11y.table-headers` (warn) — Data tables have <th> headers · [WCAG 2.2 SC 1.3.1 Info and Relationships (H51)](https://www.w3.org/TR/WCAG22/#info-and-relationships)
 - 📐 CONV `a11y.duplicate-id-refs` (warn) — Referenced ids are unique · [WCAG 2.2 SC 1.3.1 / 4.1.2; axe duplicate-id-aria](https://www.w3.org/TR/WCAG22/#info-and-relationships)
+- 📐 CONV `responsive.viewport-fit` (warn) — safe-area insets need viewport-fit=cover · [CSS Round Display L1 (env safe-area-inset-*); WHATWG viewport-fit](https://drafts.csswg.org/css-round-display/#viewport-fit-descriptor)
 - 📐 CONV `security.external-rel` (warn) — target=_blank has rel=noopener · [WHATWG HTML — noopener link type (OWASP: reverse tabnabbing)](https://html.spec.whatwg.org/multipage/links.html#link-type-noopener)
 - 📐 CONV `security.sri` (warn) — External subresources use SRI · [W3C Subresource Integrity](https://www.w3.org/TR/SRI/)
 - 📐 CONV `type.body-min` (off · manual, agent-verified) — Body text >= 16px · Norma §3 Typography

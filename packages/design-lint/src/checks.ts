@@ -925,10 +925,23 @@ const duplicateIdRefs: Check = (ctx, rules) => {
   return out;
 };
 
+const viewportFit: Check = (ctx, rules) => {
+  if (!isFullDocument(ctx)) return [];
+  const r = rules[0];
+  let usesSafeArea = false;
+  for (const block of ctx.css) block.root.walkDecls((d) => { if (/env\(\s*safe-area-inset-/i.test(d.value)) usesSafeArea = true; });
+  if (!usesSafeArea) return [];
+  const meta = ctx.dom!.querySelector('meta[name="viewport"]');
+  if (/viewport-fit\s*=\s*cover/i.test(meta?.getAttribute("content") ?? "")) return [];
+  return [mk(ctx, r, meta ? elementLine(ctx, meta) : 1,
+    "CSS uses env(safe-area-inset-*) but the viewport meta lacks viewport-fit=cover — the insets resolve to 0, so notch/home-indicator padding silently does nothing.",
+    "CSS dùng env(safe-area-inset-*) nhưng viewport meta thiếu viewport-fit=cover — insets về 0, nên padding cho tai thỏ/home-indicator âm thầm vô hiệu.")];
+};
+
 export const CHECKS: Record<string, Check> = {
   contrast, focusRing, reducedMotion, forbiddenValue, formLabel, semanticControl, emojiIcon, imgDimensions, imgAlt, targetSize,
   headingOrder, htmlLang, logicalProperties, colorScheme, colorTokenOnly, externalRel, sri,
   metaViewport, viewportPresence, controlName, deadHref, gradientText, positiveTabindex, langValid,
   landmarkMain, singleH1, fieldsetGroup, genericLinkText, focusForcedColors, zindexScale, containerQuery,
-  iframeTitle, tableHeaders, duplicateIdRefs,
+  iframeTitle, tableHeaders, duplicateIdRefs, viewportFit,
 };

@@ -398,6 +398,16 @@ Interface copy is design — every mature system (HIG, Material, Polaris, GOV.UK
 - **Adaptive vs responsive:** responsive = continuously fluid; adaptive = discrete layouts snapped to breakpoints. Most modern products blend both.
 - **Viewport widths to test:** 320 (small phone / WCAG reflow floor), 360–414 (typical phones), 768 (tablet portrait), 1024 (tablet landscape / small laptop), 1280–1440 (desktop), 1536+ (large desktop).
 
+**Device capabilities — screen size is only half of it (📐).** Two devices at the same width can have opposite *input*, *viewport behaviour* and *safe areas*. Query the capability, not the width:
+
+- **Input modality — `pointer` / `hover`.** `@media (pointer: coarse)` = a finger (size targets ≥44px, more spacing); `(pointer: fine)` = a mouse/stylus. `@media (hover: hover)` = a hover-capable device; **never hide a critical action behind `:hover` alone** — on `(hover: none)` touch it's unreachable. Use `any-pointer`/`any-hover` for hybrids (a laptop with both touch and trackpad). Design tap-first, enhance for hover.
+- **Modern viewport units — `dvh` / `svh` / `lvh`.** `100vh` **overflows on mobile**: it equals the *largest* viewport, so the collapsing URL bar hides the bottom. Use **`dvh`** (dynamic — resizes with the chrome) for full-height layouts, **`svh`** (small — chrome shown) when content must be guaranteed visible, `lvh` (large) rarely. Logical siblings `vi`/`vb` respect writing mode. Baseline 2023.
+- **Safe areas & notches.** For edge-to-edge UI on notched/rounded phones, set `<meta name="viewport" content="…, viewport-fit=cover">` **and** pad interactive content with `env(safe-area-inset-top|right|bottom|left)` (with a `0px` fallback) so nothing hides under the notch or home indicator. Without `viewport-fit=cover` the insets are `0` and the padding is inert (linted as `responsive.viewport-fit`).
+- **Orientation & reflow.** `@media (orientation: landscape)` adapts layout, but **never lock orientation** and never just scale — reflow. Content must survive both orientations at 320 CSS px (WCAG 1.4.10 Reflow).
+- **Print.** Ship a `@media print` stylesheet for document-like pages: hide nav/chrome, force black-on-white, expand `a[href]::after{ content:" (" attr(href) ")" }` so URLs survive on paper, and avoid `break-inside: avoid` orphans.
+- **Responsive images — resolution vs art-direction.** Use `srcset` + `sizes` (w-descriptors, 3–5 variants) for the *same* image at different resolutions/DPRs; use `<picture><source media="…">` when the crop/composition must **change** by breakpoint (art direction). Reserve space with `width`/`height` (CLS, §6); `loading="lazy"` + `decoding="async"` below the fold, `fetchpriority="high"` + `loading="eager"` for the LCP hero only.
+- **Foldables & dual-screen** are emerging: the `viewport-segments` env vars and `@media (spanning: …)` let content avoid the seam — forward-looking, not yet Baseline.
+
 ---
 
 ## 12. HCI Mathematical Laws

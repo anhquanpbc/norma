@@ -46,6 +46,7 @@ export const SURFACE_BY_CHECK: Record<string, Surface[]> = {
   iframeTitle: ["html"],
   tableHeaders: ["html"],
   duplicateIdRefs: ["html"],
+  viewportFit: ["html", "css"],
   manual: [], // spacing-scale / body-min / inp-budget / agent-verified WCAG mandates — not statically checkable
 };
 

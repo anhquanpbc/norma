@@ -6,8 +6,20 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+Nothing yet.
+
+## [1.5.0] — 2026-07-04
+
 ### Added
 
+- **Device-capability layer (§10–11) — "screen size is only half of it."** REFERENCE (EN+VI) + a new site
+  card now cover what varies *beyond* width: input modality (`pointer`/`hover` — never hide a critical
+  action behind `:hover`), modern viewport units (`dvh`/`svh`/`lvh` — `100vh` overflows past the mobile
+  URL bar), safe-area insets + `viewport-fit=cover`, orientation & reflow, a `@media print` stylesheet, and
+  responsive-images depth (`srcset`/`sizes` for resolution vs `<picture media>` for art-direction; lazy
+  vs `fetchpriority` for the LCP hero). **New rule `responsive.viewport-fit`** (CONV/warn, catalog 44→45):
+  flags `env(safe-area-inset-*)` used without `viewport-fit=cover` in the viewport meta — the insets
+  resolve to 0, so notch/home-indicator padding silently does nothing.
 - **JSX/TSX support (MVP)** — the linter now recognises `.jsx`/`.tsx` and scans them (line-accurate,
   no DOM/AST) for the two tells that transfer cleanly from CSS/HTML: `antipattern.indigo-default`
   (`#667eea`/`#764ba2`/`indigo-500` in a `className`, `style` object, or arbitrary Tailwind value) and
