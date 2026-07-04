@@ -327,6 +327,30 @@ The states list above is per-*control* micro-states; a **data-driven view** must
 
 Announce state transitions via **4.1.3 Status Messages** (a `role=status`/`aria-live` region) so they reach screen-reader users without stealing focus.
 
+### Feedback & status 🔒/📐
+
+Every async action and system message needs the right surface **and** the right live-region role:
+- **Toast / snackbar** — auto-dismiss **4–10s** for **non-critical** messages only; **never auto-dismiss anything actionable** (an Undo or a "Retry" must persist — WCAG 2.2.1 Timing Adjustable); **pause on hover/focus**; cap concurrent (~1–3, queue the rest). Role: **`role=status`** (polite) for success/info, **`role=alert`** (assertive) for errors — governed by **4.1.3 Status Messages (AA)**, i.e. announce **without moving focus**.
+- **Progress** — `role=progressbar` + `aria-valuenow`/`min`/`max` (determinate) or `aria-busy`/indeterminate; distinct from a bare spinner.
+- **Inline banner vs badge vs skeleton** — a banner sits in the flow for persistent context; a badge is a count/indicator (needs a text alternative); a skeleton is an `aria-hidden` placeholder inside an `aria-busy` region.
+- **Undo over confirm** — for a **reversible** destructive action prefer soft-delete + an Undo toast (that does *not* auto-dismiss) over a confirmation dialog; reserve a modal confirm for the **irreversible**, and **name the action** ("Delete 3 files", not "Are you sure?"). AI reliably buries the only Undo in a 3-second, role-less toast.
+
+### Overlays 🔒/📐
+
+Pick the overlay by interruption + dismissal, not by habit:
+
+| Overlay | Modal? | Dismiss | Use for |
+|---|---|---|---|
+| **Dialog** (`role=dialog`) | yes | Esc, close btn, backdrop | focused task/form |
+| **Alertdialog** (`role=alertdialog`) | yes | explicit choice only (no backdrop) | confirm/irreversible; focus a safe default |
+| **Non-modal dialog** | no | Esc / click-away | secondary panels |
+| **Popover** (Popover API) | no | light-dismiss (Esc/outside) | menus, comboboxes, hovercards |
+| **Tooltip** | no | blur / Esc | supplementary text (never the only source) |
+| **Drawer / side-sheet** | modal or not | Esc / backdrop | nav, filters |
+| **Bottom sheet** | usually modal | drag/backdrop | mobile actions; give a non-drag control (2.5.7) |
+
+**Mechanics AI hand-rolls wrong:** mark the background **`inert`** (not merely "trap focus" — `inert` removes it from tab order *and* the a11y tree), **restore focus** to the invoking control on close, **lock body scroll** (`overflow:hidden` + `overscroll-behavior:contain`), and set **initial focus** deliberately (first focusable, or a destructive-safe default for alertdialog). Prefer the native `<dialog>` + Popover API — the browser **top layer** gives inert-background, Esc and focus handling for free (§2), and sits above all `z-index`. For the real "confirm-over-form" case §9's "don't stack" forbids, use the z-index ladder (§2) — but keep it to one level of nesting.
+
 **Reference design systems 📐 (study for concrete specs):** Google Material 3, Apple HIG, IBM Carbon, Shopify Polaris, Ant Design, Atlassian Design System, Salesforce Lightning, plus the evidence-based GOV.UK Design System and U.S. Web Design System (USWDS).
 
 **Atomic Design (Brad Frost) 📐:** atoms → molecules → organisms → templates → pages. Maps onto the primitive/semantic/component token tiers.

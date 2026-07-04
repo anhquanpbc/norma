@@ -257,6 +257,18 @@ Danh sách trạng thái ở trên là micro-state của từng *điều khiển
 
 Thông báo chuyển trạng thái qua **4.1.3 Status Messages** (vùng `role=status`/`aria-live`) để tới người dùng trình đọc màn hình mà không cướp focus.
 
+### Phản hồi & trạng thái hệ thống 🔒/📐
+
+Mỗi hành động async và thông điệp hệ thống cần đúng bề mặt **và** đúng role live-region:
+- **Toast / snackbar** — tự đóng **4–10s** chỉ cho thông điệp **không quan trọng**; **không bao giờ tự đóng thứ có thể thao tác** (nút Undo hay "Thử lại" phải ở lại — WCAG 2.2.1 Timing Adjustable); **tạm dừng khi hover/focus**; giới hạn đồng thời (~1–3, xếp hàng phần còn lại). Role: **`role=status`** (polite) cho thành công/thông tin, **`role=alert`** (assertive) cho lỗi — theo **4.1.3 Status Messages (AA)**, tức thông báo **mà không dời focus**.
+- **Progress** — `role=progressbar` + `aria-valuenow`/`min`/`max` (xác định) hoặc `aria-busy`/vô định; khác spinner trơ.
+- **Banner / badge / skeleton** — banner nằm trong luồng cho ngữ cảnh lâu dài; badge là đếm/chỉ báo (cần văn bản thay thế); skeleton là placeholder `aria-hidden` trong vùng `aria-busy`.
+- **Undo hơn confirm** — với hành động phá huỷ **có thể hoàn tác**, ưu tiên soft-delete + toast Undo (*không* tự đóng) hơn hộp xác nhận; chỉ để modal confirm cho việc **không thể hoàn tác**, và **gọi tên hành động** ("Xoá 3 tệp", không phải "Bạn chắc chứ?"). AI hay chôn nút Undo duy nhất trong toast 3 giây không có role.
+
+### Overlay 🔒/📐
+
+Chọn overlay theo mức độ ngắt quãng + cách đóng, không theo thói quen — **bảng quyết định đầy đủ ở khối tiếng Anh** (dialog / alertdialog / non-modal dialog / popover / tooltip / drawer-side-sheet / bottom-sheet). **Cơ chế AI hay tự chế sai:** đánh dấu nền **`inert`** (không chỉ "bẫy focus" — `inert` gỡ khỏi thứ tự tab *và* cây a11y), **khôi phục focus** về điều khiển gọi khi đóng, **khoá cuộn body** (`overflow:hidden` + `overscroll-behavior:contain`), và đặt **focus ban đầu** có chủ đích (phần tử focus đầu tiên, hoặc mặc định an toàn cho alertdialog). Ưu tiên `<dialog>` gốc + Popover API — **top layer** của trình duyệt lo sẵn nền-inert, Esc và focus (§2), và nổi trên mọi `z-index`. Với trường hợp "confirm-đè-form" mà "không chồng modal" cấm, dùng thang z-index (§2) — nhưng chỉ một cấp lồng.
+
 **Hệ thống thiết kế tham khảo 📐:** Material 3, Apple HIG, IBM Carbon, Shopify Polaris, Ant Design, Atlassian, Salesforce Lightning, cùng GOV.UK Design System và U.S. Web Design System (USWDS) dựa trên bằng chứng.
 
 **Atomic Design (Brad Frost) 📐:** atom → molecule → organism → template → page. Ánh xạ đúng với ba tầng token primitive/semantic/component.
