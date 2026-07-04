@@ -76,3 +76,57 @@ describe("jsx — false positives from adversarial review (scan only real tag re
     expect(ids(`export const A = () => <pre>{"<div onClick=...>"}</pre>;`)).not.toContain("a11y.semantic-control");
   });
 });
+
+describe("vue/svelte templates — the tells transfer", () => {
+  const vue = (src: string) => lintContext(buildContext("C.vue", src, "jsx"), rules).map((f) => f.ruleId);
+  const svelte = (src: string) => lintContext(buildContext("C.svelte", src, "jsx"), rules).map((f) => f.ruleId);
+  it("flags a Vue <div @click> (and v-on:click)", () => {
+    expect(vue(`<template><div @click="go">x</div></template>`)).toContain("a11y.semantic-control");
+    expect(vue(`<template><div v-on:click="go">x</div></template>`)).toContain("a11y.semantic-control");
+  });
+  it("flags a Svelte <div on:click>", () => {
+    expect(svelte(`<div on:click={go}>x</div>`)).toContain("a11y.semantic-control");
+  });
+  it("does not flag a real <button @click> or a <Component @click>", () => {
+    expect(vue(`<template><button @click="go">x</button></template>`)).not.toContain("a11y.semantic-control");
+    expect(vue(`<template><MyBtn @click="go">x</MyBtn></template>`)).not.toContain("a11y.semantic-control");
+  });
+  it("does not flag a div with a click handler + role (ARIA retrofit)", () => {
+    expect(vue(`<template><div role="button" tabindex="0" @click="go">x</div></template>`)).not.toContain("a11y.semantic-control");
+  });
+  it("catches the indigo tell in a Vue class / :class / style attribute", () => {
+    expect(vue(`<template><div class="bg-indigo-500"/></template>`)).toContain("antipattern.indigo-default");
+    expect(vue(`<template><div :style="{ background: '#667eea' }"/></template>`)).toContain("antipattern.indigo-default");
+  });
+  it("a clean Svelte component produces no tells", () => {
+    expect(svelte(`<button class="rounded bg-slate-800" on:click={save}>Save</button>`)).toEqual([]);
+  });
+});
+
+describe("vue/svelte — HTML comments must be masked", () => {
+  const vue = (src: string) => lintContext(buildContext("C.vue", src, "jsx"), rules).map((f) => f.ruleId);
+  it("does not flag markup commented out with an HTML comment", () => {
+    expect(vue(`<template><!-- <div @click="old" class="bg-indigo-500">x</div> --><button @click="go">Go</button></template>`)).toEqual([]);
+  });
+  it("still flags a live <div @click> next to a commented one", () => {
+    expect(vue(`<template><!-- <span @click="a"/> --><div @click="b">x</div></template>`)).toContain("a11y.semantic-control");
+  });
+});
+
+describe("vue/svelte — handler/role must be attribute NAMES, not string values (review FP+FN)", () => {
+  const vue = (src: string) => lintContext(buildContext("C.vue", src, "jsx"), rules).map((f) => f.ruleId);
+  const svelte = (src: string) => lintContext(buildContext("C.svelte", src, "jsx"), rules).map((f) => f.ruleId);
+  it("does NOT flag @click / on:click appearing inside a quoted attribute value", () => {
+    expect(vue(`<template><span title="Email us at hello@click.com">Contact</span></template>`)).not.toContain("a11y.semantic-control");
+    expect(vue(`<template><div aria-label="Follow @click for news">Social</div></template>`)).not.toContain("a11y.semantic-control");
+    expect(svelte(`<div data-tooltip="test@click.io">hover</div>`)).not.toContain("a11y.semantic-control");
+  });
+  it("does NOT let a role= inside a string value suppress a real handler (FN)", () => {
+    expect(vue(`<template><div title="role=admin" @click="realHandler">x</div></template>`)).toContain("a11y.semantic-control");
+  });
+  it("still flags real handlers (with modifiers) and still honours a real role attribute", () => {
+    expect(vue(`<template><div @click.stop="a">x</div></template>`)).toContain("a11y.semantic-control");
+    expect(svelte(`<div on:click|preventDefault={h}>x</div>`)).toContain("a11y.semantic-control");
+    expect(vue(`<template><div role="button" tabindex="0" @click="a">x</div></template>`)).not.toContain("a11y.semantic-control");
+  });
+});

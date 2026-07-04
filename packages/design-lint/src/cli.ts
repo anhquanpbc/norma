@@ -40,7 +40,7 @@ function expand(patterns: string[]): string[] {
         // A directory arg means "lint everything lintable under here" — expand it so the files
         // are actually inspected (a bare dir path is skipped by typeOf and would exit 0 = false green).
         try {
-          for (const f of globSync("**/*.{html,htm,css,jsx,tsx}", { cwd: p, exclude: EXCLUDE })) files.add(join(p, String(f)));
+          for (const f of globSync("**/*.{html,htm,css,jsx,tsx,vue,svelte}", { cwd: p, exclude: EXCLUDE })) files.add(join(p, String(f)));
         } catch { /* ignore */ }
       } else {
         files.add(p);
@@ -96,7 +96,7 @@ function main(argv: string[]): number {
 
   const flagVals = new Set(["--format", "--lang", "--config", "--rules", "--max-warnings"]);
   const patterns = args.filter((a, i) => !a.startsWith("-") && !flagVals.has(args[i - 1]));
-  const files = expand(patterns.length ? patterns : ["**/*.{html,htm,css,jsx,tsx}"]);
+  const files = expand(patterns.length ? patterns : ["**/*.{html,htm,css,jsx,tsx,vue,svelte}"]);
 
   if (!files.length) { console.error("No HTML/CSS files matched."); return 1; }
 
