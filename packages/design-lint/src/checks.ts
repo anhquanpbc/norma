@@ -929,8 +929,9 @@ const duplicateIdRefs: Check = (ctx, rules) => {
 const documentTitle: Check = (ctx, rules) => {
   if (!isFullDocument(ctx)) return [];
   const r = rules[0];
-  // Scope to the document <head> — an inline SVG's <title> in the body must not satisfy the page title.
-  const title = ctx.dom!.querySelector("head")?.querySelector("title");
+  // The document title, excluding an inline SVG's <title> in the body and any inert <template> copy.
+  // (querySelectorAll, not head-scoped, so a conforming doc that omits the optional <head> tag still counts.)
+  const title = ctx.dom!.querySelectorAll("title").find((t) => !t.closest("svg") && notInTemplate(t));
   if ((title?.text ?? "").trim()) return [];
   return [mk(ctx, r, title ? elementLine(ctx, title) : 1,
     "The document has no non-empty <title> — screen readers announce it as the URL and search/social results have no name (WCAG 2.4.2).",
@@ -940,7 +941,9 @@ const documentTitle: Check = (ctx, rules) => {
 const metaDescription: Check = (ctx, rules) => {
   if (!isFullDocument(ctx)) return [];
   const r = rules[0];
-  const meta = ctx.dom!.querySelector('meta[name="description"]');
+  // <meta> name values are ASCII case-insensitive (HTML spec), so name="Description" is valid.
+  const meta = ctx.dom!.querySelectorAll("meta").find((m) =>
+    notInTemplate(m) && (m.getAttribute("name") ?? "").trim().toLowerCase() === "description");
   if ((meta?.getAttribute("content") ?? "").trim()) return [];
   return [mk(ctx, r, meta ? elementLine(ctx, meta) : 1,
     "The document has no <meta name=\"description\"> — search engines invent a snippet from the page, usually worse than an authored summary.",
@@ -950,7 +953,8 @@ const metaDescription: Check = (ctx, rules) => {
 const canonicalUnique: Check = (ctx, rules) => {
   if (!ctx.dom) return [];
   const r = rules[0];
-  const canon = ctx.dom.querySelectorAll("link[rel]").filter((l) => (l.getAttribute("rel") ?? "").trim().toLowerCase() === "canonical");
+  const canon = ctx.dom.querySelectorAll("link[rel]").filter((l) =>
+    (l.getAttribute("rel") ?? "").trim().toLowerCase() === "canonical" && notInTemplate(l));
   if (canon.length < 2) return [];
   return [mk(ctx, r, elementLine(ctx, canon[1]),
     `The document has ${canon.length} <link rel="canonical"> — search engines ignore all but one (often the wrong one). Keep exactly one.`,
