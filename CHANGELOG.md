@@ -6,7 +6,12 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
-Nothing yet.
+### Added
+
+- **MCP server (`norma-mcp`)** — a zero-dependency Model Context Protocol server over stdio (JSON-RPC 2.0,
+  no SDK) so an AI agent can use Norma in the loop: `lint_source` (lint an HTML/CSS/JSX string → findings),
+  `list_rules` (the catalog, filterable by `domain`/`tag`), `get_rule` (one rule by id, with rationale +
+  remediation). Shipped as a second bin in `@norma/design-lint`.
 
 ## [1.7.0] — 2026-07-04
 

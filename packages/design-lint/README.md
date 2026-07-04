@@ -80,6 +80,19 @@ Vue/Svelte templates, CSS-in-JS, and general Tailwind class semantics are still 
 lean on the **agent layer** (`AGENTS.md`, the Cursor/Copilot/Claude rule files) generated from the same
 catalog. A deeper AST-based extractor is the next step.
 
+## MCP server (for AI agents)
+
+The package ships a zero-dependency [Model Context Protocol](https://modelcontextprotocol.io) server over
+stdio, so an agent can query the standard and lint source in the loop. Point your MCP client at the
+`norma-mcp` bin:
+
+```json
+{ "mcpServers": { "norma": { "command": "npx", "args": ["-y", "@norma/design-lint", "norma-mcp"] } } }
+```
+
+Tools: **`lint_source`** (lint an HTML/CSS/JSX string → findings), **`list_rules`** (the catalog, filterable
+by `domain`/`tag`), **`get_rule`** (one rule by id, with rationale + remediation).
+
 ## Programmatic API
 
 ```ts
