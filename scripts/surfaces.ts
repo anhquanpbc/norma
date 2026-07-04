@@ -50,6 +50,9 @@ export const SURFACE_BY_CHECK: Record<string, Surface[]> = {
   documentTitle: ["html"],
   metaDescription: ["html"],
   canonicalUnique: ["html"],
+  invalidRole: ["html"],
+  nestedInteractive: ["html"],
+  listStructure: ["html"],
   manual: [], // spacing-scale / body-min / inp-budget / agent-verified WCAG mandates — not statically checkable
 };
 

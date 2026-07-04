@@ -46,7 +46,9 @@ These structural/enforcement rules back the guidance above (📐 CONV, staticall
 `a11y.table-headers` (data tables have `<th>`), `a11y.duplicate-id-refs` (a label/aria-referenced id is unique),
 `responsive.viewport-fit` (`env(safe-area-inset-*)` needs `viewport-fit=cover`, else it's inert),
 `a11y.document-title` (a non-empty `<title>`), `seo.meta-description` (a `<meta name="description">`),
-`seo.canonical` (at most one `<link rel="canonical">`).
+`seo.canonical` (at most one `<link rel="canonical">`), `a11y.invalid-role` (`role` is a defined ARIA role),
+`a11y.nested-interactive` (no interactive element inside another), `a11y.list-structure` (`ul`/`ol` have
+only `<li>` children).
 
 **Technical SEO is the same DOM as a11y** (markup only — keyword/link strategy is out of scope): one `<h1>`,
 real `<a href>` (not `<div onClick>`), descriptive link text, `alt`, plus a unique `<title>`, a meta

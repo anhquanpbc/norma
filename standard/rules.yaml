@@ -16,7 +16,7 @@
 #   rationale   { en, vi } why the rule exists.
 #   check       machine assertion consumed by @norma/design-lint. type: manual = agent-only, not auto-checked.
 #   remediation { en, vi } how to fix.
-version: "1.6.0"
+version: "1.7.0"
 rules:
   - id: color.contrast.text
     title: { en: "Body text contrast >= 4.5:1", vi: "Tương phản chữ thân >= 4.5:1" }
@@ -716,6 +716,54 @@ rules:
     remediation:
       en: "Keep exactly one self-referencing <link rel=\"canonical\" href=\"<absolute-url>\"> per page."
       vi: "Giữ đúng một <link rel=\"canonical\" href=\"<url-tuyệt-đối>\"> tự trỏ mỗi trang."
+
+  - id: a11y.invalid-role
+    title: { en: "role is a valid ARIA role", vi: "role là role ARIA hợp lệ" }
+    domain: a11y
+    tag: CONV
+    severity: warn
+    source: "WAI-ARIA 1.2 role definitions; axe aria-roles"
+    source_url: "https://www.w3.org/TR/wai-aria-1.2/#role_definitions"
+    rationale:
+      en: "A role attribute whose value is not a defined ARIA role (a typo like role=\"buton\", or an abstract role) exposes no role at all to assistive technology — the intended semantics silently vanish, often masking a real accessibility need the author thought they had met."
+      vi: "Thuộc tính role có giá trị không phải role ARIA đã định nghĩa (gõ sai như role=\"buton\", hay role trừu tượng) không phơi role nào cho công nghệ trợ giúp — ngữ nghĩa dự định âm thầm biến mất, thường che một nhu cầu tiếp cận thật mà tác giả tưởng đã đáp ứng."
+    check:
+      type: invalidRole
+    remediation:
+      en: "Use a valid WAI-ARIA 1.2 role (or a doc-*/graphics-* extension role), or remove the attribute and use the native element."
+      vi: "Dùng role WAI-ARIA 1.2 hợp lệ (hoặc role mở rộng doc-*/graphics-*), hoặc bỏ thuộc tính và dùng phần tử gốc."
+
+  - id: a11y.nested-interactive
+    title: { en: "No interactive element inside another", vi: "Không lồng phần tử tương tác" }
+    domain: a11y
+    tag: CONV
+    severity: warn
+    source: "WCAG 2.2 SC 4.1.2; HTML content model; axe nested-interactive"
+    source_url: "https://www.w3.org/TR/WCAG22/#name-role-value"
+    rationale:
+      en: "An interactive element nested inside another (a <button> inside an <a>, an <a> inside a <button>) has no valid HTML content model — keyboard focus order is ambiguous, only one control is reachable, and screen readers announce the pair inconsistently."
+      vi: "Phần tử tương tác lồng trong phần tử tương tác khác (<button> trong <a>, <a> trong <button>) không có content model HTML hợp lệ — thứ tự focus bàn phím mơ hồ, chỉ một điều khiển tới được, và trình đọc màn hình đọc cặp đó không nhất quán."
+    check:
+      type: nestedInteractive
+    remediation:
+      en: "Make them siblings, not ancestor/descendant; if you need a linked action inside a card, use one control and style the surface."
+      vi: "Đặt chúng thành anh em, không lồng; nếu cần hành động liên kết trong card, dùng một điều khiển và tạo kiểu cho bề mặt."
+
+  - id: a11y.list-structure
+    title: { en: "ul/ol have only <li> children", vi: "ul/ol chỉ có con <li>" }
+    domain: a11y
+    tag: CONV
+    severity: warn
+    source: "HTML content model (ul/ol); WCAG 1.3.1; axe list"
+    source_url: "https://html.spec.whatwg.org/multipage/grouping-content.html#the-ul-element"
+    rationale:
+      en: "A <ul>/<ol> may only have <li> (plus <script>/<template>) as direct children. A stray <div>/<a> child breaks the list semantics screen readers rely on — the announced item count is wrong and navigation by list is broken."
+      vi: "<ul>/<ol> chỉ được có <li> (cùng <script>/<template>) làm con trực tiếp. Một con <div>/<a> lạc phá ngữ nghĩa danh sách mà trình đọc màn hình dựa vào — số mục đọc lên sai và điều hướng theo danh sách hỏng."
+    check:
+      type: listStructure
+    remediation:
+      en: "Wrap each item in an <li>; if the element isn't a list, use a different container (or set an explicit role)."
+      vi: "Bọc mỗi mục trong <li>; nếu không phải danh sách, dùng container khác (hoặc đặt role rõ ràng)."
 
   - id: responsive.viewport-fit
     title: { en: "safe-area insets need viewport-fit=cover", vi: "safe-area insets cần viewport-fit=cover" }

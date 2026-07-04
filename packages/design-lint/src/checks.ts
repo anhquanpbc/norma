@@ -974,6 +974,78 @@ const viewportFit: Check = (ctx, rules) => {
     "CSS dùng env(safe-area-inset-*) nhưng viewport meta thiếu viewport-fit=cover — insets về 0, nên padding cho tai thỏ/home-indicator âm thầm vô hiệu.")];
 };
 
+// WAI-ARIA 1.2 concrete roles (abstract roles like "widget"/"roletype" are intentionally excluded —
+// authoring them is invalid). DPUB-ARIA (doc-*) and Graphics-ARIA (graphics-*) roles are accepted by prefix.
+const VALID_ROLES = new Set([
+  "button", "checkbox", "gridcell", "link", "menuitem", "menuitemcheckbox", "menuitemradio", "option",
+  "progressbar", "radio", "scrollbar", "searchbox", "separator", "slider", "spinbutton", "switch", "tab",
+  "tabpanel", "textbox", "treeitem", "combobox", "grid", "listbox", "menu", "menubar", "radiogroup",
+  "tablist", "tree", "treegrid", "application", "article", "blockquote", "caption", "cell", "columnheader",
+  "definition", "deletion", "directory", "document", "emphasis", "feed", "figure", "generic", "group",
+  "heading", "img", "insertion", "list", "listitem", "math", "meter", "none", "note", "paragraph",
+  "presentation", "row", "rowgroup", "rowheader", "strong", "subscript", "superscript", "table", "term",
+  "time", "toolbar", "tooltip", "banner", "complementary", "contentinfo", "form", "main", "navigation",
+  "region", "search", "alert", "log", "marquee", "status", "timer", "alertdialog", "dialog",
+]);
+const isValidRole = (t: string): boolean => VALID_ROLES.has(t) || /^(doc|graphics)-/.test(t);
+
+const invalidRole: Check = (ctx, rules) => {
+  if (!ctx.dom) return [];
+  const r = rules[0];
+  const out: Finding[] = [];
+  ctx.dom.querySelectorAll("[role]").forEach((el) => {
+    if (el.closest("template") || elDisabled(el, r.id)) return;
+    const raw = (el.getAttribute("role") ?? "").trim();
+    const tokens = raw.toLowerCase().split(/\s+/).filter(Boolean);
+    if (!tokens.length || tokens.some(isValidRole)) return; // empty attr, or has a valid (fallback) token
+    out.push(mk(ctx, r, elementLine(ctx, el),
+      `role="${raw}" is not a valid ARIA role — it exposes no role to assistive tech (a typo silently does nothing).`,
+      `role="${raw}" không phải role ARIA hợp lệ — không phơi role nào cho công nghệ trợ giúp (gõ sai âm thầm vô hiệu).`));
+  });
+  return out;
+};
+
+const INTERACTIVE_ROLE = new Set(["button", "link", "checkbox", "radio", "menuitem", "menuitemcheckbox", "menuitemradio", "tab", "switch", "option", "slider", "spinbutton", "textbox", "combobox", "searchbox"]);
+const isInteractiveEl = (el: HTMLElement): boolean => {
+  const tag = (el.rawTagName ?? "").toLowerCase();
+  if (tag === "a" || tag === "area") return el.hasAttribute("href");
+  if (tag === "button" || tag === "select" || tag === "textarea") return true;
+  if (tag === "input") return (el.getAttribute("type") ?? "").toLowerCase() !== "hidden";
+  return INTERACTIVE_ROLE.has((el.getAttribute("role") ?? "").toLowerCase());
+};
+
+const nestedInteractive: Check = (ctx, rules) => {
+  if (!ctx.dom) return [];
+  const r = rules[0];
+  const out: Finding[] = [];
+  ctx.dom.querySelectorAll("a, area, button, input, select, textarea, [role]").forEach((el) => {
+    if (!isInteractiveEl(el) || el.closest("template") || elDisabled(el, r.id)) return;
+    for (let p = el.parentNode as HTMLElement | null; p && p.nodeType === 1; p = p.parentNode as HTMLElement | null) {
+      if (isInteractiveEl(p)) {
+        out.push(mk(ctx, r, elementLine(ctx, el),
+          `<${el.rawTagName}> is nested inside an interactive <${p.rawTagName}> — nested controls break keyboard focus and screen-reader semantics (4.1.2).`,
+          `<${el.rawTagName}> lồng trong <${p.rawTagName}> tương tác — điều khiển lồng phá focus bàn phím và ngữ nghĩa trình đọc màn hình (4.1.2).`));
+        break;
+      }
+    }
+  });
+  return out;
+};
+
+const listStructure: Check = (ctx, rules) => {
+  if (!ctx.dom) return [];
+  const r = rules[0];
+  const out: Finding[] = [];
+  ctx.dom.querySelectorAll("ul, ol").forEach((el) => {
+    if (el.closest("template") || el.hasAttribute("role") || elDisabled(el, r.id)) return; // a role override re-purposes the list
+    const bad = el.childNodes.find((c) => c.nodeType === 1 && !["li", "script", "template"].includes(((c as HTMLElement).rawTagName ?? "").toLowerCase()));
+    if (bad) out.push(mk(ctx, r, elementLine(ctx, el),
+      `<${el.rawTagName}> has a non-<li> child <${(bad as HTMLElement).rawTagName}> — only <li> (plus <script>/<template>) may be a direct child, or the list semantics break.`,
+      `<${el.rawTagName}> có con không phải <li> là <${(bad as HTMLElement).rawTagName}> — chỉ <li> (cùng <script>/<template>) được làm con trực tiếp, nếu không ngữ nghĩa danh sách hỏng.`));
+  });
+  return out;
+};
+
 export const CHECKS: Record<string, Check> = {
   contrast, focusRing, reducedMotion, forbiddenValue, formLabel, semanticControl, emojiIcon, imgDimensions, imgAlt, targetSize,
   headingOrder, htmlLang, logicalProperties, colorScheme, colorTokenOnly, externalRel, sri,
@@ -981,4 +1053,5 @@ export const CHECKS: Record<string, Check> = {
   landmarkMain, singleH1, fieldsetGroup, genericLinkText, focusForcedColors, zindexScale, containerQuery,
   iframeTitle, tableHeaders, duplicateIdRefs, viewportFit,
   documentTitle, metaDescription, canonicalUnique,
+  invalidRole, nestedInteractive, listStructure,
 };
