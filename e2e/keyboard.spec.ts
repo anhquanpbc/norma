@@ -14,9 +14,9 @@ test("the bypass-blocks skip link is focusable, becomes visible, and jumps to th
   const box = await page.locator(".skip").boundingBox();
   expect(box).not.toBeNull();
   expect(box!.x).toBeGreaterThanOrEqual(0);
-  // Activating it moves to the content start.
+  // Activating it moves to the content start (the <main id="main"> landmark).
   await page.keyboard.press("Enter");
-  expect(await page.evaluate(() => location.hash)).toBe("#top");
+  expect(await page.evaluate(() => location.hash)).toBe("#main");
 });
 
 test("focused controls carry a visible focus ring (>= 2px outline)", async ({ page }) => {
