@@ -418,7 +418,7 @@ select{ font-family:var(--sans); font-size:14px; padding:8px 10px; border:1px so
 .tell-bars{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
 .tell-bar{ height:52px; border-radius:8px; display:flex; align-items:flex-end; padding:6px 8px;
   font-family:var(--mono); font-size:10px; color:var(--paper); }
-.tell-cap{ background:oklch(0 0 0 / 0.6); padding:1px 5px; border-radius:4px; }   /* scrim keeps the 10px label >=4.5:1 over the gradient */
+.tell-cap{ background:oklch(0 0 0 / 0.6); color:oklch(0.985 0 0); padding:1px 5px; border-radius:4px; }   /* dark scrim + fixed light text keeps the 10px label >=4.5:1 in BOTH themes (--paper flips dark) */
 /* norma-disable antipattern.indigo-default tokens.color-only -- intentional TELL demo (shows the AI default cliché) */
 .tell-purple{ background:linear-gradient(135deg,#667eea,#764ba2); }  /* the AI default cliché */
 .tell-brand{ background:var(--azure-ink); }
