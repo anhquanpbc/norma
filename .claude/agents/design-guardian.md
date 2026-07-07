@@ -102,6 +102,7 @@ Not compliance failures, but they erase brand distinctiveness and often *induce*
 - **antipattern.dead-href** — no `href="#"` / empty-href links wired to nothing; use a real destination or a `<button>`.
 - **antipattern.gradient-text** — no `background-clip:text` gradient headlines; gradient text has no computable contrast.
 - **a11y.no-positive-tabindex** — never `tabindex >= 1`; use `0`/`-1` and DOM order (WCAG 2.4.3).
+- **a11y.focus-no-reshape** — a `:focus`/`:focus-visible` rule repaints only (`outline`/`box-shadow`/`border-color`); never change `border-radius`/`border-width`/`width`/`height`/`padding` on focus — reshaping the control on focus snaps the corners, shifts layout, and reads as a doubled outer border (WCAG 2.4.13).
 - **Dead controls** — no CTAs wired to nothing; every control does what it says.
 - **Dark-by-default** — dark mode is a theme, not a default; no glow-edged dark cards as a premium shortcut.
 - **tokens.color-only / tokens.spacing-scale** — no raw hex, no off-scale px; snap to the 8px scale.
@@ -184,6 +185,7 @@ npx @norma/design-lint "**/*.{html,css}"     # gate SPEC violations; exits non-z
 - 📐 CONV `forms.fieldset-group` (warn) — Group radios/checkboxes in a fieldset · [WCAG 2.2 SC 1.3.1 Info and Relationships (H71)](https://www.w3.org/TR/WCAG22/#info-and-relationships)
 - 📐 CONV `a11y.generic-link-text` (warn) — No non-descriptive link/button text · [WCAG 2.2 SC 2.4.4 Link Purpose (In Context)](https://www.w3.org/TR/WCAG22/#link-purpose-in-context)
 - 📐 CONV `a11y.focus-forced-colors` (warn) — Focus ring survives forced-colors · [WCAG 2.2 SC 2.4.7 / 1.4.11; CSS Color Adjustment L1 (forced-colors)](https://www.w3.org/TR/css-color-adjust-1/#forced-colors-properties)
+- 📐 CONV `a11y.focus-no-reshape` (warn) — Focus repaints, never reshapes the control · [WCAG 2.2 SC 2.4.13 Focus Appearance; Norma §9 States / §14 AI anti-patterns](https://www.w3.org/TR/WCAG22/#focus-appearance)
 - 📐 CONV `tokens.zindex-scale` (warn) — No arbitrary high z-index · Norma §2 Layout — z-index token ladder
 - 📐 CONV `responsive.container-query` (warn) — @container needs a container-type · [W3C CSS Containment Module L3 (container queries)](https://www.w3.org/TR/css-contain-3/)
 - 📐 CONV `a11y.iframe-title` (warn) — Every <iframe> has a title · [WCAG 2.2 SC 4.1.2 / 2.4.1; axe frame-title](https://www.w3.org/TR/WCAG22/#name-role-value)

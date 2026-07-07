@@ -589,6 +589,22 @@ rules:
       en: "Keep (or add) an outline on :focus-visible; box-shadow can enhance it but must not be the only indicator."
       vi: "Giữ (hoặc thêm) outline trên :focus-visible; box-shadow có thể tô điểm nhưng không được là chỉ báo duy nhất."
 
+  - id: a11y.focus-no-reshape
+    title: { en: "Focus repaints, never reshapes the control", vi: "Focus tô lại, không đổi dáng control" }
+    domain: a11y
+    tag: CONV
+    severity: warn
+    source: "WCAG 2.2 SC 2.4.13 Focus Appearance; Norma §9 States / §14 AI anti-patterns"
+    source_url: "https://www.w3.org/TR/WCAG22/#focus-appearance"
+    rationale:
+      en: "A :focus / :focus-visible rule that changes the control's box geometry — border-radius, border-width, width/height, padding, font-size — reshapes or resizes it on focus: the corners snap, the box reflows, and a still-present static border reads as a doubled outer border. A focus indicator should only repaint the element (outline, box-shadow, border-color); geometry changes cause layout shift and are a common AI-generated tell. A negative outline-offset (an inset ring) and a skip link's position reveal are not reshapes and are not flagged."
+      vi: "Quy tắc :focus / :focus-visible đổi hình hộp của control — border-radius, border-width, width/height, padding, font-size — làm nó đổi dáng/kích thước khi focus: góc bị bẻ, hộp reflow, và viền tĩnh còn đó trông như viền ngoài thứ hai. Chỉ báo focus chỉ nên tô lại phần tử (outline, box-shadow, border-color); đổi hình gây layout-shift và là dấu hiệu quen thuộc của UI do AI sinh. outline-offset âm (ring bên trong) và skip-link đổi vị trí để hiện không tính là đổi dáng nên không bị gắn cờ."
+    check:
+      type: focusReshape
+    remediation:
+      en: "In :focus/:focus-visible keep only paint properties (outline, outline-offset, box-shadow, border-color, background, color). To emphasize the edge use a wider outline or a box-shadow ring, or brighten border-color — never change border-radius / border-width / width / height / padding / font-size on focus."
+      vi: "Trong :focus/:focus-visible chỉ giữ thuộc tính tô (outline, outline-offset, box-shadow, border-color, background, color). Muốn nhấn viền thì tăng outline hoặc thêm vòng box-shadow, hoặc đổi border-color — đừng đổi border-radius / border-width / width / height / padding / font-size khi focus."
+
   - id: tokens.zindex-scale
     title: { en: "No arbitrary high z-index", vi: "Không z-index cao tuỳ tiện" }
     domain: tokens

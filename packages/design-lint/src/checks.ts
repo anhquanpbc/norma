@@ -846,6 +846,32 @@ const focusForcedColors: Check = (ctx, rules) => {
   return out;
 };
 
+// Box-geometry / size properties. A :focus / :focus-visible rule must only REPAINT the control
+// (outline*, box-shadow, border-color/style, background, color, filter) — changing its corner radius,
+// border thickness, size, padding or text metrics on focus snaps the corners / reflows the box, and a
+// still-present static border then reads as a doubled outer border (the "focus grows a second border /
+// morphs the control" AI tell). outline & outline-offset are the ring itself and are always allowed (a
+// NEGATIVE outline-offset is the canonical inset-ring technique); a position move (the skip-link reveal
+// `.skip:focus{ left:0 }`) is a legitimate pattern, so top/right/bottom/left/inset are NOT included.
+const RESHAPE_PROP =
+  /^(border-radius|border-(top|bottom)-(left|right)-radius|border-(start|end)-(start|end)-radius|border-width|border-(top|right|bottom|left|inline|block)(-(start|end))?-width|width|height|(min|max)-(width|height|inline-size|block-size)|inline-size|block-size|padding(-(top|right|bottom|left|inline|block)(-(start|end))?)?|font-size|line-height)$/;
+const focusReshape: Check = (ctx, rules) => {
+  const r = rules[0];
+  const out: Finding[] = [];
+  for (const block of ctx.css) {
+    block.root.walkRules((rule) => {
+      if (!/:focus(-visible)?(?![\w-])/.test(rule.selector) || /:focus-within/.test(rule.selector)) return;
+      const hits: string[] = [];
+      for (const prop of decls(rule).keys()) if (RESHAPE_PROP.test(prop)) hits.push(prop);
+      if (!hits.length || ruleDisabled(rule, r.id)) return;
+      out.push(mk(ctx, r, cssLine(block, rule),
+        `"${rule.selector}" reshapes the control on focus (${hits.join(", ")}) — a focus indicator must repaint (outline / box-shadow / border-color), not change the box's radius, size or padding.`,
+        `"${rule.selector}" đổi dáng control khi focus (${hits.join(", ")}) — chỉ báo focus phải tô lại (outline / box-shadow / border-color), không đổi bo góc, kích thước hay padding của hộp.`));
+    });
+  }
+  return out;
+};
+
 const zindexScale: Check = (ctx, rules) => {
   const r = rules[0];
   const out: Finding[] = [];
@@ -1061,7 +1087,7 @@ export const CHECKS: Record<string, Check> = {
   contrast, focusRing, reducedMotion, forbiddenValue, formLabel, semanticControl, emojiIcon, imgDimensions, imgAlt, targetSize,
   headingOrder, htmlLang, logicalProperties, colorScheme, colorTokenOnly, externalRel, sri,
   metaViewport, viewportPresence, controlName, deadHref, gradientText, positiveTabindex, langValid,
-  landmarkMain, singleH1, fieldsetGroup, genericLinkText, focusForcedColors, zindexScale, containerQuery,
+  landmarkMain, singleH1, fieldsetGroup, genericLinkText, focusForcedColors, focusReshape, zindexScale, containerQuery,
   iframeTitle, tableHeaders, duplicateIdRefs, viewportFit,
   documentTitle, metaDescription, canonicalUnique,
   invalidRole, nestedInteractive, listStructure,

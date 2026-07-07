@@ -396,12 +396,12 @@ select{ font-family:var(--sans); font-size:14px; padding:8px 10px; border:1px so
 .fd-btn{ font-family:var(--sans); font-size:14px; font-weight:600; padding:0 18px; min-height:44px;
   border-radius:8px; cursor:pointer; background:var(--surface); color:var(--ink); }
 .fd-bad{ border:2px solid var(--line-2); }
-/* norma-disable a11y.focus-ring-single -- intentional VIOLATION demo (the anti-pattern this widget teaches) */
+/* norma-disable a11y.focus-ring-single a11y.focus-no-reshape -- intentional VIOLATION demo (the anti-pattern this widget teaches) */
 .fd-bad:focus-visible{ outline:3px solid var(--azure); outline-offset:3px; border-radius:8px;
   border-color:var(--bad); box-shadow:0 0 0 6px var(--bad-wash); }   /* 3 competing rings — the anti-pattern */
 .fd-good{ border:1px solid var(--line-2); }
 .fd-good:focus-visible{ outline:2px solid var(--azure-ink); outline-offset:2px; box-shadow:none;
-  border-color:var(--line-2); border-radius:8px; }                    /* one clean ring */
+  border-color:var(--line-2); }                    /* one clean ring — repaint only, no geometry change */
 
 /* halo / glow overload demo */
 .halo-card{ background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:18px;
@@ -1299,6 +1299,7 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
       <h3><span class="en">Level 1 — Visual &amp; CSS defects</span><span class="vi">Cấp 1 — Lỗi thị giác &amp; CSS</span></h3>
       <ul class="spec">
         <li><span class="badge viol">VIOL</span><span><b><span class="en">Nested focus rings.</span><span class="vi">Vòng focus chồng.</span></b> <span class="en">border+outline+shadow → one <code>:focus-visible</code> ring.</span><span class="vi">border+outline+shadow → một vòng <code>:focus-visible</code>.</span> <span class="src">2.4.11 / 2.4.13</span></span></li>
+        <li><span class="badge viol">VIOL</span><span><b><span class="en">Focus reshapes the control.</span><span class="vi">Focus đổi dáng control.</span></b> <span class="en"><code>:focus</code> changing <code>border-radius</code>/width/padding → corners snap, a doubled outer border appears; repaint only (<code>outline</code>/<code>box-shadow</code>/<code>border-color</code>).</span><span class="vi"><code>:focus</code> đổi <code>border-radius</code>/kích thước/padding → góc bị bẻ, hiện viền ngoài đôi; chỉ tô lại (<code>outline</code>/<code>box-shadow</code>/<code>border-color</code>).</span> <span class="src">2.4.13</span></span></li>
         <li><span class="badge tell">TELL</span><span><b><span class="en">Halo / glow overuse.</span><span class="vi">Lạm dụng halo / glow.</span></b> <span class="en">Stacked colored shadows → neutral elevation scale, one light source.</span><span class="vi">Nhiều bóng màu chồng → thang độ nổi trung tính, một nguồn sáng.</span></span></li>
         <li><span class="badge tell">TELL</span><span><b><span class="en">Purple→violet gradient.</span><span class="vi">Gradient tím→chàm.</span></b> <span class="en"><code>#667eea→#764ba2</code> indigo default → brand tokens.</span><span class="vi"><code>#667eea→#764ba2</code> indigo mặc định → token thương hiệu.</span></span></li>
         <li><span class="badge viol">VIOL</span><span><b><span class="en">Low-contrast gray text.</span><span class="vi">Chữ xám thiếu tương phản.</span></b> <span class="en">#999 on #fff; found on ~84% of home pages (WebAIM) → 4.5:1.</span><span class="vi">#999 trên #fff; ~84% trang chủ mắc (WebAIM) → 4.5:1.</span> <span class="src">1.4.3</span></span></li>

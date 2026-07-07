@@ -38,6 +38,33 @@ describe("a11y.focus-ring-single", () => {
   });
 });
 
+describe("a11y.focus-no-reshape", () => {
+  it("flags border-radius changed on :focus-visible", () => {
+    const f = lint(`input:focus-visible{ outline:2px solid blue; outline-offset:2px; border-radius:3px; }`, "css");
+    expect(ids(f)).toContain("a11y.focus-no-reshape");
+  });
+  it("flags a width/padding resize on focus", () => {
+    const f = lint(`button:focus{ outline:2px solid blue; padding:8px; width:120px; }`, "css");
+    expect(ids(f)).toContain("a11y.focus-no-reshape");
+  });
+  it("passes a paint-only ring (border-color brighten + inset offset)", () => {
+    const f = lint(`input:focus-visible{ outline:2px solid blue; outline-offset:-1px; border-color:blue; }`, "css");
+    expect(ids(f)).not.toContain("a11y.focus-no-reshape");
+  });
+  it("does not flag the skip-link position reveal", () => {
+    const f = lint(`.skip{ position:absolute; left:-9999px }\n.skip:focus{ left:0 }`, "css");
+    expect(ids(f)).not.toContain("a11y.focus-no-reshape");
+  });
+  it("ignores :focus-within (a parent expand is legitimate)", () => {
+    const f = lint(`.field:focus-within{ padding:12px; border-radius:8px; }`, "css");
+    expect(ids(f)).not.toContain("a11y.focus-no-reshape");
+  });
+  it("respects a disable comment", () => {
+    const f = lint(`/* norma-disable a11y.focus-no-reshape */\ninput:focus-visible{ border-radius:3px; }`, "css");
+    expect(ids(f)).not.toContain("a11y.focus-no-reshape");
+  });
+});
+
 describe("a11y.reduced-motion", () => {
   it("flags animation with no reduced-motion block", () => {
     const f = lint(`.x{ transition: all .3s ease; }`, "css");
