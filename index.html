@@ -10,7 +10,7 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://anhquanpbc.github.io/norma/">
 <meta property="og:image" content="https://opengraph.githubassets.com/norma/anhquanpbc/norma">
-<meta name="twitter:card" content="summary">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="https://anhquanpbc.github.io/norma/">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","name":"Norma — Web Design Standard","headline":"Norma — an enforceable bilingual (EN/VI) web design standard","inLanguage":["en","vi"],"url":"https://anhquanpbc.github.io/norma/","author":{"@type":"Organization","name":"Norma"},"about":["web design standard","WCAG 2.2","Core Web Vitals","design tokens","technical SEO"]}</script>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231d7cd5'/%3E%3Ctext x='16' y='23' font-family='monospace' font-size='19' font-weight='700' fill='%23fff' text-anchor='middle'%3EN%3C/text%3E%3C/svg%3E">
@@ -39,9 +39,11 @@ d.setAttribute('data-lang',l);d.lang=l;})();</script>
   --surface-2:  oklch(0.975 0.006 255);
   --line:       oklch(0.90 0.008 258);
   --line-2:     oklch(0.84 0.010 258);
+  --control-border: oklch(0.64 0.02 258);   /* >=3:1 vs --surface for UI-component borders (1.4.11) */
   --azure:      oklch(0.58 0.16 252);
   --azure-ink:  oklch(0.45 0.15 258);   /* darker: AA text on paper */
   --azure-wash: oklch(0.96 0.03 252);
+  --violet:     oklch(0.55 0.16 300);   /* chosen section accent (a defined token, not the indigo default) */
   --amber:      oklch(0.70 0.14 66);
   --amber-ink:  oklch(0.52 0.12 60);
   --good:       oklch(0.66 0.15 155);
@@ -90,9 +92,11 @@ d.setAttribute('data-lang',l);d.lang=l;})();</script>
   --surface-2:  oklch(0.255 0.013 258);
   --line:       oklch(0.33 0.012 258);
   --line-2:     oklch(0.42 0.014 258);
+  --control-border: oklch(0.56 0.016 258);   /* >=3:1 vs dark --surface */
   --azure:      oklch(0.72 0.14 252);
   --azure-ink:  oklch(0.82 0.11 252);
   --azure-wash: oklch(0.32 0.06 255);
+  --violet:     oklch(0.72 0.14 300);
   --amber:      oklch(0.83 0.13 70);
   --amber-ink:  oklch(0.85 0.11 70);
   --good:       oklch(0.76 0.15 155);
@@ -110,7 +114,7 @@ d.setAttribute('data-lang',l);d.lang=l;})();</script>
 }
 
 *{box-sizing:border-box}
-html{scroll-behavior:smooth}
+html{scroll-behavior:smooth; scroll-padding-top:70px}
 @media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} }
 
 body{
@@ -137,7 +141,17 @@ a{ color:var(--azure-ink); text-underline-offset:3px; }
 /* ---- accessible focus (the doc obeys 2.4.13) ---- */
 a:focus-visible, button:focus-visible, select:focus-visible,
 input:focus-visible, [tabindex]:focus-visible{
-  outline:3px solid var(--azure); outline-offset:2px; border-radius:3px;
+  outline:2px solid var(--azure-ink); outline-offset:2px;
+}
+/* clip-safe focus: an overflow:hidden/auto ancestor would trim an outset ring, so these
+   scoped rings sit inside the box (same 2px --azure-ink ring, drawn inward) */
+.lang-toggle button:focus-visible{ outline-offset:-3px; }
+nav.sections a:focus-visible{ outline-offset:-2px; }
+/* form fields: focus brightens the field's OWN border, ring drawn just inside it — no detached
+   outer halo (a bordered field's edge is its natural focus surface; buttons/links keep the
+   offset ring shown in the §14 demo) */
+input:focus-visible, select:focus-visible, textarea:focus-visible{
+  border-color:var(--azure); outline-offset:-1px;
 }
 
 /* ---- eyebrow / mono labels (the signature device) ---- */
@@ -150,13 +164,13 @@ input:focus-visible, [tabindex]:focus-visible{
   border:1px solid transparent; white-space:nowrap; }
 .badge.spec{ color:var(--azure-ink); background:var(--azure-wash); border-color:oklch(0.85 0.05 252); }
 .badge.conv{ color:var(--ink-3); background:var(--surface-2); border-color:var(--line-2); }
-.badge.good{ color:oklch(0.42 0.14 155); background:var(--good-wash); border-color:oklch(0.82 0.08 155); }
+.badge.good{ color:var(--good-ink); background:var(--good-wash); border-color:oklch(0.82 0.08 155); }
 .src{ font-family:var(--mono); font-size:11px; color:var(--ink-3); }
 
 /* =================== HEADER / NAV =================== */
 header.bar{ position:sticky; top:0; z-index:50; background:var(--bar-bg);
   backdrop-filter:blur(10px) saturate(1.1); border-bottom:1px solid var(--line); }
-.bar-inner{ max-width:var(--maxw); margin:0 auto; padding:10px var(--s-5);
+.bar-inner{ max-width:var(--maxw); margin:0 auto; padding:var(--s-2) var(--s-5);
   display:flex; align-items:center; gap:var(--s-5); }
 .brand{ font-family:var(--mono); font-weight:700; font-size:14px; letter-spacing:-0.01em;
   color:var(--ink); display:flex; align-items:center; gap:8px; flex-shrink:0; }
@@ -164,21 +178,20 @@ header.bar{ position:sticky; top:0; z-index:50; background:var(--bar-bg);
   box-shadow:0 0 0 3px var(--azure-wash); }
 nav.sections{ display:flex; gap:2px; margin-inline-start:auto; overflow-x:auto; }
 nav.sections a{ font-family:var(--mono); font-size:12px; letter-spacing:0.03em; text-transform:uppercase;
-  color:var(--ink-3); text-decoration:none; padding:8px 9px; border-radius:6px; white-space:nowrap;
+  color:var(--ink-3); text-decoration:none; padding:8px 8px; border-radius:6px; white-space:nowrap;
   min-height:34px; display:flex; align-items:center; transition:color .15s var(--ease), background .15s var(--ease); }
 nav.sections a:hover{ color:var(--ink); background:var(--surface-2); }
 nav.sections a.active{ color:var(--azure-ink); background:var(--azure-wash); }
-.lang-toggle{ display:flex; border:1px solid var(--line-2); border-radius:7px; overflow:hidden; flex-shrink:0; }
+.lang-toggle{ display:flex; border:1px solid var(--control-border); border-radius:7px; overflow:hidden; flex-shrink:0; }
 .theme-btn{ margin-inline-start:auto; display:flex; align-items:center; justify-content:center;
-  inline-size:34px; block-size:34px; flex-shrink:0; border:1px solid var(--line-2); border-radius:7px;
+  inline-size:34px; block-size:34px; flex-shrink:0; border:1px solid var(--control-border); border-radius:7px;
   background:var(--surface); color:var(--ink-3); cursor:pointer; transition:color .15s var(--ease), border-color .15s var(--ease); }
-.theme-btn:hover{ color:var(--ink); border-color:var(--line); }
-.theme-btn:focus-visible{ outline:2px solid var(--azure-ink); outline-offset:1px; }
+.theme-btn:hover{ color:var(--ink); border-color:var(--ink-3); }
 .theme-btn svg{ inline-size:16px; block-size:16px; }
 .gh-link{ font-family:var(--mono); font-size:12px; font-weight:600; letter-spacing:0.03em; color:var(--ink-3);
-  text-decoration:none; border:1px solid var(--line-2); border-radius:7px; padding:0 10px; min-height:34px;
+  text-decoration:none; border:1px solid var(--control-border); border-radius:7px; padding:0 12px; min-height:34px;
   display:flex; align-items:center; flex-shrink:0; transition:color .15s var(--ease), border-color .15s var(--ease); }
-.gh-link:hover{ color:var(--ink); border-color:var(--line); }
+.gh-link:hover{ color:var(--ink); border-color:var(--ink-3); }
 @media (max-width:560px){
   .bar-inner{ gap:var(--s-3); padding-inline:var(--s-4); }
   .brand{ font-size:12px; }
@@ -198,15 +211,14 @@ main{ max-width:var(--maxw); margin:0 auto; padding:0 var(--s-5); }
 .doc-shell{ max-width:1340px; margin-inline:auto; padding-inline:var(--s-5);
   display:grid; grid-template-columns:214px minmax(0,1fr); gap:var(--s-7); }
 .doc-shell > main{ max-width:none; margin:0; padding:0; }
-.doc-nav{ position:sticky; top:68px; align-self:start; max-height:calc(100vh - 84px);
+.doc-nav{ position:sticky; top:68px; align-self:start; max-height:calc(100svh - 84px);
   overflow-y:auto; padding-block:var(--s-3) var(--s-5); }
 .doc-search-label{ display:block; font-family:var(--mono); font-size:11px; letter-spacing:0.04em;
   text-transform:uppercase; color:var(--ink-3); margin-block-end:6px; }
 .doc-search{ inline-size:100%; box-sizing:border-box; font-family:inherit; font-size:13px;
-  padding:8px 11px; margin-block-end:var(--s-4); border:1px solid var(--line-2); border-radius:8px;
+  padding:8px 12px; margin-block-end:var(--s-4); border:1px solid var(--control-border); border-radius:8px;
   background:var(--surface); color:var(--ink); }
 .doc-search::placeholder{ color:var(--ink-3); }
-.doc-search:focus-visible{ outline:2px solid var(--azure-ink); outline-offset:1px; }
 .doc-nav .sections{ flex-direction:column; gap:1px; margin:0; overflow:visible; }
 .doc-nav .sections a{ min-height:auto; padding:6px 10px; border-inline-start:2px solid transparent; }
 .doc-nav .sections a.active{ border-inline-start-color:var(--azure-ink); }
@@ -308,9 +320,9 @@ pre .c-mut{ color:oklch(0.62 0.02 258); }  /* comment */
 label.ctrl{ display:block; font-size:13px; font-weight:600; color:var(--ink); margin-bottom:8px; }
 label.ctrl output{ font-family:var(--mono); color:var(--azure-ink); }
 input[type=range]{ width:100%; accent-color:var(--azure); height:34px; }
-input[type=color]{ width:52px; height:40px; border:1px solid var(--line-2); border-radius:8px;
+input[type=color]{ width:52px; height:40px; border:1px solid var(--control-border); border-radius:8px;
   background:var(--surface); cursor:pointer; padding:3px; }
-select{ font-family:var(--sans); font-size:14px; padding:8px 10px; border:1px solid var(--line-2);
+select{ font-family:var(--sans); font-size:14px; padding:8px 10px; border:1px solid var(--control-border);
   border-radius:8px; background:var(--surface); color:var(--ink); min-height:40px; cursor:pointer; }
 .demo-btn{ font-family:var(--sans); font-size:14px; font-weight:600; color:var(--paper);
   background:var(--azure-ink); border:0; border-radius:8px; padding:0 16px; min-height:44px; cursor:pointer; }
@@ -323,7 +335,7 @@ select{ font-family:var(--sans); font-size:14px; padding:8px 10px; border:1px so
 .ramp{ display:grid; grid-template-columns:repeat(11,1fr); gap:4px; }
 .ramp .sw{ aspect-ratio:1/1.3; border-radius:6px; display:flex; align-items:flex-end; justify-content:center;
   padding-bottom:4px; font-family:var(--mono); font-size:9px; }
-.cmp{ display:grid; grid-template-columns:repeat(9,1fr); gap:3px; height:34px; margin-top:6px; }
+.cmp{ display:grid; grid-template-columns:repeat(9,1fr); gap:4px; height:34px; margin-top:8px; }
 .cmp .sw{ border-radius:4px; }
 
 /* contrast checker */
@@ -366,9 +378,9 @@ select{ font-family:var(--sans); font-size:14px; padding:8px 10px; border:1px so
 /* fitts demo */
 .fitts-stage{ position:relative; height:150px; border:1px dashed var(--line-2); border-radius:8px;
   background:var(--surface-2); overflow:hidden; }
-.fitts-target{ position:absolute; background:var(--azure-ink); color:var(--paper); border-radius:8px;
-  display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:600; cursor:pointer;
-  transition:all .35s var(--ease); user-select:none; }
+.fitts-target{ position:absolute; background:var(--azure-ink); color:var(--paper); border:0; padding:0; border-radius:8px;
+  display:flex; align-items:center; justify-content:center; font-family:inherit; font-size:12px; font-weight:600; cursor:pointer;
+  transition:left .35s var(--ease), top .35s var(--ease), width .35s var(--ease), height .35s var(--ease); user-select:none; }
 
 /* easing demo */
 .ease-track{ height:44px; background:var(--surface-2); border-radius:8px; position:relative; margin-top:12px; }
@@ -406,6 +418,7 @@ select{ font-family:var(--sans); font-size:14px; padding:8px 10px; border:1px so
 .tell-bars{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
 .tell-bar{ height:52px; border-radius:8px; display:flex; align-items:flex-end; padding:6px 8px;
   font-family:var(--mono); font-size:10px; color:var(--paper); }
+.tell-cap{ background:oklch(0 0 0 / 0.6); padding:1px 5px; border-radius:4px; }   /* scrim keeps the 10px label >=4.5:1 over the gradient */
 /* norma-disable antipattern.indigo-default tokens.color-only -- intentional TELL demo (shows the AI default cliché) */
 .tell-purple{ background:linear-gradient(135deg,#667eea,#764ba2); }  /* the AI default cliché */
 .tell-brand{ background:var(--azure-ink); }
@@ -445,7 +458,8 @@ nav.sections a{ position:relative; }
 .gauge-bar > div{ transition:width .85s var(--ease); }
 
 @media (prefers-reduced-motion: reduce){
-  *{ transition-duration:0.001ms !important; animation-duration:0.001ms !important; }
+  *{ transition-duration:0.001ms !important; animation-duration:0.001ms !important;
+     animation-delay:0.001ms !important; }
   .reveal.pending{ opacity:1 !important; transform:none !important; }
 }
 
@@ -457,7 +471,7 @@ footer h3{ color:oklch(0.96 0.005 250); font-family:var(--mono); font-size:12px;
   letter-spacing:0.06em; margin-bottom:var(--s-4); }
 footer a{ color:oklch(0.80 0.08 252); }
 footer .src{ color:oklch(0.66 0.02 250); }   /* lift source labels to AA (>=4.5:1) on the dark footer */
-footer .srcgrid{ display:grid; grid-template-columns:repeat(2,1fr); gap:6px 24px; font-size:13px; line-height:1.7; }
+footer .srcgrid{ display:grid; grid-template-columns:repeat(2,1fr); gap:8px 24px; font-size:13px; line-height:1.7; }
 @media (max-width:640px){ footer .srcgrid{ grid-template-columns:1fr; } }
 footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250); line-height:1.6; max-width:80ch; }
 
@@ -467,7 +481,7 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
 </style>
 </head>
 <body>
-<a href="#top" class="skip"><span class="en">Skip to content</span><span class="vi">Tới nội dung</span></a>
+<a href="#main" class="skip"><span class="en">Skip to content</span><span class="vi">Tới nội dung</span></a>
 
 <header class="bar">
   <div class="bar-inner">
@@ -506,7 +520,7 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
   <p class="no-hits" id="navNoHits" hidden><span class="en">No matches</span><span class="vi">Không khớp</span></p>
 </aside>
 
-<main>
+<main id="main" tabindex="-1">
 <section class="hero" id="top" tabindex="-1">
   <div class="hero-grid"></div>
   <div class="hero-inner">
@@ -540,13 +554,13 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
 
     <div class="audit" role="group" aria-label="This page's self-audit">
       <span class="lbl"><span class="en">This page:</span><span class="vi">Trang này:</span></span>
-      <span class="item">8px grid</span>
-      <span class="item">1.25 scale</span>
-      <span class="item">OKLCH palette</span>
-      <span class="item">AA contrast</span>
+      <span class="item"><span class="en">8px grid</span><span class="vi">lưới 8px</span></span>
+      <span class="item"><span class="en">1.25 scale</span><span class="vi">thang 1.25</span></span>
+      <span class="item"><span class="en">OKLCH palette</span><span class="vi">palette OKLCH</span></span>
+      <span class="item"><span class="en">AA contrast</span><span class="vi">tương phản AA</span></span>
       <span class="item">focus ≥2px</span>
       <span class="item">reduced-motion ✓</span>
-      <span class="item">0 network requests</span>
+      <span class="item"><span class="en">0 network requests</span><span class="vi">0 request mạng</span></span>
     </div>
   </div>
 </section>
@@ -565,7 +579,7 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
   <div class="grid g2">
     <div class="widget">
       <div class="widget-title">W3C DTCG · v2025.10 <span class="badge spec">SPEC</span></div>
-      <pre><code>{
+      <pre id="pre-dtcg" tabindex="0" aria-label="W3C design-token JSON sample"><code>{
   <span class="c-key">"color"</span>: {
     <span class="c-key">"brand"</span>: {
       <span class="c-key">"primary"</span>: {
@@ -662,7 +676,7 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
         <li><span class="en"><b>Intrinsic sizing:</b> <code>min()/max()/clamp()</code>, logical axes, <code>aspect-ratio</code> + <code>object-fit</code>.</span><span class="vi"><b>Kích thước nội tại:</b> <code>min()/max()/clamp()</code>, trục logic, <code>aspect-ratio</code> + <code>object-fit</code>.</span></li>
         <li><span class="en"><b>Container queries</b> (Baseline 2023) so a component adapts to its slot, not the screen.</span><span class="vi"><b>Container query</b> (Baseline 2023) để component thích ứng theo slot, không phải màn hình.</span></li>
       </ul>
-      <pre tabindex="0" aria-label="RAM grid technique code sample"><code><span class="c-mut">/* RAM: Repeat, Auto, Minmax — a responsive card gallery, no media queries */</span>
+      <pre id="pre-ram" tabindex="0" aria-label="RAM grid technique code sample"><code><span class="c-mut">/* RAM: Repeat, Auto, Minmax — a responsive card gallery, no media queries */</span>
 <span class="c-key">.gallery</span> {
   <span class="c-key">display</span>: grid;
   <span class="c-key">gap</span>: 1rem;
@@ -692,7 +706,7 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
 <section id="s3">
   <div class="sec-head">
     <span class="sec-num">§03</span>
-    <div class="sec-tick" style="background:oklch(0.55 0.16 300)"></div>
+    <div class="sec-tick" style="background:var(--violet)"></div>
     <div class="titles">
       <h2><span class="en">Typography</span><span class="vi">Kiểu chữ</span></h2>
       <div class="sec-sub"><span class="en">Sizes come from a ratio, not from taste. Try it live — drag the ratio and watch the scale rebuild.</span><span class="vi">Cỡ chữ đến từ tỷ lệ, không từ cảm tính. Thử trực tiếp — kéo tỷ lệ và xem thang tự dựng lại.</span></div>
@@ -760,7 +774,7 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
 <section id="s4">
   <div class="sec-head">
     <span class="sec-num">§04</span>
-    <div class="sec-tick" style="background:oklch(0.66 0.15 155)"></div>
+    <div class="sec-tick" style="background:var(--good)"></div>
     <div class="titles">
       <h2><span class="en">Color</span><span class="vi">Màu sắc</span></h2>
       <div class="sec-sub"><span class="en">OKLCH makes tonal ramps predictable; WCAG contrast keeps text legible. Both are live below.</span><span class="vi">OKLCH khiến dải tông có quy luật; tương phản WCAG giữ chữ dễ đọc. Cả hai đều tương tác bên dưới.</span></div>
@@ -831,7 +845,7 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
 <section id="s5">
   <div class="sec-head">
     <span class="sec-num">§05</span>
-    <div class="sec-tick" style="background:oklch(0.60 0.20 25)"></div>
+    <div class="sec-tick" style="background:var(--bad)"></div>
     <div class="titles">
       <h2><span class="en">Accessibility (measurable)</span><span class="vi">Khả năng tiếp cận (đo được)</span></h2>
       <div class="sec-sub"><span class="en">WCAG 2.2 AA is the near-universal legal target. These are hard numbers, not aspirations.</span><span class="vi">WCAG 2.2 mức AA là mục tiêu pháp lý gần như phổ quát. Đây là con số cứng, không phải khẩu hiệu.</span></div>
@@ -970,7 +984,7 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
 <section id="s7">
   <div class="sec-head">
     <span class="sec-num">§07</span>
-    <div class="sec-tick" style="background:oklch(0.55 0.16 300)"></div>
+    <div class="sec-tick" style="background:var(--violet)"></div>
     <div class="titles">
       <h2><span class="en">Motion &amp; Interaction</span><span class="vi">Chuyển động &amp; Tương tác</span></h2>
       <div class="sec-sub"><span class="en">Duration and easing are tokens, not vibes. Pick an easing curve and watch it move.</span><span class="vi">Thời lượng và easing là token, không phải cảm hứng. Chọn đường easing và xem nó chuyển động.</span></div>
@@ -1166,7 +1180,7 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
 <section id="s12">
   <div class="sec-head">
     <span class="sec-num">§12</span>
-    <div class="sec-tick" style="background:oklch(0.70 0.14 66)"></div>
+    <div class="sec-tick" style="background:var(--amber)"></div>
     <div class="titles">
       <h2><span class="en">HCI Mathematical Laws</span><span class="vi">Định luật Toán học Tương tác (HCI)</span></h2>
       <div class="sec-sub"><span class="en">Empirical models that turn "feel" into estimates. Not spec mandates — but foundational and battle-tested.</span><span class="vi">Mô hình thực nghiệm biến "cảm giác" thành ước lượng. Không phải quy chuẩn bắt buộc — nhưng nền tảng và đã kiểm chứng.</span></div>
@@ -1179,9 +1193,9 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
       <div class="chart"><svg id="fittsChart" viewBox="0 0 320 150" aria-hidden="true"></svg></div>
       <p class="note"><span class="en">Time to hit a target grows with distance <b>D</b>, shrinks with width <b>W</b>. Make primary actions <b>large and close</b>; screen edges/corners act "infinitely large" (the pointer stops) — ideal for CTAs and menus.</span><span class="vi">Thời gian chạm mục tiêu tăng theo khoảng cách <b>D</b>, giảm theo bề rộng <b>W</b>. Đặt hành động chính <b>to và gần</b>; cạnh/góc màn hình "lớn vô hạn" (con trỏ dừng lại) — lý tưởng cho CTA và menu.</span></p>
       <div class="fitts-stage" id="fittsStage">
-        <div class="fitts-target" id="fittsTarget" style="left:16px;top:55px;width:120px;height:40px" role="button" tabindex="0">
+        <button class="fitts-target" id="fittsTarget" type="button" style="left:16px;top:55px;width:120px;height:40px">
           <span class="en">Tap me</span><span class="vi">Chạm tôi</span>
-        </div>
+        </button>
       </div>
       <p class="note" style="margin-top:8px"><span class="en">↑ Tap the target — it shrinks and jumps. Feel the difficulty (Index of Difficulty) rise as it gets smaller and farther.</span><span class="vi">↑ Chạm mục tiêu — nó co lại và nhảy. Cảm nhận độ khó (Index of Difficulty) tăng khi nó nhỏ và xa dần.</span></p>
     </div>
@@ -1250,9 +1264,9 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
         <button class="fd-btn fd-good"><span class="en">✓ Single ring</span><span class="vi">✓ Một vòng</span></button>
       </div>
       <p class="note"><span class="en"><b>Press Tab</b> (or click) each button. The left stacks <code>border</code> + <code>outline</code> + <code>box-shadow</code> → 2–3 competing rings, an AI habit that muddies WCAG 2.4.13's "≥2px perimeter, ≥3:1" rule. The right is the correct single <code>:focus-visible</code> ring.</span><span class="vi"><b>Nhấn Tab</b> (hoặc bấm) từng nút. Nút trái chồng <code>border</code> + <code>outline</code> + <code>box-shadow</code> → 2–3 vòng đua nhau, thói quen của AI làm rối yêu cầu "viền ≥2px, ≥3:1" của WCAG 2.4.13. Nút phải là một vòng <code>:focus-visible</code> đúng chuẩn.</span></p>
-      <pre><code><span class="c-mut">/* ✓ one clean ring — never border+outline+shadow */</span>
+      <pre id="pre-focus" tabindex="0" aria-label="Focus-ring CSS code sample"><code><span class="c-mut">/* ✓ one clean ring — never border+outline+shadow */</span>
 <span class="c-key">:focus-visible</span> {
-  <span class="c-key">outline</span>: 2px solid #0066cc;
+  <span class="c-key">outline</span>: 2px solid var(--azure-ink);
   <span class="c-key">outline-offset</span>: 2px;
 }</code></pre>
     </div>
@@ -1271,8 +1285,8 @@ footer .fine{ margin-top:var(--s-6); font-size:12px; color:oklch(0.62 0.01 250);
       <div style="margin-top:18px">
         <div class="note" style="margin-bottom:6px"><span class="en"><b>The "purple tell":</b> AI's default gradient vs a chosen brand color.</span><span class="vi"><b>"Dấu hiệu tím":</b> gradient mặc định của AI so với màu thương hiệu có chủ đích.</span></div>
         <div class="tell-bars">
-          <div class="tell-bar tell-purple">#667eea → #764ba2</div>
-          <div class="tell-bar tell-brand">oklch(0.45 0.15 258)</div>
+          <div class="tell-bar tell-purple"><span class="tell-cap">#667eea → #764ba2</span></div>
+          <div class="tell-bar tell-brand"><span class="tell-cap">oklch(0.45 0.15 258)</span></div>
         </div>
         <p class="note"><span class="en">Tailwind UI defaulted buttons to <code>indigo-500</code>; its creator publicly apologized in 2025 for that default "leading to every AI generated UI on earth also being indigo." Define brand tokens instead.</span><span class="vi">Tailwind UI mặc định nút màu <code>indigo-500</code>; tác giả đã công khai xin lỗi năm 2025 vì mặc định ấy "khiến mọi UI do AI tạo trên đời cũng tím indigo." Hãy định nghĩa token thương hiệu riêng.</span></p>
       </div>
@@ -1388,7 +1402,10 @@ var I18N_ATTRS = [
   [".doc-nav",           "aria-label",  "Documentation navigation", "Điều hướng tài liệu"],
   [".doc-nav .sections", "aria-label",  "Sections",                 "Các mục"],
   ["#docSearch",         "placeholder", "Search the standard…",     "Tìm trong chuẩn…"],
-  [".audit",             "aria-label",  "This page's self-audit",   "Tự kiểm của trang này"]
+  [".audit",             "aria-label",  "This page's self-audit",   "Tự kiểm của trang này"],
+  ["#pre-dtcg",          "aria-label",  "W3C design-token JSON sample",   "Mẫu JSON design token W3C"],
+  ["#pre-ram",           "aria-label",  "RAM grid technique code sample", "Mẫu mã kỹ thuật lưới RAM"],
+  ["#pre-focus",         "aria-label",  "Focus-ring CSS code sample",     "Mẫu mã CSS vòng focus"]
 ];
 function applyI18nAttrs(){
   document.title = t("Norma — UX/UI Technical Standards 2026 (EN/VI)", "Norma — Quy chuẩn Kỹ thuật UX/UI 2026 (EN/VI)");
@@ -1626,8 +1643,8 @@ function initScrollSpy(){
     // unlike offsetTop (which silently desyncs if .doc-shell/main ever becomes position:relative).
     var current = null;
     targets.forEach(function(o){ if(o.el.getBoundingClientRect().top <= 90){ current = o; } });
-    links.forEach(function(a){ a.classList.remove("active"); });
-    if(current){ current.link.classList.add("active"); }
+    links.forEach(function(a){ a.classList.remove("active"); a.removeAttribute("aria-current"); });
+    if(current){ current.link.classList.add("active"); current.link.setAttribute("aria-current", "true"); }
   }
   window.addEventListener("scroll", onScroll, { passive:true });
   window.addEventListener("resize", onScroll, { passive:true });   // recompute active section on reflow
@@ -1694,8 +1711,7 @@ document.addEventListener("DOMContentLoaded", function(){
   $("bgColor").addEventListener("input", drawContrast);
   $("easingSelect").addEventListener("change", drawEasing);
   $("easePlay").addEventListener("click", playEase);
-  $("fittsTarget").addEventListener("click", moveFitts);
-  $("fittsTarget").addEventListener("keydown", function(e){ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); moveFitts(); } });
+  $("fittsTarget").addEventListener("click", moveFitts);   // native <button> handles Enter/Space → click
   var halo = $("haloToggle");
   if(halo){ halo.addEventListener("click", function(){
     var on = $("haloWidget").classList.toggle("is-glow");
