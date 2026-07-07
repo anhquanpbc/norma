@@ -8,6 +8,12 @@ All notable changes to this project are documented here. The format is based on
 
 ### Added
 
+- **New rule `a11y.focus-no-reshape` (CONV, catalog 51→52).** A `:focus`/`:focus-visible` block must only
+  repaint the control (`outline`, `box-shadow`, `border-color`); a new static check flags box-geometry
+  changes on focus — `border-radius`, `border-width`, `width`/`height`, `padding`, `font-size` — the
+  "focus snaps the corners / grows a second border outside the field" AI tell (WCAG 2.4.13). A negative
+  `outline-offset` (inset ring) and a skip link's position reveal are intentionally not flagged. This
+  caught a real instance in the reference site's own `:focus-visible` rule.
 - **Runtime Core Web Vitals gate.** A new Playwright spec (`e2e/perf.spec.ts`, Chromium) measures the
   reference site's **LCP** and **CLS** and asserts the §6 "good" thresholds (LCP < 2.5s, CLS < 0.1) — so
   the "we measure CWV" claim is dogfooded on every CI run. Dependency-free (uses the existing Playwright

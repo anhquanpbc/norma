@@ -41,6 +41,7 @@ export const SURFACE_BY_CHECK: Record<string, Surface[]> = {
   fieldsetGroup: ["html"],
   genericLinkText: ["html"],
   focusForcedColors: ["css"],
+  focusReshape: ["css"],
   zindexScale: ["css"],
   containerQuery: ["css"],
   iframeTitle: ["html"],

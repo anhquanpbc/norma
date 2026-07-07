@@ -100,6 +100,7 @@ Not compliance failures, but they erase brand distinctiveness and often *induce*
 - **antipattern.dead-href** — no `href="#"` / empty-href links wired to nothing; use a real destination or a `<button>`.
 - **antipattern.gradient-text** — no `background-clip:text` gradient headlines; gradient text has no computable contrast.
 - **a11y.no-positive-tabindex** — never `tabindex >= 1`; use `0`/`-1` and DOM order (WCAG 2.4.3).
+- **a11y.focus-no-reshape** — a `:focus`/`:focus-visible` rule repaints only (`outline`/`box-shadow`/`border-color`); never change `border-radius`/`border-width`/`width`/`height`/`padding` on focus — reshaping the control on focus snaps the corners, shifts layout, and reads as a doubled outer border (WCAG 2.4.13).
 - **Dead controls** — no CTAs wired to nothing; every control does what it says.
 - **Dark-by-default** — dark mode is a theme, not a default; no glow-edged dark cards as a premium shortcut.
 - **tokens.color-only / tokens.spacing-scale** — no raw hex, no off-scale px; snap to the 8px scale.
