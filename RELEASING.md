@@ -2,13 +2,14 @@
 
 Publishing is one tag away. The [`publish.yml`](.github/workflows/publish.yml) workflow runs the full
 verify suite (build + unit tests + anti-drift + dogfood + the Playwright/axe browser test) and only then
-runs `npm publish --provenance --access public` for [`@norma/design-lint`](packages/design-lint).
+runs `npm publish --provenance --access public` for [`norma-design-lint`](packages/design-lint).
 
 ## One-time setup (maintainer)
 
 Add an npm **automation** token as the `NPM_TOKEN` repository secret
-(GitHub → Settings → Secrets and variables → Actions → New repository secret). The `@norma` scope must
-exist and the token must be allowed to publish to it.
+(GitHub → Settings → Secrets and variables → Actions → New repository secret). `norma-design-lint` is an
+**unscoped public package**, so no npm org/scope is required — the token only needs publish permission on
+your npm account (an *automation* token so it isn't blocked by 2FA in CI).
 
 ## Cut a release
 
@@ -32,7 +33,7 @@ Swap the npm badge in `README.md` and `README.vi.md` back to the live version ba
 `coming soon` until the first publish):
 
 ```md
-[![npm](https://img.shields.io/npm/v/@norma/design-lint?label=%40norma%2Fdesign-lint)](https://www.npmjs.com/package/@norma/design-lint)
+[![npm](https://img.shields.io/npm/v/norma-design-lint?label=norma-design-lint)](https://www.npmjs.com/package/norma-design-lint)
 ```
 
-Then `npx @norma/design-lint` and every `npx` quickstart in the docs work as written.
+Then `npx norma-design-lint` and every `npx` quickstart in the docs work as written.

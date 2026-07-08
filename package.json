@@ -15,7 +15,7 @@
     "check:drift": "tsx scripts/check-drift.ts",
     "build": "npm run build:rules && npm run build --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",
-    "lint:self": "npm run build --workspace @norma/design-lint && node packages/design-lint/dist/cli.js index.html",
+    "lint:self": "npm run build --workspace norma-design-lint && node packages/design-lint/dist/cli.js index.html",
     "e2e": "playwright test"
   },
   "devDependencies": {

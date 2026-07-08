@@ -3,7 +3,7 @@
 # Norma — a web design standard for humans **and** AI
 
 [![CI](https://github.com/anhquanpbc/norma/actions/workflows/ci.yml/badge.svg)](https://github.com/anhquanpbc/norma/actions/workflows/ci.yml)
-[![npm](https://img.shields.io/badge/%40norma%2Fdesign--lint-coming%20soon-lightgrey)](packages/design-lint)
+[![npm](https://img.shields.io/badge/norma--design--lint-coming%20soon-lightgrey)](packages/design-lint)
 [![standard](https://img.shields.io/badge/standard-v1.7.0-informational)](standard/rules.yaml)
 [![code: MIT](https://img.shields.io/badge/code-MIT-blue)](LICENSE)
 [![content: CC BY 4.0](https://img.shields.io/badge/content-CC%20BY%204.0-lightgrey)](LICENSE-CONTENT)
@@ -28,7 +28,7 @@ Norma turns the standard into three aligned artifacts so both people and agents 
 
 1. **The reference** — what's correct, and why, with primary-source citations.
 2. **The agent** — strict do/don't rules wired into Claude Code, Cursor, Copilot and any `AGENTS.md` tool.
-3. **The linter** — `@norma/design-lint`, which fails the build on real violations.
+3. **The linter** — `norma-design-lint`, which fails the build on real violations.
 
 ## What's inside
 
@@ -39,13 +39,13 @@ Norma turns the standard into three aligned artifacts so both people and agents 
 | [`standard/`](standard) | **The single source of truth**: `tokens.tokens.json` (DTCG v2025.10) + `rules.yaml` → `rules.json`. |
 | [`agents/`](agents) | The canonical design-agent spec, projected into the surfaces below. |
 | [`AGENTS.md`](AGENTS.md) · [`CLAUDE.md`](CLAUDE.md) · [`.cursor/rules`](.cursor/rules) · [`.github/copilot-instructions.md`](.github/copilot-instructions.md) | **Generated** agent rule files (English), one per AI surface. |
-| [`packages/design-lint`](packages/design-lint) | `@norma/design-lint` — the CLI that enforces the standard. |
+| [`packages/design-lint`](packages/design-lint) | `norma-design-lint` — the CLI that enforces the standard. |
 | [`examples/`](examples) | A clean starter that lints green + a seeded "before" page that trips 11 rules, with a copy-paste [CI recipe](examples/ci-recipe.yml). |
 | [`action.yml`](action.yml) | A reusable GitHub Action (`uses: anhquanpbc/norma@v1`) — builds the linter from its checkout, so it gates CI even before the npm release. |
 
 ## Quick start
 
-**Lint your project** against the standard. `@norma/design-lint` isn't on npm yet, so use whichever of
+**Lint your project** against the standard. `norma-design-lint` isn't on npm yet, so use whichever of
 these works for you today:
 
 - **In CI (one step)** — the reusable action builds Norma from its own checkout, no install:
@@ -59,7 +59,7 @@ these works for you today:
   npm ci && npm run build
   node packages/design-lint/dist/cli.js "**/*.{html,css}"   # add --lang vi for Vietnamese messages
   ```
-- **Once published** — `npx @norma/design-lint "**/*.{html,css}"`. Publishing is one tag away; see
+- **Once published** — `npx norma-design-lint "**/*.{html,css}"`. Publishing is one tag away; see
   [RELEASING.md](RELEASING.md).
 
 See [`examples/`](examples) for a clean starter and a broken "before" page.
@@ -84,7 +84,7 @@ GitHub Action, which builds Norma from its own checkout (so it works today, befo
 ```
 
 A ready-to-copy workflow is in [`examples/ci-recipe.yml`](examples/ci-recipe.yml). Or run the CLI directly
-(once published: `npx @norma/design-lint "**/*.{html,css}"`; from source today: `npm ci && npm run build`
+(once published: `npx norma-design-lint "**/*.{html,css}"`; from source today: `npm ci && npm run build`
 then `node packages/design-lint/dist/cli.js "**/*.{html,css}"`) — non-zero exit on any error-severity finding.
 See [`examples/`](examples) for a clean starter and a broken "before" page.
 
@@ -97,7 +97,7 @@ See [`examples/`](examples) for a clean starter and a broken "before" page.
 | GitHub Copilot | `.github/copilot-instructions.md` (+ scoped `.github/instructions/*`) |
 | Codex / Cline / Gemini / any `AGENTS.md` tool | `AGENTS.md` |
 
-**3. Verify the agent is wired** — ask it to review a component. A wired agent returns findings shaped like `[SPEC] a11y.focus-ring-single — …` and refuses to emit a mandate (🔒) violation; if it doesn't, the file isn't being read. All agent files are generated from one spec so they never drift — and `npx @norma/design-lint` is the ground truth regardless.
+**3. Verify the agent is wired** — ask it to review a component. A wired agent returns findings shaped like `[SPEC] a11y.focus-ring-single — …` and refuses to emit a mandate (🔒) violation; if it doesn't, the file isn't being read. All agent files are generated from one spec so they never drift — and `npx norma-design-lint` is the ground truth regardless.
 
 ## Covers
 

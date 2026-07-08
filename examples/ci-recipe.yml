@@ -25,7 +25,7 @@ jobs:
           lang: en                        # or vi
           format: stylish                 # or sarif for GitHub code scanning
 
-      # --- Option B: once @norma/design-lint is on npm, drop the action and run directly ---
+      # --- Option B: once norma-design-lint is on npm, drop the action and run directly ---
       # - uses: actions/setup-node@v4
       #   with: { node-version: 22 }
-      # - run: npx @norma/design-lint "**/*.{html,htm,css}"
+      # - run: npx norma-design-lint "**/*.{html,htm,css}"

@@ -1,6 +1,6 @@
 [English](README.md) · **Tiếng Việt**
 
-# @norma/design-lint
+# norma-design-lint
 
 Kiểm HTML/CSS theo chuẩn thiết kế web [Norma](https://github.com/anhquanpbc/norma) — tương phản, vòng
 focus, HTML ngữ nghĩa, nhãn biểu mẫu, reduced-motion, và các "dấu hiệu" thiết kế do AI sinh thường gặp.
@@ -9,9 +9,9 @@ Thông báo song ngữ (EN/VI) qua `--lang`, xuất SARIF cho GitHub.
 ## Cách dùng
 
 ```bash
-npx @norma/design-lint "**/*.{html,css,jsx,tsx}"
-npx @norma/design-lint index.html --lang vi
-npx @norma/design-lint src --format sarif > design-lint.sarif
+npx norma-design-lint "**/*.{html,css,jsx,tsx}"
+npx norma-design-lint index.html --lang vi
+npx norma-design-lint src --format sarif > design-lint.sarif
 ```
 
 Mã thoát khác 0 khi có bất kỳ phát hiện mức `error`, nên nó chặn được CI.
@@ -85,7 +85,7 @@ Gói kèm một server [Model Context Protocol](https://modelcontextprotocol.io)
 để agent truy vấn chuẩn và lint source ngay trong vòng lặp. Trỏ MCP client tới bin `norma-mcp`:
 
 ```json
-{ "mcpServers": { "norma": { "command": "npx", "args": ["-y", "@norma/design-lint", "norma-mcp"] } } }
+{ "mcpServers": { "norma": { "command": "npx", "args": ["-y", "norma-design-lint", "norma-mcp"] } } }
 ```
 
 Tool: **`lint_source`** (lint chuỗi HTML/CSS/JSX → findings), **`list_rules`** (catalog, lọc theo
@@ -94,7 +94,7 @@ Tool: **`lint_source`** (lint chuỗi HTML/CSS/JSX → findings), **`list_rules`
 ## API lập trình
 
 ```ts
-import { lintFiles } from "@norma/design-lint";
+import { lintFiles } from "norma-design-lint";
 const { findings, errorCount } = lintFiles(["index.html"]);
 ```
 

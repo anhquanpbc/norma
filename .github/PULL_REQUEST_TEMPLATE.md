@@ -5,7 +5,7 @@
 ## Type
 
 - [ ] Standard rule change (edited `standard/rules.yaml` / `tokens.tokens.json`)
-- [ ] Linter (`@norma/design-lint`)
+- [ ] Linter (`norma-design-lint`)
 - [ ] Reference site (`index.html`) / docs
 - [ ] Agent spec (`agents/norma-design-agent.md`)
 - [ ] CI / tooling
