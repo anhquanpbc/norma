@@ -93,7 +93,7 @@ jobs:
       # "not supported on this repository" while it is off; keep it non-blocking so a
       # config toggle the maintainer owns can't red-X every PR. It becomes a real gate
       # the moment Dependency graph is turned on — no workflow change needed.
-      - uses: actions/dependency-review-action@v4
+      - uses: actions/dependency-review-action@v5
         continue-on-error: true
         with:
           fail-on-severity: high
