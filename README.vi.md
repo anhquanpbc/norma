@@ -6,7 +6,7 @@
 [![npm](https://img.shields.io/npm/v/norma-design-lint?label=norma-design-lint)](https://www.npmjs.com/package/norma-design-lint)
 [![standard](https://img.shields.io/badge/standard-v1.8.0-informational)](standard/rules.yaml)
 [![code: MIT](https://img.shields.io/badge/code-MIT-blue)](LICENSE)
-[![content: CC BY 4.0](https://img.shields.io/badge/content-CC%20BY%204.0-lightgrey)](LICENSE-CONTENT)
+[![content: CC BY 4.0](https://img.shields.io/badge/content-CC%20BY%204.0-lightgrey)](https://creativecommons.org/licenses/by/4.0/)
 
 Norma là một **chuẩn thiết kế web thực thi được, song ngữ (EN/VI)** cho con người và agent code AI —
 những con số cụ thể về WCAG 2.2, Core Web Vitals và design token mà bạn có thể đưa thẳng vào tiêu chí
@@ -112,5 +112,7 @@ web.dev / Chrome (Core Web Vitals) · HTTP Archive Web Almanac · Laws of UX. Da
 
 ## Giấy phép
 
-**Mã nguồn** (công cụ, script, JS trong `index.html`): [MIT](LICENSE). **Nội dung** (chuẩn viết,
-`REFERENCE.md`, prose của trang): [CC BY 4.0](LICENSE-CONTENT).
+**Mã nguồn** (công cụ, script, JS trong `index.html`) theo [MIT](LICENSE). **Chuẩn viết và prose**
+(`REFERENCE.md`, phần chữ đọc-được của `standard/rules.yaml`, và bản sao tài liệu trong `index.html` và
+`README.md`) theo [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) — vui lòng ghi công là
+*"Norma — a web design standard for humans and AI" by anhquanpbc and the Norma contributors*.

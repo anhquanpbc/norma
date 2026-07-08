@@ -6,7 +6,7 @@
 [![npm](https://img.shields.io/npm/v/norma-design-lint?label=norma-design-lint)](https://www.npmjs.com/package/norma-design-lint)
 [![standard](https://img.shields.io/badge/standard-v1.8.0-informational)](standard/rules.yaml)
 [![code: MIT](https://img.shields.io/badge/code-MIT-blue)](LICENSE)
-[![content: CC BY 4.0](https://img.shields.io/badge/content-CC%20BY%204.0-lightgrey)](LICENSE-CONTENT)
+[![content: CC BY 4.0](https://img.shields.io/badge/content-CC%20BY%204.0-lightgrey)](https://creativecommons.org/licenses/by/4.0/)
 
 Norma is an **enforceable, bilingual (EN/VI) web design standard** for humans and AI coding agents — the
 concrete WCAG 2.2, Core Web Vitals, and design-token numbers you can drop straight into an acceptance
@@ -112,5 +112,7 @@ web.dev / Chrome (Core Web Vitals) · HTTP Archive Web Almanac · Laws of UX. Fu
 
 ## License
 
-**Code** (tooling, scripts, `index.html` JS): [MIT](LICENSE). **Content** (the written standard,
-`REFERENCE.md`, site prose): [CC BY 4.0](LICENSE-CONTENT).
+**Code** (tooling, scripts, `index.html` JS) is [MIT](LICENSE). The **written standard and prose**
+(`REFERENCE.md`, the human-readable text of `standard/rules.yaml`, and the documentary copy in
+`index.html` and `README.md`) is [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) — please
+attribute as *"Norma — a web design standard for humans and AI" by anhquanpbc and the Norma contributors*.
