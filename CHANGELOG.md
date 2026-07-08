@@ -6,6 +6,14 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+### Changed
+
+- **License presentation.** `LICENSE` is now clean, standard MIT so GitHub detects it as MIT (it was
+  reported as "Other" because of an appended dual-license note). The content license — CC BY 4.0 for the
+  written standard and prose — is now stated in the README with the canonical Creative Commons URL, and
+  the separate root `LICENSE-CONTENT` file was removed. Code stays MIT and content stays CC BY 4.0; only
+  the presentation changed.
+
 ## [1.8.2] — 2026-07-08
 
 ### Changed
