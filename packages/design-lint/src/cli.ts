@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { readFileSync, writeFileSync, existsSync, statSync, globSync } from "node:fs";
 import { extname, join } from "node:path";
-import { pathToFileURL } from "node:url";
+import { isMainModule } from "./is-main.js";
 import { lintFiles, loadRules, fixSource } from "./index.js";
 import { stylish, json, sarif, type Lang } from "./formatters.js";
 import type { Severity } from "./types.js";
@@ -135,7 +135,9 @@ function main(argv: string[]): number {
 
 export { main };
 
-// Execute as a CLI only when invoked directly, so tests can import main() without exiting.
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+// Execute as a CLI only when this file is the entry point (incl. via a symlinked/shimmed bin —
+// `npx norma-design-lint`), so tests can import main() without exiting. See isMainModule for why a
+// raw URL compare is not enough.
+if (isMainModule(import.meta.url)) {
   process.exit(main(process.argv));
 }

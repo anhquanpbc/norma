@@ -3,7 +3,7 @@
 // catalog and lint source directly. Implements the minimal MCP server surface (initialize / tools/list /
 // tools/call) as newline-delimited JSON-RPC 2.0 — no SDK, matching the project's dependency minimalism.
 import { createInterface } from "node:readline";
-import { pathToFileURL } from "node:url";
+import { isMainModule } from "./is-main.js";
 import { loadRules } from "./loadRules.js";
 import { buildContext } from "./parse.js";
 import { lintContext } from "./engine.js";
@@ -121,4 +121,4 @@ function main(): void {
   });
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) main();
+if (isMainModule(import.meta.url)) main();
