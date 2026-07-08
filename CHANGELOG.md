@@ -6,6 +6,10 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+## [1.8.0] — 2026-07-08
+
+First npm release of the CLI (published as the unscoped package `norma-design-lint`).
+
 ### Added
 
 - **New rule `a11y.focus-no-reshape` (CONV, catalog 51→52).** A `:focus`/`:focus-visible` block must only
