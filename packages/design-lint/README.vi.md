@@ -16,6 +16,12 @@ npx norma-design-lint src --format sarif > design-lint.sarif
 
 Mã thoát khác 0 khi có bất kỳ phát hiện mức `error`, nên nó chặn được CI.
 
+**Áp dụng lên codebase có sẵn:** chạy `--update-baseline` một lần để đóng băng các phát hiện hiện tại vào
+`.norma-baseline.json` (commit nó), rồi truyền `--baseline .norma-baseline.json` để CI chỉ fail trên nợ
+thiết kế **mới**. **GitHub code scanning:** `--format sarif` xuất SARIF 2.1.0 đầy đủ (metadata rule,
+`helpUri`, fingerprint độc-lập-với-dòng) — upload bằng `github/codeql-action/upload-sarif` để có annotation
+trên PR và danh sách alert ở tab Security (xem [`examples/ci-recipe.yml`](https://github.com/anhquanpbc/norma/blob/main/examples/ci-recipe.yml)).
+
 ### Tùy chọn
 
 | Tùy chọn | Mô tả |
@@ -27,6 +33,8 @@ Mã thoát khác 0 khi có bất kỳ phát hiện mức `error`, nên nó chặ
 | `--quiet` | Chỉ báo lỗi. |
 | `--max-warnings <n>` | Exit khác 0 nếu số cảnh báo vượt `n` (để CI gate cả rule mức warn, không chỉ error). |
 | `--fix` | Tự sửa các rule xác định ngay tại chỗ, rồi lint phần còn lại. |
+| `--baseline <path>` | Ẩn các phát hiện đã có trong baseline; chỉ fail trên phát hiện MỚI (áp dụng lên code cũ). |
+| `--update-baseline` | (Ghi lại) baseline từ các phát hiện hiện tại (đường dẫn từ `--baseline`, else `.norma-baseline.json`). |
 | `-h`, `--help` | Hiện hướng dẫn dùng rồi thoát. |
 
 `--fix` chỉ đụng các sửa **không cần phán đoán**: thuộc tính CSS vật lý→logic
@@ -90,7 +98,8 @@ Gói kèm một server [Model Context Protocol](https://modelcontextprotocol.io)
 ```
 
 Tool: **`lint_source`** (lint chuỗi HTML/CSS/JSX → findings), **`list_rules`** (catalog, lọc theo
-`domain`/`tag`), **`get_rule`** (một rule theo id, kèm rationale + remediation).
+`domain`/`tag`), **`get_rule`** (một rule theo id, kèm rationale + remediation), và **`fix_source`**
+(tự sửa các rule xác định trong chuỗi HTML/CSS → nguồn đã sửa + số lần sửa, khép vòng lint→fix→lint-lại).
 
 ## API lập trình
 

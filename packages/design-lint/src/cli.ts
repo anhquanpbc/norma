@@ -3,6 +3,7 @@ import { readFileSync, writeFileSync, existsSync, statSync, globSync } from "nod
 import { extname, join } from "node:path";
 import { isMainModule } from "./is-main.js";
 import { lintFiles, loadRules, fixSource } from "./index.js";
+import { fingerprints, splitByBaseline } from "./fingerprint.js";
 import { stylish, json, sarif, type Lang } from "./formatters.js";
 import type { Severity } from "./types.js";
 
@@ -19,6 +20,9 @@ Options:
   --quiet                         only report errors
   --max-warnings <n>              exit non-zero if warnings exceed n (default: unlimited)
   --fix                           auto-fix the deterministic rules in place, then lint the rest
+  --baseline <path>               suppress findings already in the baseline; fail only on NEW ones
+  --update-baseline               (re)write the baseline from the current findings
+                                  (path from --baseline <path>, else .norma-baseline.json)
   -h, --help                      show this help
 
 Exit code is non-zero when any error-severity finding is present (or warnings exceed --max-warnings).`;
@@ -94,7 +98,7 @@ function main(argv: string[]): number {
     }
   }
 
-  const flagVals = new Set(["--format", "--lang", "--config", "--rules", "--max-warnings"]);
+  const flagVals = new Set(["--format", "--lang", "--config", "--rules", "--max-warnings", "--baseline"]);
   const patterns = args.filter((a, i) => !a.startsWith("-") && !flagVals.has(args[i - 1]));
   const files = expand(patterns.length ? patterns : ["**/*.{html,htm,css,jsx,tsx,vue,svelte}"]);
 
@@ -116,12 +120,44 @@ function main(argv: string[]): number {
   }
 
   let res = lintFiles(files, { rulesPath, overrides: config.rules });
+
+  // --baseline ratchet: snapshot or suppress known findings by fingerprint, so a team can adopt Norma on
+  // an existing codebase and fail only on NEW design debt (not the whole legacy backlog on run one).
+  const baselinePath = opt("--baseline") ?? ".norma-baseline.json";
+  if (args.includes("--update-baseline")) {
+    const fps = [...new Set(fingerprints(res.findings))].sort();
+    writeFileSync(baselinePath, JSON.stringify({ version: 1, fingerprints: fps }, null, 2) + "\n");
+    console.error(lang === "vi"
+      ? `✓ Đã ghi baseline ${fps.length} phát hiện vào ${baselinePath}.`
+      : `✓ Wrote a baseline of ${fps.length} finding(s) to ${baselinePath}.`);
+    return 0;
+  }
+  if (opt("--baseline")) {
+    let base: Set<string>;
+    try {
+      const raw = JSON.parse(readFileSync(baselinePath, "utf8")) as { fingerprints?: string[] };
+      base = new Set(Array.isArray(raw.fingerprints) ? raw.fingerprints : []);
+    } catch (e) {
+      console.error(`Cannot read baseline ${baselinePath}: ${(e as Error).message}`);
+      return 1;
+    }
+    const { fresh, suppressed } = splitByBaseline(res.findings, base);
+    res = {
+      ...res, findings: fresh,
+      errorCount: fresh.filter((f) => f.severity === "error").length,
+      warnCount: fresh.filter((f) => f.severity === "warn").length,
+    };
+    if (suppressed) console.error(lang === "vi"
+      ? `(baseline: ẩn ${suppressed} phát hiện đã biết)`
+      : `(baseline: ${suppressed} known finding(s) suppressed)`);
+  }
+
   if (quiet) {
     res = { ...res, findings: res.findings.filter((f) => f.severity === "error"), warnCount: 0 };
   }
 
   if (format === "json") console.log(json(res));
-  else if (format === "sarif") console.log(sarif(res));
+  else if (format === "sarif") console.log(sarif(res, loadRules({ path: rulesPath, overrides: config.rules }).rules));
   else console.log(stylish(res, lang));
 
   const overWarnings = maxWarnings != null && res.warnCount > maxWarnings;

@@ -1,6 +1,7 @@
 import { relative } from "node:path";
-import type { Finding } from "./types.js";
+import type { Finding, Rule } from "./types.js";
 import type { LintResult } from "./index.js";
+import { fingerprints } from "./fingerprint.js";
 
 export type Lang = "en" | "vi";
 
@@ -33,9 +34,24 @@ export function json(res: LintResult): string {
   return JSON.stringify(res, null, 2);
 }
 
-/** SARIF 2.1.0 for GitHub code scanning. */
-export function sarif(res: LintResult): string {
-  const ruleIds = [...new Set(res.findings.map((f) => f.ruleId))];
+const uri = (file: string): string => relative(process.cwd(), file).replace(/\\/g, "/");
+const sarifLevel = (sev: string): "error" | "warning" | "note" =>
+  sev === "error" ? "error" : sev === "warn" ? "warning" : "note";
+// A WCAG success-criterion number (e.g. "1.4.3") from a rule's source citation, for a SARIF tag.
+const wcagTag = (source: string): string | null => {
+  const m = /\b(\d\.\d+\.\d+)\b/.exec(source);
+  return m ? `WCAG-${m[1]}` : null;
+};
+
+/**
+ * SARIF 2.1.0 for GitHub code scanning. Pass the rule catalog to enrich `tool.driver.rules` with names,
+ * descriptions, `helpUri` (the primary source), level and SPEC/CONV + WCAG tags; each result carries a
+ * line-independent `partialFingerprints` so alerts survive edits.
+ */
+export function sarif(res: LintResult, rules: Rule[] = []): string {
+  const byId = new Map(rules.map((r) => [r.id, r]));
+  const usedIds = [...new Set(res.findings.map((f) => f.ruleId))];
+  const fps = fingerprints(res.findings);
   const doc = {
     version: "2.1.0",
     $schema: "https://json.schemastore.org/sarif-2.1.0.json",
@@ -44,16 +60,29 @@ export function sarif(res: LintResult): string {
         name: "norma-design-lint",
         informationUri: "https://github.com/anhquanpbc/norma",
         version: res.version,
-        rules: ruleIds.map((id) => ({ id })),
+        rules: usedIds.map((id) => {
+          const r = byId.get(id);
+          if (!r) return { id };
+          return {
+            id,
+            name: r.title.en,
+            shortDescription: { text: r.title.en },
+            fullDescription: { text: r.rationale.en },
+            ...(r.source_url ? { helpUri: r.source_url } : {}),
+            defaultConfiguration: { level: sarifLevel(r.severity) },
+            properties: { tags: [r.tag, r.domain, wcagTag(r.source)].filter((t): t is string => !!t) },
+          };
+        }),
       } },
-      results: res.findings.map((f) => ({
+      results: res.findings.map((f, i) => ({
         ruleId: f.ruleId,
-        level: f.severity === "error" ? "error" : "warning",
+        level: sarifLevel(f.severity),
         message: { text: f.message.en },
         locations: [{ physicalLocation: {
-          artifactLocation: { uri: relative(process.cwd(), f.file) },
+          artifactLocation: { uri: uri(f.file) },
           region: { startLine: f.line, startColumn: f.column ?? 1 },
         } }],
+        partialFingerprints: { "normaFingerprint/v1": fps[i] },
       })),
     }],
   };
