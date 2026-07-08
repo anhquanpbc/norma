@@ -18,12 +18,12 @@ your npm account (an *automation* token so it isn't blocked by 2FA in CI).
    match. `npm run check:drift` enforces the standard/badge/footer trio; the CLI package version is the
    one to bump by hand when only the linter changes (semver: bug fix → patch, new rule → minor).
 2. **Update the changelog.** Move `CHANGELOG.md`'s `[Unreleased]` items under a dated
-   `[X.Y.Z] — YYYY-MM-DD` heading. (The first publish is **v1.7.0** — the CLI has never shipped, so the
+   `[X.Y.Z] — YYYY-MM-DD` heading. (The first publish is **v1.8.0** — the CLI has never shipped, so the
    `v1.0.0` tag published nothing.)
 3. **Tag and push.**
    ```bash
-   git tag v1.7.0
-   git push origin v1.7.0
+   git tag v1.8.0
+   git push origin v1.8.0
    ```
    The workflow verifies, then publishes with provenance. Watch it under the repo's Actions tab.
 
