@@ -8,90 +8,56 @@
 [![code: MIT](https://img.shields.io/badge/code-MIT-blue)](LICENSE)
 [![content: CC BY 4.0](https://img.shields.io/badge/content-CC%20BY%204.0-lightgrey)](LICENSE-CONTENT)
 
-An **enforceable** technical standard for modern app & website design — the concrete numbers you can
-drop into an acceptance ticket, every value tagged as a published **mandate** (🔒) or an industry
-**convention** (📐), plus the machinery to make **AI coding agents** build to it and a **linter** that
-gates violations in CI.
+Norma is an **enforceable, bilingual (EN/VI) web design standard** for humans and AI coding agents — the
+concrete WCAG 2.2, Core Web Vitals, and design-token numbers you can drop straight into an acceptance
+ticket. It ships the machinery to make them stick: a **linter** that fails CI on real violations, and
+**rule files** that make AI agents build to the same standard.
 
-See the standard in action: **[live reference site →](https://anhquanpbc.github.io/norma/)** — a single
-self-contained, zero-network page that dogfoods every rule it documents (light/dark, EN/VI).
+**[Open the live reference site →](https://anhquanpbc.github.io/norma/)** — one self-contained,
+zero-network page that dogfoods every rule it documents (light/dark, EN/VI).
 
-English is the primary language; a Vietnamese translation lives in
-**[README.vi.md](README.vi.md)** and **[REFERENCE.vi.md](REFERENCE.vi.md)** (the reference's dense data
-tables defer to the English block).
+## Try it
+
+```bash
+npx norma-design-lint "**/*.{html,css}"   # add --lang vi for Vietnamese
+```
+
+```text
+index.html
+  13:  error  Contrast 2.85:1 for ".muted" is below 4.5:1.                 color.contrast.text
+  11:  warn   Forbidden value "#667eea" — no default indigo/purple gradient  antipattern.indigo-default
+  25:  error  <div onclick> is not a semantic control — use <button>/<a>.   a11y.semantic-control
+✗ 2 errors, 1 warning
+```
+
+It exits non-zero on any error-severity finding, so it gates CI. Full CLI reference:
+**[`norma-design-lint` on npm](https://www.npmjs.com/package/norma-design-lint)**.
 
 ## Why
 
-AI coding tools reliably emit two kinds of design defect: **objective WCAG/HIG violations**, and
-aesthetic **"tells"** that scream machine-generated (the indigo gradient, glow spam, `<div onClick>`).
-Norma turns the standard into three aligned artifacts so both people and agents build the same way:
+AI coding tools reliably ship two kinds of design defect: **objective WCAG/HIG violations**, and
+aesthetic **"tells"** that scream machine-generated — the indigo gradient, glow spam, `<div onClick>`.
+Norma turns one standard into three aligned artifacts so people and agents build the same way:
 
-1. **The reference** — what's correct, and why, with primary-source citations.
-2. **The agent** — strict do/don't rules wired into Claude Code, Cursor, Copilot and any `AGENTS.md` tool.
+1. **The reference** — what's correct and why, primary-source cited ([`REFERENCE.md`](REFERENCE.md) or the [live site](https://anhquanpbc.github.io/norma/)).
+2. **The agent** — strict do/don't rules for Claude Code, Cursor, Copilot, and any `AGENTS.md` tool.
 3. **The linter** — `norma-design-lint`, which fails the build on real violations.
 
-## What's inside
+## Use it
 
-| Path | Purpose |
-|------|---------|
-| [`index.html`](index.html) | Interactive, **self-contained** reference site (EN/VI toggle, defaults to English, live widgets, **zero network requests**). It passes its own linter and is a reference implementation of its own content. |
-| [`REFERENCE.md`](REFERENCE.md) | The full written reference in English — 14 numbered sections (§0 *How to read* + the 13 content domains), primary-source cited. Vietnamese: [`REFERENCE.vi.md`](REFERENCE.vi.md). |
-| [`standard/`](standard) | **The single source of truth**: `tokens.tokens.json` (DTCG v2025.10) + `rules.yaml` → `rules.json`. |
-| [`agents/`](agents) | The canonical design-agent spec, projected into the surfaces below. |
-| [`AGENTS.md`](AGENTS.md) · [`CLAUDE.md`](CLAUDE.md) · [`.cursor/rules`](.cursor/rules) · [`.github/copilot-instructions.md`](.github/copilot-instructions.md) | **Generated** agent rule files (English), one per AI surface. |
-| [`packages/design-lint`](packages/design-lint) | `norma-design-lint` — the CLI that enforces the standard. |
-| [`examples/`](examples) | A clean starter that lints green + a seeded "before" page that trips 11 rules, with a copy-paste [CI recipe](examples/ci-recipe.yml). |
-| [`action.yml`](action.yml) | A reusable GitHub Action (`uses: anhquanpbc/norma@v1`) — builds the linter from its checkout, so it gates CI even before the npm release. |
-
-## Quick start
-
-**Lint your project** against the standard — `norma-design-lint` is on npm, so the quickest way is:
-
-```bash
-npx norma-design-lint "**/*.{html,css}"   # add --lang vi for Vietnamese messages
-```
-
-Other options:
-
-- **In CI (one step)** — the reusable action builds Norma from its own checkout, no install:
-  ```yaml
-  - uses: anhquanpbc/norma@v1
-    with: { globs: "**/*.{html,htm,css}" }   # lang: en|vi · format: stylish|json|sarif
-  ```
-  A ready-to-copy workflow is in [`examples/ci-recipe.yml`](examples/ci-recipe.yml).
-- **Locally (from source)**:
-  ```bash
-  npm ci && npm run build
-  node packages/design-lint/dist/cli.js "**/*.{html,css}"   # add --lang vi for Vietnamese messages
-  ```
-
-See [`examples/`](examples) for a clean starter and a broken "before" page.
-
-**Point your AI agent at Norma** by copying the generated rule file for your tool into your project:
-`AGENTS.md` (Codex/Cline/Gemini/…), `.cursor/rules/norma-design.mdc` (Cursor),
-`.github/copilot-instructions.md` (Copilot), or `.claude/agents/design-guardian.md` (Claude Code).
-
-**Read the reference:** open `index.html` in any browser (works offline), or read [`REFERENCE.md`](REFERENCE.md).
-
-## Adopt in your project
-
-**1. Gate CI with the linter** — fail the build on real violations. The quickest path is the reusable
-GitHub Action, which builds Norma from its own checkout (so it works today, before the npm release):
+**Gate CI.** Run the `npx` command above, or use the reusable GitHub Action — it builds Norma from the
+checked-out version, so there's nothing to install and the rules are pinned to that version:
 
 ```yaml
 # .github/workflows/design-lint.yml
 - uses: actions/checkout@v4
 - uses: anhquanpbc/norma@v1
-  with:
-    globs: "src/**/*.{html,htm,css}"   # lang: en|vi · format: stylish|json|sarif
+  with: { globs: "src/**/*.{html,htm,css}" }   # lang: en|vi · format: stylish|json|sarif
 ```
 
-A ready-to-copy workflow is in [`examples/ci-recipe.yml`](examples/ci-recipe.yml). Or run the CLI directly
-(`npx norma-design-lint "**/*.{html,css}"`, or from source: `npm ci && npm run build`
-then `node packages/design-lint/dist/cli.js "**/*.{html,css}"`) — non-zero exit on any error-severity finding.
-See [`examples/`](examples) for a clean starter and a broken "before" page.
+A ready-to-copy workflow is in [`examples/ci-recipe.yml`](examples/ci-recipe.yml).
 
-**2. Wire your AI coding agent** — copy the generated rule file for your tool into your repo:
+**Wire your AI coding agent.** Copy the generated rule file for your tool into your repo:
 
 | Tool | File to copy |
 |------|--------------|
@@ -100,22 +66,30 @@ See [`examples/`](examples) for a clean starter and a broken "before" page.
 | GitHub Copilot | `.github/copilot-instructions.md` (+ scoped `.github/instructions/*`) |
 | Codex / Cline / Gemini / any `AGENTS.md` tool | `AGENTS.md` |
 
-**3. Verify the agent is wired** — ask it to review a component. A wired agent returns findings shaped like `[SPEC] a11y.focus-ring-single — …` and refuses to emit a mandate (🔒) violation; if it doesn't, the file isn't being read. All agent files are generated from one spec so they never drift — and `npx norma-design-lint` is the ground truth regardless.
+**Read the reference.** Open [`index.html`](index.html) in any browser (works offline), or read
+[`REFERENCE.md`](REFERENCE.md).
+
+## What's inside
+
+| Path | Purpose |
+|------|---------|
+| [`standard/`](standard) | **The single source of truth** — `tokens.tokens.json` (DTCG v2025.10) + `rules.yaml` → `rules.json`. |
+| [`REFERENCE.md`](REFERENCE.md) | The full written standard (EN), primary-source cited. Vietnamese: [`REFERENCE.vi.md`](REFERENCE.vi.md). |
+| [`index.html`](index.html) | The self-contained reference site — EN/VI, live widgets, zero network requests. |
+| [`packages/design-lint`](packages/design-lint) | `norma-design-lint` — the CLI + MCP server that enforce the standard. |
+| [`agents/`](agents) · [`AGENTS.md`](AGENTS.md) · [`.cursor/rules`](.cursor/rules) · [`.github/copilot-instructions.md`](.github/copilot-instructions.md) | The canonical agent spec + its generated per-tool rule files. |
+| [`examples/`](examples) | A clean starter that lints green + a seeded "before" page, with a [CI recipe](examples/ci-recipe.yml). |
+| [`action.yml`](action.yml) | The reusable GitHub Action (`uses: anhquanpbc/norma@v1`). |
+
+Every value is tagged 🔒 **SPEC** (a published WCAG/platform mandate) or 📐 **CONV** (an industry
+convention), so you always know whether a rule is a hard requirement or a strong default.
 
 ## Covers
 
-13 domains: design tokens (W3C DTCG 2025.10) · spacing & the 8px grid · typography (incl. Vietnamese &
-CJK) · color (OKLCH, WCAG/APCA contrast) · accessibility (WCAG 2.2 AA) · Core Web Vitals (INP) · motion
-(Material 3 tokens) · platform guidelines (iOS HIG vs Material 3) · components & states · forms ·
-responsive design · HCI mathematical laws (Fitts, Hick, Miller…) · **AI-era design anti-patterns**
-(tagged VIOLATION vs TELL).
-
-## How it stays consistent
-
-`standard/rules.yaml` + `standard/tokens.tokens.json` are the **only** hand-edited rule sources. The rule
-JSON, all agent files, and the linter config are **generated**; a CI job (`npm run check:drift`)
-regenerates everything and fails if it diverges, if the brand color is inconsistent, or if a rule is
-uncovered. To change a rule: edit the YAML, run `npm run build:rules && npm run gen`, commit.
+**13 domains** — design tokens · spacing & the 8px grid · typography (incl. Vietnamese & CJK) · color
+(OKLCH, WCAG/APCA contrast) · accessibility (WCAG 2.2 AA) · Core Web Vitals · motion (Material 3 tokens) ·
+platform (iOS HIG vs Material 3) · components & states · forms · responsive design · HCI laws (Fitts,
+Hick, Miller…) · **AI-era design anti-patterns**.
 
 ## Develop
 
@@ -123,15 +97,20 @@ uncovered. To change a rule: edit the YAML, run `npm run build:rules && npm run 
 npm ci
 npm run build        # compile rules.json + the linter
 npm test             # unit tests + dogfood (index.html must lint clean)
-npm run check:drift  # anti-drift guard
+npm run check:drift  # anti-drift guard (regenerates and diffs every generated file)
 ```
 
-See [`CONTRIBUTING.md`](CONTRIBUTING.md).
+`standard/rules.yaml` + `standard/tokens.tokens.json` are the only hand-edited rule sources; the rule
+JSON, agent files, and linter config are generated. See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the
+generation pipeline and [`RELEASING.md`](RELEASING.md) for releases.
 
 ## Sources
 
-W3C WCAG 2.2 · W3C Design Tokens (DTCG) · Apple Human Interface Guidelines · Google Material Design 3 · web.dev / Chrome (Core Web Vitals) · HTTP Archive Web Almanac · Laws of UX. Full list inside [`REFERENCE.md`](REFERENCE.md).
+W3C WCAG 2.2 · W3C Design Tokens (DTCG) · Apple Human Interface Guidelines · Google Material Design 3 ·
+web.dev / Chrome (Core Web Vitals) · HTTP Archive Web Almanac · Laws of UX. Full list in
+[`REFERENCE.md`](REFERENCE.md).
 
 ## License
 
-**Code** (tooling, scripts, `index.html` JS): [MIT](LICENSE). **Content** (the written standard, `REFERENCE.md`, site prose): [CC BY 4.0](LICENSE-CONTENT).
+**Code** (tooling, scripts, `index.html` JS): [MIT](LICENSE). **Content** (the written standard,
+`REFERENCE.md`, site prose): [CC BY 4.0](LICENSE-CONTENT).

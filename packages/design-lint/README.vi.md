@@ -25,8 +25,9 @@ Mã thoát khác 0 khi có bất kỳ phát hiện mức `error`, nên nó chặ
 | `--config <path>` | File cấu hình (mặc định `.normarc.json` nếu có). |
 | `--rules <path>` | Đường dẫn catalog rule (mặc định: `standard/rules.json` đóng kèm). |
 | `--quiet` | Chỉ báo lỗi. |
-| `--max-warnings <n>` | Exit khác 0 nếu số cảnh báo vượt `n` (để CI gate 26 rule mức warn). |
+| `--max-warnings <n>` | Exit khác 0 nếu số cảnh báo vượt `n` (để CI gate cả rule mức warn, không chỉ error). |
 | `--fix` | Tự sửa các rule xác định ngay tại chỗ, rồi lint phần còn lại. |
+| `-h`, `--help` | Hiện hướng dẫn dùng rồi thoát. |
 
 `--fix` chỉ đụng các sửa **không cần phán đoán**: thuộc tính CSS vật lý→logic
 (`margin-left`→`margin-inline-start`, `text-align:left`→`start`, …) trong file `.css`, và trong HTML là
