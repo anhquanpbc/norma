@@ -11,9 +11,9 @@ describe("MCP — JSON-RPC surface", () => {
     expect(res.result.serverInfo.name).toBe("norma-design-lint");
     expect(res.result.capabilities.tools).toBeDefined();
   });
-  it("tools/list advertises the three tools", () => {
+  it("tools/list advertises the four tools", () => {
     const res = handleRpc({ jsonrpc: "2.0", id: 2, method: "tools/list" }, catalog) as any;
-    expect(res.result.tools.map((t: any) => t.name).sort()).toEqual(["get_rule", "lint_source", "list_rules"]);
+    expect(res.result.tools.map((t: any) => t.name).sort()).toEqual(["fix_source", "get_rule", "lint_source", "list_rules"]);
     for (const t of res.result.tools) expect(t.inputSchema.type).toBe("object");
   });
   it("a notification gets no reply", () => {

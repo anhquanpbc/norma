@@ -18,14 +18,33 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # --- Option A: the reusable action (works today; builds Norma from its checkout) ---
-      - uses: anhquanpbc/norma@v1
-        with:
-          globs: "**/*.{html,htm,css}"   # narrow to e.g. "src/**/*.{html,css}"
-          lang: en                        # or vi
-          format: stylish                 # or sarif for GitHub code scanning
+      # --- Option A: run the published CLI directly (recommended) ---
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: npx norma-design-lint "**/*.{html,htm,css}"   # add --lang vi · narrow the glob, e.g. src/**
+      # Adopting on an existing codebase? Freeze current findings once with
+      #   npx norma-design-lint "**/*.{html,css}" --update-baseline   (commit .norma-baseline.json)
+      # then pass --baseline .norma-baseline.json here to fail only on NEW design debt.
 
-      # --- Option B: once norma-design-lint is on npm, drop the action and run directly ---
-      # - uses: actions/setup-node@v4
-      #   with: { node-version: 22 }
-      # - run: npx norma-design-lint "**/*.{html,htm,css}"
+      # --- Option B: the reusable action (no npm install; builds Norma from its checkout) ---
+      # - uses: anhquanpbc/norma@v1
+      #   with: { globs: "**/*.{html,htm,css}", lang: en, format: stylish }
+
+  # --- Optional: publish findings to the repo's Security tab (GitHub code scanning) ---
+  # Gets PR annotations, a Security-tab alert list, and cross-commit trends for free.
+  norma-code-scanning:
+    name: Norma → code scanning
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write   # required to upload SARIF
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      # `|| true` so a non-zero exit (error-severity findings) still uploads the report.
+      - run: npx norma-design-lint "**/*.{html,htm,css}" --format sarif > norma.sarif || true
+      - uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: norma.sarif
+          category: norma

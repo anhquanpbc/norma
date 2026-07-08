@@ -16,6 +16,12 @@ npx norma-design-lint src --format sarif > design-lint.sarif
 
 Exit code is non-zero when any `error`-severity finding is present, so it gates CI.
 
+**Adopt on an existing codebase:** run `--update-baseline` once to freeze current findings into
+`.norma-baseline.json` (commit it), then pass `--baseline .norma-baseline.json` so CI fails only on
+**new** design debt. **GitHub code scanning:** `--format sarif` emits enriched SARIF 2.1.0 (rule
+metadata, `helpUri`, line-independent fingerprints) — upload it with `github/codeql-action/upload-sarif`
+for PR annotations and a Security-tab alert list (see [`examples/ci-recipe.yml`](https://github.com/anhquanpbc/norma/blob/main/examples/ci-recipe.yml)).
+
 ### Options
 
 | Option | Description |
@@ -27,6 +33,8 @@ Exit code is non-zero when any `error`-severity finding is present, so it gates 
 | `--quiet` | Only report errors. |
 | `--max-warnings <n>` | Exit non-zero if warnings exceed `n` (so CI can gate warn-severity rules, not just errors). |
 | `--fix` | Auto-fix the deterministic rules in place, then lint the rest. |
+| `--baseline <path>` | Suppress findings already in the baseline; fail only on NEW ones (adopt on legacy code). |
+| `--update-baseline` | (Re)write the baseline from the current findings (path from `--baseline`, else `.norma-baseline.json`). |
 | `-h`, `--help` | Show usage and exit. |
 
 `--fix` only touches edits with **no judgement call**: physical→logical CSS properties
@@ -93,7 +101,9 @@ stdio, so an agent can query the standard and lint source in the loop. Point you
 ```
 
 Tools: **`lint_source`** (lint an HTML/CSS/JSX string → findings), **`list_rules`** (the catalog, filterable
-by `domain`/`tag`), **`get_rule`** (one rule by id, with rationale + remediation).
+by `domain`/`tag`), **`get_rule`** (one rule by id, with rationale + remediation), and **`fix_source`**
+(auto-fix the deterministic rules in an HTML/CSS string → fixed source + edit count, to close the
+lint→fix→re-lint loop).
 
 ## Programmatic API
 

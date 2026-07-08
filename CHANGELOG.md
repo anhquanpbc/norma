@@ -6,6 +6,25 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+## [1.9.0] — 2026-07-08
+
+First step toward comprehensive design governance (Govern + Generate pillars): make the linter's findings
+*deliverable* and *adoptable*, and give AI agents a way to fix, not just be told.
+
+### Added
+
+- **`--baseline` / `--update-baseline` ratchet.** Freeze current findings into a fingerprinted baseline
+  (`.norma-baseline.json`), then fail only on **new** design debt — so a team can turn Norma on over an
+  existing codebase without a red build on run one. Fingerprints are line-independent (ruleId +
+  repo-relative path + normalized message), so a known finding stays matched as code moves.
+- **Enriched SARIF for GitHub code scanning.** `--format sarif` now populates `tool.driver.rules` with
+  names, descriptions, `helpUri` (the primary source), level, and SPEC/CONV + WCAG tags, and attaches a
+  `partialFingerprints` to every result. Ready for `github/codeql-action/upload-sarif` — PR annotations,
+  a Security-tab alert list, and cross-commit trends. A copy-paste recipe is in `examples/ci-recipe.yml`.
+- **MCP `fix_source` tool.** Exposes the deterministic `--fix` engine to AI agents (physical→logical CSS,
+  positive `tabindex`→0, `rel=noopener` on external `target=_blank`), closing the lint → fix → re-lint
+  loop. The MCP server now advertises four tools.
+
 ### Changed
 
 - **License presentation.** `LICENSE` is now clean, standard MIT so GitHub detects it as MIT (it was

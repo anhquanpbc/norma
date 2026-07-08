@@ -7,6 +7,7 @@ import { isMainModule } from "./is-main.js";
 import { loadRules } from "./loadRules.js";
 import { buildContext } from "./parse.js";
 import { lintContext } from "./engine.js";
+import { fixSource } from "./fix.js";
 import type { FileType, Rule } from "./types.js";
 
 const PROTOCOL_VERSION = "2024-11-05";
@@ -52,6 +53,18 @@ const TOOLS = [
       required: ["id"],
     },
   },
+  {
+    name: "fix_source",
+    description: "Auto-fix the deterministic Norma rules in an HTML or CSS source string (physical→logical CSS properties, a positive tabindex→0, rel=noopener on an external target=_blank link). Returns the fixed source and the number of edits; everything needing a human decision (contrast, labels, alt text…) is left untouched. Re-run lint_source on the output to see what remains.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        source: { type: "string", description: "The raw HTML or CSS to fix." },
+        type: { type: "string", enum: ["html", "css"], description: "Which fixer to use." },
+      },
+      required: ["source", "type"],
+    },
+  },
 ];
 
 export interface Catalog { version: string; rules: Rule[]; }
@@ -84,6 +97,14 @@ export function callTool(name: string, args: Record<string, unknown>, catalog: C
     const rule = catalog.rules.find((r) => r.id === args.id);
     if (!rule) return text(`No rule with id "${args.id}". Use list_rules to see all ${catalog.rules.length} ids.`, true);
     return text(rule);
+  }
+  if (name === "fix_source") {
+    const source = args.source;
+    const type = args.type;
+    if (typeof source !== "string") return text('Invalid "source": expected a string.', true);
+    if (type !== "html" && type !== "css") return text('Invalid "type": expected "html" or "css".', true);
+    const { output, fixed } = fixSource(source, type as FileType);
+    return text({ fixed, output });
   }
   return text(`Unknown tool "${name}".`, true);
 }
