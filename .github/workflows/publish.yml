@@ -1,6 +1,6 @@
 name: Publish CLI
 
-# Push a tag (e.g. `git tag v1.0.1 && git push --tags`) to publish @norma/design-lint.
+# Push a tag (e.g. `git tag v1.0.1 && git push --tags`) to publish norma-design-lint.
 # One-time setup by the maintainer: add an npm automation token as the NPM_TOKEN repo secret.
 on:
   push:
@@ -13,7 +13,7 @@ permissions:
 
 jobs:
   publish:
-    name: Verify, then publish @norma/design-lint
+    name: Verify, then publish norma-design-lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7

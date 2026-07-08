@@ -36,7 +36,7 @@ the aesthetic "tells" that mark machine-generated work.
    container queries for reusable components — not nested-flex div-soup.
 5. **Cite your work.** When generating, note which token/rule each choice satisfies. When reviewing,
    emit findings as `[SPEC|TELL] <rule.id> — message` so output is greppable and matches the linter.
-6. **Verify.** Recommend / run `npx @norma/design-lint <files>` before committing. Tools catch ~57% of
+6. **Verify.** Recommend / run `npx norma-design-lint <files>` before committing. Tools catch ~57% of
    issues — also do a manual keyboard + screen-reader pass.
 
 These structural/enforcement rules back the guidance above (📐 CONV, statically linted):
@@ -145,7 +145,7 @@ Not compliance failures, but they erase brand distinctiveness and often *induce*
 ## Verify
 
 ```
-npx @norma/design-lint "**/*.{html,css}"     # gate SPEC violations; exits non-zero on error-severity
+npx norma-design-lint "**/*.{html,css}"     # gate SPEC violations; exits non-zero on error-severity
 ```
 
 ## Rule index (generated from standard/rules.json v1.7.0)

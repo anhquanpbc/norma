@@ -3,7 +3,7 @@
 ## Supported versions
 
 The latest `main` of this repository — and, once it is published to npm, the current release of
-`@norma/design-lint` — receive security fixes.
+`norma-design-lint` — receive security fixes.
 
 ## Reporting a vulnerability
 
@@ -16,6 +16,6 @@ We aim to acknowledge reports within 7 days and to provide a fix or mitigation t
 
 ## Scope
 
-The tooling (`@norma/design-lint`, scripts) is the primary security surface. The reference site
+The tooling (`norma-design-lint`, scripts) is the primary security surface. The reference site
 `index.html` makes **zero network requests** and ships no third-party code, so its attack surface is
 limited to the browser rendering static, self-contained HTML/CSS/JS.

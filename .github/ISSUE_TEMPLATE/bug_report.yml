@@ -6,7 +6,7 @@ body:
     id: area
     attributes:
       label: Area
-      options: ["@norma/design-lint (CLI)", "standard / rules", "reference site (index.html)", "agent files", "docs"]
+      options: ["norma-design-lint (CLI)", "standard / rules", "reference site (index.html)", "agent files", "docs"]
     validations:
       required: true
   - type: textarea
@@ -26,4 +26,4 @@ body:
     id: version
     attributes:
       label: Version
-      description: "@norma/design-lint version and/or commit SHA"
+      description: "norma-design-lint version and/or commit SHA"

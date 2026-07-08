@@ -129,7 +129,7 @@ ${ruleIndex()}
 ## How to verify
 
 \`\`\`
-npx @norma/design-lint "**/*.{html,css}"
+npx norma-design-lint "**/*.{html,css}"
 \`\`\`
 Exits non-zero on any \`error\`-severity finding. Also do a manual keyboard + screen-reader pass.`);
 

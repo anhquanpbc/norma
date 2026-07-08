@@ -18,10 +18,10 @@ node packages/design-lint/dist/cli.js examples/minimal-pass/index.html       # �
 node packages/design-lint/dist/cli.js examples/catches-violations/index.html # ✗ exit khác 0
 ```
 
-Sau khi [`@norma/design-lint`](../packages/design-lint) được publish:
+Sau khi [`norma-design-lint`](../packages/design-lint) được publish:
 
 ```bash
-npx @norma/design-lint examples/minimal-pass/index.html
+npx norma-design-lint examples/minimal-pass/index.html
 ```
 
 ## `catches-violations/` dạy gì

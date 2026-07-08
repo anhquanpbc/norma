@@ -2,7 +2,7 @@
 
 All notable changes to this project are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The **standard** is versioned in
-`standard/VERSION`; the **CLI** (`@norma/design-lint`) is versioned in its own `package.json`.
+`standard/VERSION`; the **CLI** (`norma-design-lint`) is versioned in its own `package.json`.
 
 ## [Unreleased]
 
@@ -27,7 +27,14 @@ All notable changes to this project are documented here. The format is based on
 - **MCP server (`norma-mcp`)** — a zero-dependency Model Context Protocol server over stdio (JSON-RPC 2.0,
   no SDK) so an AI agent can use Norma in the loop: `lint_source` (lint an HTML/CSS/JSX string → findings),
   `list_rules` (the catalog, filterable by `domain`/`tag`), `get_rule` (one rule by id, with rationale +
-  remediation). Shipped as a second bin in `@norma/design-lint`.
+  remediation). Shipped as a second bin in `norma-design-lint`.
+
+### Changed
+
+- **CLI package renamed `@norma/design-lint` → `norma-design-lint`** (unscoped public package). The `@norma`
+  npm scope was unavailable, so the first npm release ships under the unscoped name; the CLI bins
+  (`norma-design-lint`, `norma-mcp`) are unchanged, and the programmatic import is now
+  `import { lintFiles } from "norma-design-lint"`.
 
 ## [1.7.0] — 2026-07-04
 
@@ -191,7 +198,7 @@ plus **7 new lint rules** so enforcement catches up with the expanded content. *
   of defects), plus a copy-paste `ci-recipe.yml`. A new **Examples & action self-test** CI job proves
   both: the starter lints clean through the action, the broken page fails and trips its seeded rules.
 - **`action.yml`** — a reusable GitHub Action (`uses: anhquanpbc/norma@v1`) that builds the linter from
-  its own checkout, so a team can gate CI **today**, before `@norma/design-lint` is published to npm.
+  its own checkout, so a team can gate CI **today**, before `norma-design-lint` is published to npm.
   The README "Adopt in your project" now leads with it (EN + VI).
 - **`RELEASING.md`** — a one-tag release runbook (verify → `git tag v1.1.0 && git push` → `publish.yml`
   publishes with provenance), plus the post-publish badge swap-back.
@@ -200,7 +207,7 @@ plus **7 new lint rules** so enforcement catches up with the expanded content. *
 
 - **Honest pre-publish docs.** The dead `npm/v` badge (rendered "not found" for the unpublished package,
   reading as abandoned) is now a static `coming soon` placeholder; the Quick start (EN + VI) leads with
-  the paths that work **today** (the action, or from source) and demotes `npx @norma/design-lint` to
+  the paths that work **today** (the action, or from source) and demotes `npx norma-design-lint` to
   "once published". `npm pack --dry-run` confirmed the tarball is publish-safe (dist/cli.js + index.js +
   rules.json via `prepack`).
 
@@ -307,7 +314,7 @@ never published, so everything below lands **before the first npm release**.
 ## [1.0.0] — 2026-07-02
 
 First tagged release of the Norma standard (`standard/VERSION` 1.0.0) and the
-`@norma/design-lint` CLI (1.0.0).
+`norma-design-lint` CLI (1.0.0).
 
 ### The standard
 
@@ -325,7 +332,7 @@ First tagged release of the Norma standard (`standard/VERSION` 1.0.0) and the
 - **Scope note** — a front-end *design* standard. Backend and runtime/header security (CSP/HSTS/Trusted
   Types) are explicitly out of scope; frontend-markup security is in.
 
-### `@norma/design-lint` (CLI 1.0.0)
+### `norma-design-lint` (CLI 1.0.0)
 
 - Lints HTML/CSS against the standard: stylish / JSON / SARIF output, `.normarc.json` config,
   `--rules` / `--lang en|vi`, inline `norma-disable` suppression, and a programmatic API. Node ≥ 22.

@@ -1,6 +1,6 @@
 **English** · [Tiếng Việt](README.vi.md)
 
-# @norma/design-lint
+# norma-design-lint
 
 Lint HTML/CSS against the [Norma](https://github.com/anhquanpbc/norma) web design standard —
 contrast, focus rings, semantic HTML, form labels, reduced-motion, and the common
@@ -9,9 +9,9 @@ AI-generated design "tells". Bilingual (EN/VI) messages via `--lang`, SARIF outp
 ## Usage
 
 ```bash
-npx @norma/design-lint "**/*.{html,css,jsx,tsx}"
-npx @norma/design-lint index.html --lang vi
-npx @norma/design-lint src --format sarif > design-lint.sarif
+npx norma-design-lint "**/*.{html,css,jsx,tsx}"
+npx norma-design-lint index.html --lang vi
+npx norma-design-lint src --format sarif > design-lint.sarif
 ```
 
 Exit code is non-zero when any `error`-severity finding is present, so it gates CI.
@@ -88,7 +88,7 @@ stdio, so an agent can query the standard and lint source in the loop. Point you
 `norma-mcp` bin:
 
 ```json
-{ "mcpServers": { "norma": { "command": "npx", "args": ["-y", "@norma/design-lint", "norma-mcp"] } } }
+{ "mcpServers": { "norma": { "command": "npx", "args": ["-y", "norma-design-lint", "norma-mcp"] } } }
 ```
 
 Tools: **`lint_source`** (lint an HTML/CSS/JSX string → findings), **`list_rules`** (the catalog, filterable
@@ -97,7 +97,7 @@ by `domain`/`tag`), **`get_rule`** (one rule by id, with rationale + remediation
 ## Programmatic API
 
 ```ts
-import { lintFiles } from "@norma/design-lint";
+import { lintFiles } from "norma-design-lint";
 const { findings, errorCount } = lintFiles(["index.html"]);
 ```
 

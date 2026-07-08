@@ -18,10 +18,10 @@ node packages/design-lint/dist/cli.js examples/minimal-pass/index.html       # â
 node packages/design-lint/dist/cli.js examples/catches-violations/index.html # âœ— non-zero exit
 ```
 
-Once [`@norma/design-lint`](../packages/design-lint) is published:
+Once [`norma-design-lint`](../packages/design-lint) is published:
 
 ```bash
-npx @norma/design-lint examples/minimal-pass/index.html
+npx norma-design-lint examples/minimal-pass/index.html
 ```
 
 ## What `catches-violations/` teaches

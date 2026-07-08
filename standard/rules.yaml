@@ -14,7 +14,7 @@
 #               context only (spacing scale, body-min, runtime budgets).
 #   source      short citation.  source_url  primary source (required for SPEC).
 #   rationale   { en, vi } why the rule exists.
-#   check       machine assertion consumed by @norma/design-lint. type: manual = agent-only, not auto-checked.
+#   check       machine assertion consumed by norma-design-lint. type: manual = agent-only, not auto-checked.
 #   remediation { en, vi } how to fix.
 version: "1.7.0"
 rules:

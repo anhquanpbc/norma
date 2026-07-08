@@ -384,7 +384,7 @@ Công cụ AI thường sinh hai loại lỗi, và cần biết bạn đang xử
 - **Thiếu minh bạch AI** 🔒 — không tiết lộ / độ tin cậy / cách kiểm chứng → gắn nhãn AI, hiện nguồn + undo (HIG, PAIR, MS G11).
 
 **Khắc phục (ba tầng):**
-1. **Chặn VIOLATION ở CI** — kiểm tra tự động tương phản (1.4.3), focus (2.4.7/2.4.11), nhãn (3.3.2/4.1.2), reduced-motion và vai trò ngữ nghĩa — fail thì chặn build. Công cụ chỉ bắt ~57% lỗi, nên thêm lượt kiểm bằng bàn phím + trình đọc màn hình. *(Đây chính là việc `@norma/design-lint` làm — xem repo.)*
+1. **Chặn VIOLATION ở CI** — kiểm tra tự động tương phản (1.4.3), focus (2.4.7/2.4.11), nhãn (3.3.2/4.1.2), reduced-motion và vai trò ngữ nghĩa — fail thì chặn build. Công cụ chỉ bắt ~57% lỗi, nên thêm lượt kiểm bằng bàn phím + trình đọc màn hình. *(Đây chính là việc `norma-design-lint` làm — xem repo.)*
 2. **Hệ thống hóa đầu vào** — cấp cho agent file token 3 tầng cùng các file rule (`AGENTS.md`, `.cursor/rules/*.mdc`, `.github/copilot-instructions.md`) bắt buộc HTML ngữ nghĩa, một vòng focus, chỉ dùng token cho màu/khoảng cách, và anti-default rõ ràng ("không gradient indigo, không chỉ Inter, không px tùy tiện, không glass mặc định").
 3. **Quản trị tầng sản phẩm** — biện minh mỗi tính năng AI (nhu cầu × thế mạnh AI); bắt buộc tiết lộ + độ tin cậy + undo/giám sát; kiểm toán TMĐT/biểu mẫu theo phân loại dark pattern; cấm nội dung bịa.
 
