@@ -6,6 +6,18 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+## [1.8.1] — 2026-07-08
+
+### Fixed
+
+- **`norma-design-lint` / `norma-mcp` no longer silently no-op when run via `npx` or the installed bin.**
+  The ESM main-module guard compared raw file URLs (`import.meta.url === pathToFileURL(argv[1]).href`),
+  which is false when the bin is a symlink/shim — exactly how `npx norma-design-lint` and the installed
+  `.bin` entry invoke it — so the CLI printed nothing and exited 0 (a silent false pass, dangerous for a
+  linter). It now compares realpaths (resolving the symlink and normalising Windows drive-letter casing).
+  `node dist/cli.js` was unaffected, which is why 1.8.0's tests passed; two new CI steps now invoke the
+  built bin through a symlink so this can't regress. **Anyone on 1.8.0 should upgrade.**
+
 ## [1.8.0] — 2026-07-08
 
 First npm release of the CLI (published as the unscoped package `norma-design-lint`).

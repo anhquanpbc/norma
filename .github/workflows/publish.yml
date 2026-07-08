@@ -29,6 +29,11 @@ jobs:
           npm test
           npm run check:drift
           node packages/design-lint/dist/cli.js index.html
+          # Never publish a bin that no-ops via npx/the installed bin: invoke it through a symlink and
+          # require real output (the 1.8.0 main-module-guard bug exited 0 with no output that way).
+          ln -sf "$PWD/packages/design-lint/dist/cli.js" "$RUNNER_TEMP/norma-bin"
+          out=$(node "$RUNNER_TEMP/norma-bin" examples/catches-violations/index.html || true)
+          [ -n "$out" ] || { echo "::error::CLI produced no output via a symlinked bin — refusing to publish a silent no-op"; exit 1; }
       - name: Browser self-test — axe × theme × lang, 0-network, overflow
         run: |
           npx playwright install --with-deps chromium firefox webkit

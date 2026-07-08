@@ -33,6 +33,14 @@ jobs:
         run: |
           node packages/design-lint/dist/cli.js index.html --format sarif > design-lint.sarif
           node packages/design-lint/dist/cli.js index.html
+      - name: CLI runs via a symlinked bin (the `npx` / installed-bin path, not just `node dist/cli.js`)
+        shell: bash
+        run: |
+          ln -sf "$PWD/packages/design-lint/dist/cli.js" "$RUNNER_TEMP/norma-bin"
+          set +e; out=$(node "$RUNNER_TEMP/norma-bin" examples/catches-violations/index.html); code=$?; set -e
+          [ -n "$out" ] || { echo "::error::CLI produced no output via a symlinked bin — the main-module guard is broken (npx would silently no-op)"; exit 1; }
+          [ "$code" -ne 0 ] || { echo "::error::expected a non-zero exit via the bin on the seeded-bad page"; exit 1; }
+          echo "OK — CLI runs correctly when invoked through the bin"
       - uses: actions/upload-artifact@v7
         if: always()
         with:
