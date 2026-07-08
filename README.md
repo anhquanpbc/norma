@@ -3,7 +3,7 @@
 # Norma — a web design standard for humans **and** AI
 
 [![CI](https://github.com/anhquanpbc/norma/actions/workflows/ci.yml/badge.svg)](https://github.com/anhquanpbc/norma/actions/workflows/ci.yml)
-[![npm](https://img.shields.io/badge/norma--design--lint-coming%20soon-lightgrey)](packages/design-lint)
+[![npm](https://img.shields.io/npm/v/norma-design-lint?label=norma-design-lint)](https://www.npmjs.com/package/norma-design-lint)
 [![standard](https://img.shields.io/badge/standard-v1.8.0-informational)](standard/rules.yaml)
 [![code: MIT](https://img.shields.io/badge/code-MIT-blue)](LICENSE)
 [![content: CC BY 4.0](https://img.shields.io/badge/content-CC%20BY%204.0-lightgrey)](LICENSE-CONTENT)
@@ -45,8 +45,13 @@ Norma turns the standard into three aligned artifacts so both people and agents 
 
 ## Quick start
 
-**Lint your project** against the standard. `norma-design-lint` isn't on npm yet, so use whichever of
-these works for you today:
+**Lint your project** against the standard — `norma-design-lint` is on npm, so the quickest way is:
+
+```bash
+npx norma-design-lint "**/*.{html,css}"   # add --lang vi for Vietnamese messages
+```
+
+Other options:
 
 - **In CI (one step)** — the reusable action builds Norma from its own checkout, no install:
   ```yaml
@@ -59,8 +64,6 @@ these works for you today:
   npm ci && npm run build
   node packages/design-lint/dist/cli.js "**/*.{html,css}"   # add --lang vi for Vietnamese messages
   ```
-- **Once published** — `npx norma-design-lint "**/*.{html,css}"`. Publishing is one tag away; see
-  [RELEASING.md](RELEASING.md).
 
 See [`examples/`](examples) for a clean starter and a broken "before" page.
 
@@ -84,7 +87,7 @@ GitHub Action, which builds Norma from its own checkout (so it works today, befo
 ```
 
 A ready-to-copy workflow is in [`examples/ci-recipe.yml`](examples/ci-recipe.yml). Or run the CLI directly
-(once published: `npx norma-design-lint "**/*.{html,css}"`; from source today: `npm ci && npm run build`
+(`npx norma-design-lint "**/*.{html,css}"`, or from source: `npm ci && npm run build`
 then `node packages/design-lint/dist/cli.js "**/*.{html,css}"`) — non-zero exit on any error-severity finding.
 See [`examples/`](examples) for a clean starter and a broken "before" page.
 
