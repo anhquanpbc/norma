@@ -55,7 +55,7 @@ PR — don't let the two drift.
 
 - Run `npm ci && npm run build && npm test && npm run check:drift` locally; all must pass.
 - Keep the site (`index.html`) **zero-dependency and offline** — no CDNs, fonts, or network requests.
-- Fill in the PR template checklist (regenerated? lint:self green?).
+- Fill in the PR template checklist (edited the sources, not generated files? `check:drift` green?).
 
 ## Versioning
 

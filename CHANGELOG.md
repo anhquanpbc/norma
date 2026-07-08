@@ -6,6 +6,21 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+## [1.8.2] — 2026-07-08
+
+### Changed
+
+- **Documentation overhaul for clarity and professionalism.** Rewrote the root README (EN + VI):
+  front-loaded a "Try it" block with real linter output, merged the duplicated *Quick start* / *Adopt*
+  sections into one *Use it* section, glossed the 🔒 SPEC / 📐 CONV markers, and cut maintainer-only
+  internals and stale "before the npm release" hedging (~40% shorter). Also: restored the full
+  Contributor Covenant 2.1 enforcement ladder in `CODE_OF_CONDUCT.md`; fixed stale post-publish
+  references in `SECURITY.md` and `RELEASING.md`; aligned the `LICENSE-CONTENT` attribution tagline;
+  added a `-h/--help` row to the package README options (EN + VI); and repaired a `CONTRIBUTING.vi.md`
+  drift. No runtime/behaviour change.
+- **`node-html-parser` 8.0.4 → 9.0.0.** v9's only breaking change is a build-tooling swap on the
+  dependency's side; the linter's API usage is unchanged and the full test suite + dogfood stay green.
+
 ## [1.8.1] — 2026-07-08
 
 ### Fixed

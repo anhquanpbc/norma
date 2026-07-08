@@ -18,22 +18,21 @@ your npm account (an *automation* token so it isn't blocked by 2FA in CI).
    match. `npm run check:drift` enforces the standard/badge/footer trio; the CLI package version is the
    one to bump by hand when only the linter changes (semver: bug fix → patch, new rule → minor).
 2. **Update the changelog.** Move `CHANGELOG.md`'s `[Unreleased]` items under a dated
-   `[X.Y.Z] — YYYY-MM-DD` heading. (The first publish is **v1.8.0** — the CLI has never shipped, so the
-   `v1.0.0` tag published nothing.)
-3. **Tag and push.**
+   `[X.Y.Z] — YYYY-MM-DD` heading.
+3. **Tag and push** (the tag must match the CLI `package.json` version — it only triggers the workflow;
+   the published version comes from `package.json`):
    ```bash
-   git tag v1.8.0
-   git push origin v1.8.0
+   git tag vX.Y.Z
+   git push origin vX.Y.Z
    ```
    The workflow verifies, then publishes with provenance. Watch it under the repo's Actions tab.
 
 ## After it lands
 
-Swap the npm badge in `README.md` and `README.vi.md` back to the live version badge (it reads
-`coming soon` until the first publish):
+The README npm badge is the live shields.io version badge, so it updates on its own. Confirm the
+publish landed and works end-to-end:
 
-```md
-[![npm](https://img.shields.io/npm/v/norma-design-lint?label=norma-design-lint)](https://www.npmjs.com/package/norma-design-lint)
+```bash
+npm view norma-design-lint version                     # the new version
+npx norma-design-lint@latest examples/minimal-pass/index.html   # runs clean
 ```
-
-Then `npx norma-design-lint` and every `npx` quickstart in the docs work as written.

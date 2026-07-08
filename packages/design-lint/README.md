@@ -25,8 +25,9 @@ Exit code is non-zero when any `error`-severity finding is present, so it gates 
 | `--config <path>` | Config file (default `.normarc.json` if present). |
 | `--rules <path>` | Rule catalog path (default: bundled `standard/rules.json`). |
 | `--quiet` | Only report errors. |
-| `--max-warnings <n>` | Exit non-zero if warnings exceed `n` (lets CI gate the 26 warn-severity rules). |
+| `--max-warnings <n>` | Exit non-zero if warnings exceed `n` (so CI can gate warn-severity rules, not just errors). |
 | `--fix` | Auto-fix the deterministic rules in place, then lint the rest. |
+| `-h`, `--help` | Show usage and exit. |
 
 `--fix` only touches edits with **no judgement call**: physical→logical CSS properties
 (`margin-left`→`margin-inline-start`, `text-align:left`→`start`, …) in `.css` files, and in HTML a
