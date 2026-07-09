@@ -16,7 +16,7 @@
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
-import { onSurface } from "./surfaces.js";
+import { onSurface } from "../packages/design-lint/src/surfaces.js";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 
