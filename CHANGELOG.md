@@ -6,6 +6,17 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+## [1.14.0] — 2026-07-10 · CLI
+
+### Added
+
+- **`--format markdown` — a stateless run summary (Phase 2 M1, Measure pillar).** A pure Markdown report of
+  a lint run — findings aggregated **by domain** and **by rule**, plus the **baseline delta** (new vs
+  suppressed) — for a GitHub Step Summary or PR comment (`… --format markdown >> "$GITHUB_STEP_SUMMARY"`;
+  recipe in `examples/ci-recipe.yml`). No new deps, no server, no history store — the cross-commit *trend*
+  is already delivered by `--format sarif` → GitHub code scanning. Exposed as `markdown(res, rules,
+  suppressed)` on the API.
+
 ## [1.13.0] — 2026-07-09 · CLI
 
 ### Added

@@ -4,7 +4,7 @@ import { extname, join } from "node:path";
 import { isMainModule } from "./is-main.js";
 import { lintFiles, loadRules, fixSource, validateTokens } from "./index.js";
 import { fingerprints, splitByBaseline } from "./fingerprint.js";
-import { stylish, json, sarif, type Lang } from "./formatters.js";
+import { stylish, json, sarif, markdown, type Lang } from "./formatters.js";
 import type { Severity } from "./types.js";
 
 const HELP = `norma-design-lint — lint HTML/CSS against the Norma design standard
@@ -14,7 +14,7 @@ Usage:
   norma-design-lint tokens validate <file.json>
 
 Options:
-  --format <stylish|json|sarif>   output format (default: stylish)
+  --format <stylish|json|sarif|markdown>   output format (default: stylish; markdown → a GitHub Step Summary)
   --lang <en|vi>                  message language (default: en, or NORMA_LANG)
   --config <path>                 config file (default: .normarc.json if present)
   --rules <path>                  rule catalog path (default: bundled standard/rules.json)
@@ -159,6 +159,8 @@ function main(argv: string[]): number {
   }
 
   let res = lintFiles(files, { rulesPath, overrides: config.rules, tokensPath: opt("--tokens") ?? config.tokens });
+  let suppressedCount = 0; // findings hidden by the baseline, surfaced in the markdown report
+  let freshCount = res.findings.length; // baseline-fresh count, captured BEFORE --quiet can shrink res.findings
 
   // --baseline ratchet: snapshot or suppress known findings by fingerprint, so a team can adopt Norma on
   // an existing codebase and fail only on NEW design debt (not the whole legacy backlog on run one).
@@ -181,6 +183,8 @@ function main(argv: string[]): number {
       return 1;
     }
     const { fresh, suppressed } = splitByBaseline(res.findings, base);
+    suppressedCount = suppressed;
+    freshCount = fresh.length;
     res = {
       ...res, findings: fresh,
       errorCount: fresh.filter((f) => f.severity === "error").length,
@@ -197,6 +201,7 @@ function main(argv: string[]): number {
 
   if (format === "json") console.log(json(res));
   else if (format === "sarif") console.log(sarif(res, loadRules({ path: rulesPath, overrides: config.rules }).rules));
+  else if (format === "markdown") console.log(markdown(res, loadRules({ path: rulesPath, overrides: config.rules }).rules, suppressedCount, freshCount));
   else console.log(stylish(res, lang));
 
   const overWarnings = maxWarnings != null && res.warnCount > maxWarnings;

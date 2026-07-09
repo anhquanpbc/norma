@@ -20,13 +20,15 @@ Exit code is non-zero when any `error`-severity finding is present, so it gates 
 `.norma-baseline.json` (commit it), then pass `--baseline .norma-baseline.json` so CI fails only on
 **new** design debt. **GitHub code scanning:** `--format sarif` emits enriched SARIF 2.1.0 (rule
 metadata, `helpUri`, line-independent fingerprints) — upload it with `github/codeql-action/upload-sarif`
-for PR annotations and a Security-tab alert list (see [`examples/ci-recipe.yml`](https://github.com/anhquanpbc/norma/blob/main/examples/ci-recipe.yml)).
+for PR annotations and a Security-tab alert list. **A run summary:** `--format markdown` prints a
+by-domain / by-rule table (plus the baseline delta) — append it to `$GITHUB_STEP_SUMMARY` for a readable
+per-run snapshot in the Actions UI (see [`examples/ci-recipe.yml`](https://github.com/anhquanpbc/norma/blob/main/examples/ci-recipe.yml)).
 
 ### Options
 
 | Option | Description |
 |---|---|
-| `--format <stylish\|json\|sarif>` | Output format (default `stylish`). |
+| `--format <stylish\|json\|sarif\|markdown>` | Output format (default `stylish`). `markdown` = a by-domain / by-rule summary for a GitHub Step Summary or PR comment. |
 | `--lang <en\|vi>` | Message language (default `en`, or `NORMA_LANG`). |
 | `--config <path>` | Config file (default `.normarc.json` if present). |
 | `--rules <path>` | Rule catalog path (default: bundled `standard/rules.json`). |

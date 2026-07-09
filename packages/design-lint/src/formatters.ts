@@ -34,6 +34,54 @@ export function json(res: LintResult): string {
   return JSON.stringify(res, null, 2);
 }
 
+/**
+ * A stateless Markdown summary of a lint run — findings aggregated by domain, severity and rule, plus the
+ * baseline delta — for a GitHub Step Summary or PR comment. Pass the rule catalog to resolve each finding's
+ * domain (findings carry only a ruleId), exactly as sarif() does. NOT a dashboard or history store; the
+ * cross-commit trend is delivered separately by SARIF → GitHub code scanning.
+ */
+// `newCount` is the baseline-fresh finding count; the caller passes it explicitly (defaulting to
+// res.findings.length) so the "N new" delta stays on the same basis as `suppressed` even when a later
+// filter like --quiet has since shrunk res.findings.
+export function markdown(res: LintResult, rules: Rule[] = [], suppressed = 0, newCount = res.findings.length): string {
+  const byId = new Map(rules.map((r) => [r.id, r]));
+  const plural = (n: number, w: string): string => `${n} ${w}${n === 1 ? "" : "s"}`;
+  const out: string[] = ["## Norma design lint", ""];
+
+  if (!res.findings.length) {
+    out.push(`✓ No violations — ${plural(res.fileCount, "file")}, standard v${res.version}.`);
+    if (suppressed) out.push("", `_${plural(suppressed, "finding")} suppressed by baseline._`);
+    return out.join("\n") + "\n";
+  }
+
+  out.push(`**${plural(res.errorCount, "error")} · ${plural(res.warnCount, "warning")}** across ${plural(res.fileCount, "file")} (standard v${res.version})`);
+  if (suppressed) out.push("", `_${plural(newCount, "new finding")}, ${suppressed} suppressed by baseline._`);
+
+  const byDomain = new Map<string, { error: number; warn: number }>();
+  for (const f of res.findings) {
+    const domain = byId.get(f.ruleId)?.domain ?? "other";
+    const row = byDomain.get(domain) ?? { error: 0, warn: 0 };
+    row[f.severity === "error" ? "error" : "warn"]++;
+    byDomain.set(domain, row);
+  }
+  out.push("", "### By domain", "| Domain | Errors | Warnings |", "| --- | ---: | ---: |");
+  for (const [domain, row] of [...byDomain].sort((a, b) => (b[1].error + b[1].warn) - (a[1].error + a[1].warn))) {
+    out.push(`| ${domain} | ${row.error} | ${row.warn} |`);
+  }
+
+  const byRule = new Map<string, { severity: string; count: number }>();
+  for (const f of res.findings) {
+    const row = byRule.get(f.ruleId) ?? { severity: f.severity, count: 0 };
+    row.count++;
+    byRule.set(f.ruleId, row);
+  }
+  out.push("", "### By rule", "| Rule | Severity | Count |", "| --- | --- | ---: |");
+  for (const [id, row] of [...byRule].sort((a, b) => b[1].count - a[1].count)) {
+    out.push(`| \`${id}\` | ${row.severity} | ${row.count} |`);
+  }
+  return out.join("\n") + "\n";
+}
+
 const uri = (file: string): string => relative(process.cwd(), file).replace(/\\/g, "/");
 const sarifLevel = (sev: string): "error" | "warning" | "note" =>
   sev === "error" ? "error" : sev === "warn" ? "warning" : "note";
