@@ -22,6 +22,10 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version: 22 }
       - run: npx norma-design-lint "**/*.{html,htm,css}"   # add --lang vi · narrow the glob, e.g. src/**
+      # A readable by-domain / by-rule summary in the Actions UI. `if: always()` so it still renders when the
+      # gate above FAILS — that's exactly the run whose summary you want. It doesn't gate; the run above does.
+      - if: always()
+        run: npx norma-design-lint "**/*.{html,htm,css}" --format markdown >> "$GITHUB_STEP_SUMMARY" || true
       # Adopting on an existing codebase? Freeze current findings once with
       #   npx norma-design-lint "**/*.{html,css}" --update-baseline   (commit .norma-baseline.json)
       # then pass --baseline .norma-baseline.json here to fail only on NEW design debt.

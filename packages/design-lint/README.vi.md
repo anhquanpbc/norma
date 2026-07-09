@@ -20,13 +20,15 @@ Mã thoát khác 0 khi có bất kỳ phát hiện mức `error`, nên nó chặ
 `.norma-baseline.json` (commit nó), rồi truyền `--baseline .norma-baseline.json` để CI chỉ fail trên nợ
 thiết kế **mới**. **GitHub code scanning:** `--format sarif` xuất SARIF 2.1.0 đầy đủ (metadata rule,
 `helpUri`, fingerprint độc-lập-với-dòng) — upload bằng `github/codeql-action/upload-sarif` để có annotation
-trên PR và danh sách alert ở tab Security (xem [`examples/ci-recipe.yml`](https://github.com/anhquanpbc/norma/blob/main/examples/ci-recipe.yml)).
+trên PR và danh sách alert ở tab Security. **Tóm tắt một lần chạy:** `--format markdown` in bảng theo
+domain / theo rule (kèm delta baseline) — append vào `$GITHUB_STEP_SUMMARY` để có ảnh chụp dễ đọc trong
+Actions UI (xem [`examples/ci-recipe.yml`](https://github.com/anhquanpbc/norma/blob/main/examples/ci-recipe.yml)).
 
 ### Tùy chọn
 
 | Tùy chọn | Mô tả |
 |---|---|
-| `--format <stylish\|json\|sarif>` | Định dạng đầu ra (mặc định `stylish`). |
+| `--format <stylish\|json\|sarif\|markdown>` | Định dạng đầu ra (mặc định `stylish`). `markdown` = bảng tóm tắt theo domain / rule cho GitHub Step Summary hoặc PR comment. |
 | `--lang <en\|vi>` | Ngôn ngữ thông báo (mặc định `en`, hoặc `NORMA_LANG`). |
 | `--config <path>` | File cấu hình (mặc định `.normarc.json` nếu có). |
 | `--rules <path>` | Đường dẫn catalog rule (mặc định: `standard/rules.json` đóng kèm). |
