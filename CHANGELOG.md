@@ -6,6 +6,16 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+### Changed
+
+- **index.html now consumes the generated token variable names.** The reference site's design tokens were
+  renamed from ad-hoc short names (`--azure`, `--s-1`, `--t-0`) to the `standard/tokens.css` names
+  (`--color-brand-azure`, `--space-1`, `--font-scale-0`) — a mechanical, **value-preserving** rename (321
+  occurrences; pixel-identical render, e2e green). The `[data-theme=dark]` overrides and ~15 site-specific
+  vars (`--violet`, `--amber`, the `-wash`/`-ink` tints, `--bar-bg`, `--footer-bg`, …) are unchanged. A new
+  `check:drift` guard (item 10) asserts every token-derived `:root` value equals `standard/tokens.css`, so
+  the site's tokens can no longer drift from the standard. Closes the deferred GEN1 site-rewire.
+
 ## [1.14.0] — 2026-07-10 · CLI
 
 ### Added
