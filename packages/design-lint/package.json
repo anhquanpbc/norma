@@ -1,6 +1,6 @@
 {
   "name": "norma-design-lint",
-  "version": "1.10.0",
+  "version": "1.11.0",
   "description": "Lint HTML/CSS against the Norma web design standard — contrast, focus rings, semantic HTML, labels, reduced-motion, and the common AI-generated design tells.",
   "type": "module",
   "license": "MIT",
@@ -32,6 +32,10 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
+    "./stylelint": {
+      "types": "./dist/stylelint.d.ts",
+      "default": "./dist/stylelint.js"
+    },
     "./package.json": "./package.json"
   },
   "files": [
@@ -53,9 +57,19 @@
     "node-html-parser": "^9.0.0",
     "postcss": "^8.4.49"
   },
+  "peerDependencies": {
+    "stylelint": ">=15"
+  },
+  "peerDependenciesMeta": {
+    "stylelint": {
+      "optional": true
+    }
+  },
   "devDependencies": {
     "@types/node": "^26.1.1",
     "@vitest/coverage-v8": "^4.1.10",
+    "postcss-scss": "^4.0.9",
+    "stylelint": "^16.10.0",
     "typescript": "^6.0.3",
     "vitest": "^4.1.9"
   },

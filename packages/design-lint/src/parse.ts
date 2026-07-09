@@ -87,4 +87,16 @@ export function elementLine(ctx: FileContext, el: HTMLElement): number {
   return nodeLine(ctx.source, el);
 }
 
+/**
+ * Build a css FileContext from an ALREADY-PARSED PostCSS Root — e.g. one Stylelint hands a plugin, which
+ * may have been parsed with a custom syntax (postcss-scss / postcss-less). Linting that root directly —
+ * rather than re-parsing the raw text with the default CSS parser, which THROWS on SCSS/Less syntax
+ * (`//` comments, `$vars`, `#{}` interpolation) and would silently lint nothing — is what lets a consumer
+ * enforce Norma on SCSS/Less, and keeps node positions exact (they are the caller's own nodes).
+ */
+export function cssContextFromRoot(file: string, source: string, root: Root): FileContext {
+  const css: CssBlock[] = [{ root, startLine: 1 }];
+  return { file, type: "css", source, css, vars: collectVars(css) };
+}
+
 export { lineAt };

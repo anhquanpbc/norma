@@ -10,7 +10,7 @@ import { execSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
-import { onSurface } from "./surfaces.js";
+import { onSurface } from "../packages/design-lint/src/surfaces.js";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const read = (rel: string) => readFileSync(join(root, rel), "utf8");

@@ -6,6 +6,20 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+## [1.11.0] — 2026-07-09 · CLI
+
+### Added
+
+- **Stylelint plugin — `norma-design-lint/stylelint` (Phase 2, Enforce pillar).** Run Norma's CSS-family
+  checks (contrast, focus rings, reduced-motion, logical properties, the z-index ladder, the
+  indigo-default tell, …) inside a team's existing Stylelint pipeline — one config line, no separate CI
+  tool: `{ plugins: ["norma-design-lint/stylelint"], rules: { "norma/design": true } }`. It reuses the
+  exact engine the CLI uses — linting Stylelint's **already-parsed** stylesheet (so it works with plain
+  CSS and **SCSS / Less** via `customSyntax`), filtered to the CSS-surface checks via the shared
+  `SURFACE_BY_CHECK` partition, and maps each finding to a Stylelint warning on the offending line at the
+  rule's own severity (error-severity rules fail the build). Accepts `lang` + per-rule severity overrides.
+  `stylelint` is an **optional peer dependency** — no new runtime dependency for CLI/MCP users.
+
 ## [1.10.0] — 2026-07-09 · CLI
 
 ### Added

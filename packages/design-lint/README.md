@@ -60,6 +60,29 @@ The reference site marks its intentional anti-pattern demos with a comment:
 
 For HTML, add `data-norma-disable="rule.id"` to the element.
 
+## Use inside Stylelint
+
+Already run [Stylelint](https://stylelint.io)? Adopt Norma's CSS-family checks (contrast, focus rings,
+reduced-motion, logical properties, the z-index ladder, the indigo-default tell, …) as one config line —
+no separate CI tool. It lints whatever Stylelint parses: plain CSS, and **SCSS / Less** via `customSyntax`
+(it runs on Stylelint's own parsed stylesheet). `stylelint` is an optional peer dependency; the plugin
+ships as a subpath export.
+
+```js
+// stylelint.config.js
+export default {
+  plugins: ["norma-design-lint/stylelint"],
+  rules: {
+    "norma/design": true,
+    // or pass options: [true, { lang: "vi", rules: { "color.contrast.text": "warn" } }]
+  },
+};
+```
+
+Each Norma finding becomes a Stylelint warning on the offending line, tagged with its rule id, at the
+rule's own severity (error-severity Norma rules fail the build). The DOM-based checks (labels, landmarks,
+headings, …) don't apply to stylesheets — run those against your HTML with the CLI above.
+
 ## What it checks
 
 Sound, low-false-positive static checks mapped to the Norma rule catalog (`standard/rules.yaml`):

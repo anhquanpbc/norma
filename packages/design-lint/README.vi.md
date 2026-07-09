@@ -60,6 +60,29 @@ Trang tham chiếu đánh dấu các demo anti-pattern có chủ đích bằng c
 
 Với HTML, thêm `data-norma-disable="rule.id"` vào phần tử.
 
+## Dùng bên trong Stylelint
+
+Đã dùng [Stylelint](https://stylelint.io)? Áp dụng nhóm kiểm CSS của Norma (tương phản, focus ring,
+reduced-motion, thuộc tính logic, thang z-index, tell indigo mặc định, …) chỉ bằng một dòng cấu hình —
+không cần công cụ CI riêng. Nó kiểm mọi cú pháp Stylelint phân tích được: CSS thuần, và **SCSS / Less** qua
+`customSyntax` (chạy trên chính stylesheet đã parse của Stylelint). `stylelint` là peer dependency tùy chọn;
+plugin xuất qua một subpath export.
+
+```js
+// stylelint.config.js
+export default {
+  plugins: ["norma-design-lint/stylelint"],
+  rules: {
+    "norma/design": true,
+    // hoặc truyền tùy chọn: [true, { lang: "vi", rules: { "color.contrast.text": "warn" } }]
+  },
+};
+```
+
+Mỗi phát hiện của Norma thành một cảnh báo Stylelint ở đúng dòng vi phạm, kèm rule id, theo đúng mức
+severity của rule (rule mức error làm fail build). Các kiểm dựa trên DOM (label, landmark, heading, …)
+không áp cho stylesheet — chạy chúng trên HTML bằng CLI ở trên.
+
 ## Kiểm những gì
 
 Các kiểm tra tĩnh chắc chắn, ít dương tính giả, ánh xạ tới catalog rule của Norma (`standard/rules.yaml`):
