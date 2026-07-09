@@ -1,0 +1,76 @@
+/* GENERATED from standard/tokens.tokens.json by scripts/gen-tokens-css.ts — do not edit.
+   The CSS custom-property view of the Norma design tokens. Var name = "--" + the DTCG token path
+   (e.g. z.modal -> --z-modal). Aliases are var() references; the $extensions theme map is not emitted
+   (the dark ramp is available as --color-dark-*). Run `npm run gen` to regenerate. */
+:root {
+  --color-brand-azure                  : oklch(0.58 0.16 252);
+  --color-brand-azure-ink              : oklch(0.45 0.15 258);
+  --color-ink-1                        : oklch(0.20 0.028 258);
+  --color-ink-2                        : oklch(0.40 0.022 258);
+  --color-ink-3                        : oklch(0.52 0.018 258);
+  --color-paper                        : oklch(0.983 0.004 250);
+  --color-surface-1                    : oklch(1 0 0);
+  --color-surface-2                    : oklch(0.975 0.006 255);
+  --color-line-1                       : oklch(0.90 0.008 258);
+  --color-line-2                       : oklch(0.84 0.010 258);
+  --color-semantic-good                : oklch(0.66 0.15 155);
+  --color-semantic-good-solid          : oklch(0.52 0.14 155);
+  --color-semantic-warn                : oklch(0.80 0.15 82);
+  --color-semantic-bad                 : oklch(0.60 0.20 25);
+  --color-semantic-bad-solid           : oklch(0.55 0.19 25);
+  --color-text-primary                 : var(--color-ink-1);
+  --color-text-secondary               : var(--color-ink-2);
+  --color-text-muted                   : var(--color-ink-3);
+  --color-text-link                    : var(--color-brand-azure-ink);
+  --color-dark-paper                   : oklch(0.17 0.008 258);
+  --color-dark-surface-1               : oklch(0.21 0.010 258);
+  --color-dark-surface-2               : oklch(0.25 0.012 258);
+  --color-dark-ink-1                   : oklch(0.93 0.010 250);
+  --color-dark-ink-2                   : oklch(0.78 0.012 250);
+  --color-dark-ink-3                   : oklch(0.66 0.012 250);
+  --color-dark-line                    : oklch(0.32 0.012 258);
+  --color-dark-brand-azure             : oklch(0.72 0.14 252);
+  --color-dark-brand-azure-ink         : oklch(0.80 0.11 252);
+  --space-0                            : 0px;
+  --space-1                            : 4px;
+  --space-2                            : 8px;
+  --space-3                            : 12px;
+  --space-4                            : 16px;
+  --space-5                            : 24px;
+  --space-6                            : 32px;
+  --space-7                            : 48px;
+  --space-8                            : 64px;
+  --space-9                            : 96px;
+  --space-10                           : 128px;
+  --font-family-sans                   : -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans", "Be Vietnam Pro", Arial, sans-serif;
+  --font-family-mono                   : ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+  --font-scale-0                       : 1rem;
+  --font-scale-1                       : 1.25rem;
+  --font-scale-2                       : 1.5625rem;
+  --font-scale-3                       : 1.953rem;
+  --font-scale-4                       : 2.441rem;
+  --font-scale-5                       : 3.052rem;
+  --font-scale--1                      : 0.8rem;
+  --radius-sm                          : 6px;
+  --radius-md                          : 10px;
+  --z-base                             : 0;
+  --z-dropdown                         : 1000;
+  --z-sticky                           : 1100;
+  --z-fixed                            : 1200;
+  --z-overlay                          : 1300;
+  --z-modal                            : 1400;
+  --z-popover                          : 1500;
+  --z-toast                            : 1600;
+  --z-tooltip                          : 1700;
+  --motion-duration-short1             : 50ms;
+  --motion-duration-short2             : 100ms;
+  --motion-duration-short3             : 150ms;
+  --motion-duration-short4             : 200ms;
+  --motion-duration-medium2            : 300ms;
+  --motion-duration-long2              : 500ms;
+  --motion-easing-standard             : cubic-bezier(0.2, 0, 0, 1);
+  --motion-easing-standard-decelerate  : cubic-bezier(0, 0, 0, 1);
+  --motion-easing-standard-accelerate  : cubic-bezier(0.3, 0, 1, 1);
+  --motion-easing-emphasized-decelerate: cubic-bezier(0.05, 0.7, 0.1, 1);
+  --motion-easing-emphasized-accelerate: cubic-bezier(0.3, 0, 0.8, 0.15);
+}

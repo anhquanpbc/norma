@@ -6,6 +6,17 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+### Added
+
+- **Compiled `standard/tokens.css` (Phase 2 GEN1).** A generated CSS custom-property view of the DTCG
+  design tokens (`scripts/gen-tokens-css.ts`, wired into `npm run gen` and the `check:drift` guard),
+  closing the "never compiled" gap. The custom-property name is `--` + the DTCG token path (e.g.
+  `z.modal` → `--z-modal`, matching the z-index ladder's convention); aliases become `var()` references
+  and the dark ramp is available as `--color-dark-*`. A ~60-line zero-dependency emitter — deliberately
+  **not** Style Dictionary — that also establishes the canonical token→var naming the upcoming
+  token-binding checks (E2) will enforce. `index.html` still hand-writes its own vars; wiring the site to
+  consume `tokens.css` is a separate change.
+
 ## [1.12.0] — 2026-07-09 · CLI
 
 ### Added
