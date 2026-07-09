@@ -83,6 +83,32 @@ Each Norma finding becomes a Stylelint warning on the offending line, tagged wit
 rule's own severity (error-severity Norma rules fail the build). The DOM-based checks (labels, landmarks,
 headings, …) don't apply to stylesheets — run those against your HTML with the CLI above.
 
+## Use inside ESLint
+
+For JSX/TSX components, run Norma's two transferable design tells — the **indigo-default** colour tell and
+the **`<div onClick>` non-semantic-control** tell — inside your existing ESLint (flat config):
+
+```js
+// eslint.config.js
+import norma from "norma-design-lint/eslint";
+
+export default [
+  {
+    files: ["**/*.{jsx,tsx}"],
+    plugins: { norma },
+    // or ["error", { lang: "vi", rules: { "antipattern.indigo-default": "off" } }]
+    rules: { "norma/design": "error" },
+  },
+];
+```
+
+This block slots into your **existing** flat config — your project's JSX/TSX parser (`typescript-eslint`, or
+espree with `languageOptions.parserOptions.ecmaFeatures.jsx`) does the parsing; the plugin only reads the
+source text. `eslint` is an optional peer dependency; the plugin ships as a subpath export and imports
+nothing from ESLint at runtime. Coverage here is deliberately narrow — a component isn't a rendered page, so structural
+a11y (landmarks, labels, contrast, heading order) is **not** evaluated. Lint your built HTML with the CLI,
+and your CSS with the Stylelint plugin, for the full rule set.
+
 ## What it checks
 
 Sound, low-false-positive static checks mapped to the Norma rule catalog (`standard/rules.yaml`):

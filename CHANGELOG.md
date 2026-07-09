@@ -6,6 +6,27 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+## [1.12.0] — 2026-07-09 · CLI
+
+### Added
+
+- **ESLint plugin — `norma-design-lint/eslint` (Phase 2, Enforce pillar).** Run Norma's two component-level
+  design tells — the indigo-default colour tell and the `<div onClick>` non-semantic-control tell — inside
+  a team's existing ESLint (flat config): `{ files: ["**/*.{jsx,tsx}"], plugins: { norma }, rules: {
+  "norma/design": "error" } }`. It uses ESLint's own source text (no re-parse) and the exact engine the CLI
+  runs on component files. Coverage is deliberately narrow — the two tells that transfer without a rendered
+  DOM; structural a11y that needs the DOM is left to the CLI / Stylelint plugin. Accepts `{ lang, rules }`.
+  `eslint` is an **optional peer dependency**, and the plugin imports nothing from ESLint at runtime — no
+  new dependency for CLI/MCP users.
+
+### Fixed
+
+- **`antipattern.indigo-default` JSX false positive.** The `indigo-500` class token was matched against the
+  whole JSX opening tag, so an `href="/…/indigo-500-…"` slug or a `data-*` attribute containing the
+  substring false-fired. Non-hex class tokens are now scoped to `className`/`class` values (a specific
+  indigo **hex** is still flagged anywhere in the tag — it is a colour). Fixes the CLI's
+  `.jsx/.tsx/.vue/.svelte` path too, not just the new ESLint plugin.
+
 ## [1.11.0] — 2026-07-09 · CLI
 
 ### Added
