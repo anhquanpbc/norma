@@ -152,6 +152,32 @@ if (!zLadder) {
   }
 }
 
+// 10. index.html consumes the generated token vars: every custom property it defines in :root (light) that
+// standard/tokens.css also defines must carry the SAME value — so the reference site's tokens can't drift
+// from the standard. (Site-specific vars and the [data-theme=dark] overrides are not in tokens.css, so they
+// aren't checked; only the token-derived light values are.)
+const normCss = (v: string): string => v.trim().toLowerCase().replace(/\s+/g, " ").replace(/\s*([(),/])\s*/g, "$1");
+const tokenCss = new Map<string, string>();
+for (const m of read("standard/tokens.css").matchAll(/(--[a-z0-9-]+)\s*:\s*([^;]+);/gi)) tokenCss.set(m[1], normCss(m[2]));
+// Match `:root {` OR `:root{` and FAIL CLOSED if the block can't be located (a whitespace reformat must
+// never silently void the guard — a drift check that no-ops is worse than none).
+const rootMatch = html.match(/:root\s*\{/);
+if (!rootMatch) {
+  fail.push("check-drift item 10: could not locate the :root { block in index.html — token-value drift is unguarded");
+} else {
+  const rootBlock = html.slice(rootMatch.index!, html.indexOf("}", rootMatch.index!));
+  let checked = 0;
+  for (const m of rootBlock.matchAll(/(--[a-z0-9-]+)\s*:\s*([^;]+);/gi)) {
+    const name = m[1], expected = tokenCss.get(name);
+    if (expected === undefined) continue;
+    checked++;
+    if (normCss(m[2]) !== expected) {
+      fail.push(`index.html :root ${name} = "${normCss(m[2])}" but standard/tokens.css has "${expected}" — the token value drifted (regenerate or re-sync)`);
+    }
+  }
+  if (!checked) fail.push("check-drift item 10: no token-derived vars found in index.html :root — the site→tokens.css binding is unguarded (did the vars move or get renamed?)");
+}
+
 if (fail.length) {
   console.error("✗ drift check failed:");
   for (const f of fail) console.error("  - " + f);
