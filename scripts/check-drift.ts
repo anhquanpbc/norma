@@ -23,9 +23,10 @@ try {
   fail.push("regeneration failed: " + (e as Error).message);
 }
 const GENERATED = [
-  "standard/rules.json", ".claude/agents/design-guardian.md", ".cursor/rules/norma-design.mdc",
-  ".github/copilot-instructions.md", ".github/instructions/css.instructions.md",
-  ".github/instructions/html.instructions.md", "AGENTS.md", "CLAUDE.md",
+  "standard/rules.json", "standard/tokens.css", ".claude/agents/design-guardian.md",
+  ".cursor/rules/norma-design.mdc", ".github/copilot-instructions.md",
+  ".github/instructions/css.instructions.md", ".github/instructions/html.instructions.md",
+  "AGENTS.md", "CLAUDE.md",
 ];
 try {
   execSync(`git diff --exit-code -- ${GENERATED.join(" ")}`, { cwd: root, stdio: "pipe" });

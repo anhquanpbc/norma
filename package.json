@@ -11,7 +11,7 @@
   ],
   "scripts": {
     "build:rules": "tsx scripts/build-rules.ts",
-    "gen": "tsx scripts/gen-agents.ts",
+    "gen": "tsx scripts/gen-agents.ts && tsx scripts/gen-tokens-css.ts",
     "check:drift": "tsx scripts/check-drift.ts",
     "build": "npm run build:rules && npm run build --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",
