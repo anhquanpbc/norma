@@ -33,6 +33,8 @@ jobs:
         run: |
           node packages/design-lint/dist/cli.js index.html --format sarif > design-lint.sarif
           node packages/design-lint/dist/cli.js index.html
+      - name: Validate the design tokens (DTCG, Norma profile)
+        run: node packages/design-lint/dist/cli.js tokens validate standard/tokens.tokens.json
       - name: CLI runs via a symlinked bin (the `npx` / installed-bin path, not just `node dist/cli.js`)
         shell: bash
         run: |

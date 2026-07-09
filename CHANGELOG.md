@@ -6,6 +6,35 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+## [1.10.0] — 2026-07-09 · CLI
+
+### Added
+
+- **`norma-design-lint tokens validate <file>` — a DTCG token validator.** Validates a W3C DTCG
+  design-token file against the **Norma profile**: `$type` inheritance down the tree, group-vs-token
+  structure, per-type value shapes (color/dimension/number/fontFamily/cubicBezier/duration), and — the
+  part a JSON Schema cannot do — **alias reference integrity** (a `{group.token}` that doesn't resolve, or
+  a reference cycle, is an error). Color is accepted as a CSS `oklch()`/hex string, Norma's readable
+  convention (strict-DTCG color is hex or a color object). The reference `standard/tokens.tokens.json` is
+  now dogfooded in CI (`npm run validate:tokens`) and a unit test.
+- **MCP `validate_tokens` tool.** Exposes the same validator to AI agents (validate a token JSON string →
+  `{ valid, tokenCount, errors, warnings }`), so an agent can author tokens in the loop. The MCP server
+  now advertises five tools.
+
+## [1.8.1] — 2026-07-09 · standard
+
+### Added
+
+- **z-index token ladder.** The layer ladder that was already normative in prose (REFERENCE §2) now
+  exists as real DTCG `number` tokens in `standard/tokens.tokens.json` (`z.base 0 … z.tooltip 1700`,
+  consumed as `--z-*`), closing the "phantom token" gap that rule `tokens.zindex-scale` pointed at.
+
+### Fixed
+
+- **z-index ladder drift.** The `fixed 1200` rung had silently gone missing from the index.html ladder
+  card (8 of the 9 documented rungs); restored. A new `check:drift` guard now asserts every rung stays
+  consistent across `tokens.tokens.json`, `REFERENCE.md`, `REFERENCE.vi.md` and `index.html`.
+
 ## [1.9.0] — 2026-07-08
 
 First step toward comprehensive design governance (Govern + Generate pillars): make the linter's findings

@@ -88,6 +88,21 @@ CSS-in-JS và ngữ nghĩa class Tailwind tổng quát vẫn ngoài phạm vi. V
 (`AGENTS.md`, các file rule Cursor/Copilot/Claude) sinh từ cùng catalog. Bộ trích xuất dựa trên AST sâu hơn
 là bước kế tiếp.
 
+## Kiểm tra design token
+
+Ngoài HTML/CSS, Norma còn kiểm một file [W3C DTCG](https://tr.designtokens.org/format/) theo **hồ sơ
+Norma** — cấu trúc DTCG (kế thừa `$type`, phân biệt group/token, hình dạng giá trị theo từng kiểu) cộng
+**tính toàn vẹn tham chiếu alias** (một `{group.token}` không phân giải được, hay một vòng lặp tham chiếu,
+sẽ bị bắt — JSON Schema thuần không làm được). Màu chấp nhận dạng chuỗi CSS `oklch()`/hex, quy ước dễ đọc
+của Norma:
+
+```bash
+npx norma-design-lint tokens validate tokens.tokens.json
+```
+
+Mã thoát 0 khi hợp lệ, 1 khi có lỗi cấu trúc. `$type` sai, dimension/duration hỏng, alias treo/vòng lặp là
+lỗi; một khóa `$`-prefix lạ là cảnh báo (tương thích với các bản spec tương lai).
+
 ## MCP server (cho AI agent)
 
 Gói kèm một server [Model Context Protocol](https://modelcontextprotocol.io) **zero-dependency** qua stdio,
@@ -98,8 +113,9 @@ Gói kèm một server [Model Context Protocol](https://modelcontextprotocol.io)
 ```
 
 Tool: **`lint_source`** (lint chuỗi HTML/CSS/JSX → findings), **`list_rules`** (catalog, lọc theo
-`domain`/`tag`), **`get_rule`** (một rule theo id, kèm rationale + remediation), và **`fix_source`**
-(tự sửa các rule xác định trong chuỗi HTML/CSS → nguồn đã sửa + số lần sửa, khép vòng lint→fix→lint-lại).
+`domain`/`tag`), **`get_rule`** (một rule theo id, kèm rationale + remediation), **`fix_source`**
+(tự sửa các rule xác định trong chuỗi HTML/CSS → nguồn đã sửa + số lần sửa, khép vòng lint→fix→lint-lại),
+và **`validate_tokens`** (kiểm chuỗi JSON token DTCG → `{ valid, tokenCount, errors, warnings }`).
 
 ## API lập trình
 

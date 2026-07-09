@@ -90,6 +90,22 @@ CSS-in-JS and general Tailwind class semantics are still out of scope. For those
 layer** (`AGENTS.md`, the Cursor/Copilot/Claude rule files) generated from the same catalog. A deeper
 AST-based extractor is the next step.
 
+## Validate design tokens
+
+Beyond HTML/CSS, Norma validates a [W3C DTCG](https://tr.designtokens.org/format/) design-token file
+against the **Norma profile** — DTCG structure (`$type` inheritance, group-vs-token, per-type value
+shapes) plus **alias reference integrity** (a `{group.token}` that doesn't resolve, or a reference cycle,
+is caught — a plain JSON Schema can't do that). Color is accepted as a CSS `oklch()`/hex string, Norma's
+readable convention:
+
+```bash
+npx norma-design-lint tokens validate tokens.tokens.json
+```
+
+Exit code is 0 when valid, 1 on any structural error. A bad `$type`, a malformed dimension/duration, or a
+dangling/cyclic alias is an error; an unknown `$`-prefixed key is a warning (forward-compatible with future
+spec revisions).
+
 ## MCP server (for AI agents)
 
 The package ships a zero-dependency [Model Context Protocol](https://modelcontextprotocol.io) server over
@@ -101,9 +117,10 @@ stdio, so an agent can query the standard and lint source in the loop. Point you
 ```
 
 Tools: **`lint_source`** (lint an HTML/CSS/JSX string → findings), **`list_rules`** (the catalog, filterable
-by `domain`/`tag`), **`get_rule`** (one rule by id, with rationale + remediation), and **`fix_source`**
+by `domain`/`tag`), **`get_rule`** (one rule by id, with rationale + remediation), **`fix_source`**
 (auto-fix the deterministic rules in an HTML/CSS string → fixed source + edit count, to close the
-lint→fix→re-lint loop).
+lint→fix→re-lint loop), and **`validate_tokens`** (validate a DTCG token JSON string → `{ valid,
+tokenCount, errors, warnings }`).
 
 ## Programmatic API
 

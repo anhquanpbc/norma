@@ -11,9 +11,9 @@ describe("MCP — JSON-RPC surface", () => {
     expect(res.result.serverInfo.name).toBe("norma-design-lint");
     expect(res.result.capabilities.tools).toBeDefined();
   });
-  it("tools/list advertises the four tools", () => {
+  it("tools/list advertises the five tools", () => {
     const res = handleRpc({ jsonrpc: "2.0", id: 2, method: "tools/list" }, catalog) as any;
-    expect(res.result.tools.map((t: any) => t.name).sort()).toEqual(["fix_source", "get_rule", "lint_source", "list_rules"]);
+    expect(res.result.tools.map((t: any) => t.name).sort()).toEqual(["fix_source", "get_rule", "lint_source", "list_rules", "validate_tokens"]);
     for (const t of res.result.tools) expect(t.inputSchema.type).toBe("object");
   });
   it("a notification gets no reply", () => {
@@ -54,5 +54,21 @@ describe("MCP — tools", () => {
     expect(good.isError).toBe(false);
     expect(JSON.parse(good.content[0].text).id).toBe("a11y.target-size");
     expect(callTool("get_rule", { id: "a11y.nope" }, catalog).isError).toBe(true);
+  });
+  it("validate_tokens validates a token string and rejects bad input", () => {
+    const good = callTool("validate_tokens", { tokens: `{"c":{"$type":"color","a":{"$value":"oklch(0.5 0.1 250)"}}}` }, catalog);
+    expect(good.isError).toBe(false);
+    expect(JSON.parse(good.content[0].text).valid).toBe(true);
+    expect(callTool("validate_tokens", { tokens: "{not json" }, catalog).isError).toBe(true);
+    expect(callTool("validate_tokens", { tokens: 42 }, catalog).isError).toBe(true);
+  });
+  it("validate_tokens never throws on hostile deeply-nested input", () => {
+    // Build the payload as a STRING (JSON.stringify would itself overflow at this depth) — which is also
+    // exactly how a hostile request arrives at the MCP boundary. callTool must return, not crash.
+    let s = `{"$type":"number","$value":1}`;
+    for (let i = 0; i < 8000; i++) s = `{"g":${s}}`;
+    const r = callTool("validate_tokens", { tokens: s }, catalog);
+    expect(r.isError).toBe(false);
+    expect(JSON.parse(r.content[0].text).valid).toBe(false);
   });
 });

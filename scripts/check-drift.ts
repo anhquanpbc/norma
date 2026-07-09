@@ -134,6 +134,23 @@ if (!readme.includes(`standard-v${version}`)) fail.push(`README.md badge does no
 if (!read("README.vi.md").includes(`standard-v${version}`)) fail.push(`README.vi.md badge does not say standard-v${version}`);
 if (!html.includes(`standard v${version}`)) fail.push(`index.html footer does not say "standard v${version}"`);
 
+// 9. z-index ladder consistency. tokens.tokens.json is the source of truth for the layer ladder,
+// but REFERENCE.md, REFERENCE.vi.md and index.html each restate it by hand — and the `fixed 1200`
+// rung once silently vanished from index.html. Assert every token rung is present on all four surfaces.
+const zLadder = (tokens as { z?: Record<string, { $value?: unknown }> }).z;
+if (!zLadder) {
+  fail.push("tokens.tokens.json is missing the z-index ladder group `z`");
+} else {
+  for (const [name, tok] of Object.entries(zLadder)) {
+    if (name.startsWith("$")) continue;
+    const value = tok.$value;
+    if (typeof value !== "number") { fail.push(`tokens.tokens.json z.${name} has no numeric $value`); continue; }
+    if (!ref.includes(`${name} ${value}`)) fail.push(`REFERENCE.md z-index ladder is missing the "${name} ${value}" rung`);
+    if (!refVi.includes(`${name} ${value}`)) fail.push(`REFERENCE.vi.md z-index ladder is missing the "${name} ${value}" rung`);
+    if (!html.includes(`>${value}</span><span>${name}</span>`)) fail.push(`index.html z-index ladder card is missing the "${name} ${value}" rung`);
+  }
+}
+
 if (fail.length) {
   console.error("✗ drift check failed:");
   for (const f of fail) console.error("  - " + f);

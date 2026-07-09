@@ -16,6 +16,7 @@
     "build": "npm run build:rules && npm run build --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",
     "lint:self": "npm run build --workspace norma-design-lint && node packages/design-lint/dist/cli.js index.html",
+    "validate:tokens": "npm run build --workspace norma-design-lint && node packages/design-lint/dist/cli.js tokens validate standard/tokens.tokens.json",
     "e2e": "playwright test"
   },
   "devDependencies": {
