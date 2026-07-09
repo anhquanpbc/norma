@@ -83,6 +83,31 @@ Mỗi phát hiện của Norma thành một cảnh báo Stylelint ở đúng dò
 severity của rule (rule mức error làm fail build). Các kiểm dựa trên DOM (label, landmark, heading, …)
 không áp cho stylesheet — chạy chúng trên HTML bằng CLI ở trên.
 
+## Dùng bên trong ESLint
+
+Với component JSX/TSX, chạy hai "tell" thiết kế chuyển được của Norma — tell màu **indigo mặc định** và
+tell **`<div onClick>` không phải control ngữ nghĩa** — bên trong ESLint hiện có của bạn (flat config):
+
+```js
+// eslint.config.js
+import norma from "norma-design-lint/eslint";
+
+export default [
+  {
+    files: ["**/*.{jsx,tsx}"],
+    plugins: { norma },
+    // hoặc ["error", { lang: "vi", rules: { "antipattern.indigo-default": "off" } }]
+    rules: { "norma/design": "error" },
+  },
+];
+```
+
+Khối này gắn vào flat config **có sẵn** của bạn — parser JSX/TSX của dự án (`typescript-eslint`, hoặc espree
+với `languageOptions.parserOptions.ecmaFeatures.jsx`) lo việc parse; plugin chỉ đọc source text. `eslint` là
+peer dependency tùy chọn; plugin xuất qua subpath và không import gì từ ESLint lúc chạy. Phạm vi
+ở đây cố ý hẹp — component không phải một trang đã render, nên a11y cấu trúc (landmark, label, tương phản,
+thứ tự heading) **không** được kiểm. Kiểm HTML đã build bằng CLI, và CSS bằng plugin Stylelint, để có đủ bộ rule.
+
 ## Kiểm những gì
 
 Các kiểm tra tĩnh chắc chắn, ít dương tính giả, ánh xạ tới catalog rule của Norma (`standard/rules.yaml`):

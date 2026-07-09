@@ -209,6 +209,30 @@ function jsxOpenTags(src: string): { tag: string; start: number; body: string }[
   return tags;
 }
 
+/** The className/class attribute VALUES in a JSX opening-tag body — the only place a non-hex class token
+ *  (e.g. `indigo-500`) is the colour tell. The same substring in an href / data-* / prop is not a colour. */
+function classText(body: string): string {
+  const out: string[] = [];
+  const re = /\b(?:className|class)\s*=\s*/gi;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(body))) {
+    const k = m.index + m[0].length;
+    const ch = body[k];
+    if (ch === '"' || ch === "'" || ch === "`") {
+      const end = body.indexOf(ch, k + 1);
+      out.push(body.slice(k + 1, end < 0 ? body.length : end));
+    } else if (ch === "{") {
+      let depth = 0, j = k;
+      for (; j < body.length; j++) {
+        if (body[j] === "{") depth++;
+        else if (body[j] === "}") { depth--; if (depth === 0) break; }
+      }
+      out.push(body.slice(k + 1, j));
+    }
+  }
+  return out.join("\n");
+}
+
 // The colour/value tells (indigo-default) transfer to JSX — a hex or `indigo-500` in a className /
 // style / arbitrary value is the same tell. Scanned ONLY inside real opening-tag bodies (not comments,
 // import paths, JSX text or unrelated string literals), so documenting the tell isn't itself a violation.
@@ -218,10 +242,15 @@ function forbiddenValueJsx(ctx: FileContext, rules: Rule[]): Finding[] {
   for (const r of rules) {
     if ((r.check as { context?: string }).context) continue; // dark-surface etc. need a CSS scope
     for (const p of (r.check as { patterns?: string[] }).patterns ?? []) {
-      const re = new RegExp(escapeRe(p) + (canonHex(p) ? "\\b" : ""), "gi");
+      const hex = !!canonHex(p);
+      const re = new RegExp(escapeRe(p) + (hex ? "\\b" : ""), "gi");
       for (const t of tags) {
-        for (const m of t.body.matchAll(re)) {
-          out.push(mk(ctx, r, lineOf(ctx.source, t.start + m.index!),
+        // A specific indigo HEX (#667eea) is the tell anywhere in the tag (style, className, a colour prop);
+        // a non-hex class token (indigo-500) is the tell ONLY inside a className/class value — the same
+        // substring in an href/data-*/prop is not a colour. Non-hex matches report at the tag's line.
+        const haystack = hex ? t.body : classText(t.body);
+        for (const m of haystack.matchAll(re)) {
+          out.push(mk(ctx, r, lineOf(ctx.source, hex ? t.start + m.index! : t.start),
             `Forbidden value "${m[0]}" — ${r.title.en}.`,
             `Giá trị bị cấm "${m[0]}" — ${r.title.vi}.`));
         }
