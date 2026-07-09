@@ -2,7 +2,7 @@
 import { readFileSync, writeFileSync, existsSync, statSync, globSync } from "node:fs";
 import { extname, join } from "node:path";
 import { isMainModule } from "./is-main.js";
-import { lintFiles, loadRules, fixSource } from "./index.js";
+import { lintFiles, loadRules, fixSource, validateTokens } from "./index.js";
 import { fingerprints, splitByBaseline } from "./fingerprint.js";
 import { stylish, json, sarif, type Lang } from "./formatters.js";
 import type { Severity } from "./types.js";
@@ -11,6 +11,7 @@ const HELP = `norma-design-lint — lint HTML/CSS against the Norma design stand
 
 Usage:
   norma-design-lint [globs...] [options]
+  norma-design-lint tokens validate <file.json>
 
 Options:
   --format <stylish|json|sarif>   output format (default: stylish)
@@ -24,6 +25,9 @@ Options:
   --update-baseline               (re)write the baseline from the current findings
                                   (path from --baseline <path>, else .norma-baseline.json)
   -h, --help                      show this help
+
+Subcommands:
+  tokens validate <file.json>     validate a DTCG token file (Norma profile: DTCG structure + oklch color)
 
 Exit code is non-zero when any error-severity finding is present (or warnings exceed --max-warnings).`;
 
@@ -54,9 +58,43 @@ function expand(patterns: string[]): string[] {
   return [...files];
 }
 
+// `norma-design-lint tokens validate <file>` — validate a DTCG token file (Norma profile). Dispatched
+// before the flat lint parser so `tokens`/`validate` are never mistaken for globs (which would expand to
+// nothing and exit 0 = a silent false pass).
+function runTokens(rest: string[]): number {
+  const langI = rest.indexOf("--lang");
+  const lang: Lang = (langI >= 0 ? rest[langI + 1] : process.env.NORMA_LANG) === "vi" ? "vi" : "en";
+  const sub = rest[0];
+  const file = rest.find((a, i) => !a.startsWith("-") && rest[i - 1] !== "--lang" && a !== sub);
+  if (sub !== "validate" || !file) {
+    console.error("Usage: norma-design-lint tokens validate <file.json>");
+    return 1;
+  }
+  let doc: unknown;
+  try {
+    doc = JSON.parse(readFileSync(file, "utf8"));
+  } catch (e) {
+    console.error(`Cannot read/parse ${file}: ${(e as Error).message}`);
+    return 1;
+  }
+  const res = validateTokens(doc);
+  for (const w of res.warnings) console.log(`  warn  ${w.path}  ${w.message}`);
+  if (res.valid) {
+    console.log(lang === "vi"
+      ? `✓ ${file}: ${res.tokenCount} token hợp lệ (DTCG, hồ sơ Norma).`
+      : `✓ ${file}: ${res.tokenCount} tokens valid (DTCG, Norma profile).`);
+    return 0;
+  }
+  console.log(`\n✗ ${file} — ${res.errors.length} problem(s):`);
+  const pad = Math.min(44, Math.max(0, ...res.errors.map((e) => e.path.length)));
+  for (const e of res.errors) console.log(`  ${e.path.padEnd(pad)}  ${e.message}`);
+  return 1;
+}
+
 function main(argv: string[]): number {
   const args = argv.slice(2);
   if (args.includes("-h") || args.includes("--help")) { console.log(HELP); return 0; }
+  if (args[0] === "tokens") return runTokens(args.slice(1));
 
   const opt = (name: string): string | undefined => {
     const i = args.indexOf(name);

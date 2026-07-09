@@ -1,5 +1,5 @@
 {
-  "$description": "Norma design tokens — W3C DTCG Format Module v2025.10. The single source of truth for the palette, spacing, type scale, radius and motion. The brand color lives here and nowhere else.",
+  "$description": "Norma design tokens — W3C DTCG Format Module v2025.10 (Norma profile: color values use CSS oklch() strings rather than the DTCG structured color object, for human + CSS readability). The single source of truth for the palette, spacing, type scale, radius, z-index ladder and motion. The brand color lives here and nowhere else.",
   "$extensions": {
     "org.norma.themes": {
       "$description": "Theme map (a Norma extension — DTCG reserves theming for the Resolver module, so it lives under $extensions to keep the file strict-DTCG valid). Light is the default; dark remaps the semantic tier only. Consumers apply via prefers-color-scheme: dark or [data-theme=dark]. Enforced by rules theme.color-scheme and antipattern.pure-dark-mode.",
@@ -97,6 +97,19 @@
     "$type": "dimension",
     "sm": { "$value": { "value": 6, "unit": "px" } },
     "md": { "$value": { "value": 10, "unit": "px" } }
+  },
+  "z": {
+    "$type": "number",
+    "$description": "z-index layer ladder (unitless stacking order). Consume as CSS custom properties named --z-<token> (modal -> var(--z-modal)); this file is never compiled, so --z-* is a naming convention, not generated output. Values mirror the ladder in REFERENCE §2. Referencing a raw z-index >= 1000 instead of the token is flagged by rule tokens.zindex-scale; reserve raw 1-99 for small local stacking.",
+    "base": { "$value": 0 },
+    "dropdown": { "$value": 1000 },
+    "sticky": { "$value": 1100 },
+    "fixed": { "$value": 1200 },
+    "overlay": { "$value": 1300 },
+    "modal": { "$value": 1400 },
+    "popover": { "$value": 1500 },
+    "toast": { "$value": 1600 },
+    "tooltip": { "$value": 1700 }
   },
   "motion": {
     "duration": {

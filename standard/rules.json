@@ -1,6 +1,6 @@
 {
   "$generated": "Do not edit. Generated from standard/rules.yaml by scripts/build-rules.ts.",
-  "version": "1.8.0",
+  "version": "1.8.1",
   "rules": [
     {
       "id": "color.contrast.text",

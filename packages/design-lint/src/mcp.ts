@@ -8,6 +8,7 @@ import { loadRules } from "./loadRules.js";
 import { buildContext } from "./parse.js";
 import { lintContext } from "./engine.js";
 import { fixSource } from "./fix.js";
+import { validateTokens } from "./tokens.js";
 import type { FileType, Rule } from "./types.js";
 
 const PROTOCOL_VERSION = "2024-11-05";
@@ -65,6 +66,17 @@ const TOOLS = [
       required: ["source", "type"],
     },
   },
+  {
+    name: "validate_tokens",
+    description: "Validate a W3C DTCG design-token JSON string against the Norma profile (DTCG structure + Norma's CSS oklch() color convention): $type inheritance, group-vs-token, per-type value shapes, and alias reference integrity. Returns { valid, tokenCount, errors, warnings } where each problem is { path, message }.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        tokens: { type: "string", description: "The DTCG token file contents as a JSON string." },
+      },
+      required: ["tokens"],
+    },
+  },
 ];
 
 export interface Catalog { version: string; rules: Rule[]; }
@@ -106,6 +118,14 @@ export function callTool(name: string, args: Record<string, unknown>, catalog: C
     const { output, fixed } = fixSource(source, type as FileType);
     return text({ fixed, output });
   }
+  if (name === "validate_tokens") {
+    const src = args.tokens;
+    if (typeof src !== "string") return text('Invalid "tokens": expected a JSON string.', true);
+    let doc: unknown;
+    try { doc = JSON.parse(src); }
+    catch (e) { return text(`Invalid "tokens" JSON: ${(e as Error).message}`, true); }
+    return text(validateTokens(doc));
+  }
   return text(`Unknown tool "${name}".`, true);
 }
 
@@ -137,7 +157,11 @@ function main(): void {
     let msg: Rpc;
     try { msg = JSON.parse(trimmed) as Rpc; }
     catch { process.stdout.write(JSON.stringify(err(null, -32700, "Parse error")) + "\n"); return; }
-    const res = handleRpc(msg, catalog);
+    // A single malformed request must never take down a long-lived stdio server — a thrown handler
+    // becomes a JSON-RPC internal error, not an uncaught exception that exits the process.
+    let res: RpcResult | RpcError | null;
+    try { res = handleRpc(msg, catalog); }
+    catch (e) { res = err(msg.id ?? null, -32603, `Internal error: ${(e as Error).message}`); }
     if (res) process.stdout.write(JSON.stringify(res) + "\n");
   });
 }
