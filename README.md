@@ -43,6 +43,19 @@ Norma turns one standard into three aligned artifacts so people and agents build
 2. **The agent** — strict do/don't rules for Claude Code, Cursor, Copilot, and any `AGENTS.md` tool.
 3. **The linter** — `norma-design-lint`, which fails the build on real violations.
 
+## The six pillars
+
+Norma is comprehensive *control* over design quality, not just a rule list — every pillar has working code:
+
+| Pillar | What it does | How Norma ships it |
+|--------|--------------|--------------------|
+| **Define** | one source of truth | the rule catalog ([`standard/rules.yaml`](standard/rules.yaml)) + DTCG design tokens ([`tokens.tokens.json`](standard/tokens.tokens.json), v2025.10) |
+| **Enforce** | fail the build on violations | the `norma-design-lint` CLI, a **Stylelint** plugin (`norma-design-lint/stylelint`), and an **ESLint** plugin (`norma-design-lint/eslint`) — run inside the linters you already have |
+| **Generate** | derive every consumer artifact | per-tool agent rule files, a zero-dependency **MCP server** for AI agents, and compiled CSS variables ([`standard/tokens.css`](standard/tokens.css)) |
+| **Govern** | deliver findings where teams work | enriched **SARIF 2.1.0** → GitHub code scanning (PR annotations + a Security-tab alert list) |
+| **Sync** | adopt & stay in step, no drift | a `--baseline` ratchet (fail only on *new* debt), a **DTCG token validator** (`tokens validate`), and anti-drift guards that regenerate + diff every derived file |
+| **Measure** | see the state of each run | a Markdown run summary (`--format markdown` → a GitHub Step Summary) + cross-commit trends via code scanning |
+
 ## Use it
 
 **Gate CI.** Run the `npx` command above, or use the reusable GitHub Action — it builds Norma from the
