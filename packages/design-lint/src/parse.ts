@@ -45,16 +45,16 @@ function collectVars(blocks: CssBlock[], dom?: HTMLElement): Map<string, string>
   return vars;
 }
 
-export function buildContext(file: string, source: string, type: FileType): FileContext {
+export function buildContext(file: string, source: string, type: FileType, tokens?: Map<string, string>): FileContext {
   if (type === "jsx") {
     // JSX/TSX is not a DOM and not CSS — the jsx-aware checks scan the raw source directly
     // (className/style/JSX-tag tells). No node-html-parser (JSX expressions break it), no postcss.
-    return { file, type, source, css: [], vars: new Map() };
+    return { file, type, source, css: [], vars: new Map(), tokens };
   }
   if (type === "css") {
     const block = parseCss(source, 1);
     const css = block ? [block] : [];
-    return { file, type, source, css, vars: collectVars(css) };
+    return { file, type, source, css, vars: collectVars(css), tokens };
   }
   const dom = parseHtml(source, { comment: true });
   const css: CssBlock[] = [];
@@ -79,7 +79,7 @@ export function buildContext(file: string, source: string, type: FileType): File
     const block = parseCss(inlineSrc, nodeLine(source, el));
     if (block) css.push(block);
   }
-  return { file, type, source, dom, css, vars: collectVars(css, dom) };
+  return { file, type, source, dom, css, vars: collectVars(css, dom), tokens };
 }
 
 /** 1-based line of an HTML element in the original source (best effort). */

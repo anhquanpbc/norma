@@ -103,7 +103,7 @@ Not compliance failures, but they erase brand distinctiveness and often *induce*
 - **a11y.focus-no-reshape** — a `:focus`/`:focus-visible` rule repaints only (`outline`/`box-shadow`/`border-color`); never change `border-radius`/`border-width`/`width`/`height`/`padding` on focus — reshaping the control on focus snaps the corners, shifts layout, and reads as a doubled outer border (WCAG 2.4.13).
 - **Dead controls** — no CTAs wired to nothing; every control does what it says.
 - **Dark-by-default** — dark mode is a theme, not a default; no glow-edged dark cards as a premium shortcut.
-- **tokens.color-only / tokens.spacing-scale** — no raw hex, no off-scale px; snap to the 8px scale.
+- **tokens.color-only / tokens.token-binding / tokens.spacing-scale** — colour comes from tokens (no raw hex; and no value that literally duplicates a defined token — reference it, with `--tokens`), spacing snaps to the 8px scale.
 - **perf.img-dimensions** — set `width`/`height` (or `aspect-ratio`) on every `<img>` to prevent CLS.
 - **responsive.viewport-meta** — full documents include `<meta name="viewport" content="width=device-width, initial-scale=1">`.
 - **a11y.heading-order** — never skip a heading level (`h2 → h4`); descend one at a time so the screen-reader outline stays correct (WCAG 1.3.1, axe best-practice).
@@ -146,7 +146,7 @@ Not compliance failures, but they erase brand distinctiveness and often *induce*
 npx norma-design-lint "**/*.{html,css}"     # gate SPEC violations; exits non-zero on error-severity
 ```
 
-## Rule index (generated from standard/rules.json v1.8.1)
+## Rule index (generated from standard/rules.json v1.9.0)
 
 - 🔒 SPEC `color.contrast.text` (error) — Body text contrast >= 4.5:1 · [WCAG 2.2 SC 1.4.3 Contrast (Minimum)](https://www.w3.org/TR/WCAG22/#contrast-minimum)
 - 🔒 SPEC `color.contrast.large-ui` (error) — Large text & UI contrast >= 3:1 · [WCAG 2.2 SC 1.4.3 / 1.4.11 Non-text Contrast](https://www.w3.org/TR/WCAG22/#non-text-contrast)
@@ -172,6 +172,7 @@ npx norma-design-lint "**/*.{html,css}"     # gate SPEC violations; exits non-ze
 - 🔒 SPEC `i18n.inline-lang` (warn · manual, agent-verified) — Inline foreign-language runs carry lang · [WCAG 2.2 SC 3.1.2 Language of Parts](https://www.w3.org/TR/WCAG22/#language-of-parts)
 - 📐 CONV `theme.color-scheme` (warn) — Declare color-scheme · [W3C CSS Color Adjustment Module L1](https://www.w3.org/TR/css-color-adjust-1/)
 - 📐 CONV `tokens.color-only` (warn) — Color comes from tokens, not raw hex · Norma §1 Design Tokens
+- 📐 CONV `tokens.token-binding` (warn) — No hard-coded token values · Norma §1 Design Tokens
 - 📐 CONV `tokens.spacing-scale` (off · manual, agent-verified) — Spacing snaps to the 8px scale · Norma §2 Spacing & Grid
 - 📐 CONV `antipattern.indigo-default` (warn) — No default indigo/purple gradient · [Norma §14 AI-era Anti-patterns (TELL); Adam Wathan's 2025 indigo apology](https://x.com/adamwathan/status/1953510802159219096)
 - 📐 CONV `antipattern.pure-dark-mode` (warn) — No pure #000/#fff dark mode · Norma §14 AI-era Anti-patterns (TELL)

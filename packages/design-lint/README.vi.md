@@ -30,6 +30,7 @@ trên PR và danh sách alert ở tab Security (xem [`examples/ci-recipe.yml`](h
 | `--lang <en\|vi>` | Ngôn ngữ thông báo (mặc định `en`, hoặc `NORMA_LANG`). |
 | `--config <path>` | File cấu hình (mặc định `.normarc.json` nếu có). |
 | `--rules <path>` | Đường dẫn catalog rule (mặc định: `standard/rules.json` đóng kèm). |
+| `--tokens <path>` | File token DTCG → bật **token-binding**: cờ một giá trị CSS thô trùng khít token đã định nghĩa (ví dụ `oklch(…)` hard-code bằng `color.brand.azure`) và trỏ tới token. Bản này chỉ xét màu; vô hiệu nếu không có cờ này. |
 | `--quiet` | Chỉ báo lỗi. |
 | `--max-warnings <n>` | Exit khác 0 nếu số cảnh báo vượt `n` (để CI gate cả rule mức warn, không chỉ error). |
 | `--fix` | Tự sửa các rule xác định ngay tại chỗ, rồi lint phần còn lại. |

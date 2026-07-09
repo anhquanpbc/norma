@@ -30,6 +30,7 @@ for PR annotations and a Security-tab alert list (see [`examples/ci-recipe.yml`]
 | `--lang <en\|vi>` | Message language (default `en`, or `NORMA_LANG`). |
 | `--config <path>` | Config file (default `.normarc.json` if present). |
 | `--rules <path>` | Rule catalog path (default: bundled `standard/rules.json`). |
+| `--tokens <path>` | DTCG token file → enable **token-binding**: flag a raw CSS value that literally duplicates a defined token (e.g. a hard-coded `oklch(…)` equal to `color.brand.azure`) and point at the token. Color-only for now; inert without this flag. |
 | `--quiet` | Only report errors. |
 | `--max-warnings <n>` | Exit non-zero if warnings exceed `n` (so CI can gate warn-severity rules, not just errors). |
 | `--fix` | Auto-fix the deterministic rules in place, then lint the rest. |

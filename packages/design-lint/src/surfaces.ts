@@ -44,6 +44,7 @@ export const SURFACE_BY_CHECK: Record<string, Surface[]> = {
   focusForcedColors: ["css"],
   focusReshape: ["css"],
   zindexScale: ["css"],
+  tokenBinding: ["css"],
   containerQuery: ["css"],
   iframeTitle: ["html"],
   tableHeaders: ["html"],

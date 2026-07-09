@@ -1,6 +1,6 @@
 {
   "$generated": "Do not edit. Generated from standard/rules.yaml by scripts/build-rules.ts.",
-  "version": "1.8.1",
+  "version": "1.9.0",
   "rules": [
     {
       "id": "color.contrast.text",
@@ -558,6 +558,29 @@
       "remediation": {
         "en": "Reference a CSS custom property / token instead of a literal color.",
         "vi": "Tham chiếu CSS custom property / token thay vì màu cố định."
+      }
+    },
+    {
+      "id": "tokens.token-binding",
+      "title": {
+        "en": "No hard-coded token values",
+        "vi": "Không hard-code giá trị token"
+      },
+      "domain": "tokens",
+      "tag": "CONV",
+      "severity": "warn",
+      "source": "Norma §1 Design Tokens",
+      "source_url": "",
+      "rationale": {
+        "en": "A raw CSS value that exactly duplicates a defined design token (e.g. a hard-coded oklch equal to color.brand.azure) silently drifts — the token can change and the copy won't. Reference the token instead. Requires a token file (--tokens / .normarc `tokens`); inert otherwise. Color-only in this release.",
+        "vi": "Một giá trị CSS thô trùng khít với token đã định nghĩa (ví dụ oklch hard-code bằng color.brand.azure) sẽ âm thầm lệch — token đổi mà bản sao thì không. Hãy tham chiếu token. Cần file token (--tokens / .normarc `tokens`); nếu không thì vô hiệu. Bản này chỉ xét màu."
+      },
+      "check": {
+        "type": "tokenBinding"
+      },
+      "remediation": {
+        "en": "Reference the token (a CSS custom property) instead of copying its value.",
+        "vi": "Tham chiếu token (một CSS custom property) thay vì sao chép giá trị."
       }
     },
     {

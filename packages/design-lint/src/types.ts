@@ -44,6 +44,9 @@ export interface FileContext {
   css: CssBlock[];
   /** All CSS custom properties declared anywhere in the file: name -> raw value. */
   vars: Map<string, string>;
+  /** Concrete color-token value → dotted token path, for the token-binding check. Only set when a token
+   *  file is supplied (--tokens / .normarc `tokens`); otherwise the check is inert. */
+  tokens?: Map<string, string>;
 }
 
 /** A check receives the file context and the active rules that use its check.type. */
