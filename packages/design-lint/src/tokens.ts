@@ -203,3 +203,37 @@ function validateMeasure(path: string, value: unknown, units: Set<string>, label
     err(join(path, "$value.unit"), `${label} .unit must be one of ${[...units].join("/")}, got ${JSON.stringify(value.unit)}`);
   }
 }
+
+/**
+ * Normalize a CSS color literal for exact-duplication comparison: lowercase, collapse whitespace, and
+ * drop spaces around ( ) , / so `oklch( 0.58  0.16 252 )` and `oklch(0.58 0.16 252)` compare equal.
+ */
+export const normColor = (s: string): string =>
+  s.toLowerCase().replace(/\s+/g, " ").replace(/\s*([(),/])\s*/g, "$1").trim();
+
+/**
+ * Map each CONCRETE (non-alias) color token's normalized value → its dotted path, for the token-binding
+ * check (which flags a raw CSS color that literally duplicates a defined token). Aliases are skipped —
+ * they reference another token, not a raw value. Depth-capped for the same reason validateTokens is.
+ */
+export function colorTokenIndex(doc: unknown): Map<string, string> {
+  const index = new Map<string, string>();
+  if (!isObject(doc)) return index;
+  const walk = (node: Record<string, unknown>, path: string[], inheritedType: string | undefined, depth: number): void => {
+    if (depth > MAX_DEPTH) return;
+    const type = typeof node.$type === "string" ? node.$type : inheritedType;
+    if ("$value" in node) {
+      if (type === "color" && typeof node.$value === "string" && !isAlias(node.$value)) {
+        const key = normColor(node.$value);
+        if (!index.has(key)) index.set(key, path.join("."));
+      }
+      return;
+    }
+    for (const [k, child] of Object.entries(node)) {
+      if (k.startsWith("$")) continue;
+      if (isObject(child)) walk(child, [...path, k], type, depth + 1);
+    }
+  };
+  walk(doc, [], undefined, 0);
+  return index;
+}

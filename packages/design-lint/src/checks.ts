@@ -3,6 +3,7 @@ import type { HTMLElement } from "node-html-parser";
 import type { Check, CssBlock, FileContext, Finding, Rule } from "./types.js";
 import { contrastRatio, resolveVar } from "./color.js";
 import { elementLine } from "./parse.js";
+import { normColor } from "./tokens.js";
 
 // ---------- helpers ----------
 const cssLine = (block: CssBlock, node: { source?: { start?: { line: number } } }): number =>
@@ -665,6 +666,40 @@ const colorTokenOnly: Check = (ctx, rules) => {
   return out;
 };
 
+// A color literal anywhere in a declaration value (oklch() covers the Norma token format; hex too).
+const COLOR_LITERAL = /oklch\([^)]*\)|#[0-9a-f]{3,8}\b/gi;
+
+// Blank string literals and url(...) (SVG fragment refs, data: URIs) — length-preserving — so a hex/oklch
+// that lives inside `content:"…"` or `url(#id)` isn't mistaken for a colour usage: it isn't one, and there
+// is no token to reference there. This also covers `fill: url(#id)` where a property allow-list could not.
+const maskNonColor = (value: string): string =>
+  value.replace(/"[^"]*"|'[^']*'/g, (m) => " ".repeat(m.length)).replace(/url\([^)]*\)/gi, (m) => " ".repeat(m.length));
+
+// token-binding: flag a raw CSS color that LITERALLY duplicates a defined color token's value, and point
+// at the token by path. Inert unless a token file was supplied (ctx.tokens). Skips custom-property
+// declarations (a `--x: <color>` is the token definition, not a usage) and var() (already a reference).
+const tokenBinding: Check = (ctx, rules) => {
+  const map = ctx.tokens;
+  if (!map || !map.size) return [];
+  const r = rules[0];
+  const out: Finding[] = [];
+  for (const block of ctx.css) {
+    block.root.walkDecls((d) => {
+      if (d.prop.startsWith("--")) return;
+      const parent = d.parent;
+      if (parent && parent.type === "rule" && ruleDisabled(parent as PostcssRule, r.id)) return;
+      for (const m of maskNonColor(d.value).matchAll(COLOR_LITERAL)) {
+        const path = map.get(normColor(m[0]));
+        if (!path) continue;
+        out.push(mk(ctx, r, cssLine(block, d),
+          `Hard-coded color "${m[0]}" duplicates token ${path} — reference the token instead of copying its value.`,
+          `Màu hard-code "${m[0]}" trùng token ${path} — hãy tham chiếu token thay vì sao chép giá trị.`));
+      }
+    });
+  }
+  return out;
+};
+
 // ---------- AI-tell markup/style checks ----------
 const deadHref: Check = (ctx, rules) => {
   if (!ctx.dom) return [];
@@ -1114,7 +1149,7 @@ const listStructure: Check = (ctx, rules) => {
 
 export const CHECKS: Record<string, Check> = {
   contrast, focusRing, reducedMotion, forbiddenValue, formLabel, semanticControl, emojiIcon, imgDimensions, imgAlt, targetSize,
-  headingOrder, htmlLang, logicalProperties, colorScheme, colorTokenOnly, externalRel, sri,
+  headingOrder, htmlLang, logicalProperties, colorScheme, colorTokenOnly, tokenBinding, externalRel, sri,
   metaViewport, viewportPresence, controlName, deadHref, gradientText, positiveTabindex, langValid,
   landmarkMain, singleH1, fieldsetGroup, genericLinkText, focusForcedColors, focusReshape, zindexScale, containerQuery,
   iframeTitle, tableHeaders, duplicateIdRefs, viewportFit,

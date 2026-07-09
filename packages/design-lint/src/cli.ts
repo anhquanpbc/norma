@@ -18,6 +18,7 @@ Options:
   --lang <en|vi>                  message language (default: en, or NORMA_LANG)
   --config <path>                 config file (default: .normarc.json if present)
   --rules <path>                  rule catalog path (default: bundled standard/rules.json)
+  --tokens <path>                 DTCG token file → enable token-binding (flag raw values duplicating a token)
   --quiet                         only report errors
   --max-warnings <n>              exit non-zero if warnings exceed n (default: unlimited)
   --fix                           auto-fix the deterministic rules in place, then lint the rest
@@ -31,7 +32,7 @@ Subcommands:
 
 Exit code is non-zero when any error-severity finding is present (or warnings exceed --max-warnings).`;
 
-interface Config { lang?: Lang; rules?: Record<string, Severity>; }
+interface Config { lang?: Lang; rules?: Record<string, Severity>; tokens?: string; }
 
 // Never descend into vendored / build output — linting node_modules CSS the team can't fix
 // (or, worse, silently linting a directory as zero files) is the #1 first-run footgun.
@@ -136,7 +137,7 @@ function main(argv: string[]): number {
     }
   }
 
-  const flagVals = new Set(["--format", "--lang", "--config", "--rules", "--max-warnings", "--baseline"]);
+  const flagVals = new Set(["--format", "--lang", "--config", "--rules", "--max-warnings", "--baseline", "--tokens"]);
   const patterns = args.filter((a, i) => !a.startsWith("-") && !flagVals.has(args[i - 1]));
   const files = expand(patterns.length ? patterns : ["**/*.{html,htm,css,jsx,tsx,vue,svelte}"]);
 
@@ -157,7 +158,7 @@ function main(argv: string[]): number {
     console.error(lang === "vi" ? `✓ Đã tự sửa ${totalFixed} vấn đề.` : `✓ Auto-fixed ${totalFixed} issue(s).`);
   }
 
-  let res = lintFiles(files, { rulesPath, overrides: config.rules });
+  let res = lintFiles(files, { rulesPath, overrides: config.rules, tokensPath: opt("--tokens") ?? config.tokens });
 
   // --baseline ratchet: snapshot or suppress known findings by fingerprint, so a team can adopt Norma on
   // an existing codebase and fail only on NEW design debt (not the whole legacy backlog on run one).

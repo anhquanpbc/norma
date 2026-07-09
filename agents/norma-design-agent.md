@@ -103,7 +103,7 @@ Not compliance failures, but they erase brand distinctiveness and often *induce*
 - **a11y.focus-no-reshape** — a `:focus`/`:focus-visible` rule repaints only (`outline`/`box-shadow`/`border-color`); never change `border-radius`/`border-width`/`width`/`height`/`padding` on focus — reshaping the control on focus snaps the corners, shifts layout, and reads as a doubled outer border (WCAG 2.4.13).
 - **Dead controls** — no CTAs wired to nothing; every control does what it says.
 - **Dark-by-default** — dark mode is a theme, not a default; no glow-edged dark cards as a premium shortcut.
-- **tokens.color-only / tokens.spacing-scale** — no raw hex, no off-scale px; snap to the 8px scale.
+- **tokens.color-only / tokens.token-binding / tokens.spacing-scale** — colour comes from tokens (no raw hex; and no value that literally duplicates a defined token — reference it, with `--tokens`), spacing snaps to the 8px scale.
 - **perf.img-dimensions** — set `width`/`height` (or `aspect-ratio`) on every `<img>` to prevent CLS.
 - **responsive.viewport-meta** — full documents include `<meta name="viewport" content="width=device-width, initial-scale=1">`.
 - **a11y.heading-order** — never skip a heading level (`h2 → h4`); descend one at a time so the screen-reader outline stays correct (WCAG 1.3.1, axe best-practice).

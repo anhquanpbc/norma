@@ -6,16 +6,30 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+## [1.13.0] — 2026-07-09 · CLI
+
 ### Added
 
-- **Compiled `standard/tokens.css` (Phase 2 GEN1).** A generated CSS custom-property view of the DTCG
-  design tokens (`scripts/gen-tokens-css.ts`, wired into `npm run gen` and the `check:drift` guard),
-  closing the "never compiled" gap. The custom-property name is `--` + the DTCG token path (e.g.
-  `z.modal` → `--z-modal`, matching the z-index ladder's convention); aliases become `var()` references
-  and the dark ramp is available as `--color-dark-*`. A ~60-line zero-dependency emitter — deliberately
-  **not** Style Dictionary — that also establishes the canonical token→var naming the upcoming
-  token-binding checks (E2) will enforce. `index.html` still hand-writes its own vars; wiring the site to
-  consume `tokens.css` is a separate change.
+- **`--tokens <path>` — token-binding (Phase 2 E2).** Given a DTCG token file, the new `tokenBinding` check
+  flags a raw CSS value that **literally duplicates** a defined token (e.g. a hard-coded `oklch(…)` equal to
+  `color.brand.azure`) and names the token to reference — the first check to make `tokens.tokens.json`
+  **load-bearing for enforcement** (nothing read it at lint time before). Color-only for now, exact-value
+  (whitespace-normalized), skips `var()` and custom-property *definitions*, respects `norma-disable`, and is
+  inert without `--tokens`. Also readable from a `.normarc` `tokens` field, and `lintFiles({ tokensPath })`
+  on the API. Loads the token file once, warning (via `validateTokens`) if it isn't valid DTCG.
+
+## [1.9.0] — 2026-07-09 · standard
+
+### Added
+
+- **Rule `tokens.token-binding` (CONV/warn).** No raw CSS value that duplicates a defined design token —
+  the standard side of the token-binding check above. Catalog **52 → 53** rules.
+- **Compiled `standard/tokens.css` (GEN1).** A generated CSS custom-property view of the DTCG tokens
+  (`scripts/gen-tokens-css.ts`, wired into `npm run gen` + the `check:drift` guard), closing the "never
+  compiled" gap. Var name = `--` + the DTCG token path (`z.modal` → `--z-modal`); aliases → `var()`
+  references; the dark ramp is `--color-dark-*`. A ~60-line zero-dependency emitter — deliberately **not**
+  Style Dictionary — that establishes the canonical token→var naming. `index.html` still hand-writes its
+  own vars; wiring the site to consume `tokens.css` is a separate change.
 
 ## [1.12.0] — 2026-07-09 · CLI
 
