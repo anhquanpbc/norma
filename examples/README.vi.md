@@ -38,7 +38,7 @@ error-severity. Hoặc dùng action tái sử dụng từ gốc repo:
 ```yaml
 - uses: anhquanpbc/norma@v1
   with:
-    globs: "src/**/*.{html,htm,css}"
+    globs: "src/**/*.{html,htm,css,jsx,tsx,vue,svelte}"
     lang: vi          # hoặc en
     format: stylish   # hoặc json | sarif
 ```

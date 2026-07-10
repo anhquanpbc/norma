@@ -8,6 +8,14 @@ All notable changes to this project are documented here. The format is based on
 
 ### Changed
 
+- **The reusable GitHub Action's default `globs` now includes components.** `action.yml`'s default changed
+  from `**/*.{html,htm,css}` to `**/*.{html,htm,css,jsx,tsx,vue,svelte}`, matching the CLI's own default —
+  so `uses: anhquanpbc/norma@v1` with no explicit `globs` no longer silently skips JSX/TSX/Vue/Svelte
+  components (a false green for component apps). This is a behavior change to the `@v1` action: a project
+  that relied on the default and has design tells in its components (e.g. a `<div onClick>`) may see new
+  findings — that's the point; adopt on existing debt with `--baseline`. (Not an npm/CLI change — `action.yml`
+  ships in the repo, not the package; it reaches consumers when the `v1` tag advances to include it.)
+
 - **index.html now consumes the generated token variable names.** The reference site's design tokens were
   renamed from ad-hoc short names (`--azure`, `--s-1`, `--t-0`) to the `standard/tokens.css` names
   (`--color-brand-azure`, `--space-1`, `--font-scale-0`) — a mechanical, **value-preserving** rename (321

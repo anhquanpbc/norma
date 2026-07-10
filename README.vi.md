@@ -65,7 +65,7 @@ checkout, nên không cần cài gì và luật được ghim theo đúng phiên
 # .github/workflows/design-lint.yml
 - uses: actions/checkout@v4
 - uses: anhquanpbc/norma@v1
-  with: { globs: "src/**/*.{html,htm,css}" }   # lang: en|vi · format: stylish|json|sarif
+  with: { globs: "src/**/*.{html,htm,css,jsx,tsx,vue,svelte}" }   # lang: en|vi · format: stylish|json|sarif
 ```
 
 Workflow sẵn-để-copy ở [`examples/ci-recipe.yml`](examples/ci-recipe.yml).

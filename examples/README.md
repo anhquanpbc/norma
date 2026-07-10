@@ -52,7 +52,7 @@ finding. Or use the reusable action from the repo root:
 ```yaml
 - uses: anhquanpbc/norma@v1
   with:
-    globs: "src/**/*.{html,htm,css}"
+    globs: "src/**/*.{html,htm,css,jsx,tsx,vue,svelte}"
     lang: en          # or vi
     format: stylish   # or json | sarif
 ```
