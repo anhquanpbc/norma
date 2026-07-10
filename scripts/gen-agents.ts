@@ -122,6 +122,20 @@ This repository defines the **Norma** web design standard. Any agent editing UI 
 that adopts Norma) must follow the rules below. The authoritative catalog is \`standard/rules.json\`
 (compiled from \`standard/rules.yaml\`); design tokens are in \`standard/tokens.tokens.json\`.
 
+## The six pillars
+
+Norma is comprehensive *control* over design quality — the rules below are enforced by real tooling, so
+you can (and should) self-check your output with the linter:
+
+| Pillar | What it does | How Norma ships it |
+|--------|--------------|--------------------|
+| **Define** | one source of truth | \`standard/rules.yaml\` + DTCG tokens (\`tokens.tokens.json\`) |
+| **Enforce** | fail the build on violations | the \`norma-design-lint\` CLI + Stylelint (\`norma-design-lint/stylelint\`) & ESLint (\`norma-design-lint/eslint\`) plugins |
+| **Generate** | derive every consumer artifact | these agent rule files, a zero-dependency MCP server, and compiled CSS vars (\`standard/tokens.css\`) |
+| **Govern** | deliver findings where teams work | enriched SARIF 2.1.0 → GitHub code scanning |
+| **Sync** | adopt & stay in step, no drift | a \`--baseline\` ratchet, a DTCG token validator (\`tokens validate\`), and anti-drift guards |
+| **Measure** | see the state of each run | a Markdown run summary (\`--format markdown\`) + code-scanning trends |
+
 ${body}
 
 ${ruleIndex()}
