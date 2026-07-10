@@ -74,6 +74,15 @@ describe("a11y.reduced-motion", () => {
     const f = lint(`.x{ transition: all .3s ease; }\n@media (prefers-reduced-motion: reduce){ .x{ transition:none } }`, "css");
     expect(ids(f)).not.toContain("a11y.reduced-motion");
   });
+  it("flags scroll-behavior:smooth with no reduced-motion block", () => {
+    expect(ids(lint(`html{ scroll-behavior:smooth }`, "css"))).toContain("a11y.reduced-motion");
+  });
+  it("passes scroll-behavior:smooth when guarded", () => {
+    expect(ids(lint(`html{ scroll-behavior:smooth }\n@media (prefers-reduced-motion: reduce){ html{ scroll-behavior:auto } }`, "css"))).not.toContain("a11y.reduced-motion");
+  });
+  it("does not flag scroll-behavior:auto (no motion, not a trigger)", () => {
+    expect(ids(lint(`html{ scroll-behavior:auto }`, "css"))).not.toContain("a11y.reduced-motion");
+  });
 });
 
 describe("color.contrast", () => {

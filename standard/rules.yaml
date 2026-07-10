@@ -16,7 +16,7 @@
 #   rationale   { en, vi } why the rule exists.
 #   check       machine assertion consumed by norma-design-lint. type: manual = agent-only, not auto-checked.
 #   remediation { en, vi } how to fix.
-version: "1.11.0"
+version: "1.12.0"
 rules:
   - id: color.contrast.text
     title: { en: "Body text contrast >= 4.5:1", vi: "Tương phản chữ thân >= 4.5:1" }
@@ -96,13 +96,13 @@ rules:
     source: "WCAG 2.2 SC 2.3.3 Animation from Interactions"
     source_url: "https://www.w3.org/TR/WCAG22/#animation-from-interactions"
     rationale:
-      en: "Any file that animates must provide an @media (prefers-reduced-motion: reduce) block that neutralizes non-essential motion."
-      vi: "File nào có animation phải có khối @media (prefers-reduced-motion: reduce) vô hiệu hoá chuyển động không thiết yếu."
+      en: "Any file with non-essential motion — CSS animation/transition, or scroll-behavior: smooth — must provide an @media (prefers-reduced-motion: reduce) block that neutralizes it."
+      vi: "File có chuyển động không thiết yếu — animation/transition CSS, hoặc scroll-behavior: smooth — phải có khối @media (prefers-reduced-motion: reduce) vô hiệu hoá nó."
     check:
       type: reducedMotion
     remediation:
-      en: "Add @media (prefers-reduced-motion: reduce) { *{ animation-duration:.001ms!important; transition-duration:.001ms!important } }."
-      vi: "Thêm @media (prefers-reduced-motion: reduce) { *{ animation-duration:.001ms!important; transition-duration:.001ms!important } }."
+      en: "Add @media (prefers-reduced-motion: reduce) { *{ animation-duration:.001ms!important; transition-duration:.001ms!important } html{ scroll-behavior:auto } } — the scroll-behavior:auto reset is what actually stops smooth scrolling for reduced-motion users."
+      vi: "Thêm @media (prefers-reduced-motion: reduce) { *{ animation-duration:.001ms!important; transition-duration:.001ms!important } html{ scroll-behavior:auto } } — phần reset scroll-behavior:auto mới thực sự dừng cuộn mượt cho người dùng reduced-motion."
 
   - id: a11y.form-label
     title: { en: "Every input has a real label", vi: "Mọi input có nhãn thật" }

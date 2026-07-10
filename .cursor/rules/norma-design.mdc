@@ -147,7 +147,7 @@ Not compliance failures, but they erase brand distinctiveness and often *induce*
 npx norma-design-lint "**/*.{html,css}"     # gate SPEC violations; exits non-zero on error-severity
 ```
 
-## Rule index (generated from standard/rules.json v1.11.0)
+## Rule index (generated from standard/rules.json v1.12.0)
 
 - 🔒 SPEC `color.contrast.text` (error) — Body text contrast >= 4.5:1 · [WCAG 2.2 SC 1.4.3 Contrast (Minimum)](https://www.w3.org/TR/WCAG22/#contrast-minimum)
 - 🔒 SPEC `color.contrast.large-ui` (error) — Large text & UI contrast >= 3:1 · [WCAG 2.2 SC 1.4.3 / 1.4.11 Non-text Contrast](https://www.w3.org/TR/WCAG22/#non-text-contrast)
