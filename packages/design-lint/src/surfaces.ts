@@ -18,6 +18,7 @@ export const SURFACE_BY_CHECK: Record<string, Surface[]> = {
   forbiddenValue: ["css"], // antipattern.indigo-default + antipattern.pure-dark-mode
   colorTokenOnly: ["css"],
   logicalProperties: ["css"],
+  viewportUnits: ["css"],
   colorScheme: ["css"],
   spacingScale: ["css"],
   formLabel: ["html"],

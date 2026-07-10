@@ -16,7 +16,7 @@
 #   rationale   { en, vi } why the rule exists.
 #   check       machine assertion consumed by norma-design-lint. type: manual = agent-only, not auto-checked.
 #   remediation { en, vi } how to fix.
-version: "1.12.0"
+version: "1.13.0"
 rules:
   - id: color.contrast.text
     title: { en: "Body text contrast >= 4.5:1", vi: "Tương phản chữ thân >= 4.5:1" }
@@ -345,6 +345,22 @@ rules:
     remediation:
       en: "Replace margin/padding/border-left/right with *-inline-start/end; text-align:left/right with start/end; float:left/right with inline-start/end."
       vi: "Thay margin/padding/border-left/right bằng *-inline-start/end; text-align:left/right bằng start/end; float:left/right bằng inline-start/end."
+
+  - id: responsive.viewport-units
+    title: { en: "Use dvh/svh, not 100vh, for full height", vi: "Dùng dvh/svh, không 100vh, cho chiều cao đầy" }
+    domain: responsive
+    tag: CONV
+    severity: warn
+    source: "web.dev — The large, small, and dynamic viewport units; CSS Values 4"
+    source_url: "https://web.dev/blog/viewport-units"
+    rationale:
+      en: "height/min-height:100vh overflows on mobile — 100vh equals the LARGEST viewport, so the collapsing URL bar hides the bottom of the layout. dvh resizes with the browser chrome; svh is the guaranteed-visible small viewport."
+      vi: "height/min-height:100vh tràn trên mobile — 100vh bằng viewport LỚN NHẤT, nên thanh URL thu lại che mất phần dưới. dvh co giãn theo thanh trình duyệt; svh là viewport nhỏ chắc chắn thấy."
+    check:
+      type: viewportUnits
+    remediation:
+      en: "Replace 100vh with 100dvh (dynamic) for full-height layouts, or 100svh when content must stay visible; reserve lvh for rare cases."
+      vi: "Thay 100vh bằng 100dvh (động) cho bố cục cao đầy, hoặc 100svh khi nội dung phải luôn thấy; lvh chỉ dùng hiếm."
 
   - id: i18n.lang-valid
     title: { en: "lang is a well-formed BCP-47 tag", vi: "lang là thẻ BCP-47 hợp lệ" }

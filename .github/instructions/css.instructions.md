@@ -15,6 +15,7 @@ Use tokens from `standard/tokens.tokens.json`. Color and spacing come from token
 - 🔒 SPEC `a11y.focus-ring-single` (error) — Visible focus indicator (never removed) · [WCAG 2.2 SC 2.4.7 Focus Visible](https://www.w3.org/TR/WCAG22/#focus-visible)
 - 🔒 SPEC `a11y.reduced-motion` (error) — Honor prefers-reduced-motion · [WCAG 2.2 SC 2.3.3 Animation from Interactions](https://www.w3.org/TR/WCAG22/#animation-from-interactions)
 - 📐 CONV `i18n.logical-properties` (warn) — Use logical (inline/block) CSS properties · [W3C CSS Logical Properties and Values L1](https://www.w3.org/TR/css-logical-1/)
+- 📐 CONV `responsive.viewport-units` (warn) — Use dvh/svh, not 100vh, for full height · [web.dev — The large, small, and dynamic viewport units; CSS Values 4](https://web.dev/blog/viewport-units)
 - 📐 CONV `theme.color-scheme` (warn) — Declare color-scheme · [W3C CSS Color Adjustment Module L1](https://www.w3.org/TR/css-color-adjust-1/)
 - 📐 CONV `tokens.color-only` (warn) — Color comes from tokens, not raw hex · Norma §1 Design Tokens
 - 📐 CONV `tokens.token-binding` (warn) — No hard-coded token values · Norma §1 Design Tokens
