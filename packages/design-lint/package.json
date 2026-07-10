@@ -1,6 +1,6 @@
 {
   "name": "norma-design-lint",
-  "version": "1.18.0",
+  "version": "1.19.0",
   "description": "Lint HTML/CSS against the Norma web design standard — contrast, focus rings, semantic HTML, labels, reduced-motion, and the common AI-generated design tells.",
   "type": "module",
   "license": "MIT",
@@ -19,7 +19,9 @@
     "design-tokens",
     "ai",
     "css",
-    "html"
+    "html",
+    "stylelint",
+    "eslint"
   ],
   "bin": {
     "norma-design-lint": "dist/cli.js",

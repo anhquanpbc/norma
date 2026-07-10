@@ -16,6 +16,19 @@ All notable changes to this project are documented here. The format is based on
   `check:drift` guard (item 10) asserts every token-derived `:root` value equals `standard/tokens.css`, so
   the site's tokens can no longer drift from the standard. Closes the deferred GEN1 site-rewire.
 
+## [1.19.0] — 2026-07-10 · CLI
+
+### Added
+
+- **The generated AI-agent rule files now ship inside the package (Direction C: adoption).** `npm i
+  norma-design-lint` now includes the per-tool rule files under
+  `node_modules/norma-design-lint/dist/agents/` — `AGENTS.md` plus the Claude Code / Cursor / Copilot rule
+  files — so you no longer have to clone the repo to wire up your agent: copy the one for your tool (see the
+  README table). `CLAUDE.md` is intentionally not bundled (it's this repo's own project memory, not an
+  adopter template). A single `agent-files.mjs` manifest is the source of truth for the bundle.
+- **`stylelint` / `eslint` keywords** so the bundled plugins (`norma-design-lint/stylelint`,
+  `norma-design-lint/eslint`) are discoverable on npm.
+
 ## [1.18.0] — 2026-07-10 · CLI
 
 ### Added
