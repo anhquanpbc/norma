@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 import { readFileSync, writeFileSync, existsSync, statSync, globSync } from "node:fs";
-import { extname, join } from "node:path";
+import { dirname, extname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { isMainModule } from "./is-main.js";
+import { scaffold } from "./init.js";
 import { lintFiles, loadRules, fixSource, validateTokens } from "./index.js";
 import { fingerprints, splitByBaseline } from "./fingerprint.js";
 import { stylish, json, sarif, markdown, type Lang } from "./formatters.js";
@@ -29,6 +31,7 @@ Options:
 
 Subcommands:
   tokens validate <file.json>     validate a DTCG token file (Norma profile: DTCG structure + oklch color)
+  init [--force]                  scaffold .normarc.json + a CI workflow + AGENTS.md (skips existing files)
 
 Exit code is non-zero when any error-severity finding is present (or warnings exceed --max-warnings).`;
 
@@ -92,10 +95,27 @@ function runTokens(rest: string[]): number {
   return 1;
 }
 
+// `norma-design-lint init` — scaffold a project to adopt Norma: a .normarc.json, a CI workflow, and the
+// vendor-neutral AGENTS.md rule file (copied from the bundled dist/agents). Non-interactive; existing files
+// are skipped unless --force. Dispatched before the flat lint parser so `init` isn't mistaken for a glob.
+function runInit(rest: string[]): number {
+  const force = rest.includes("--force");
+  const agentsDir = join(dirname(fileURLToPath(import.meta.url)), "..", "dist", "agents");
+  const { written, skipped } = scaffold({ cwd: process.cwd(), agentsDir, force });
+  for (const f of written) console.log(`  ✓ ${f}`);
+  for (const f of skipped) console.log(`  • ${f} (exists — use --force to overwrite)`);
+  console.log(written.length
+    ? `\n✓ Scaffolded ${written.length} file(s). Commit them, then run \`npx norma-design-lint\`.`
+    : `\nAll target files already exist — nothing written (use --force to overwrite).`);
+  if (existsSync(agentsDir)) console.log(`  Rule files for other AI tools (Claude Code, Cursor, Copilot) are in ${agentsDir}`);
+  return 0;
+}
+
 function main(argv: string[]): number {
   const args = argv.slice(2);
   if (args.includes("-h") || args.includes("--help")) { console.log(HELP); return 0; }
   if (args[0] === "tokens") return runTokens(args.slice(1));
+  if (args[0] === "init") return runInit(args.slice(1));
 
   const opt = (name: string): string | undefined => {
     const i = args.indexOf(name);
