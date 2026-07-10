@@ -47,7 +47,8 @@ to `#main`), `a11y.single-h1` (one `<h1>`), `forms.fieldset-group`
 `a11y.table-headers` (data tables have `<th>`), `a11y.duplicate-id-refs` (a label/aria-referenced id is unique),
 `responsive.viewport-fit` (`env(safe-area-inset-*)` needs `viewport-fit=cover`, else it's inert),
 `a11y.document-title` (a non-empty `<title>`), `seo.meta-description` (a `<meta name="description">`),
-`seo.canonical` (at most one `<link rel="canonical">`), `a11y.invalid-role` (`role` is a defined ARIA role),
+`seo.canonical` (at most one `<link rel="canonical">`), `seo.og-tags` (core Open Graph tags for link
+previews), `a11y.invalid-role` (`role` is a defined ARIA role),
 `a11y.nested-interactive` (no interactive element inside another), `a11y.list-structure` (`ul`/`ol` have
 only `<li>` children).
 

@@ -16,7 +16,7 @@
 #   rationale   { en, vi } why the rule exists.
 #   check       machine assertion consumed by norma-design-lint. type: manual = agent-only, not auto-checked.
 #   remediation { en, vi } how to fix.
-version: "1.10.0"
+version: "1.11.0"
 rules:
   - id: color.contrast.text
     title: { en: "Body text contrast >= 4.5:1", vi: "Tương phản chữ thân >= 4.5:1" }
@@ -764,6 +764,22 @@ rules:
     remediation:
       en: "Keep exactly one self-referencing <link rel=\"canonical\" href=\"<absolute-url>\"> per page."
       vi: "Giữ đúng một <link rel=\"canonical\" href=\"<url-tuyệt-đối>\"> tự trỏ mỗi trang."
+
+  - id: seo.og-tags
+    title: { en: "Open Graph tags for link previews", vi: "Thẻ Open Graph cho xem trước link" }
+    domain: a11y
+    tag: CONV
+    severity: warn
+    source: "The Open Graph protocol (ogp.me); social/chat link unfurling"
+    source_url: "https://ogp.me/"
+    rationale:
+      en: "With no Open Graph tags, a link shared to social or chat renders as a bare URL — no title, description, or preview image — costing click-through. The core set is og:title, og:url, og:image (~1200×630), plus og:type."
+      vi: "Không có thẻ Open Graph thì link chia sẻ lên mạng xã hội hay chat hiện dưới dạng URL trơ — không tiêu đề, mô tả hay ảnh xem trước — làm giảm click. Bộ cốt lõi là og:title, og:url, og:image (~1200×630), cùng og:type."
+    check:
+      type: ogTags
+    remediation:
+      en: "Add the core Open Graph meta tags (og:title, og:url, og:image, og:type) to <head>, plus twitter:card for X."
+      vi: "Thêm các thẻ Open Graph cốt lõi (og:title, og:url, og:image, og:type) vào <head>, cùng twitter:card cho X."
 
   - id: a11y.invalid-role
     title: { en: "role is a valid ARIA role", vi: "role là role ARIA hợp lệ" }

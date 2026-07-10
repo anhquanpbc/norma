@@ -16,6 +16,24 @@ All notable changes to this project are documented here. The format is based on
   `check:drift` guard (item 10) asserts every token-derived `:root` value equals `standard/tokens.css`, so
   the site's tokens can no longer drift from the standard. Closes the deferred GEN1 site-rewire.
 
+## [1.16.0] — 2026-07-10 · CLI
+
+### Added
+
+- **`seo.og-tags` — enforce Open Graph link-preview tags (Direction B: extend enforcement).** A full
+  document with no core Open Graph tags — none of `og:title` / `og:url` / `og:image` — now **warns**;
+  without them a link shared to social or chat renders as a bare URL with no title or preview image. The
+  check accepts `property="og:*"` or `name="og:*"` and passes as soon as **any one** core tag is present,
+  so false positives are near zero (a page that opted into OG is never nagged about which tags). Bundles
+  standard **1.11.0** (rule catalog 54 → 55).
+
+## [1.11.0] — 2026-07-10 · standard
+
+### Added
+
+- **Rule `seo.og-tags`** (domain `a11y`, 📐 CONV, `warn`) — The Open Graph protocol (ogp.me). Enforced by
+  the CLI as of 1.16.0 (see above). Catalog 54 → 55.
+
 ## [1.15.0] — 2026-07-10 · CLI
 
 ### Added

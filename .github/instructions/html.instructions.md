@@ -37,6 +37,7 @@ real `<label>`. Touch targets ≥ 24 CSS px. Set `width`/`height` on images. No 
 - 📐 CONV `a11y.document-title` (warn) — Every page has a descriptive <title> · [WCAG 2.2 SC 2.4.2 Page Titled (Level A); also the primary SEO title](https://www.w3.org/TR/WCAG22/#page-titled)
 - 📐 CONV `seo.meta-description` (warn) — Every page has a meta description · [Google Search Central — snippets & meta descriptions](https://developers.google.com/search/docs/appearance/snippet)
 - 📐 CONV `seo.canonical` (warn) — At most one canonical link · [Google Search Central — consolidate duplicate URLs (rel=canonical)](https://developers.google.com/search/docs/crawling-indexing/consolidate-duplicate-urls)
+- 📐 CONV `seo.og-tags` (warn) — Open Graph tags for link previews · [The Open Graph protocol (ogp.me); social/chat link unfurling](https://ogp.me/)
 - 📐 CONV `a11y.invalid-role` (warn) — role is a valid ARIA role · [WAI-ARIA 1.2 role definitions; axe aria-roles](https://www.w3.org/TR/wai-aria-1.2/#role_definitions)
 - 📐 CONV `a11y.nested-interactive` (warn) — No interactive element inside another · [WCAG 2.2 SC 4.1.2; HTML content model; axe nested-interactive](https://www.w3.org/TR/WCAG22/#name-role-value)
 - 📐 CONV `a11y.list-structure` (warn) — ul/ol have only <li> children · [HTML content model (ul/ol); WCAG 1.3.1; axe list](https://html.spec.whatwg.org/multipage/grouping-content.html#the-ul-element)
