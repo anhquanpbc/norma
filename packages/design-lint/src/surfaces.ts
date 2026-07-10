@@ -54,6 +54,7 @@ export const SURFACE_BY_CHECK: Record<string, Surface[]> = {
   documentTitle: ["html"],
   metaDescription: ["html"],
   canonicalUnique: ["html"],
+  ogTags: ["html"],
   invalidRole: ["html"],
   nestedInteractive: ["html"],
   listStructure: ["html"],

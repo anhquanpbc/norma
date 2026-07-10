@@ -1093,6 +1093,25 @@ const canonicalUnique: Check = (ctx, rules) => {
     `Tài liệu có ${canon.length} <link rel="canonical"> — máy tìm kiếm chỉ giữ một (thường là cái sai). Chỉ để đúng một.`)];
 };
 
+const OG_CORE = new Set(["og:title", "og:url", "og:image"]);
+const ogTags: Check = (ctx, rules) => {
+  if (!isFullDocument(ctx)) return [];
+  const r = rules[0];
+  // Open Graph uses property="og:*" (RDFa); some pages mistakenly use name="og:*" — accept either so a
+  // page that DID add OG isn't false-flagged. Flag only when NONE of the core three (og:title / og:url /
+  // og:image) is present: any OG means the page has opted in; total absence is what makes a shared link
+  // render as a bare URL. Values are ASCII case-insensitive.
+  const hasOg = ctx.dom!.querySelectorAll("meta").some((m) => {
+    if (!notInTemplate(m)) return false;
+    const key = ((m.getAttribute("property") ?? m.getAttribute("name")) ?? "").trim().toLowerCase();
+    return OG_CORE.has(key) && (m.getAttribute("content") ?? "").trim() !== ""; // empty content is not a real tag
+  });
+  if (hasOg) return [];
+  return [mk(ctx, r, 1,
+    "The document has no Open Graph tags (og:title/og:url/og:image) — shared links render as a bare URL with no title or preview image.",
+    "Tài liệu không có thẻ Open Graph (og:title/og:url/og:image) — link chia sẻ hiện dưới dạng URL trơ, không tiêu đề hay ảnh xem trước.")];
+};
+
 const viewportFit: Check = (ctx, rules) => {
   if (!isFullDocument(ctx)) return [];
   const r = rules[0];
@@ -1184,6 +1203,6 @@ export const CHECKS: Record<string, Check> = {
   metaViewport, viewportPresence, controlName, deadHref, gradientText, positiveTabindex, langValid,
   landmarkMain, skipLink, singleH1, fieldsetGroup, genericLinkText, focusForcedColors, focusReshape, zindexScale, containerQuery,
   iframeTitle, tableHeaders, duplicateIdRefs, viewportFit,
-  documentTitle, metaDescription, canonicalUnique,
+  documentTitle, metaDescription, canonicalUnique, ogTags,
   invalidRole, nestedInteractive, listStructure,
 };
