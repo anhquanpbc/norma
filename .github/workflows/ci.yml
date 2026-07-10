@@ -81,6 +81,13 @@ jobs:
         uses: ./
         with:
           globs: examples/minimal-pass/index.html
+      # The PUBLISHED path must also resolve and work: `uses: anhquanpbc/norma@v1` fetches the action via the
+      # moving major tag and builds Norma from that checkout. Nothing exercised this before — which is exactly
+      # how the `@v1` tag came to be missing while the docs advertised it. This is the regression guard.
+      - name: minimal-pass must also lint clean via the published @v1 action
+        uses: anhquanpbc/norma@v1
+        with:
+          globs: examples/minimal-pass/index.html
       # The seeded "before" page must fail (non-zero) and trip the rules it advertises.
       - name: catches-violations must fail and hit the seeded rules
         shell: bash

@@ -31,6 +31,14 @@ your npm account (an *automation* token so it isn't blocked by 2FA in CI).
    ```
    The workflow verifies, then publishes with provenance. Watch it under the repo's Actions tab.
 
+## The `@vN` major tag (reusable action)
+
+The GitHub Action is consumed as `uses: anhquanpbc/norma@v1` — a **moving major tag** that must always point
+at the latest `v1.x.y` release. After each successful publish, `publish.yml`'s `major-tag` job
+**automatically** fast-forwards `vN` (derived from the pushed tag) to that release commit, so `@v1` stays
+current with no manual step. It was bootstrapped once with `git tag v1 <latest-release> && git push origin v1`;
+a `ci.yml` smoke-test (`uses: anhquanpbc/norma@v1`) guards that the published action path keeps resolving.
+
 ## After it lands
 
 The README npm badge is the live shields.io version badge, so it updates on its own. Confirm the
