@@ -117,11 +117,16 @@ const reducedMotion: Check = (ctx, rules) => {
       const v = d.value.trim();
       if (animateLine === null && v && v !== "none" && !/^0m?s?$/.test(v)) animateLine = cssLine(block, d);
     });
+    // scroll-behavior: smooth is motion too — a very common AI default that jumps the viewport for users
+    // who asked for none. Treat it as a trigger (auto/other values are not motion).
+    block.root.walkDecls(/^scroll-behavior$/i, (d) => {
+      if (animateLine === null && /^smooth$/i.test(d.value.trim())) animateLine = cssLine(block, d);
+    });
   }
   if (animateLine !== null && !guarded) {
     return [mk(ctx, r, animateLine,
-      "File animates but has no @media (prefers-reduced-motion: reduce) block.",
-      "File có chuyển động nhưng thiếu khối @media (prefers-reduced-motion: reduce).")];
+      "File has motion (animation, transition, or scroll-behavior: smooth) but no @media (prefers-reduced-motion: reduce) block.",
+      "File có chuyển động (animation, transition, hoặc scroll-behavior: smooth) nhưng thiếu khối @media (prefers-reduced-motion: reduce).")];
   }
   return [];
 };

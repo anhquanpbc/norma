@@ -16,6 +16,27 @@ All notable changes to this project are documented here. The format is based on
   `check:drift` guard (item 10) asserts every token-derived `:root` value equals `standard/tokens.css`, so
   the site's tokens can no longer drift from the standard. Closes the deferred GEN1 site-rewire.
 
+## [1.17.0] — 2026-07-10 · CLI
+
+### Changed
+
+- **`a11y.reduced-motion` now also catches `scroll-behavior: smooth` (Direction B: extend enforcement).**
+  The check previously inspected only `animation` / `transition` declarations, so a page whose only motion
+  was `html { scroll-behavior: smooth }` — a common AI default that animates scrolling for users who asked
+  for none — passed clean. It's now a motion trigger (`scroll-behavior: auto` is not). Ships with standard
+  **1.12.0**, whose `a11y.reduced-motion` rationale + remediation were updated to name scroll-behavior and
+  add a `html { scroll-behavior: auto }` reset — so following the remediation is a *complete* fix, not a
+  finding-silencer (the guard clears on any `prefers-reduced-motion` block, so a duration-only reset would
+  otherwise pass CI while smooth scroll still ran for reduced-motion users).
+
+## [1.12.0] — 2026-07-10 · standard
+
+### Changed
+
+- **`a11y.reduced-motion` broadened to cover `scroll-behavior: smooth`.** The rationale now names smooth
+  scroll as non-essential motion, and the remediation includes an `html { scroll-behavior: auto }` reset
+  alongside the animation/transition duration resets. Enforced by the CLI as of 1.17.0.
+
 ## [1.16.0] — 2026-07-10 · CLI
 
 ### Added
