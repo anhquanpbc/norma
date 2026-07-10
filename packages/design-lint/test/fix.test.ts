@@ -21,6 +21,16 @@ describe("fixSource — CSS logical properties", () => {
     const { output } = fixSource(".x{ text-align:left }", "css");
     expect(output).toContain("text-align:start");
   });
+  it("renames float:left → inline-start and clear:right → inline-end (never the invalid start/end)", () => {
+    const { output, fixed } = fixSource(".x{ float:left } .y{ clear:right }", "css");
+    expect(output).toContain("float:inline-start");
+    expect(output).toContain("clear:inline-end");
+    // float:start / clear:end are invalid CSS the browser drops — the fixer must never emit them.
+    expect(output).not.toMatch(/float:\s*start\b/);
+    expect(output).not.toMatch(/clear:\s*end\b/);
+    expect(fixed).toBe(2);
+    expect(idsOf(output, "css")).not.toContain("i18n.logical-properties");
+  });
   it("is a no-op on already-logical CSS", () => {
     const { fixed } = fixSource(".x{ margin-inline-start:8px }", "css");
     expect(fixed).toBe(0);

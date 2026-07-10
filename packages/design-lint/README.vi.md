@@ -135,9 +135,9 @@ theo dòng, cho hai "dấu hiệu" chuyển được mà không cần DOM đầy
 landmark, thứ tự heading, nhãn, tương phản — **không** kiểm ở đây, vì file component không phải một trang;
 hãy chạy chúng trên HTML/CSS đã build. Khối `<style>` trong SFC Vue/Svelte chưa được lint như CSS.
 
-CSS-in-JS và ngữ nghĩa class Tailwind tổng quát vẫn ngoài phạm vi. Với chúng, dựa vào **tầng agent**
-(`AGENTS.md`, các file rule Cursor/Copilot/Claude) sinh từ cùng catalog. Bộ trích xuất dựa trên AST sâu hơn
-là bước kế tiếp.
+CSS-in-JS và ngữ nghĩa class Tailwind tổng quát nằm ngoài phạm vi ở đây **theo thiết kế**: ngữ nghĩa cây
+component sâu thuộc về **tầng agent** (`AGENTS.md`, các file rule Cursor/Copilot/Claude) sinh từ cùng
+catalog — không phải một parser nặng hơn bên trong linter. Hãy lint HTML/CSS đã build bằng CLI để có đủ bộ rule.
 
 ## Kiểm tra design token
 

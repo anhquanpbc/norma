@@ -23,6 +23,17 @@ jobs:
           cache: npm
           registry-url: https://registry.npmjs.org
       - run: npm ci
+      - name: Verify — release tag matches the CLI version + changelog entry exists
+        run: |
+          ver=$(node -p "require('./packages/design-lint/package.json').version")
+          if [ "$GITHUB_REF_TYPE" = "tag" ] && [ "$GITHUB_REF_NAME" != "v$ver" ]; then
+            echo "::error::tag $GITHUB_REF_NAME does not match CLI package.json v$ver — refusing to publish under the wrong ref"; exit 1
+          fi
+          # Anchor to the dated CLI section heading (escaping the dots). CHANGELOG.md interleaves the CLI and
+          # standard version lines in one 1.x.y namespace, so an unscoped grep could match a `· standard`
+          # heading (or a link-ref) for the same number and let a CLI publish through with no CLI notes.
+          esc=$(printf '%s' "$ver" | sed 's/\./\\./g')
+          grep -qE "^## \[$esc\] .*CLI" CHANGELOG.md || { echo "::error::CHANGELOG.md has no '## [$ver] … · CLI' release heading — add the CLI release notes before tagging"; exit 1; }
       - name: Verify — build + unit tests + anti-drift + dogfood
         run: |
           npm run build

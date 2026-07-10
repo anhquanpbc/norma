@@ -16,6 +16,17 @@ All notable changes to this project are documented here. The format is based on
   `check:drift` guard (item 10) asserts every token-derived `:root` value equals `standard/tokens.css`, so
   the site's tokens can no longer drift from the standard. Closes the deferred GEN1 site-rewire.
 
+## [1.14.1] — 2026-07-10 · CLI
+
+### Fixed
+
+- **`--fix` no longer corrupts `float` / `clear` into invalid CSS.** The auto-fixer shared one keyword map
+  across `text-align`, `float`, and `clear`, rewriting `float: left` → `float: start` and `clear: right` →
+  `clear: end`. But `start`/`end` are **not** valid `float`/`clear` values — the browser drops the whole
+  declaration, silently deleting the float the fixer claimed to preserve, and dodging re-detection (the check
+  only flags `left`/`right`). `float`/`clear` now map to `inline-start`/`inline-end` (matching the
+  `i18n.logical-properties` remediation); `text-align` keeps `start`/`end`. Guarded by a regression test.
+
 ## [1.14.0] — 2026-07-10 · CLI
 
 ### Added
