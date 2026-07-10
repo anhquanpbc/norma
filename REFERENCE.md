@@ -220,7 +220,7 @@ Ratio = (L1 + 0.05)/(L2 + 0.05), range 1:1–21:1.
 - 1.4.4 Resize Text (AA) 🔒 — text resizable to **200%** without loss; no pixel minimum imposed. Never block zoom in the viewport meta — no `user-scalable=no`, no `maximum-scale` < 2 (linted as `a11y.meta-viewport`).
 
 **Document structure & bypass 🔒:**
-- **Skip link (2.4.1 Bypass Blocks, Level A)** — a first-focusable "Skip to main content" link to `#main` that becomes visible on focus. Absent from most AI output despite being **Level A** — the cheapest a11y win there is.
+- **Skip link (2.4.1 Bypass Blocks, Level A)** — a first-focusable "Skip to main content" link to `#main` that becomes visible on focus. Absent from most AI output despite being **Level A** — the cheapest a11y win there is. Linted as `a11y.skip-link`.
 - **Landmarks** — one `<header>`(banner), `<nav>`, one `<main>` (the skip target), `<footer>`(contentinfo); SR users jump between them. Never a page of `<div>`s.
 - **Headings (1.3.1 / 2.4.6 / 2.4.10)** — exactly one `<h1>`; never skip a level (`h2→h4`); headings describe *structure*, not size — style with CSS. Linted as `a11y.heading-order`.
 - **Current location (aria-current)** — mark the active item in nav/steppers/pagination with `aria-current="page"|"step"|"true"`, not colour alone.

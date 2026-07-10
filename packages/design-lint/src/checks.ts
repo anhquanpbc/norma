@@ -811,6 +811,37 @@ const landmarkMain: Check = (ctx, rules) => {
       : `Tài liệu có ${mains.length} landmark <main> — phải đúng một.`)];
 };
 
+// A bypass link's target (WCAG 2.4.1) must land focus at or around the main content: the target IS the
+// <main>, CONTAINS it (a wrapper), or is INSIDE it. Uses only querySelectorAll containment (identity).
+const mainRelated = (target: HTMLElement, main: HTMLElement): boolean =>
+  target === main ||
+  target.querySelectorAll("main, [role=main]").includes(main) ||   // target wraps main
+  main.querySelectorAll("[id]").includes(target);                  // target is inside main
+
+const skipLink: Check = (ctx, rules) => {
+  if (!isFullDocument(ctx)) return [];
+  const r = rules[0];
+  const main = ctx.dom!.querySelectorAll("main, [role=main]").filter(notInTemplate)[0];
+  if (!main || elDisabled(main, r.id)) return []; // no <main> → a11y.landmark-main owns that gap
+  const byId = new Map<string, HTMLElement>();
+  for (const el of ctx.dom!.querySelectorAll("[id]").filter(notInTemplate)) {
+    const id = el.getAttribute("id");
+    if (id && !byId.has(id)) byId.set(id, el);
+  }
+  // A valid skip link is an in-page <a href="#id"> whose target is at/around the main content. First-
+  // focusable / visible-on-focus can't be checked statically, so this ships at warn (heuristic presence).
+  const hasSkip = ctx.dom!.querySelectorAll("a[href]").filter(notInTemplate).some((a) => {
+    const href = (a.getAttribute("href") ?? "").trim();
+    if (!href.startsWith("#") || href.length < 2) return false; // "#" / "" is not a real bypass target
+    const target = byId.get(href.slice(1));
+    return !!target && mainRelated(target, main);
+  });
+  if (hasSkip) return [];
+  return [mk(ctx, r, elementLine(ctx, main),
+    "Document has a <main> but no skip link — add a first-focusable \"Skip to main content\" link to #main (WCAG 2.4.1, Level A).",
+    "Tài liệu có <main> nhưng thiếu skip link — thêm liên kết \"Bỏ qua tới nội dung chính\" focus-đầu-tiên tới #main (WCAG 2.4.1, Mức A).")];
+};
+
 const singleH1: Check = (ctx, rules) => {
   if (!isFullDocument(ctx)) return [];
   const r = rules[0];
@@ -1151,7 +1182,7 @@ export const CHECKS: Record<string, Check> = {
   contrast, focusRing, reducedMotion, forbiddenValue, formLabel, semanticControl, emojiIcon, imgDimensions, imgAlt, targetSize,
   headingOrder, htmlLang, logicalProperties, colorScheme, colorTokenOnly, tokenBinding, externalRel, sri,
   metaViewport, viewportPresence, controlName, deadHref, gradientText, positiveTabindex, langValid,
-  landmarkMain, singleH1, fieldsetGroup, genericLinkText, focusForcedColors, focusReshape, zindexScale, containerQuery,
+  landmarkMain, skipLink, singleH1, fieldsetGroup, genericLinkText, focusForcedColors, focusReshape, zindexScale, containerQuery,
   iframeTitle, tableHeaders, duplicateIdRefs, viewportFit,
   documentTitle, metaDescription, canonicalUnique,
   invalidRole, nestedInteractive, listStructure,

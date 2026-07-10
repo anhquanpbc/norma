@@ -38,6 +38,7 @@ export const SURFACE_BY_CHECK: Record<string, Surface[]> = {
   gradientText: ["css"],
   langValid: ["html"],
   landmarkMain: ["html"],
+  skipLink: ["html"],
   singleH1: ["html"],
   fieldsetGroup: ["html"],
   genericLinkText: ["html"],
