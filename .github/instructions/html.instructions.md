@@ -27,6 +27,7 @@ real `<label>`. Touch targets ≥ 24 CSS px. Set `width`/`height` on images. No 
 - 📐 CONV `antipattern.dead-href` (warn) — No dead links (href="#" or empty) · Norma §14 AI-era Anti-patterns (TELL)
 - 📐 CONV `a11y.no-positive-tabindex` (warn) — No positive tabindex (>= 1) · [WCAG 2.2 SC 2.4.3 Focus Order](https://www.w3.org/TR/WCAG22/#focus-order)
 - 📐 CONV `a11y.landmark-main` (warn) — Exactly one <main> landmark · [WCAG 2.2 SC 1.3.1 / ARIA landmarks; axe landmark-one-main](https://www.w3.org/TR/WCAG22/#info-and-relationships)
+- 📐 CONV `a11y.skip-link` (warn) — Skip link to bypass repeated blocks · [WCAG 2.2 SC 2.4.1 Bypass Blocks (Level A); axe skip-link (best-practice)](https://www.w3.org/TR/WCAG22/#bypass-blocks)
 - 📐 CONV `a11y.single-h1` (warn) — Exactly one <h1> per page · [WCAG 2.2 SC 1.3.1 / 2.4.6; axe page-has-heading-one](https://www.w3.org/TR/WCAG22/#headings-and-labels)
 - 📐 CONV `forms.fieldset-group` (warn) — Group radios/checkboxes in a fieldset · [WCAG 2.2 SC 1.3.1 Info and Relationships (H71)](https://www.w3.org/TR/WCAG22/#info-and-relationships)
 - 📐 CONV `a11y.generic-link-text` (warn) — No non-descriptive link/button text · [WCAG 2.2 SC 2.4.4 Link Purpose (In Context)](https://www.w3.org/TR/WCAG22/#link-purpose-in-context)

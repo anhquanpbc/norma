@@ -16,7 +16,7 @@
 #   rationale   { en, vi } why the rule exists.
 #   check       machine assertion consumed by norma-design-lint. type: manual = agent-only, not auto-checked.
 #   remediation { en, vi } how to fix.
-version: "1.9.0"
+version: "1.10.0"
 rules:
   - id: color.contrast.text
     title: { en: "Body text contrast >= 4.5:1", vi: "Tương phản chữ thân >= 4.5:1" }
@@ -540,6 +540,22 @@ rules:
     remediation:
       en: "Wrap the primary content in a single <main> (with id=main as the skip-link target)."
       vi: "Bọc nội dung chính trong một <main> duy nhất (với id=main làm đích skip-link)."
+
+  - id: a11y.skip-link
+    title: { en: "Skip link to bypass repeated blocks", vi: "Skip link để bỏ qua khối lặp" }
+    domain: a11y
+    tag: CONV
+    severity: warn
+    source: "WCAG 2.2 SC 2.4.1 Bypass Blocks (Level A); axe skip-link (best-practice)"
+    source_url: "https://www.w3.org/TR/WCAG22/#bypass-blocks"
+    rationale:
+      en: "A first-focusable \"Skip to main content\" link to the <main> lets keyboard users bypass the repeated header/nav (2.4.1 Bypass Blocks). Landmarks satisfy this for screen-reader users, but a visible skip link is the cheapest win for sighted keyboard users — and it's absent from most AI-generated output."
+      vi: "Một liên kết \"Bỏ qua tới nội dung chính\" focus-đầu-tiên tới <main> cho phép người dùng bàn phím bỏ qua header/nav lặp lại (2.4.1 Bypass Blocks). Landmark đáp ứng điều này cho người dùng trình đọc màn hình, nhưng skip link hiện rõ là thắng lợi rẻ nhất cho người dùng bàn phím thấy được — và thường thiếu trong output do AI sinh."
+    check:
+      type: skipLink
+    remediation:
+      en: "Add a first-focusable <a href=\"#main\"> \"Skip to main content\" link (visible on focus) targeting the <main> landmark (id=main)."
+      vi: "Thêm liên kết <a href=\"#main\"> \"Bỏ qua tới nội dung chính\" focus-đầu-tiên (hiện khi focus) trỏ tới landmark <main> (id=main)."
 
   - id: a11y.single-h1
     title: { en: "Exactly one <h1> per page", vi: "Đúng một <h1> mỗi trang" }

@@ -16,6 +16,26 @@ All notable changes to this project are documented here. The format is based on
   `check:drift` guard (item 10) asserts every token-derived `:root` value equals `standard/tokens.css`, so
   the site's tokens can no longer drift from the standard. Closes the deferred GEN1 site-rewire.
 
+## [1.15.0] — 2026-07-10 · CLI
+
+### Added
+
+- **`a11y.skip-link` — enforce a bypass / skip link (Direction B: extend enforcement).** A full document
+  that has a `<main>` landmark but no in-page skip link targeting it now **warns**. A valid skip link is an
+  `<a href="#id">` whose target is the `<main>`, a wrapper *around* it, or an element *inside* it — following
+  it lands focus at/around the main content. WCAG 2.4.1 Bypass Blocks (Level A) — "the cheapest a11y win",
+  and absent from most AI-generated pages. First-focusable / visible-on-focus can't be verified statically,
+  so it's a heuristic **presence** check shipped at `warn`, scoped to documents that already have a `<main>`
+  (a missing `<main>` stays `a11y.landmark-main`'s concern) to keep false positives near zero. Bundles
+  standard **1.10.0** (rule catalog 53 → 54).
+
+## [1.10.0] — 2026-07-10 · standard
+
+### Added
+
+- **Rule `a11y.skip-link`** (domain `a11y`, 📐 CONV, `warn`) — WCAG 2.4.1 Bypass Blocks (Level A). Enforced by
+  the CLI as of 1.15.0 (see above). Catalog 53 → 54.
+
 ## [1.14.1] — 2026-07-10 · CLI
 
 ### Fixed

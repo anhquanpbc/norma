@@ -38,7 +38,8 @@ the aesthetic "tells" that mark machine-generated work.
    issues — also do a manual keyboard + screen-reader pass.
 
 These structural/enforcement rules back the guidance above (📐 CONV, statically linted):
-`a11y.landmark-main` (one `<main>`), `a11y.single-h1` (one `<h1>`), `forms.fieldset-group`
+`a11y.landmark-main` (one `<main>`), `a11y.skip-link` (a first-focusable "Skip to main content" link
+to `#main`), `a11y.single-h1` (one `<h1>`), `forms.fieldset-group`
 (radio/checkbox sets in a `<fieldset>`), `a11y.generic-link-text` (no "click here"/"read more"),
 `a11y.focus-forced-colors` (a focus ring must not be box-shadow-only — it's stripped in forced-colors),
 `tokens.zindex-scale` (no raw `z-index >= 1000`; use the ladder), `responsive.container-query`

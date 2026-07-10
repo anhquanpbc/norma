@@ -25,6 +25,9 @@
     }
     h1 { font-size: 1.953rem; line-height: 1.15; } /* modular scale, base 16 x 1.25 */
     a { color: var(--accent); }
+    /* skip link: off-screen until focused, then visible (2.4.1 Bypass Blocks) */
+    .skip { position: absolute; left: -9999px; top: 8px; background: var(--accent); color: #fff; padding: 8px 16px; border-radius: 8px; }
+    .skip:focus { left: 8px; }
     /* one clean focus ring — never outline:none without a replacement */
     a:focus-visible, button:focus-visible, input:focus-visible {
       outline: 2px solid var(--accent);
@@ -56,7 +59,8 @@
   </style>
 </head>
 <body>
-  <main>
+  <a href="#main" class="skip">Skip to main content</a>
+  <main id="main">
     <h1>Your product, built to the standard</h1>
     <p>
       This tiny page passes <a href="https://github.com/anhquanpbc/norma">Norma</a>'s linter with zero
