@@ -20,6 +20,21 @@ This is a lookup reference, not an essay. Every figure is meant to be droppable 
 
 ---
 
+## The six pillars
+
+Norma is comprehensive *control* over design quality, not just this reference document — every pillar below has working code, so the numbers in the following sections are actually enforced:
+
+| Pillar | What it does | How Norma ships it |
+|--------|--------------|--------------------|
+| **Define** | one source of truth | the rule catalog (`standard/rules.yaml`) + DTCG design tokens (`tokens.tokens.json`, v2025.10) |
+| **Enforce** | fail the build on violations | the `norma-design-lint` CLI, a **Stylelint** plugin (`norma-design-lint/stylelint`), and an **ESLint** plugin (`norma-design-lint/eslint`) — run inside the linters you already have |
+| **Generate** | derive every consumer artifact | per-tool agent rule files, a zero-dependency **MCP server** for AI agents, and compiled CSS variables (`standard/tokens.css`) |
+| **Govern** | deliver findings where teams work | enriched **SARIF 2.1.0** → GitHub code scanning (PR annotations + a Security-tab alert list) |
+| **Sync** | adopt & stay in step, no drift | a `--baseline` ratchet (fail only on *new* debt), a **DTCG token validator** (`tokens validate`), and anti-drift guards that regenerate + diff every derived file |
+| **Measure** | see the state of each run | a Markdown run summary (`--format markdown` → a GitHub Step Summary) + cross-commit trends via code scanning |
+
+---
+
 ## 1. Design Tokens & Systems
 
 Design tokens are the indivisible, named design decisions of a system (color, spacing, type, motion, radius, elevation, duration), stored platform-agnostically so one source generates CSS, iOS, Android, Flutter, etc. The term originated with the Salesforce Lightning team (~2014–2016).

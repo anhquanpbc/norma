@@ -16,6 +16,21 @@
 
 ---
 
+## Sáu trụ cột
+
+Norma là sự **kiểm soát toàn diện** chất lượng thiết kế, không chỉ là tài liệu tham chiếu này — mỗi trụ cột dưới đây đều có code chạy được, nên các con số ở các mục sau thực sự được thực thi:
+
+| Trụ cột | Làm gì | Norma cung cấp qua |
+|---------|--------|--------------------|
+| **Define** | một nguồn sự thật duy nhất | catalog rule (`standard/rules.yaml`) + design token DTCG (`tokens.tokens.json`, v2025.10) |
+| **Enforce** | fail build khi có vi phạm | CLI `norma-design-lint`, plugin **Stylelint** (`norma-design-lint/stylelint`) và plugin **ESLint** (`norma-design-lint/eslint`) — chạy ngay trong linter bạn đã dùng |
+| **Generate** | sinh mọi artifact tiêu thụ | file rule agent theo từng tool, một **MCP server** zero-dependency cho AI agent, và biến CSS đã biên dịch (`standard/tokens.css`) |
+| **Govern** | giao phát hiện tới nơi team làm việc | **SARIF 2.1.0** đầy đủ → GitHub code scanning (annotation trên PR + danh sách alert tab Security) |
+| **Sync** | áp dụng & đồng bộ, không lệch | ratchet `--baseline` (chỉ fail trên nợ *mới*), **validator token DTCG** (`tokens validate`), và guard chống-lệch tự sinh + diff mọi file dẫn xuất |
+| **Measure** | thấy trạng thái mỗi lần chạy | bản tóm tắt Markdown (`--format markdown` → GitHub Step Summary) + xu hướng cross-commit qua code scanning |
+
+---
+
 ## 1. Design Tokens & Hệ thống
 
 Design tokens là các quyết định thiết kế nguyên tử, có tên (màu, khoảng cách, chữ, chuyển động, bo góc, độ nổi, thời lượng), lưu độc lập nền tảng để một nguồn sinh ra CSS, iOS, Android, Flutter… Thuật ngữ khởi nguồn từ đội Salesforce Lightning (~2014–2016).
