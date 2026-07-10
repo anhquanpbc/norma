@@ -16,6 +16,15 @@ All notable changes to this project are documented here. The format is based on
   `check:drift` guard (item 10) asserts every token-derived `:root` value equals `standard/tokens.css`, so
   the site's tokens can no longer drift from the standard. Closes the deferred GEN1 site-rewire.
 
+## [1.20.1] — 2026-07-11 · CLI
+
+### Added
+
+- **Framework quickstart docs (Direction C: adoption).** The README gains a "Framework quickstart (React,
+  Vue, Svelte)" section that assembles the three linting layers — the ESLint plugin for components, the
+  Stylelint plugin for stylesheets / SFC `<style>` blocks, and the CLI for built HTML — into per-framework
+  recipes, plus a `lint-staged` **pre-commit** recipe. README-only (published so it reaches npm).
+
 ## [1.20.0] — 2026-07-11 · CLI
 
 ### Added
