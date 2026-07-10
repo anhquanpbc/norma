@@ -159,6 +159,19 @@ Exit code is 0 when valid, 1 on any structural error. A bad `$type`, a malformed
 dangling/cyclic alias is an error; an unknown `$`-prefixed key is a warning (forward-compatible with future
 spec revisions).
 
+## AI-agent rule files
+
+Norma generates strict do/don't rule files for AI coding tools from the same catalog, and they ship
+**inside this package** — no repo clone needed. Copy the one for your tool out of
+`node_modules/norma-design-lint/dist/agents/`:
+
+| Tool | File | Copy to |
+|------|------|---------|
+| Claude Code | `design-guardian.md` | `.claude/agents/` |
+| Cursor | `norma-design.mdc` | `.cursor/rules/` |
+| GitHub Copilot | `copilot-instructions.md` (+ scoped `css.instructions.md` / `html.instructions.md`) | `.github/` (+ `.github/instructions/`) |
+| Codex / Cline / Gemini / any `AGENTS.md` tool | `AGENTS.md` | repo root |
+
 ## MCP server (for AI agents)
 
 The package ships a zero-dependency [Model Context Protocol](https://modelcontextprotocol.io) server over
