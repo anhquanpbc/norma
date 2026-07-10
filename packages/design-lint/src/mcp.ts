@@ -148,21 +148,30 @@ export function handleRpc(msg: Rpc, catalog: Catalog): RpcResult | RpcError | nu
   return err(id, -32601, `Method not found: ${method}`);
 }
 
+/**
+ * Handle one line of stdin: parse + dispatch, returning the JSON response line to write, or null for a
+ * blank line or a notification (which gets no reply). A malformed line (-32700) or a thrown handler
+ * (-32603) becomes a JSON-RPC error frame — a single bad request must never take down the long-lived
+ * stdio server. Extracted from the readline loop so the transport can be unit-tested directly.
+ */
+export function handleLine(line: string, catalog: Catalog): string | null {
+  const trimmed = line.trim();
+  if (!trimmed) return null;
+  let msg: Rpc;
+  try { msg = JSON.parse(trimmed) as Rpc; }
+  catch { return JSON.stringify(err(null, -32700, "Parse error")); }
+  let res: RpcResult | RpcError | null;
+  try { res = handleRpc(msg, catalog); }
+  catch (e) { res = err(msg.id ?? null, -32603, `Internal error: ${(e as Error).message}`); }
+  return res ? JSON.stringify(res) : null;
+}
+
 function main(): void {
   const catalog = loadRules() as Catalog;
   const rl = createInterface({ input: process.stdin });
   rl.on("line", (line) => {
-    const trimmed = line.trim();
-    if (!trimmed) return;
-    let msg: Rpc;
-    try { msg = JSON.parse(trimmed) as Rpc; }
-    catch { process.stdout.write(JSON.stringify(err(null, -32700, "Parse error")) + "\n"); return; }
-    // A single malformed request must never take down a long-lived stdio server — a thrown handler
-    // becomes a JSON-RPC internal error, not an uncaught exception that exits the process.
-    let res: RpcResult | RpcError | null;
-    try { res = handleRpc(msg, catalog); }
-    catch (e) { res = err(msg.id ?? null, -32603, `Internal error: ${(e as Error).message}`); }
-    if (res) process.stdout.write(JSON.stringify(res) + "\n");
+    const out = handleLine(line, catalog);
+    if (out !== null) process.stdout.write(out + "\n");
   });
 }
 

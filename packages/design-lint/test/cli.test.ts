@@ -1,6 +1,8 @@
 import { describe, it, expect, vi } from "vitest";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
+import { mkdtempSync, writeFileSync, readFileSync, existsSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { main } from "../src/cli.js";
 
 const fx = (n: string) => join(dirname(fileURLToPath(import.meta.url)), "fixtures", n);
@@ -130,5 +132,57 @@ describe("cli", () => {
   it("reports skipped=0 for a normal file", () => {
     const { out } = run(["--format", "json", fx("good.html")]);
     expect(JSON.parse(out).skipped).toBe(0);
+  });
+});
+
+// The baseline ratchet and --fix mutate the user's disk — the highest-risk CLI paths, previously untested.
+describe("cli — baseline + --fix lifecycle (real file IO)", () => {
+  it("--update-baseline writes a baseline, then --baseline suppresses those findings (exit 0)", () => {
+    const dir = mkdtempSync(join(tmpdir(), "norma-cli-"));
+    const bp = join(dir, "base.json");
+    try {
+      const w = run(["--update-baseline", "--baseline", bp, fx("bad.html")]);
+      expect(w.code).toBe(0);
+      expect(existsSync(bp)).toBe(true);
+      const base = JSON.parse(readFileSync(bp, "utf8"));
+      expect(base.fingerprints.length).toBeGreaterThan(0);
+      // Re-lint the same file against its own baseline → every known finding is suppressed → exit 0.
+      const b = run(["--baseline", bp, fx("bad.html")]);
+      expect(b.code).toBe(0);
+      expect(b.err).toContain("suppressed");
+    } finally { rmSync(dir, { recursive: true, force: true }); }
+  });
+
+  it("an empty baseline lets a real error-severity finding through (exit 1)", () => {
+    const dir = mkdtempSync(join(tmpdir(), "norma-cli-"));
+    const bp = join(dir, "empty.json");
+    try {
+      writeFileSync(bp, JSON.stringify({ version: 1, fingerprints: [] }));
+      const r = run(["--baseline", bp, fx("bad.html")]);
+      expect(r.code).toBe(1); // bad.html has error-severity findings; none are in the baseline
+    } finally { rmSync(dir, { recursive: true, force: true }); }
+  });
+
+  it("fails with a clear message on an unreadable baseline file", () => {
+    const dir = mkdtempSync(join(tmpdir(), "norma-cli-"));
+    try {
+      const r = run(["--baseline", join(dir, "nope.json"), fx("bad.html")]);
+      expect(r.code).toBe(1);
+      expect(r.err).toMatch(/Cannot read baseline/i);
+    } finally { rmSync(dir, { recursive: true, force: true }); }
+  });
+
+  it("--fix rewrites files in place (physical→logical, positive tabindex→0) and reports the count", () => {
+    const dir = mkdtempSync(join(tmpdir(), "norma-cli-"));
+    const css = join(dir, "x.css");
+    const html = join(dir, "y.html");
+    try {
+      writeFileSync(css, ".a{ margin-left:8px }");
+      writeFileSync(html, `<a href="/x" tabindex="3">go</a>`);
+      const r = run(["--fix", css, html]);
+      expect(r.err).toContain("Auto-fixed");
+      expect(readFileSync(css, "utf8")).toContain("margin-inline-start:8px");
+      expect(readFileSync(html, "utf8")).toContain(`tabindex="0"`);
+    } finally { rmSync(dir, { recursive: true, force: true }); }
   });
 });
