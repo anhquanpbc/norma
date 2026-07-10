@@ -7,9 +7,9 @@ branding:
 
 inputs:
   globs:
-    description: "Space-separated files/globs to lint (quote patterns with braces)."
+    description: "Space-separated files/globs to lint (quote patterns with braces). Default matches the CLI — HTML/CSS plus JSX/TSX/Vue/Svelte components."
     required: false
-    default: "**/*.{html,htm,css}"
+    default: "**/*.{html,htm,css,jsx,tsx,vue,svelte}"
   lang:
     description: "Message language: en or vi."
     required: false

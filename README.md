@@ -65,7 +65,7 @@ checked-out version, so there's nothing to install and the rules are pinned to t
 # .github/workflows/design-lint.yml
 - uses: actions/checkout@v4
 - uses: anhquanpbc/norma@v1
-  with: { globs: "src/**/*.{html,htm,css}" }   # lang: en|vi · format: stylish|json|sarif
+  with: { globs: "src/**/*.{html,htm,css,jsx,tsx,vue,svelte}" }   # lang: en|vi · format: stylish|json|sarif
 ```
 
 A ready-to-copy workflow is in [`examples/ci-recipe.yml`](examples/ci-recipe.yml).
