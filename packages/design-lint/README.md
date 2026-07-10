@@ -112,6 +112,44 @@ nothing from ESLint at runtime. Coverage here is deliberately narrow — a compo
 a11y (landmarks, labels, contrast, heading order) is **not** evaluated. Lint your built HTML with the CLI,
 and your CSS with the Stylelint plugin, for the full rule set.
 
+## Framework quickstart (React, Vue, Svelte)
+
+A component-based app is linted in three layers — wire the ones your stack uses:
+
+- **Components** (`.jsx` / `.tsx` / `.vue` / `.svelte`) — the **ESLint plugin** (above) flags the two
+  transferable tells in-editor and in CI; the CLI catches the same (its default glob already includes these
+  extensions).
+- **Stylesheets & SFC `<style>` blocks** — the **Stylelint plugin** (above) runs the full CSS-family rule set.
+- **Built / static HTML** — point the CLI at your build directory: `npx norma-design-lint ./dist` (or
+  `./build` / `./out`). This runs the DOM-structural a11y rules — landmarks, labels, heading order — that a
+  component file can't express. Pass the directory itself, **not** a `dist/**` glob: broad globs skip
+  `dist`/`build` by design (so a stray `**/*.html` never lints stale build output).
+
+**React / Next.js** — the ESLint rule from the [ESLint](#use-inside-eslint) section for components, plus a
+CLI script for CSS and built output:
+
+```jsonc
+// package.json
+"scripts": {
+  "lint:design": "norma-design-lint \"**/*.{css,jsx,tsx}\""
+}
+```
+
+**Vue / Svelte** — the Stylelint plugin lints the `<style>` blocks; point Stylelint's `customSyntax` at your
+SFC format (e.g. `postcss-html`), then run the CLI over components and any built HTML.
+
+**Pre-commit** — lint only what you're committing, with [lint-staged](https://github.com/lint-staged/lint-staged):
+
+```jsonc
+// package.json
+"lint-staged": {
+  "**/*.{html,htm,css,jsx,tsx,vue,svelte}": "norma-design-lint"
+}
+```
+
+Trigger it from your existing `pre-commit` hook (husky or simple-git-hooks). Already on GitHub Actions?
+`npx norma-design-lint init` drops in a ready-made workflow.
+
 ## What it checks
 
 Sound, low-false-positive static checks mapped to the Norma rule catalog (`standard/rules.yaml`):
