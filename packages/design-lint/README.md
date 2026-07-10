@@ -138,9 +138,10 @@ wrappers are skipped). Structural a11y that depends on the rendered tree — lan
 labels, contrast — is **not** evaluated here, because a component file isn't a page; run those against
 your built HTML/CSS. A Vue/Svelte SFC's `<style>` block is not yet linted as CSS.
 
-CSS-in-JS and general Tailwind class semantics are still out of scope. For those, lean on the **agent
-layer** (`AGENTS.md`, the Cursor/Copilot/Claude rule files) generated from the same catalog. A deeper
-AST-based extractor is the next step.
+CSS-in-JS and general Tailwind class semantics are out of scope here **by design**: deep component-tree
+semantics belong to the **agent layer** (`AGENTS.md`, the Cursor/Copilot/Claude rule files) generated from
+the same catalog — not to a heavier parser inside the linter. Lint your built HTML/CSS with the CLI for the
+full rule set.
 
 ## Validate design tokens
 

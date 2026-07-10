@@ -1,6 +1,6 @@
 {
   "name": "norma",
-  "version": "1.8.0",
+  "version": "1.9.0",
   "private": true,
   "type": "module",
   "description": "Norma — an enforceable, bilingual web design standard for humans and AI agents.",

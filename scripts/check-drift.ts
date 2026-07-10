@@ -131,6 +131,10 @@ for (const [needle, files] of FACTS) {
 const version = read("standard/VERSION").trim();
 const catalogVersion = (JSON.parse(read("standard/rules.json")) as { version: string }).version;
 if (catalogVersion !== version) fail.push(`standard/rules.json version ${catalogVersion} != standard/VERSION ${version} (bump rules.yaml + npm run build:rules)`);
+// The private root package.json tracks the standard version (the repo's headline artifact); the CLI
+// package.json is a separate line and is intentionally NOT checked here.
+const rootPkgVersion = (JSON.parse(read("package.json")) as { version?: string }).version;
+if (rootPkgVersion !== version) fail.push(`root package.json version ${rootPkgVersion} != standard/VERSION ${version} (the root package tracks the standard version)`);
 if (!readme.includes(`standard-v${version}`)) fail.push(`README.md badge does not say standard-v${version}`);
 if (!read("README.vi.md").includes(`standard-v${version}`)) fail.push(`README.vi.md badge does not say standard-v${version}`);
 if (!html.includes(`standard v${version}`)) fail.push(`index.html footer does not say "standard v${version}"`);

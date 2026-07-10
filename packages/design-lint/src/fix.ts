@@ -13,7 +13,12 @@ const LOGICAL_PROP: Record<string, string> = {
   "border-left-style": "border-inline-start-style", "border-right-style": "border-inline-end-style",
   "border-left-color": "border-inline-start-color", "border-right-color": "border-inline-end-color",
 };
+// text-align takes the flow-relative keywords start/end; float and clear take inline-start/inline-end.
+// float:start / clear:end are INVALID CSS — the browser drops the whole declaration, silently deleting the
+// float the fixer claims to preserve — so the two properties must never share text-align's map. Mirrors the
+// i18n.logical-properties remediation in standard/rules.yaml.
 const LOGICAL_ALIGN: Record<string, string> = { left: "start", right: "end" };
+const LOGICAL_FLOAT: Record<string, string> = { left: "inline-start", right: "inline-end" };
 
 /** Rename physical → logical properties in a CSS string, format-preserving via postcss. */
 function fixCss(css: string): [string, number] {
@@ -23,9 +28,10 @@ function fixCss(css: string): [string, number] {
   root.walkDecls((d) => {
     const prop = d.prop.toLowerCase();
     if (LOGICAL_PROP[prop]) { d.prop = LOGICAL_PROP[prop]; count++; return; }
-    if (prop === "text-align" || prop === "float" || prop === "clear") {
+    const map = prop === "text-align" ? LOGICAL_ALIGN : (prop === "float" || prop === "clear") ? LOGICAL_FLOAT : null;
+    if (map) {
       const v = d.value.trim().toLowerCase();
-      if (LOGICAL_ALIGN[v]) { d.value = LOGICAL_ALIGN[v]; count++; }
+      if (map[v]) { d.value = map[v]; count++; }
     }
   });
   return count ? [root.toString(), count] : [css, 0];
