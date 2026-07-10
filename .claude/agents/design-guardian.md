@@ -48,6 +48,7 @@ to `#main`), `a11y.single-h1` (one `<h1>`), `forms.fieldset-group`
 (`@container` needs a `container-type`), `a11y.iframe-title` (every `<iframe>` has a title),
 `a11y.table-headers` (data tables have `<th>`), `a11y.duplicate-id-refs` (a label/aria-referenced id is unique),
 `responsive.viewport-fit` (`env(safe-area-inset-*)` needs `viewport-fit=cover`, else it's inert),
+`responsive.viewport-units` (full-height uses `dvh`/`svh`, not `100vh`),
 `a11y.document-title` (a non-empty `<title>`), `seo.meta-description` (a `<meta name="description">`),
 `seo.canonical` (at most one `<link rel="canonical">`), `seo.og-tags` (core Open Graph tags for link
 previews), `a11y.invalid-role` (`role` is a defined ARIA role),
@@ -150,7 +151,7 @@ Not compliance failures, but they erase brand distinctiveness and often *induce*
 npx norma-design-lint "**/*.{html,css}"     # gate SPEC violations; exits non-zero on error-severity
 ```
 
-## Rule index (generated from standard/rules.json v1.12.0)
+## Rule index (generated from standard/rules.json v1.13.0)
 
 - 🔒 SPEC `color.contrast.text` (error) — Body text contrast >= 4.5:1 · [WCAG 2.2 SC 1.4.3 Contrast (Minimum)](https://www.w3.org/TR/WCAG22/#contrast-minimum)
 - 🔒 SPEC `color.contrast.large-ui` (error) — Large text & UI contrast >= 3:1 · [WCAG 2.2 SC 1.4.3 / 1.4.11 Non-text Contrast](https://www.w3.org/TR/WCAG22/#non-text-contrast)
@@ -172,6 +173,7 @@ npx norma-design-lint "**/*.{html,css}"     # gate SPEC violations; exits non-ze
 - 📐 CONV `perf.img-dimensions` (warn) — Images set width/height or aspect-ratio · [web.dev — Optimize CLS](https://web.dev/articles/cls)
 - 🔒 SPEC `i18n.html-lang` (error) — <html> declares a lang · [WCAG 2.2 SC 3.1.1 Language of Page](https://www.w3.org/TR/WCAG22/#language-of-page)
 - 📐 CONV `i18n.logical-properties` (warn) — Use logical (inline/block) CSS properties · [W3C CSS Logical Properties and Values L1](https://www.w3.org/TR/css-logical-1/)
+- 📐 CONV `responsive.viewport-units` (warn) — Use dvh/svh, not 100vh, for full height · [web.dev — The large, small, and dynamic viewport units; CSS Values 4](https://web.dev/blog/viewport-units)
 - 🔒 SPEC `i18n.lang-valid` (error) — lang is a well-formed BCP-47 tag · [WCAG 2.2 SC 3.1.1 / 3.1.2 (BCP-47 / RFC 5646)](https://www.w3.org/TR/WCAG22/#language-of-page)
 - 🔒 SPEC `i18n.inline-lang` (warn · manual, agent-verified) — Inline foreign-language runs carry lang · [WCAG 2.2 SC 3.1.2 Language of Parts](https://www.w3.org/TR/WCAG22/#language-of-parts)
 - 📐 CONV `theme.color-scheme` (warn) — Declare color-scheme · [W3C CSS Color Adjustment Module L1](https://www.w3.org/TR/css-color-adjust-1/)

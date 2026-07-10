@@ -609,6 +609,33 @@ const logicalProperties: Check = (ctx, rules) => {
   return out;
 };
 
+const viewportUnits: Check = (ctx, rules) => {
+  const r = rules[0];
+  const out: Finding[] = [];
+  for (const block of ctx.css) {
+    block.root.walkDecls(/^(min-|max-)?(height|block-size)$/i, (d) => {
+      if (!/(?<![\w.])100vh(?![\w])/i.test(d.value)) return; // only the full-height 100vh tell (80vh, 100dvh, etc. are fine)
+      const parent = d.parent;
+      if (parent && parent.type === "rule") {
+        if (ruleDisabled(parent as PostcssRule, r.id)) return;
+        // Skip a deliberate progressive-enhancement fallback — `min-height:100vh; min-height:100dvh` — where a
+        // later declaration of the SAME property in dvh/svh/lvh overrides the 100vh, so the author already did
+        // the fix and only kept 100vh for pre-dvh browsers.
+        const prop = d.prop.toLowerCase();
+        let overridden = false;
+        (parent as PostcssRule).walkDecls((o) => {
+          if (o !== d && o.prop.toLowerCase() === prop && /\d(?:dvh|svh|lvh)\b/i.test(o.value)) overridden = true;
+        });
+        if (overridden) return;
+      }
+      out.push(mk(ctx, r, cssLine(block, d),
+        `${d.prop}: 100vh overflows on mobile — 100vh is the LARGEST viewport, so the collapsing URL bar hides the bottom. Use 100dvh (or 100svh).`,
+        `${d.prop}: 100vh tràn trên mobile — 100vh là viewport LỚN NHẤT, nên thanh URL thu lại che mất phần dưới. Dùng 100dvh (hoặc 100svh).`));
+    });
+  }
+  return out;
+};
+
 const colorScheme: Check = (ctx, rules) => {
   const r = rules[0];
   if (!ctx.css.length) return [];
@@ -1204,7 +1231,7 @@ const listStructure: Check = (ctx, rules) => {
 
 export const CHECKS: Record<string, Check> = {
   contrast, focusRing, reducedMotion, forbiddenValue, formLabel, semanticControl, emojiIcon, imgDimensions, imgAlt, targetSize,
-  headingOrder, htmlLang, logicalProperties, colorScheme, colorTokenOnly, tokenBinding, externalRel, sri,
+  headingOrder, htmlLang, logicalProperties, viewportUnits, colorScheme, colorTokenOnly, tokenBinding, externalRel, sri,
   metaViewport, viewportPresence, controlName, deadHref, gradientText, positiveTabindex, langValid,
   landmarkMain, skipLink, singleH1, fieldsetGroup, genericLinkText, focusForcedColors, focusReshape, zindexScale, containerQuery,
   iframeTitle, tableHeaders, duplicateIdRefs, viewportFit,

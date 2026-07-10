@@ -16,6 +16,25 @@ All notable changes to this project are documented here. The format is based on
   `check:drift` guard (item 10) asserts every token-derived `:root` value equals `standard/tokens.css`, so
   the site's tokens can no longer drift from the standard. Closes the deferred GEN1 site-rewire.
 
+## [1.18.0] — 2026-07-10 · CLI
+
+### Added
+
+- **`responsive.viewport-units` — flag bare `100vh` for full-height layouts (Direction B: extend
+  enforcement).** A `height` / `min-height` / `max-height` (or the logical `block-size` forms) set to
+  `100vh` now **warns**: `100vh` equals the *largest* viewport, so on mobile the collapsing URL bar hides
+  the bottom of the layout. Recommends `100dvh` (dynamic) / `100svh` (guaranteed-visible). Scoped to the
+  full-height `100vh` tell only — `80vh`, `100dvh`, `100svh`, `1100vh`, `width`, and custom properties are
+  not flagged, keeping false positives near zero. Bundles standard **1.13.0** (rule catalog 55 → 56).
+
+## [1.13.0] — 2026-07-10 · standard
+
+### Added
+
+- **Rule `responsive.viewport-units`** (domain `responsive`, 📐 CONV, `warn`) — full-height layouts use
+  `dvh` / `svh`, not `100vh` (REFERENCE §11; web.dev viewport units). Enforced by the CLI as of 1.18.0.
+  Catalog 55 → 56.
+
 ## [1.17.0] — 2026-07-10 · CLI
 
 ### Changed
