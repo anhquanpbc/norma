@@ -16,6 +16,17 @@ All notable changes to this project are documented here. The format is based on
   `check:drift` guard (item 10) asserts every token-derived `:root` value equals `standard/tokens.css`, so
   the site's tokens can no longer drift from the standard. Closes the deferred GEN1 site-rewire.
 
+## [1.20.0] — 2026-07-11 · CLI
+
+### Added
+
+- **`norma-design-lint init` — one-command project scaffold (Direction C: adoption).** Writes a starter
+  `.normarc.json`, a CI workflow (`.github/workflows/design-lint.yml` — the recommended `npx` recipe with a
+  by-domain/by-rule Step-Summary), and the vendor-neutral `AGENTS.md` rule file (copied from the bundled
+  `dist/agents`). Non-interactive and safe: existing files are **skipped, never clobbered**, unless
+  `--force`; it also prints where the Claude Code / Cursor / Copilot rule files live. Collapses the old
+  copy-a-file → hand-write-a-config → copy-the-CI-recipe chore into `npx norma-design-lint init`.
+
 ## [1.19.0] — 2026-07-10 · CLI
 
 ### Added

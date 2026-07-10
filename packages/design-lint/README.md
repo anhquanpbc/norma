@@ -161,6 +161,9 @@ spec revisions).
 
 ## AI-agent rule files
 
+**Fastest start:** `npx norma-design-lint init` scaffolds a `.normarc.json`, a CI workflow, and `AGENTS.md`
+in one step (existing files are skipped unless `--force`).
+
 Norma generates strict do/don't rule files for AI coding tools from the same catalog, and they ship
 **inside this package** — no repo clone needed. Copy the one for your tool out of
 `node_modules/norma-design-lint/dist/agents/`:
