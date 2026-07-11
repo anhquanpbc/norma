@@ -240,8 +240,12 @@ stdio, so an agent can query the standard and lint source in the loop. Point you
 `norma-mcp` bin:
 
 ```json
-{ "mcpServers": { "norma": { "command": "npx", "args": ["-y", "norma-design-lint", "norma-mcp"] } } }
+{ "mcpServers": { "norma": { "command": "npx", "args": ["-y", "-p", "norma-design-lint", "norma-mcp"] } } }
 ```
+
+`-p norma-design-lint` selects the package and `norma-mcp` runs its MCP-server bin. The `-p` is required:
+the package's **default** bin is the linter, so `npx norma-design-lint norma-mcp` would run the linter (with
+`norma-mcp` as a file glob), not the server.
 
 Tools: **`lint_source`** (lint an HTML/CSS/JSX string → findings), **`list_rules`** (the catalog, filterable
 by `domain`/`tag`), **`get_rule`** (one rule by id, with rationale + remediation), **`fix_source`**

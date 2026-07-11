@@ -1,6 +1,7 @@
 {
   "name": "norma-design-lint",
-  "version": "1.23.1",
+  "version": "1.23.2",
+  "mcpName": "io.github.anhquanpbc/norma",
   "description": "Lint HTML/CSS against the Norma web design standard — contrast, focus rings, semantic HTML, labels, reduced-motion, and the common AI-generated design tells.",
   "type": "module",
   "license": "MIT",

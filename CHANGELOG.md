@@ -24,6 +24,24 @@ All notable changes to this project are documented here. The format is based on
   `check:drift` guard (item 10) asserts every token-derived `:root` value equals `standard/tokens.css`, so
   the site's tokens can no longer drift from the standard. Closes the deferred GEN1 site-rewire.
 
+## [1.23.2] — 2026-07-12 · CLI
+
+### Fixed
+
+- **The documented `npx` launch of the `norma-mcp` MCP server was wrong — it ran the linter.** The README's
+  MCP client config used `npx -y norma-design-lint norma-mcp`, but `norma-mcp` is the package's **secondary**
+  bin (the linter is the default), so npx treated `norma-mcp` as a file argument and ran the linter ("No
+  HTML/CSS files matched"), never starting the server. Corrected to `npx -y -p norma-design-lint norma-mcp`
+  (`-p` selects the package, then runs its `norma-mcp` bin) in both `README.md` and `README.vi.md`. The bin
+  itself was always correct — only the documented invocation was broken.
+
+### Added
+
+- **`mcpName` marker for the official MCP Registry.** `packages/design-lint/package.json` now declares
+  `"mcpName": "io.github.anhquanpbc/norma"` — the ownership marker the registry checks (it must be in the
+  **published** package, so it ships from 1.23.2 on). `RELEASING.md` gains a "Publishing to the MCP Registry"
+  section with the `mcp-publisher` init/login/publish flow. No behavior change to the package.
+
 ## [1.23.1] — 2026-07-11 · CLI
 
 ### Fixed
