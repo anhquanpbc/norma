@@ -226,8 +226,10 @@ stdio, so an agent can query the standard and lint source in the loop. Point you
 Tools: **`lint_source`** (lint an HTML/CSS/JSX string → findings), **`list_rules`** (the catalog, filterable
 by `domain`/`tag`), **`get_rule`** (one rule by id, with rationale + remediation), **`fix_source`**
 (auto-fix the deterministic rules in an HTML/CSS string → fixed source + edit count, to close the
-lint→fix→re-lint loop), and **`validate_tokens`** (validate a DTCG token JSON string → `{ valid,
-tokenCount, errors, warnings }`).
+lint→fix→re-lint loop), **`validate_tokens`** (validate a DTCG token JSON string → `{ valid,
+tokenCount, errors, warnings }`), and **`get_tokens`** (the design tokens resolved for generation — each
+token's CSS custom-property name + value + alias-resolved concrete, plus the light/dark theme map, so an
+agent builds with the right token instead of a raw value; optionally filtered by `group`).
 
 ## Programmatic API
 

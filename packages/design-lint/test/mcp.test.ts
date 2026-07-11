@@ -1,8 +1,10 @@
 import { describe, it, expect } from "vitest";
 import { handleRpc, callTool, type Catalog } from "../src/mcp.js";
 import { loadRules } from "../src/loadRules.js";
+import { loadTokenView } from "../src/token-view.js";
 
 const catalog = loadRules() as Catalog;
+const tokenView = loadTokenView();
 
 describe("MCP — JSON-RPC surface", () => {
   it("initialize returns the protocol version + server info", () => {
@@ -11,9 +13,9 @@ describe("MCP — JSON-RPC surface", () => {
     expect(res.result.serverInfo.name).toBe("norma-design-lint");
     expect(res.result.capabilities.tools).toBeDefined();
   });
-  it("tools/list advertises the five tools", () => {
+  it("tools/list advertises the six tools", () => {
     const res = handleRpc({ jsonrpc: "2.0", id: 2, method: "tools/list" }, catalog) as any;
-    expect(res.result.tools.map((t: any) => t.name).sort()).toEqual(["fix_source", "get_rule", "lint_source", "list_rules", "validate_tokens"]);
+    expect(res.result.tools.map((t: any) => t.name).sort()).toEqual(["fix_source", "get_rule", "get_tokens", "lint_source", "list_rules", "validate_tokens"]);
     for (const t of res.result.tools) expect(t.inputSchema.type).toBe("object");
   });
   it("a notification gets no reply", () => {
@@ -70,5 +72,30 @@ describe("MCP — tools", () => {
     const r = callTool("validate_tokens", { tokens: s }, catalog);
     expect(r.isError).toBe(false);
     expect(JSON.parse(r.content[0].text).valid).toBe(false);
+  });
+  it("get_tokens returns the resolved palette + themes, and errors without a token catalog", () => {
+    const r = callTool("get_tokens", {}, catalog, tokenView);
+    expect(r.isError).toBe(false);
+    const p = JSON.parse(r.content[0].text);
+    expect(p.standardVersion).toBe(catalog.version);
+    expect(p.count).toBeGreaterThan(0);
+    const brand = p.tokens.find((t: any) => t.path === "color.brand.azure");
+    expect(brand.name).toBe("--color-brand-azure");
+    expect(brand.value).toMatch(/^oklch\(/);
+    const link = p.tokens.find((t: any) => t.path === "color.text.link");
+    expect(link.value).toBe("var(--color-brand-azure-ink)"); // alias kept as var()
+    expect(link.resolved).toMatch(/^oklch\(/); // + concrete
+    expect(p.themes.light.text.name).toBe("--color-ink-1");
+    expect(p.themes.dark.surface.name).toBe("--color-dark-surface-1");
+    expect(p.skipped).toEqual([]); // the standard's tokens all render cleanly
+    // No token catalog available → graceful error, not a crash.
+    expect(callTool("get_tokens", {}, catalog, null).isError).toBe(true);
+  });
+  it("get_tokens filters by group and rejects an unknown group", () => {
+    const colors = JSON.parse(callTool("get_tokens", { group: "color" }, catalog, tokenView).content[0].text);
+    expect(colors.tokens.length).toBeGreaterThan(0);
+    expect(colors.tokens.every((t: any) => t.path.startsWith("color."))).toBe(true);
+    expect(colors.count).toBeLessThan(tokenView!.tokens.length);
+    expect(callTool("get_tokens", { group: "nope" }, catalog, tokenView).isError).toBe(true);
   });
 });

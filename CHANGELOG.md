@@ -24,6 +24,22 @@ All notable changes to this project are documented here. The format is based on
   `check:drift` guard (item 10) asserts every token-derived `:root` value equals `standard/tokens.css`, so
   the site's tokens can no longer drift from the standard. Closes the deferred GEN1 site-rewire.
 
+## [1.21.0] — 2026-07-11 · CLI
+
+### Added
+
+- **MCP `get_tokens` tool — the design tokens, resolved for UI generation.** A sixth MCP tool hands an
+  agent the Norma palette / spacing / type-scale / radius / z-index / motion tokens *in-band*: each token's
+  CSS custom-property name (`--color-brand-azure`), its CSS-writable value (an alias is kept as
+  `var(--…)`), the alias-resolved concrete value, and its description — plus the light/dark theme role map
+  from `$extensions`. So an agent can **generate** markup that reaches for the right token instead of a raw
+  value, closing the gap where `validate_tokens` could only check a token file after the fact. Optional
+  `group` filter (`color`, `space`, `font`, `radius`, `z`, `motion`). The token file
+  (`standard/tokens.tokens.json`) now ships inside the package (`dist/`), and the CSS-value formatter is
+  shared with `scripts/gen-tokens-css.ts` (via `src/token-view.ts`) so the token view an agent reads and
+  the generated `standard/tokens.css` can never disagree on how a token renders. The MCP server now
+  advertises **six** tools. (No standard change — CLI-only.)
+
 ## [1.20.1] — 2026-07-11 · CLI
 
 ### Added

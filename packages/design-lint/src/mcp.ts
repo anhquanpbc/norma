@@ -9,6 +9,7 @@ import { buildContext } from "./parse.js";
 import { lintContext } from "./engine.js";
 import { fixSource } from "./fix.js";
 import { validateTokens } from "./tokens.js";
+import { loadTokenView, type TokenView } from "./token-view.js";
 import type { FileType, Rule } from "./types.js";
 
 const PROTOCOL_VERSION = "2024-11-05";
@@ -77,12 +78,22 @@ const TOOLS = [
       required: ["tokens"],
     },
   },
+  {
+    name: "get_tokens",
+    description: "Get the Norma design tokens (palette, spacing, type scale, radius, z-index ladder, motion) resolved for UI GENERATION. Each token returns its CSS custom-property name (e.g. --color-brand-azure), its CSS-writable value (aliases as var(--…)), the alias-resolved concrete value, and its description; plus the light/dark theme role map. Use it to generate markup that reaches for the right token instead of a raw value. Optionally filter to one top-level group.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        group: { type: "string", description: "Filter to one top-level token group, e.g. color, space, font, radius, z, motion." },
+      },
+    },
+  },
 ];
 
 export interface Catalog { version: string; rules: Rule[]; }
 
 /** Execute a tool call. Pure — validates its own arguments at the boundary and never throws. */
-export function callTool(name: string, args: Record<string, unknown>, catalog: Catalog): ReturnType<typeof text> {
+export function callTool(name: string, args: Record<string, unknown>, catalog: Catalog, tokenView?: TokenView | null): ReturnType<typeof text> {
   if (name === "lint_source") {
     const source = args.source;
     const type = args.type;
@@ -126,11 +137,21 @@ export function callTool(name: string, args: Record<string, unknown>, catalog: C
     catch (e) { return text(`Invalid "tokens" JSON: ${(e as Error).message}`, true); }
     return text(validateTokens(doc));
   }
+  if (name === "get_tokens") {
+    if (!tokenView) return text("Token catalog unavailable — tokens.tokens.json was not found or could not be read (see the server's stderr).", true);
+    const group = typeof args.group === "string" ? args.group : undefined;
+    const tokens = group ? tokenView.tokens.filter((t) => t.path === group || t.path.startsWith(`${group}.`)) : tokenView.tokens;
+    if (group && tokens.length === 0) {
+      const groups = [...new Set(tokenView.tokens.map((t) => t.path.split(".")[0]))].join(", ");
+      return text(`No tokens in group "${group}". Available groups: ${groups}.`, true);
+    }
+    return text({ standardVersion: catalog.version, group, count: tokens.length, themes: tokenView.themes, tokens, skipped: tokenView.skipped });
+  }
   return text(`Unknown tool "${name}".`, true);
 }
 
 /** Handle one JSON-RPC message. Returns a response, or null for notifications (which get no reply). */
-export function handleRpc(msg: Rpc, catalog: Catalog): RpcResult | RpcError | null {
+export function handleRpc(msg: Rpc, catalog: Catalog, tokenView?: TokenView | null): RpcResult | RpcError | null {
   const { id, method } = msg;
   if (method === "initialize") {
     return ok(id, { protocolVersion: PROTOCOL_VERSION, capabilities: { tools: {} }, serverInfo: { name: "norma-design-lint", version: catalog.version } });
@@ -141,7 +162,7 @@ export function handleRpc(msg: Rpc, catalog: Catalog): RpcResult | RpcError | nu
     const params = msg.params ?? {};
     const name = typeof params.name === "string" ? params.name : "";
     const args = (params.arguments && typeof params.arguments === "object" ? params.arguments : {}) as Record<string, unknown>;
-    return ok(id, callTool(name, args, catalog));
+    return ok(id, callTool(name, args, catalog, tokenView));
   }
   if (typeof method === "string" && method.startsWith("notifications/")) return null; // notification → no reply
   if (id === undefined || id === null) return null; // any other notification
@@ -154,23 +175,24 @@ export function handleRpc(msg: Rpc, catalog: Catalog): RpcResult | RpcError | nu
  * (-32603) becomes a JSON-RPC error frame — a single bad request must never take down the long-lived
  * stdio server. Extracted from the readline loop so the transport can be unit-tested directly.
  */
-export function handleLine(line: string, catalog: Catalog): string | null {
+export function handleLine(line: string, catalog: Catalog, tokenView?: TokenView | null): string | null {
   const trimmed = line.trim();
   if (!trimmed) return null;
   let msg: Rpc;
   try { msg = JSON.parse(trimmed) as Rpc; }
   catch { return JSON.stringify(err(null, -32700, "Parse error")); }
   let res: RpcResult | RpcError | null;
-  try { res = handleRpc(msg, catalog); }
+  try { res = handleRpc(msg, catalog, tokenView); }
   catch (e) { res = err(msg.id ?? null, -32603, `Internal error: ${(e as Error).message}`); }
   return res ? JSON.stringify(res) : null;
 }
 
 function main(): void {
   const catalog = loadRules() as Catalog;
+  const tokenView = loadTokenView();
   const rl = createInterface({ input: process.stdin });
   rl.on("line", (line) => {
-    const out = handleLine(line, catalog);
+    const out = handleLine(line, catalog, tokenView);
     if (out !== null) process.stdout.write(out + "\n");
   });
 }
