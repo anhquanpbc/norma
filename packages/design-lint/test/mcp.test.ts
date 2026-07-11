@@ -87,6 +87,7 @@ describe("MCP — tools", () => {
     expect(link.resolved).toMatch(/^oklch\(/); // + concrete
     expect(p.themes.light.text.name).toBe("--color-ink-1");
     expect(p.themes.dark.surface.name).toBe("--color-dark-surface-1");
+    expect(p.skipped).toEqual([]); // the standard's tokens all render cleanly
     // No token catalog available → graceful error, not a crash.
     expect(callTool("get_tokens", {}, catalog, null).isError).toBe(true);
   });

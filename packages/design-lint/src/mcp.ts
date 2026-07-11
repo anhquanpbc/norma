@@ -138,14 +138,14 @@ export function callTool(name: string, args: Record<string, unknown>, catalog: C
     return text(validateTokens(doc));
   }
   if (name === "get_tokens") {
-    if (!tokenView) return text("Token catalog unavailable — could not locate tokens.tokens.json.", true);
+    if (!tokenView) return text("Token catalog unavailable — tokens.tokens.json was not found or could not be read (see the server's stderr).", true);
     const group = typeof args.group === "string" ? args.group : undefined;
     const tokens = group ? tokenView.tokens.filter((t) => t.path === group || t.path.startsWith(`${group}.`)) : tokenView.tokens;
     if (group && tokens.length === 0) {
       const groups = [...new Set(tokenView.tokens.map((t) => t.path.split(".")[0]))].join(", ");
       return text(`No tokens in group "${group}". Available groups: ${groups}.`, true);
     }
-    return text({ standardVersion: catalog.version, group, count: tokens.length, themes: tokenView.themes, tokens });
+    return text({ standardVersion: catalog.version, group, count: tokens.length, themes: tokenView.themes, tokens, skipped: tokenView.skipped });
   }
   return text(`Unknown tool "${name}".`, true);
 }

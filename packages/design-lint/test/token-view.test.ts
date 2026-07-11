@@ -45,7 +45,7 @@ describe("token-view — resolveTokens", () => {
   });
 
   it("is defensive: a non-object doc, a dangling alias, and a cycle never throw", () => {
-    expect(resolveTokens(null)).toEqual({ tokens: [], themes: {} });
+    expect(resolveTokens(null)).toEqual({ tokens: [], themes: {}, skipped: [] });
 
     const dangling = resolveTokens({ c: { $type: "color", a: { $value: "{c.missing}" } } });
     expect(dangling.tokens[0].value).toBe("var(--c-missing)");
@@ -53,6 +53,19 @@ describe("token-view — resolveTokens", () => {
 
     const cyclic = resolveTokens({ c: { $type: "color", a: { $value: "{c.b}" }, b: { $value: "{c.a}" } } });
     expect(cyclic.tokens.find((t) => t.path === "c.a")!.resolved).toBeUndefined();
+  });
+
+  it("isolates a per-token failure: one unrenderable token is skipped, the rest survive", () => {
+    const v = resolveTokens({
+      color: { $type: "color", ok: { $value: "oklch(0.5 0.1 250)" }, bad: { $value: 42 } }, // 42 is not a color
+      // a DTCG composite type Norma does not use → no single CSS value, must be skipped not fatal
+      shadowy: { $type: "shadow", card: { $value: { color: "#000", offsetX: { value: 1, unit: "px" } } } },
+    });
+    expect(v.tokens.find((t) => t.path === "color.ok")!.value).toBe("oklch(0.5 0.1 250)"); // good token kept
+    expect(v.tokens.some((t) => t.path === "color.bad")).toBe(false); // bad token skipped
+    expect(v.tokens.some((t) => t.path === "shadowy.card")).toBe(false); // composite skipped
+    expect(v.skipped.map((s) => s.path).sort()).toEqual(["color.bad", "shadowy.card"]);
+    expect(v.skipped.every((s) => typeof s.reason === "string" && s.reason.length > 0)).toBe(true);
   });
 
   it("formatCssValue handles every Norma token type; varName maps a path", () => {
@@ -64,12 +77,14 @@ describe("token-view — resolveTokens", () => {
     expect(formatCssValue("mono", "fontFamily")).toBe("mono");
     expect(formatCssValue([0.2, 0, 0, 1], "cubicBezier")).toBe("cubic-bezier(0.2, 0, 0, 1)");
     expect(() => formatCssValue({}, "color")).toThrow();
+    expect(() => formatCssValue([0, 0, 0, "x"], "cubicBezier")).toThrow(); // element types are checked
   });
 
   it("loadTokenView resolves the real bundled/standard tokens end to end", () => {
     const v = loadTokenView();
     expect(v).not.toBeNull();
     expect(v!.tokens.length).toBeGreaterThan(50);
+    expect(v!.skipped).toEqual([]); // the standard's own tokens all render cleanly
     expect(v!.themes.light.brand.name).toBe("--color-brand-azure");
     // the brand hue is a concrete oklch token
     expect(v!.tokens.find((t) => t.path === "color.brand.azure")!.value).toMatch(/^oklch\(/);

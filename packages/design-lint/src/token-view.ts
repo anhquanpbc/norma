@@ -46,7 +46,7 @@ export function formatCssValue(value: unknown, type: string | undefined): string
       if (typeof value === "string") return familyMember(value);
       break;
     case "cubicBezier":
-      if (Array.isArray(value) && value.length === 4) return `cubic-bezier(${value.join(", ")})`;
+      if (Array.isArray(value) && value.length === 4 && value.every((n) => typeof n === "number")) return `cubic-bezier(${value.join(", ")})`;
       break;
   }
   throw new Error(`cannot format value ${JSON.stringify(value)} (type ${type ?? "?"})`);
@@ -70,10 +70,21 @@ export interface ThemeRole {
   name: string;
   value: string;
 }
+export interface SkippedToken {
+  path: string;
+  reason: string;
+}
 export interface TokenView {
   tokens: ResolvedToken[];
   /** Theme → role → resolved token, from $extensions.org.norma.themes (e.g. light.surface, dark.text). */
   themes: Record<string, Record<string, ThemeRole>>;
+  /**
+   * Tokens whose $value could not be rendered to a single CSS value — a DTCG composite type Norma does not
+   * use (shadow, typography, …), or a malformed value — skipped so one bad token can't blank the whole view.
+   * Empty for the standard's own tokens (guarded by check:drift + validate_tokens); non-empty surfaces the
+   * problem to the agent + maintainer instead of failing silently.
+   */
+  skipped: SkippedToken[];
 }
 
 interface RawNode { path: string[]; value: unknown; type: string | undefined; description?: string; }
@@ -83,11 +94,13 @@ interface RawNode { path: string[]; value: unknown; type: string | undefined; de
 const MAX_DEPTH = 100;
 
 /**
- * Resolve a parsed DTCG token document into the flat agent view. Never throws on structure — a non-object
- * doc yields an empty view, a dangling/cyclic alias simply gets no `resolved` value.
+ * Resolve a parsed DTCG token document into the flat agent view. Never throws: a non-object doc yields an
+ * empty view; a token whose $value can't be rendered to CSS (a composite type Norma doesn't use, or a
+ * malformed value) is collected in `skipped` rather than aborting; a dangling/cyclic alias just gets no
+ * `resolved` value. Fed the standard's own valid tokens, but robust to anything.
  */
 export function resolveTokens(doc: unknown): TokenView {
-  if (!isObject(doc)) return { tokens: [], themes: {} };
+  if (!isObject(doc)) return { tokens: [], themes: {}, skipped: [] };
 
   const nodes: RawNode[] = [];
   const byPath = new Map<string, RawNode>();
@@ -120,15 +133,23 @@ export function resolveTokens(doc: unknown): TokenView {
     return cur;
   };
 
-  const tokens: ResolvedToken[] = nodes.map((n) => {
-    const t: ResolvedToken = { name: varName(n.path), path: n.path.join("."), type: n.type ?? "", value: formatCssValue(n.value, n.type) };
+  const tokens: ResolvedToken[] = [];
+  const skipped: SkippedToken[] = [];
+  for (const n of nodes) {
+    const path = n.path.join(".");
+    let value: string;
+    // Aliases always format (→ var()); only a concrete value of an unsupported/malformed type can throw.
+    try { value = formatCssValue(n.value, n.type); }
+    catch (e) { skipped.push({ path, reason: (e as Error).message }); continue; }
+    const t: ResolvedToken = { name: varName(n.path), path, type: n.type ?? "", value };
     if (isAlias(n.value)) {
       const c = concrete(n);
-      if (c) t.resolved = formatCssValue(c.value, c.type);
+      // A resolvable alias whose concrete target is itself unformattable → omit `resolved`, keep the var().
+      if (c) { try { t.resolved = formatCssValue(c.value, c.type); } catch { /* leave resolved unset */ } }
     }
     if (n.description) t.description = n.description;
-    return t;
-  });
+    tokens.push(t);
+  }
 
   // Theme role map: each role is an alias to a token; resolve it to its concrete value + var name.
   const themes: Record<string, Record<string, ThemeRole>> = {};
@@ -142,12 +163,14 @@ export function resolveTokens(doc: unknown): TokenView {
         const targetPath = ref.slice(1, -1);
         const target = byPath.get(targetPath);
         const c = target ? concrete(target) : undefined;
-        roleMap[role] = { token: targetPath, name: varName(targetPath.split(".")), value: c ? formatCssValue(c.value, c.type) : ref };
+        let value = ref; // fall back to the raw alias if the target is missing/unformattable
+        if (c) { try { value = formatCssValue(c.value, c.type); } catch { value = ref; } }
+        roleMap[role] = { token: targetPath, name: varName(targetPath.split(".")), value };
       }
       themes[themeName] = roleMap;
     }
   }
-  return { tokens, themes };
+  return { tokens, themes, skipped };
 }
 
 /** Locate the token file: the bundled copy next to this module (published) → the repo's standard/ (dev). */
@@ -166,11 +189,13 @@ function resolveTokensPath(): string | null {
 
 /**
  * Load + resolve the bundled/standard token file into a view. Returns null when the file can't be found or
- * parsed, so the MCP `get_tokens` tool degrades to a clean "unavailable" error instead of crashing.
+ * read/parsed (the cause is logged to stderr — matching lintFiles' token-file handling — so a corrupt
+ * bundled file leaves a forensic trail instead of a silent, misleading "not found"). resolveTokens itself
+ * never throws, so a null here means the file is genuinely absent or unparseable, not merely unresolvable.
  */
 export function loadTokenView(): TokenView | null {
   const p = resolveTokensPath();
   if (!p) return null;
   try { return resolveTokens(JSON.parse(readFileSync(p, "utf8"))); }
-  catch { return null; }
+  catch (e) { console.error(`[norma] get_tokens: cannot read/parse ${p}: ${(e as Error).message}`); return null; }
 }
