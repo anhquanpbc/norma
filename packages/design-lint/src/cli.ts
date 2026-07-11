@@ -105,8 +105,10 @@ function runInit(rest: string[]): number {
   const mcp = rest.includes("--mcp");
   const ai = rest.indexOf("--agent");
   const agents = ai >= 0 ? rest[ai + 1] : undefined;
-  if (agents !== undefined && !["cursor", "copilot", "claude", "all"].includes(agents)) {
-    console.error(`Invalid --agent "${agents}" — expected cursor, copilot, claude, or all.`);
+  // If --agent is present, its value must be valid — a missing value (last arg) is an error too, not a
+  // silent no-op (which would misleadingly install nothing despite the user asking for a tool).
+  if (ai >= 0 && !["cursor", "copilot", "claude", "all"].includes(agents ?? "")) {
+    console.error(`Invalid --agent "${agents ?? ""}" — expected cursor, copilot, claude, or all.`);
     return 1;
   }
   const agentsDir = join(dirname(fileURLToPath(import.meta.url)), "..", "dist", "agents");
@@ -116,10 +118,13 @@ function runInit(rest: string[]): number {
   console.log(written.length
     ? `\n✓ Scaffolded ${written.length} file(s). Commit them, then run \`npx norma-design-lint\`.`
     : `\nAll target files already exist — nothing written (use --force to overwrite).`);
-  // Always show the MCP config (whether or not --mcp wrote it) so it can be pasted into any client.
-  console.log(mcp
+  // Always show the MCP config so it can be pasted into any client. Base the wording on what actually
+  // happened to .mcp.json — not the raw --mcp flag — so a skipped (pre-existing) file isn't reported as written.
+  console.log(written.includes(".mcp.json")
     ? "\nMCP server → wrote .mcp.json (the same block works in .cursor/mcp.json or a Claude Desktop config):"
-    : "\nMCP server — add this to your client (.mcp.json / .cursor/mcp.json / Claude Desktop), or re-run with --mcp:");
+    : mcp
+      ? "\nMCP server — .mcp.json already exists (use --force to overwrite); the config it should contain:"
+      : "\nMCP server — add this to your client (.mcp.json / .cursor/mcp.json / Claude Desktop), or re-run with --mcp:");
   console.log(MCP_CONFIG.trimEnd());
   if (!agents && existsSync(agentsDir)) {
     console.log(`\nAI rule files for a specific tool: re-run with --agent <cursor|copilot|claude|all> (AGENTS.md is always installed).`);
