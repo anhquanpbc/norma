@@ -4,6 +4,7 @@
 
 [![CI](https://github.com/anhquanpbc/norma/actions/workflows/ci.yml/badge.svg)](https://github.com/anhquanpbc/norma/actions/workflows/ci.yml)
 [![npm](https://img.shields.io/npm/v/norma-design-lint?label=norma-design-lint)](https://www.npmjs.com/package/norma-design-lint)
+[![release](https://img.shields.io/github/v/release/anhquanpbc/norma?label=release&sort=semver)](https://github.com/anhquanpbc/norma/releases)
 [![standard](https://img.shields.io/badge/standard-v1.13.0-informational)](standard/rules.yaml)
 [![code: MIT](https://img.shields.io/badge/code-MIT-blue)](LICENSE)
 [![content: CC BY 4.0](https://img.shields.io/badge/content-CC%20BY%204.0-lightgrey)](https://creativecommons.org/licenses/by/4.0/)
@@ -115,7 +116,8 @@ npm run check:drift  # anti-drift guard (regenerates and diffs every generated f
 
 `standard/rules.yaml` + `standard/tokens.tokens.json` are the only hand-edited rule sources; the rule
 JSON, agent files, and linter config are generated. See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the
-generation pipeline and [`RELEASING.md`](RELEASING.md) for releases.
+generation pipeline and [`RELEASING.md`](RELEASING.md) for the release process. Per-version notes live on
+the [**Releases**](https://github.com/anhquanpbc/norma/releases) page (or [`CHANGELOG.md`](CHANGELOG.md)).
 
 ## Sources
 

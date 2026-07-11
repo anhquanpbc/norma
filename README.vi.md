@@ -4,6 +4,7 @@
 
 [![CI](https://github.com/anhquanpbc/norma/actions/workflows/ci.yml/badge.svg)](https://github.com/anhquanpbc/norma/actions/workflows/ci.yml)
 [![npm](https://img.shields.io/npm/v/norma-design-lint?label=norma-design-lint)](https://www.npmjs.com/package/norma-design-lint)
+[![release](https://img.shields.io/github/v/release/anhquanpbc/norma?label=release&sort=semver)](https://github.com/anhquanpbc/norma/releases)
 [![standard](https://img.shields.io/badge/standard-v1.13.0-informational)](standard/rules.yaml)
 [![code: MIT](https://img.shields.io/badge/code-MIT-blue)](LICENSE)
 [![content: CC BY 4.0](https://img.shields.io/badge/content-CC%20BY%204.0-lightgrey)](https://creativecommons.org/licenses/by/4.0/)
@@ -115,7 +116,8 @@ npm run check:drift  # bộ chống lệch (tái tạo và so mọi file đượ
 
 `standard/rules.yaml` + `standard/tokens.tokens.json` là nguồn luật duy nhất sửa tay; rule JSON, các file
 agent và cấu hình linter đều được sinh tự động. Xem [`CONTRIBUTING.md`](CONTRIBUTING.md) cho quy trình
-sinh và [`RELEASING.md`](RELEASING.md) cho việc release.
+sinh và [`RELEASING.md`](RELEASING.md) cho quy trình release. Ghi chú từng phiên bản nằm ở trang
+[**Releases**](https://github.com/anhquanpbc/norma/releases) (hoặc [`CHANGELOG.md`](CHANGELOG.md)).
 
 ## Nguồn
 
