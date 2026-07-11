@@ -24,6 +24,28 @@ All notable changes to this project are documented here. The format is based on
   `check:drift` guard (item 10) asserts every token-derived `:root` value equals `standard/tokens.css`, so
   the site's tokens can no longer drift from the standard. Closes the deferred GEN1 site-rewire.
 
+## [1.22.0] — 2026-07-11 · CLI
+
+### Added
+
+- **`--max-per-rule <n>` — cap the per-finding output so a large repo fits in an agent's context (token
+  efficiency).** A rule firing thousands of times (e.g. one antipattern across a monorepo) no longer floods
+  `stylish`/`json` output: `--max-per-rule 3` lists at most 3 findings per rule (a global cap across all
+  files) and reports the rest as a count. Measured: on a 60-findings-one-rule file, `--format json
+  --max-per-rule 3` cut the payload **94%** (17.3 KB → 1.0 KB). The cap is display-only — the summary
+  counts, the exit code, the `--baseline` file, and the SARIF upload are always computed from the **full**
+  set, so nothing is silently gated away. `markdown` (already aggregated by rule) and `sarif` (kept complete
+  for GitHub code scanning) are unaffected; `json` gains a `truncated` count of what was hidden.
+
+### Changed
+
+- **`--format json` is slimmed for machine/agent consumption.** Two accidental-bloat fixes: `file` is now
+  **repo-relative** and forward-slashed (was an absolute, OS-specific path), and `message` is the single
+  **`--lang`** string (was the full `{ en, vi }` object — an English agent never read the `vi` half), matching
+  the MCP `lint_source` shape. The top-level `errorCount`/`warnCount`/`fileCount`/`skipped`/`version` are
+  unchanged. **Note:** this is a shape change to the `json` output — a consumer that read `finding.message.en`
+  should now read `finding.message` (and pass `--lang vi` for Vietnamese), and paths are relative to the CWD.
+
 ## [1.21.0] — 2026-07-11 · CLI
 
 ### Added

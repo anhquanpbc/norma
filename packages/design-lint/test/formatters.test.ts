@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import Ajv from "ajv";
-import { stylish, json, sarif } from "../src/formatters.js";
+import { stylish, json, sarif, capByRule } from "../src/formatters.js";
 import type { LintResult } from "../src/index.js";
 
 const res: LintResult = {
@@ -78,8 +78,35 @@ describe("formatters", () => {
     expect(stylish(clean, "en")).toContain("No violations");
   });
 
-  it("json round-trips the result", () => {
-    expect(JSON.parse(json(res)).errorCount).toBe(1);
+  it("json is slimmed: repo-relative file, single-language message, true top-level counts", () => {
+    const p = JSON.parse(json(res));
+    expect(p.errorCount).toBe(1);
+    expect(p.warnCount).toBe(1);
+    expect(p.findings[0].file).toBe("a.html"); // repo-relative + forward-slashed, not absolute
+    expect(p.findings[0].message).toBe("low contrast"); // the en string, not the { en, vi } object
+    expect(JSON.parse(json(res, "vi")).findings[0].message).toBe("tương phản thấp");
+    expect(p.truncated).toBe(0);
+  });
+
+  it("capByRule + --max-per-rule cap the LISTED findings while counts stay true", () => {
+    const many: LintResult = {
+      version: "1.0.0", fileCount: 1, errorCount: 5, warnCount: 0,
+      findings: Array.from({ length: 5 }, (_, i) => ({
+        ruleId: "a11y.semantic-control", severity: "error" as const,
+        file: process.cwd() + "/a.html", line: i + 1, message: { en: "div onclick", vi: "div onclick" },
+      })),
+    };
+    expect(capByRule(many.findings, 2)).toMatchObject({ hidden: 3 });
+    expect(capByRule(many.findings, 2).shown.length).toBe(2);
+
+    const p = JSON.parse(json(many, "en", 2));
+    expect(p.findings.length).toBe(2); // only 2 of the 5 same-rule findings are listed
+    expect(p.truncated).toBe(3);
+    expect(p.errorCount).toBe(5); // …but the count is the true total
+
+    const s = stylish(many, "en", 2);
+    expect(s).toContain("3 more finding(s) hidden");
+    expect(s).toContain("5 errors"); // the summary still shows the true total
   });
 
   it("sarif validates against the SARIF 2.1.0 schema", () => {

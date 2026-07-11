@@ -123,6 +123,27 @@ describe("cli", () => {
     expect(err).toContain("Invalid --max-warnings");
   });
 
+  it("--max-per-rule caps listed findings per rule but keeps the true counts", () => {
+    const dir = mkdtempSync(join(tmpdir(), "norma-cli-"));
+    const html = join(dir, "many.html");
+    try {
+      // five positive-tabindex anchors → five findings of the same rule
+      writeFileSync(html, Array.from({ length: 5 }, (_, i) => `<a href="/x" tabindex="${i + 2}">x</a>`).join("\n"));
+      const full = JSON.parse(run(["--format", "json", html]).out);
+      const capped = JSON.parse(run(["--format", "json", "--max-per-rule", "1", html]).out);
+      expect(full.findings.length).toBeGreaterThan(capped.findings.length);
+      expect(capped.truncated).toBe(full.findings.length - capped.findings.length);
+      expect(capped.errorCount).toBe(full.errorCount); // the display cap does not change counts…
+      expect(capped.warnCount).toBe(full.warnCount);
+    } finally { rmSync(dir, { recursive: true, force: true }); }
+  });
+
+  it("rejects a non-positive --max-per-rule", () => {
+    const { code, err } = run(["--max-per-rule", "0", fx("good.html")]);
+    expect(code).toBe(1);
+    expect(err).toContain("Invalid --max-per-rule");
+  });
+
   it("warns (not fails) on an unknown rule id in the config", () => {
     const { err } = run(["--config", fx("unknownid.normarc.json"), fx("good.html")]);
     expect(err).toContain("unknown rule id");

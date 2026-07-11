@@ -23,6 +23,7 @@ Options:
   --tokens <path>                 DTCG token file → enable token-binding (flag raw values duplicating a token)
   --quiet                         only report errors
   --max-warnings <n>              exit non-zero if warnings exceed n (default: unlimited)
+  --max-per-rule <n>              cap findings LISTED per rule in stylish/json (counts + exit stay true)
   --fix                           auto-fix the deterministic rules in place, then lint the rest
   --baseline <path>               suppress findings already in the baseline; fail only on NEW ones
   --update-baseline               (re)write the baseline from the current findings
@@ -146,6 +147,12 @@ function main(argv: string[]): number {
     console.error(`Invalid --max-warnings "${maxWarningsRaw}" — expected a non-negative integer.`);
     return 1;
   }
+  const maxPerRuleRaw = opt("--max-per-rule");
+  const maxPerRule = maxPerRuleRaw != null ? Number(maxPerRuleRaw) : null;
+  if (maxPerRule != null && (!Number.isInteger(maxPerRule) || maxPerRule < 1)) {
+    console.error(`Invalid --max-per-rule "${maxPerRuleRaw}" — expected a positive integer.`);
+    return 1;
+  }
   const rulesPath = opt("--rules");
 
   // Warn (don't fail) on config overrides that name a rule id not in the catalog — a typo would
@@ -157,7 +164,7 @@ function main(argv: string[]): number {
     }
   }
 
-  const flagVals = new Set(["--format", "--lang", "--config", "--rules", "--max-warnings", "--baseline", "--tokens"]);
+  const flagVals = new Set(["--format", "--lang", "--config", "--rules", "--max-warnings", "--max-per-rule", "--baseline", "--tokens"]);
   const patterns = args.filter((a, i) => !a.startsWith("-") && !flagVals.has(args[i - 1]));
   const files = expand(patterns.length ? patterns : ["**/*.{html,htm,css,jsx,tsx,vue,svelte}"]);
 
@@ -219,10 +226,10 @@ function main(argv: string[]): number {
     res = { ...res, findings: res.findings.filter((f) => f.severity === "error"), warnCount: 0 };
   }
 
-  if (format === "json") console.log(json(res));
+  if (format === "json") console.log(json(res, lang, maxPerRule));
   else if (format === "sarif") console.log(sarif(res, loadRules({ path: rulesPath, overrides: config.rules }).rules));
   else if (format === "markdown") console.log(markdown(res, loadRules({ path: rulesPath, overrides: config.rules }).rules, suppressedCount, freshCount));
-  else console.log(stylish(res, lang));
+  else console.log(stylish(res, lang, maxPerRule));
 
   const overWarnings = maxWarnings != null && res.warnCount > maxWarnings;
   if (overWarnings && format === "stylish") {

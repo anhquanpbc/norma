@@ -5,16 +5,35 @@ import { fingerprints } from "./fingerprint.js";
 
 export type Lang = "en" | "vi";
 
-/** Human-readable, grouped by file. */
-export function stylish(res: LintResult, lang: Lang): string {
+/**
+ * Cap the findings LISTED per ruleId to `max` (a global cap across all files, order preserved), so one rule
+ * firing hundreds of times can't flood the per-finding output on a large repo. Only stylish/json list
+ * findings, so only they cap; the true counts + exit code always come from the full set. Returns the kept
+ * findings + how many were dropped.
+ */
+export function capByRule(findings: Finding[], max: number): { shown: Finding[]; hidden: number } {
+  const count = new Map<string, number>();
+  const shown: Finding[] = [];
+  let hidden = 0;
+  for (const f of findings) {
+    const n = count.get(f.ruleId) ?? 0;
+    if (n < max) { count.set(f.ruleId, n + 1); shown.push(f); }
+    else hidden++;
+  }
+  return { shown, hidden };
+}
+
+/** Human-readable, grouped by file. `maxPerRule` caps how many findings each rule lists (counts stay true). */
+export function stylish(res: LintResult, lang: Lang, maxPerRule?: number | null): string {
   const skip = res.skipped ? (lang === "vi" ? `, ${res.skipped} bỏ qua` : `, ${res.skipped} skipped`) : "";
   if (!res.findings.length) {
     return lang === "vi"
       ? `✓ Không có vi phạm (${res.fileCount} file${skip}, chuẩn v${res.version}).`
       : `✓ No violations (${res.fileCount} files${skip}, standard v${res.version}).`;
   }
+  const { shown, hidden } = maxPerRule && maxPerRule > 0 ? capByRule(res.findings, maxPerRule) : { shown: res.findings, hidden: 0 };
   const byFile = new Map<string, Finding[]>();
-  for (const f of res.findings) (byFile.get(f.file) ?? byFile.set(f.file, []).get(f.file)!).push(f);
+  for (const f of shown) (byFile.get(f.file) ?? byFile.set(f.file, []).get(f.file)!).push(f);
   const lines: string[] = [];
   for (const [file, fs] of byFile) {
     lines.push("\n" + relative(process.cwd(), file));
@@ -24,14 +43,41 @@ export function stylish(res: LintResult, lang: Lang): string {
       lines.push(`  ${String(f.line).padStart(4)}:  ${tag}  ${msg}  ${f.ruleId}`);
     }
   }
+  const note = hidden
+    ? "\n" + (lang === "vi"
+        ? `  … ẩn ${hidden} phát hiện khác (--max-per-rule ${maxPerRule}); số liệu dưới là tổng thật`
+        : `  … ${hidden} more finding(s) hidden (--max-per-rule ${maxPerRule}); the counts below are the true totals`)
+    : "";
   const summary = lang === "vi"
     ? `\n✗ ${res.errorCount} lỗi, ${res.warnCount} cảnh báo${skip} (chuẩn v${res.version}).`
     : `\n✗ ${res.errorCount} errors, ${res.warnCount} warnings${skip} (standard v${res.version}).`;
-  return lines.join("\n") + "\n" + summary;
+  return lines.join("\n") + note + "\n" + summary;
 }
 
-export function json(res: LintResult): string {
-  return JSON.stringify(res, null, 2);
+/**
+ * Machine-readable JSON. Slimmed for agents/large repos: `file` is repo-relative (forward-slashed), and
+ * `message` is the single `lang` string (matching the MCP lint_source shape) instead of the `{en,vi}` object.
+ * `maxPerRule` caps the listed findings per rule; `truncated` reports how many were hidden. The top-level
+ * counts are always the true totals.
+ */
+export function json(res: LintResult, lang: Lang = "en", maxPerRule?: number | null): string {
+  const { shown, hidden } = maxPerRule && maxPerRule > 0 ? capByRule(res.findings, maxPerRule) : { shown: res.findings, hidden: 0 };
+  return JSON.stringify({
+    version: res.version,
+    errorCount: res.errorCount,
+    warnCount: res.warnCount,
+    fileCount: res.fileCount,
+    skipped: res.skipped,
+    findings: shown.map((f) => ({
+      ruleId: f.ruleId,
+      severity: f.severity,
+      file: relative(process.cwd(), f.file).replace(/\\/g, "/"),
+      line: f.line,
+      ...(f.column != null ? { column: f.column } : {}),
+      message: f.message[lang],
+    })),
+    truncated: hidden,
+  }, null, 2);
 }
 
 /**
