@@ -38,6 +38,30 @@ Prefer `off` for anything a static linter can't verify soundly (e.g. rendered ta
 agent enforces those instead. Soundness over coverage: a false positive on the reference site breaks
 `npm test`.
 
+## Non-goals
+
+A few directions are deliberately **cut** — recorded here so they don't get re-litigated. Don't
+re-propose them without a genuinely new reason:
+
+- **A Figma-plugin platform or hosted dashboard.** Norma is a code-owned, agent-native standard layer that
+  runs *inside* the tools teams already have (ESLint / Stylelint, GitHub code scanning). A heavy design
+  platform is the Backlight cautionary tale — undifferentiated, not the moat.
+- **Style Dictionary for token compilation.** Its dependency tree fights the near-zero-dep ethos, and its
+  generated var names clash with the site's hand-written ones. The ~50-line zero-dep
+  `scripts/gen-tokens-css.ts` compiles `standard/tokens.css` instead.
+- **A versioned rules API / rules server.** No consumer needs it — `version` + `--rules` / `NORMA_RULES`
+  already pin a catalog; a hosted rules service is the platform trap again.
+- **A `tokens.schema.json`.** It would duplicate the hand-rolled `validateTokens` (which also checks things
+  a JSON Schema can't — alias-reference integrity, the oklch "Norma profile"), and an in-file `$schema` key
+  trips Norma's own unknown-`$`-key warning.
+- **Component state-coverage linting (loading / empty / error).** Statically ~undecidable — a
+  false-positive machine. Left to a manual pass + the design agent.
+- **A deeper AST-based JSX / Vue / Svelte extractor.** Three parsers + heavy deps vs the zero-dep ethos; the
+  line-wise scan already catches the transferable component tells, and CSS-in-JS / deep Tailwind semantics
+  belong to the agent layer by design.
+
+The throughline: **orchestrate, don't reinvent** — and keep the dependency tree tiny.
+
 ## Language policy
 
 **English is the canonical language.** Each human-facing document has an English version at its canonical
