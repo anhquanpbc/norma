@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { existsSync, readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
-import { AGENT_FILES } from "../agent-files.mjs";
+import { AGENT_FILES } from "../src/agent-files.js";
 
 const pkg = join(dirname(fileURLToPath(import.meta.url)), ".."); // packages/design-lint
 const repo = join(pkg, "..", "..");

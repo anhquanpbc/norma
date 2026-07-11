@@ -1,5 +1,6 @@
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { dirname, join } from "node:path";
+import { AGENT_FILES, type Agent } from "./agent-files.js";
 
 // Starter config. The linter's defaults already work, so this is mainly a discoverable place to set
 // `lang`, a `tokens` path (enables token-binding), or per-rule `rules` overrides (error|warn|off).
@@ -33,15 +34,25 @@ jobs:
         run: npx norma-design-lint "**/*.{html,htm,css,jsx,tsx,vue,svelte}" --format markdown >> "$GITHUB_STEP_SUMMARY" || true
 `;
 
+/** Project-level MCP client config for the norma-mcp server. `-p` runs the SECONDARY bin (the default bin
+ *  is the linter), so `npx norma-design-lint norma-mcp` would run the linter, not the server. */
+export const MCP_CONFIG =
+  JSON.stringify({ mcpServers: { norma: { command: "npx", args: ["-y", "-p", "norma-design-lint", "norma-mcp"] } } }, null, 2) + "\n";
+
+/** `--agent` selection: a single tool, or `all` (every per-tool file). AGENTS.md is always written. */
+export type AgentSelector = "cursor" | "copilot" | "claude" | "all";
+
 export interface ScaffoldResult { written: string[]; skipped: string[]; }
 
 /**
  * Write the Norma starter files into `cwd`: a `.normarc.json`, a CI workflow, and the vendor-neutral
- * `AGENTS.md` rule file (copied from `agentsDir`, the bundled dist/agents). Existing files are skipped
- * unless `force`. Pure over its inputs (all paths are parameters) so it is testable against a temp dir.
+ * `AGENTS.md` rule file (from `agentsDir`, the bundled dist/agents). `agents` additionally installs the
+ * rule file(s) for a specific tool (Cursor / Copilot / Claude Code) at their conventional paths; `mcp`
+ * writes a `.mcp.json`. Existing files are skipped unless `force`. Pure over its inputs (all paths are
+ * parameters) so it is testable against a temp dir.
  */
-export function scaffold(opts: { cwd: string; agentsDir: string; force: boolean }): ScaffoldResult {
-  const { cwd, agentsDir, force } = opts;
+export function scaffold(opts: { cwd: string; agentsDir: string; force: boolean; agents?: AgentSelector; mcp?: boolean }): ScaffoldResult {
+  const { cwd, agentsDir, force, agents, mcp } = opts;
   const written: string[] = [];
   const skipped: string[] = [];
   const put = (rel: string, content: string): void => {
@@ -51,9 +62,21 @@ export function scaffold(opts: { cwd: string; agentsDir: string; force: boolean 
     writeFileSync(abs, content);
     written.push(rel);
   };
+  // Copy a bundled agent file (dist/agents/<dest>) to its adopter target; skip if the source isn't bundled.
+  const putAgent = (f: (typeof AGENT_FILES)[number]): void => {
+    const src = join(agentsDir, f.dest);
+    if (existsSync(src)) put(f.target, readFileSync(src, "utf8"));
+  };
+
   put(".normarc.json", NORMARC);
   put(".github/workflows/design-lint.yml", WORKFLOW);
-  const agentsSrc = join(agentsDir, "AGENTS.md");
-  if (existsSync(agentsSrc)) put("AGENTS.md", readFileSync(agentsSrc, "utf8"));
+
+  // AGENTS.md (vendor-neutral) is always installed; per-tool files only when `--agent` selects them.
+  const wanted: Agent[] = agents ? (agents === "all" ? ["claude", "cursor", "copilot"] : [agents]) : [];
+  for (const f of AGENT_FILES) {
+    if (f.agent === "agents" || wanted.includes(f.agent)) putAgent(f);
+  }
+
+  if (mcp) put(".mcp.json", MCP_CONFIG);
   return { written, skipped };
 }

@@ -3,7 +3,7 @@ import { readFileSync, writeFileSync, existsSync, statSync, globSync } from "nod
 import { dirname, extname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { isMainModule } from "./is-main.js";
-import { scaffold } from "./init.js";
+import { scaffold, MCP_CONFIG, type AgentSelector } from "./init.js";
 import { lintFiles, loadRules, fixSource, validateTokens } from "./index.js";
 import { fingerprints, splitByBaseline } from "./fingerprint.js";
 import { stylish, json, sarif, markdown, type Lang } from "./formatters.js";
@@ -32,7 +32,8 @@ Options:
 
 Subcommands:
   tokens validate <file.json>     validate a DTCG token file (Norma profile: DTCG structure + oklch color)
-  init [--force]                  scaffold .normarc.json + a CI workflow + AGENTS.md (skips existing files)
+  init [--agent <t>] [--mcp]      scaffold .normarc.json + CI + AGENTS.md. --agent cursor|copilot|claude|all
+                                  installs that tool's rule files; --mcp writes .mcp.json; --force overwrites
 
 Exit code is non-zero when any error-severity finding is present (or warnings exceed --max-warnings).`;
 
@@ -101,14 +102,28 @@ function runTokens(rest: string[]): number {
 // are skipped unless --force. Dispatched before the flat lint parser so `init` isn't mistaken for a glob.
 function runInit(rest: string[]): number {
   const force = rest.includes("--force");
+  const mcp = rest.includes("--mcp");
+  const ai = rest.indexOf("--agent");
+  const agents = ai >= 0 ? rest[ai + 1] : undefined;
+  if (agents !== undefined && !["cursor", "copilot", "claude", "all"].includes(agents)) {
+    console.error(`Invalid --agent "${agents}" — expected cursor, copilot, claude, or all.`);
+    return 1;
+  }
   const agentsDir = join(dirname(fileURLToPath(import.meta.url)), "..", "dist", "agents");
-  const { written, skipped } = scaffold({ cwd: process.cwd(), agentsDir, force });
+  const { written, skipped } = scaffold({ cwd: process.cwd(), agentsDir, force, agents: agents as AgentSelector | undefined, mcp });
   for (const f of written) console.log(`  ✓ ${f}`);
   for (const f of skipped) console.log(`  • ${f} (exists — use --force to overwrite)`);
   console.log(written.length
     ? `\n✓ Scaffolded ${written.length} file(s). Commit them, then run \`npx norma-design-lint\`.`
     : `\nAll target files already exist — nothing written (use --force to overwrite).`);
-  if (existsSync(agentsDir)) console.log(`  Rule files for other AI tools (Claude Code, Cursor, Copilot) are in ${agentsDir}`);
+  // Always show the MCP config (whether or not --mcp wrote it) so it can be pasted into any client.
+  console.log(mcp
+    ? "\nMCP server → wrote .mcp.json (the same block works in .cursor/mcp.json or a Claude Desktop config):"
+    : "\nMCP server — add this to your client (.mcp.json / .cursor/mcp.json / Claude Desktop), or re-run with --mcp:");
+  console.log(MCP_CONFIG.trimEnd());
+  if (!agents && existsSync(agentsDir)) {
+    console.log(`\nAI rule files for a specific tool: re-run with --agent <cursor|copilot|claude|all> (AGENTS.md is always installed).`);
+  }
   return 0;
 }
 
