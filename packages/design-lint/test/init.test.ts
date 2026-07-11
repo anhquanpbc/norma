@@ -3,6 +3,7 @@ import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, existsSync, rmSync
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { scaffold } from "../src/init.js";
+import { AGENT_FILES } from "../src/agent-files.js";
 
 let cwd: string;
 let agentsDir: string;
@@ -10,7 +11,8 @@ let agentsDir: string;
 beforeEach(() => {
   cwd = mkdtempSync(join(tmpdir(), "norma-init-cwd-"));
   agentsDir = mkdtempSync(join(tmpdir(), "norma-init-agents-"));
-  writeFileSync(join(agentsDir, "AGENTS.md"), "# Norma AGENTS (fixture)\n");
+  // Every bundled agent file, keyed by its flattened dest name (as dist/agents/ holds them).
+  for (const f of AGENT_FILES) writeFileSync(join(agentsDir, f.dest), `# ${f.dest} (fixture)\n`);
 });
 afterEach(() => {
   rmSync(cwd, { recursive: true, force: true });
@@ -61,5 +63,42 @@ describe("scaffold (norma init)", () => {
     const { written } = scaffold({ cwd, agentsDir, force: false });
     expect(written).toEqual([".normarc.json", ".github/workflows/design-lint.yml"]);
     expect(existsSync(join(cwd, "AGENTS.md"))).toBe(false);
+  });
+
+  it("without --agent, installs only AGENTS.md — no per-tool files, no .mcp.json", () => {
+    const { written } = scaffold({ cwd, agentsDir, force: false });
+    expect(written).toContain("AGENTS.md");
+    expect(written).not.toContain(".cursor/rules/norma-design.mdc");
+    expect(written).not.toContain(".mcp.json");
+  });
+
+  it("--agent cursor installs the Cursor rule file at its target (+ AGENTS.md), not other tools' files", () => {
+    const { written } = scaffold({ cwd, agentsDir, force: false, agents: "cursor" });
+    expect(written).toContain(".cursor/rules/norma-design.mdc");
+    expect(written).toContain("AGENTS.md");
+    expect(written).not.toContain(".github/copilot-instructions.md"); // copilot not selected
+    expect(written).not.toContain(".claude/agents/design-guardian.md"); // claude not selected
+    expect(existsSync(join(cwd, ".cursor/rules/norma-design.mdc"))).toBe(true);
+  });
+
+  it("--agent all installs every tool's rule files at their conventional paths", () => {
+    const { written } = scaffold({ cwd, agentsDir, force: false, agents: "all" });
+    for (const t of [
+      ".cursor/rules/norma-design.mdc",
+      ".claude/agents/design-guardian.md",
+      ".github/copilot-instructions.md",
+      ".github/instructions/css.instructions.md",
+      ".github/instructions/html.instructions.md",
+    ]) {
+      expect(written).toContain(t);
+      expect(existsSync(join(cwd, t))).toBe(true);
+    }
+  });
+
+  it("--mcp writes .mcp.json with the -p norma-mcp launch (the secondary bin)", () => {
+    const { written } = scaffold({ cwd, agentsDir, force: false, mcp: true });
+    expect(written).toContain(".mcp.json");
+    const cfg = JSON.parse(readFileSync(join(cwd, ".mcp.json"), "utf8"));
+    expect(cfg.mcpServers.norma.args).toEqual(["-y", "-p", "norma-design-lint", "norma-mcp"]);
   });
 });

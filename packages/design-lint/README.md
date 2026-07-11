@@ -220,18 +220,20 @@ the `.md` file — it stays a single-purpose linter, not a second DESIGN.md pars
 ## AI-agent rule files
 
 **Fastest start:** `npx norma-design-lint init` scaffolds a `.normarc.json`, a CI workflow, and `AGENTS.md`
-in one step (existing files are skipped unless `--force`).
+in one step. Add **`--agent <cursor\|copilot\|claude\|all>`** to also install a specific tool's rule file(s)
+at the right paths, and **`--mcp`** to write a `.mcp.json` that wires the MCP server — e.g.
+`npx norma-design-lint init --agent cursor --mcp`. Existing files are skipped unless `--force`.
 
 Norma generates strict do/don't rule files for AI coding tools from the same catalog, and they ship
-**inside this package** — no repo clone needed. Copy the one for your tool out of
-`node_modules/norma-design-lint/dist/agents/`:
+**inside this package** — so `--agent` copies them for you (or grab one manually from
+`node_modules/norma-design-lint/dist/agents/`):
 
-| Tool | File | Copy to |
-|------|------|---------|
-| Claude Code | `design-guardian.md` | `.claude/agents/` |
-| Cursor | `norma-design.mdc` | `.cursor/rules/` |
-| GitHub Copilot | `copilot-instructions.md` (+ scoped `css.instructions.md` / `html.instructions.md`) | `.github/` (+ `.github/instructions/`) |
-| Codex / Cline / Gemini / any `AGENTS.md` tool | `AGENTS.md` | repo root |
+| Tool | `--agent` | File → installed at |
+|------|-----------|---------------------|
+| Claude Code | `claude` | `design-guardian.md` → `.claude/agents/` |
+| Cursor | `cursor` | `norma-design.mdc` → `.cursor/rules/` |
+| GitHub Copilot | `copilot` | `copilot-instructions.md` (+ scoped `css.instructions.md` / `html.instructions.md`) → `.github/` (+ `.github/instructions/`) |
+| Codex / Cline / Gemini / any `AGENTS.md` tool | _(always)_ | `AGENTS.md` → repo root |
 
 ## MCP server (for AI agents)
 

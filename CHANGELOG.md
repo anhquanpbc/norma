@@ -24,6 +24,21 @@ All notable changes to this project are documented here. The format is based on
   `check:drift` guard (item 10) asserts every token-derived `:root` value equals `standard/tokens.css`, so
   the site's tokens can no longer drift from the standard. Closes the deferred GEN1 site-rewire.
 
+## [1.24.0] — 2026-07-12 · CLI
+
+### Added
+
+- **`init --agent <cursor|copilot|claude|all>` and `init --mcp` — the adoption last-mile.**
+  `norma-design-lint init` already wrote `.normarc.json` + a CI workflow + the vendor-neutral `AGENTS.md`.
+  Now it can also install the rule file(s) for a **specific tool** at their conventional paths —
+  `.cursor/rules/norma-design.mdc`, `.github/copilot-instructions.md` +
+  `.github/instructions/*.instructions.md`, `.claude/agents/design-guardian.md` — and write a project
+  **`.mcp.json`** that wires the `norma-mcp` server (`--mcp`). `--agent all` installs every tool's files;
+  the MCP config is always **printed** for a copy-paste into any client (`.mcp.json` / `.cursor/mcp.json` /
+  Claude Desktop) whether or not `--mcp` wrote the file. Existing files are still skipped unless `--force`.
+  (Internally, the bundled-agent-files manifest moved from a root `.mjs` into `src/agent-files.ts` so `init`
+  can consume it at runtime — no change to what's bundled.)
+
 ## [1.23.2] — 2026-07-12 · CLI
 
 ### Fixed

@@ -3,7 +3,9 @@
 import { copyFileSync, mkdirSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
-import { AGENT_FILES } from "./agent-files.mjs";
+// The manifest now lives in src (so `init` can import it at runtime); tsc emits dist/agent-files.js before
+// this script runs (build = `tsc && node copy-rules.mjs`).
+import { AGENT_FILES } from "./dist/agent-files.js";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const repo = join(here, "..", "..");

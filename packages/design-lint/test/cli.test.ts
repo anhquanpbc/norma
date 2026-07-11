@@ -28,6 +28,18 @@ describe("cli", () => {
     expect(out).toContain("norma-design-lint");
   });
 
+  it("init rejects an unknown --agent value (before writing anything)", () => {
+    const { code, err } = run(["init", "--agent", "bogus"]);
+    expect(code).toBe(1);
+    expect(err).toContain("Invalid --agent");
+  });
+
+  it("init rejects --agent with no value (a missing value is not a silent no-op)", () => {
+    const { code, err } = run(["init", "--agent"]);
+    expect(code).toBe(1);
+    expect(err).toContain("Invalid --agent");
+  });
+
   it("exits 1 on a file with an error-severity finding", () => {
     const { code } = run([fx("bad.html")]);
     expect(code).toBe(1);
