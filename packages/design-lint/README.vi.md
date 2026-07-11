@@ -174,6 +174,23 @@ Norma đọc trực tiếp **color object có cấu trúc** của DTCG (`{ color
 `color: #1a1c1e` trong mã nguồn sẽ bị bắt và trỏ về `color.primary`. Norma tiêu thụ **bản export** DTCG, chứ
 không phải file `.md` — nó vẫn là một linter đơn nhiệm, không phải một parser DESIGN.md thứ hai.
 
+## File rule cho AI agent
+
+**Bắt đầu nhanh nhất:** `npx norma-design-lint init` scaffold một `.normarc.json`, một workflow CI và
+`AGENTS.md` trong một bước. Thêm **`--agent <cursor|copilot|claude|all>`** để cài luôn file rule của một tool
+cụ thể vào đúng vị trí, và **`--mcp`** để ghi `.mcp.json` wiring MCP server — ví dụ
+`npx norma-design-lint init --agent cursor --mcp`. File đã tồn tại sẽ bị bỏ qua trừ khi có `--force`.
+
+Norma sinh các file rule do/don't nghiêm ngặt cho tool code AI từ cùng một catalog, và chúng ship **bên trong
+package này** — nên `--agent` copy sẵn cho bạn (hoặc lấy tay từ `node_modules/norma-design-lint/dist/agents/`):
+
+| Tool | `--agent` | File → cài vào |
+|------|-----------|----------------|
+| Claude Code | `claude` | `design-guardian.md` → `.claude/agents/` |
+| Cursor | `cursor` | `norma-design.mdc` → `.cursor/rules/` |
+| GitHub Copilot | `copilot` | `copilot-instructions.md` (+ bản scoped `css.instructions.md` / `html.instructions.md`) → `.github/` (+ `.github/instructions/`) |
+| Codex / Cline / Gemini / mọi tool dùng `AGENTS.md` | _(luôn cài)_ | `AGENTS.md` → gốc repo |
+
 ## MCP server (cho AI agent)
 
 Gói kèm một server [Model Context Protocol](https://modelcontextprotocol.io) **zero-dependency** qua stdio,

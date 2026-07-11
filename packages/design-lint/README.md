@@ -220,7 +220,7 @@ the `.md` file — it stays a single-purpose linter, not a second DESIGN.md pars
 ## AI-agent rule files
 
 **Fastest start:** `npx norma-design-lint init` scaffolds a `.normarc.json`, a CI workflow, and `AGENTS.md`
-in one step. Add **`--agent <cursor\|copilot\|claude\|all>`** to also install a specific tool's rule file(s)
+in one step. Add **`--agent <cursor|copilot|claude|all>`** to also install a specific tool's rule file(s)
 at the right paths, and **`--mcp`** to write a `.mcp.json` that wires the MCP server — e.g.
 `npx norma-design-lint init --agent cursor --mcp`. Existing files are skipped unless `--force`.
 
