@@ -24,6 +24,16 @@ All notable changes to this project are documented here. The format is based on
   `check:drift` guard (item 10) asserts every token-derived `:root` value equals `standard/tokens.css`, so
   the site's tokens can no longer drift from the standard. Closes the deferred GEN1 site-rewire.
 
+## [1.23.1] — 2026-07-11 · CLI
+
+### Fixed
+
+- **`--max-warnings` now rejects a negative value** instead of silently accepting it. The guard checked only
+  `Number.isInteger`, so `--max-warnings -1` passed — then `warnCount > -1` is always true, so every run
+  reported "warnings exceed the threshold" and exited 1 for the wrong reason. It now fails input validation
+  with the documented "expected a non-negative integer" message (matching the `--max-per-rule` guard). `0`
+  (fail on any warning) stays valid.
+
 ## [1.23.0] — 2026-07-11 · CLI
 
 ### Added

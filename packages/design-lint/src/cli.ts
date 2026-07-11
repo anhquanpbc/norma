@@ -150,7 +150,7 @@ function main(argv: string[]): number {
   const quiet = hasFlag("--quiet");
   const maxWarningsRaw = opt("--max-warnings");
   const maxWarnings = maxWarningsRaw != null ? Number(maxWarningsRaw) : null;
-  if (maxWarnings != null && !Number.isInteger(maxWarnings)) {
+  if (maxWarnings != null && (!Number.isInteger(maxWarnings) || maxWarnings < 0)) {
     console.error(`Invalid --max-warnings "${maxWarningsRaw}" — expected a non-negative integer.`);
     return 1;
   }
