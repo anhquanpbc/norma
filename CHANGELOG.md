@@ -24,6 +24,23 @@ All notable changes to this project are documented here. The format is based on
   `check:drift` guard (item 10) asserts every token-derived `:root` value equals `standard/tokens.css`, so
   the site's tokens can no longer drift from the standard. Closes the deferred GEN1 site-rewire.
 
+## [1.23.0] — 2026-07-11 · CLI
+
+### Added
+
+- **DESIGN.md interop — enforce a Google Stitch design system against your shipped source.** The `--tokens`
+  / `tokens.token-binding` check now reads W3C DTCG **structured color objects**
+  (`{ colorSpace, components, hex }`) — the shape [DESIGN.md](https://github.com/google-labs-code/design.md)'s
+  `export --format dtcg` emits — via the `hex` fallback (or sRGB components), not just Norma's own hex/oklch
+  strings. So `npx @google/design.md export --format dtcg DESIGN.md > design.tokens.json` then
+  `norma-design-lint --tokens design.tokens.json` flags any raw color that hard-codes a DESIGN.md-declared
+  token — the **source-compliance check DESIGN.md's own validator never runs**, positioning Norma one layer
+  beneath Google's spec format. A DTCG-2025.10 root `$schema` pointer is now accepted without a warning (the
+  exports carry one). No YAML parser and no new deps — Norma consumes the DTCG **export**, staying a
+  single-purpose linter. The reusable Action gains a `tokens` input for the same interop in CI (reaches `@v1`
+  when the tag advances). Bilingual recipe in the README; a real `@google/design.md` export is checked in as
+  a test fixture. (No standard change — CLI-only.)
+
 ## [1.22.0] — 2026-07-11 · CLI
 
 ### Added

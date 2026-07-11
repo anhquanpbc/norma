@@ -78,3 +78,33 @@ describe("tokenBinding check", () => {
     expect(lint(`.a::before { content: "oklch(0.58 0.16 252)"; }`)).toHaveLength(0);
   });
 });
+
+// Consume a DESIGN.md (Google Stitch) design system as the token source and enforce it against shipped
+// source — the exact check DESIGN.md's own validator never performs. The fixture is a real
+// `npx @google/design.md export --format dtcg` output (structured color objects with an sRGB `hex` fallback).
+describe("DESIGN.md interop — structured DTCG color objects", () => {
+  const designMd = JSON.parse(readFileSync(new URL("./fixtures/design-md.tokens.json", import.meta.url), "utf8"));
+  const dmIndex = colorTokenIndex(designMd);
+
+  it("indexes a DESIGN.md `export --format dtcg` color object via its hex fallback", () => {
+    expect(dmIndex.get(normColor("#1a1c1e"))).toBe("color.primary");
+    expect(dmIndex.get(normColor("#b8422e"))).toBe("color.tertiary");
+  });
+
+  it("flags shipped source that hard-codes a DESIGN.md-declared color (case-insensitively)", () => {
+    const ctx = buildContext("x.css", `.a { color: #1A1C1E; }`, "css", dmIndex);
+    const hits = lintContext(ctx, tbRules).map((f) => f.message.en);
+    expect(hits).toHaveLength(1);
+    expect(hits[0]).toContain("color.primary");
+  });
+
+  it("falls back to sRGB components when a DTCG color object has no hex", () => {
+    const idx = colorTokenIndex({ color: { $type: "color", red: { $value: { colorSpace: "srgb", components: [1, 0, 0] } } } });
+    expect(idx.get("#ff0000")).toBe("color.red");
+  });
+
+  it("skips a non-sRGB color object with no hex — nothing to match, no false positive", () => {
+    const idx = colorTokenIndex({ color: { $type: "color", p3: { $value: { colorSpace: "display-p3", components: [1, 0, 0] } } } });
+    expect(idx.size).toBe(0);
+  });
+});

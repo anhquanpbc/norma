@@ -155,6 +155,25 @@ npx norma-design-lint tokens validate tokens.tokens.json
 Mã thoát 0 khi hợp lệ, 1 khi có lỗi cấu trúc. `$type` sai, dimension/duration hỏng, alias treo/vòng lặp là
 lỗi; một khóa `$`-prefix lạ là cảnh báo (tương thích với các bản spec tương lai).
 
+## Cưỡng chế một DESIGN.md lên mã nguồn của bạn (interop Google Stitch)
+
+[DESIGN.md](https://github.com/google-labs-code/design.md) — format mở của Google Stitch — khai báo token
+của một design system, và CLI của nó validate + export **file spec**. Thứ nó *không* làm được là kiểm tra
+xem HTML/CSS **đã ship** của bạn có thực sự *dùng* các token đó không. Norma chính là tầng còn thiếu đó:
+export DESIGN.md ra W3C DTCG, rồi đưa vào `--tokens` để **token-binding** bắt mọi màu thô hard-code một giá
+trị DESIGN.md đã khai báo thay vì tham chiếu token.
+
+```bash
+# 1. export token của design system bằng chính CLI của DESIGN.md
+npx @google/design.md export --format dtcg DESIGN.md > design.tokens.json
+# 2. cưỡng chế lên mã nguồn thật — bước mà validator của DESIGN.md không chạy
+npx norma-design-lint "src/**/*.{html,css,jsx,tsx,vue,svelte}" --tokens design.tokens.json
+```
+
+Norma đọc trực tiếp **color object có cấu trúc** của DTCG (`{ colorSpace, components, hex }`), nên một
+`color: #1a1c1e` trong mã nguồn sẽ bị bắt và trỏ về `color.primary`. Norma tiêu thụ **bản export** DTCG, chứ
+không phải file `.md` — nó vẫn là một linter đơn nhiệm, không phải một parser DESIGN.md thứ hai.
+
 ## MCP server (cho AI agent)
 
 Gói kèm một server [Model Context Protocol](https://modelcontextprotocol.io) **zero-dependency** qua stdio,

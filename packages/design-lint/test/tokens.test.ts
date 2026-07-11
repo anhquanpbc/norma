@@ -21,6 +21,18 @@ describe("validateTokens — the shipped standard (dogfood)", () => {
   });
 });
 
+describe("validateTokens — DESIGN.md / DTCG-2025.10 interop", () => {
+  it("accepts a root $schema pointer + a structured sRGB color object without warning", () => {
+    const res = validateTokens({
+      $schema: "https://www.designtokens.org/schemas/2025.10/format.json",
+      color: { $type: "color", a: { $value: { colorSpace: "srgb", components: [0, 0, 0], hex: "#000000" } } },
+    });
+    expect(res.warnings).toEqual([]);
+    expect(res.errors).toEqual([]);
+    expect(res.valid).toBe(true);
+  });
+});
+
 describe("validateTokens — structure", () => {
   it("rejects a non-object document", () => {
     expect(validateTokens(42).valid).toBe(false);
