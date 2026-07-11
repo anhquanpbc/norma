@@ -12,6 +12,10 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
+// The var-name mapping + value formatter are shared with the package's MCP `get_tokens` view
+// (packages/design-lint/src/token-view.ts) so this generated stylesheet and the token view an agent reads
+// can never disagree on how a token renders. tsx resolves the .ts behind the .js specifier.
+import { varName, formatCssValue } from "../packages/design-lint/src/token-view.js";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const stdDir = join(root, "standard");
@@ -19,37 +23,7 @@ const tokens = JSON.parse(readFileSync(join(stdDir, "tokens.tokens.json"), "utf8
 
 const isObject = (v: unknown): v is Record<string, unknown> =>
   typeof v === "object" && v !== null && !Array.isArray(v);
-const isAlias = (v: unknown): v is string => typeof v === "string" && /^\{[^{}]+\}$/.test(v);
-const varName = (path: string[]): string => "--" + path.join("-");
 const die = (msg: string): never => { console.error(`✗ gen-tokens-css: ${msg}`); process.exit(1); };
-// A font-family member needs quoting in CSS when it contains whitespace.
-const familyMember = (s: string): string => (/\s/.test(s) ? `"${s}"` : s);
-
-function formatValue(path: string[], value: unknown, type: string | undefined): string {
-  if (isAlias(value)) return `var(${varName(value.slice(1, -1).split("."))})`;
-  switch (type) {
-    case "color":
-      if (typeof value === "string") return value;
-      break;
-    case "dimension":
-    case "duration":
-      if (isObject(value) && typeof value.value === "number" && typeof value.unit === "string") {
-        return `${value.value}${value.unit}`;
-      }
-      break;
-    case "number":
-      if (typeof value === "number") return String(value);
-      break;
-    case "fontFamily":
-      if (Array.isArray(value)) return value.map((v) => familyMember(String(v))).join(", ");
-      if (typeof value === "string") return familyMember(value);
-      break;
-    case "cubicBezier":
-      if (Array.isArray(value) && value.length === 4) return `cubic-bezier(${value.join(", ")})`;
-      break;
-  }
-  return die(`cannot format ${varName(path)} (type ${type ?? "?"}, value ${JSON.stringify(value)})`);
-}
 
 interface Decl { name: string; value: string; }
 const decls: Decl[] = [];
@@ -63,7 +37,10 @@ function walk(node: Record<string, unknown>, path: string[], inheritedType: stri
     // guard) — a silent duplicate would let one token clobber another.
     if (seen.has(name)) die(`two token paths collide on custom property ${name}`);
     seen.add(name);
-    decls.push({ name, value: formatValue(path, node.$value, type) });
+    let value: string;
+    try { value = formatCssValue(node.$value, type); }
+    catch (e) { return die(`cannot format ${name}: ${(e as Error).message}`); }
+    decls.push({ name, value });
     return;
   }
   for (const [key, child] of Object.entries(node)) {

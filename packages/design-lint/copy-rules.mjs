@@ -12,6 +12,10 @@ mkdirSync(join(here, "dist"), { recursive: true });
 copyFileSync(join(repo, "standard", "rules.json"), join(here, "dist", "rules.json"));
 console.log("✓ bundled standard/rules.json → dist/rules.json");
 
+// The token file rides along so the published MCP `get_tokens` tool can resolve the palette offline.
+copyFileSync(join(repo, "standard", "tokens.tokens.json"), join(here, "dist", "tokens.tokens.json"));
+console.log("✓ bundled standard/tokens.tokens.json → dist/tokens.tokens.json");
+
 const agentsDir = join(here, "dist", "agents");
 mkdirSync(agentsDir, { recursive: true });
 // copyFileSync throws if a source is missing, so a stale manifest path fails the build loudly.

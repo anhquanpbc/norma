@@ -166,7 +166,10 @@ Gói kèm một server [Model Context Protocol](https://modelcontextprotocol.io)
 Tool: **`lint_source`** (lint chuỗi HTML/CSS/JSX → findings), **`list_rules`** (catalog, lọc theo
 `domain`/`tag`), **`get_rule`** (một rule theo id, kèm rationale + remediation), **`fix_source`**
 (tự sửa các rule xác định trong chuỗi HTML/CSS → nguồn đã sửa + số lần sửa, khép vòng lint→fix→lint-lại),
-và **`validate_tokens`** (kiểm chuỗi JSON token DTCG → `{ valid, tokenCount, errors, warnings }`).
+**`validate_tokens`** (kiểm chuỗi JSON token DTCG → `{ valid, tokenCount, errors, warnings }`), và
+**`get_tokens`** (bộ design token đã resolve để sinh UI — tên CSS custom-property + giá trị + giá trị
+concrete sau khi resolve alias, kèm bản đồ theme light/dark, để agent dùng đúng token thay vì giá trị thô;
+có thể lọc theo `group`).
 
 ## API lập trình
 
