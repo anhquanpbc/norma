@@ -180,8 +180,12 @@ Gói kèm một server [Model Context Protocol](https://modelcontextprotocol.io)
 để agent truy vấn chuẩn và lint source ngay trong vòng lặp. Trỏ MCP client tới bin `norma-mcp`:
 
 ```json
-{ "mcpServers": { "norma": { "command": "npx", "args": ["-y", "norma-design-lint", "norma-mcp"] } } }
+{ "mcpServers": { "norma": { "command": "npx", "args": ["-y", "-p", "norma-design-lint", "norma-mcp"] } } }
 ```
+
+`-p norma-design-lint` chọn package và `norma-mcp` chạy bin MCP-server của nó. Bắt buộc có `-p`: bin **mặc
+định** của package là linter, nên `npx norma-design-lint norma-mcp` sẽ chạy linter (coi `norma-mcp` là file
+glob) chứ không phải server.
 
 Tool: **`lint_source`** (lint chuỗi HTML/CSS/JSX → findings), **`list_rules`** (catalog, lọc theo
 `domain`/`tag`), **`get_rule`** (một rule theo id, kèm rationale + remediation), **`fix_source`**

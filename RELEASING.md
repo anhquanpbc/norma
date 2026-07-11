@@ -48,3 +48,38 @@ publish landed and works end-to-end:
 npm view norma-design-lint version                     # the new version
 npx norma-design-lint@latest examples/minimal-pass/index.html   # runs clean
 ```
+
+## Publishing to the MCP Registry
+
+`norma-mcp` can be listed on the [official MCP Registry](https://registry.modelcontextprotocol.io) so agents
+discover it. `packages/design-lint/package.json` already carries the ownership marker
+`"mcpName": "io.github.anhquanpbc/norma"`, which the registry verifies against the **published** npm package
+— so publish the CLI first (the marker ships from 1.23.2 on).
+
+Then, from a machine authenticated as the `anhquanpbc` GitHub owner (device flow proves ownership of the
+`io.github.anhquanpbc/` namespace):
+
+```bash
+# 1. install the publisher CLI — https://github.com/modelcontextprotocol/registry
+brew install mcp-publisher                       # or the release binary
+
+# 2. generate server.json from package.json
+mcp-publisher init
+```
+
+**Important — `norma-mcp` is the package's SECONDARY bin.** The default launch `mcp-publisher init` generates
+(`npx norma-design-lint`) runs the *linter*, not the server. Edit `server.json` so the npm package launches
+the `norma-mcp` bin — the working invocation is `npx -y -p norma-design-lint norma-mcp` (verified). Then:
+
+```bash
+# 3. validate + launch-test BEFORE publishing (the launch must return tools/list, not lint output)
+mcp-publisher publish --dry-run
+printf '{"jsonrpc":"2.0","id":1,"method":"tools/list"}\n' | npx -y -p norma-design-lint norma-mcp
+
+# 4. authenticate + publish
+mcp-publisher login github
+mcp-publisher publish
+```
+
+`server.json`'s `name` must equal `mcpName` (`io.github.anhquanpbc/norma`) and its `version` the CLI version.
+Verify the listing: `curl "https://registry.modelcontextprotocol.io/v0.1/servers?search=io.github.anhquanpbc/norma"`.
