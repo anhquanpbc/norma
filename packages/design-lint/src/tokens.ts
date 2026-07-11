@@ -32,9 +32,7 @@ const DTCG_TYPES = new Set([
   "color", "dimension", "number", "fontFamily", "fontWeight", "duration",
   "cubicBezier", "strokeStyle", "border", "transition", "shadow", "gradient", "typography",
 ]);
-// `$schema` is the JSON-Schema pointer DTCG 2025.10 files carry at the root (DESIGN.md's `export --format
-// dtcg` emits it) — accept it rather than warning, so those exports validate cleanly.
-const RESERVED_KEYS = new Set(["$value", "$type", "$description", "$extensions", "$deprecated", "$schema"]);
+const RESERVED_KEYS = new Set(["$value", "$type", "$description", "$extensions", "$deprecated"]);
 const DIMENSION_UNITS = new Set(["px", "rem"]);
 const DURATION_UNITS = new Set(["ms", "s"]);
 // DTCG token trees are shallow (a handful of levels); this cap keeps the recursive walk from overflowing
@@ -79,7 +77,11 @@ export function validateTokens(doc: unknown): TokenValidationResult {
     // Unknown $-prefixed keys → warn (the $-namespace is reserved for future spec use; a hard fail could
     // break on a future minor revision, but this still catches typos like $val/$typ).
     for (const key of Object.keys(node)) {
-      if (key.startsWith("$") && !RESERVED_KEYS.has(key)) warn(join(path, key), `unknown reserved ($-prefixed) property "${key}"`);
+      // `$schema` (a JSON-Schema pointer) is allowed ONLY at the root — DTCG 2025.10 files / DESIGN.md's
+      // `export --format dtcg` carry one there; a `$schema` deeper in the tree is still a typo worth flagging.
+      if (key.startsWith("$") && !RESERVED_KEYS.has(key) && !(key === "$schema" && path === "")) {
+        warn(join(path, key), `unknown reserved ($-prefixed) property "${key}"`);
+      }
     }
     if ("$deprecated" in node && !(typeof node.$deprecated === "boolean" || typeof node.$deprecated === "string")) {
       err(join(path, "$deprecated"), "$deprecated must be a boolean or a string message");
@@ -225,7 +227,9 @@ function colorValueKey(value: unknown): string | null {
   if (isObject(value)) {
     if (typeof value.hex === "string") return normColor(value.hex);
     const comp = value.components;
-    if (value.colorSpace === "srgb" && Array.isArray(comp) && comp.length >= 3 && (comp as unknown[]).slice(0, 3).every((n) => typeof n === "number")) {
+    // Explicit index checks (not `.slice().every()`, which vacuously passes on a sparse array) so `as
+    // number[]` is sound — components 0..2 must each be a real number.
+    if (value.colorSpace === "srgb" && Array.isArray(comp) && [0, 1, 2].every((i) => typeof (comp as unknown[])[i] === "number")) {
       const c = comp as number[];
       const ch = (x: number): string => Math.round(Math.min(1, Math.max(0, x)) * 255).toString(16).padStart(2, "0");
       return normColor(`#${ch(c[0])}${ch(c[1])}${ch(c[2])}`);

@@ -114,14 +114,21 @@ function runInit(rest: string[]): number {
 
 function main(argv: string[]): number {
   const args = argv.slice(2);
-  if (args.includes("-h") || args.includes("--help")) { console.log(HELP); return 0; }
-  if (args[0] === "tokens") return runTokens(args.slice(1));
-  if (args[0] === "init") return runInit(args.slice(1));
-
+  // Options that consume the NEXT token as their value. A boolean-flag scan (--fix/--quiet/…) must skip
+  // those value positions — else `--tokens --fix` (e.g. a forgotten token path) would read "--fix" as the
+  // value AND fire the in-place fixer, a silent gate-bypass / file-mutation footgun.
+  const flagVals = new Set(["--format", "--lang", "--config", "--rules", "--max-warnings", "--max-per-rule", "--baseline", "--tokens"]);
+  const valueAt = new Set<number>();
+  args.forEach((a, i) => { if (flagVals.has(a)) valueAt.add(i + 1); });
+  const hasFlag = (name: string): boolean => args.some((a, i) => a === name && !valueAt.has(i));
   const opt = (name: string): string | undefined => {
     const i = args.indexOf(name);
-    return i >= 0 ? args[i + 1] : undefined;
+    return i >= 0 && !valueAt.has(i) ? args[i + 1] : undefined;
   };
+
+  if (hasFlag("-h") || hasFlag("--help")) { console.log(HELP); return 0; }
+  if (args[0] === "tokens") return runTokens(args.slice(1));
+  if (args[0] === "init") return runInit(args.slice(1));
   const format = opt("--format") ?? "stylish";
   const configPath = opt("--config") ?? (existsSync(".normarc.json") ? ".normarc.json" : undefined);
   let config: Config = {};
@@ -140,7 +147,7 @@ function main(argv: string[]): number {
     }
   }
   const lang = (opt("--lang") ?? config.lang ?? process.env.NORMA_LANG ?? "en") as Lang;
-  const quiet = args.includes("--quiet");
+  const quiet = hasFlag("--quiet");
   const maxWarningsRaw = opt("--max-warnings");
   const maxWarnings = maxWarningsRaw != null ? Number(maxWarningsRaw) : null;
   if (maxWarnings != null && !Number.isInteger(maxWarnings)) {
@@ -164,14 +171,13 @@ function main(argv: string[]): number {
     }
   }
 
-  const flagVals = new Set(["--format", "--lang", "--config", "--rules", "--max-warnings", "--max-per-rule", "--baseline", "--tokens"]);
-  const patterns = args.filter((a, i) => !a.startsWith("-") && !flagVals.has(args[i - 1]));
+  const patterns = args.filter((a, i) => !a.startsWith("-") && !valueAt.has(i));
   const files = expand(patterns.length ? patterns : ["**/*.{html,htm,css,jsx,tsx,vue,svelte}"]);
 
   if (!files.length) { console.error("No HTML/CSS files matched."); return 1; }
 
   // --fix: apply the safe auto-fixes in place first, then lint what remains.
-  if (args.includes("--fix")) {
+  if (hasFlag("--fix")) {
     let totalFixed = 0;
     for (const file of files) {
       const ext = extname(file).toLowerCase();
@@ -192,7 +198,7 @@ function main(argv: string[]): number {
   // --baseline ratchet: snapshot or suppress known findings by fingerprint, so a team can adopt Norma on
   // an existing codebase and fail only on NEW design debt (not the whole legacy backlog on run one).
   const baselinePath = opt("--baseline") ?? ".norma-baseline.json";
-  if (args.includes("--update-baseline")) {
+  if (hasFlag("--update-baseline")) {
     const fps = [...new Set(fingerprints(res.findings))].sort();
     writeFileSync(baselinePath, JSON.stringify({ version: 1, fingerprints: fps }, null, 2) + "\n");
     console.error(lang === "vi"

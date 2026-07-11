@@ -31,6 +31,10 @@ describe("validateTokens — DESIGN.md / DTCG-2025.10 interop", () => {
     expect(res.errors).toEqual([]);
     expect(res.valid).toBe(true);
   });
+  it("still warns on a $schema key BELOW the root (a typo, not the DTCG root pointer)", () => {
+    const res = validateTokens({ color: { $type: "color", $schema: "typo", a: { $value: "#000000" } } });
+    expect(res.warnings.some((w) => w.path.includes("$schema"))).toBe(true);
+  });
 });
 
 describe("validateTokens — structure", () => {

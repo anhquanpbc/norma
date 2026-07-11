@@ -145,6 +145,19 @@ describe("cli", () => {
     expect(err).toContain("Invalid --max-per-rule");
   });
 
+  it("does not treat a flag's VALUE as a boolean flag (a forgotten --tokens value can't trigger --fix or a gate bypass)", () => {
+    const dir = mkdtempSync(join(tmpdir(), "norma-cli-"));
+    const css = join(dir, "x.css");
+    try {
+      writeFileSync(css, ".a{ margin-left:8px }");
+      // `--tokens --fix`: "--fix" is the token-path VALUE, so it must NOT run the in-place fixer.
+      run([css, "--tokens", "--fix"]);
+      expect(readFileSync(css, "utf8")).toContain("margin-left:8px"); // unchanged — not silently fixed
+      // `--tokens --help`: must still lint (exit 1 on the error file), not print help and exit 0.
+      expect(run([fx("bad.html"), "--tokens", "--help"]).code).toBe(1);
+    } finally { rmSync(dir, { recursive: true, force: true }); }
+  });
+
   it("warns (not fails) on an unknown rule id in the config", () => {
     const { err } = run(["--config", fx("unknownid.normarc.json"), fx("good.html")]);
     expect(err).toContain("unknown rule id");
