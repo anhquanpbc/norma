@@ -123,6 +123,15 @@ describe("cli", () => {
     expect(err).toContain("Invalid --max-warnings");
   });
 
+  it("rejects a negative --max-warnings as invalid (not the over-threshold path)", () => {
+    // `-1` is a valid integer but not non-negative: it must fail input validation, not silently make
+    // `warnCount > -1` always true (which would report the wrong reason on every run).
+    const { code, err } = run(["--max-warnings", "-1", fx("warns.html")]);
+    expect(code).toBe(1);
+    expect(err).toContain("Invalid --max-warnings");
+    expect(err).not.toContain("exceed"); // not the "N warnings exceed the threshold" message
+  });
+
   it("--max-per-rule caps listed findings per rule but keeps the true counts", () => {
     const dir = mkdtempSync(join(tmpdir(), "norma-cli-"));
     const html = join(dir, "many.html");
