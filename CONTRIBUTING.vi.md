@@ -38,6 +38,30 @@ và fail** trong `packages/design-lint/test/`.
 — agent thiết kế sẽ thực thi thay. Chắc chắn hơn là bao phủ: một dương tính giả trên trang tham chiếu sẽ
 làm hỏng `npm test`.
 
+## Không nằm trong phạm vi
+
+Một vài hướng đã được **loại bỏ có chủ đích** — ghi lại ở đây để khỏi bàn lại. Đừng đề xuất lại nếu không
+có lý do thực sự mới:
+
+- **Nền tảng plugin Figma hay dashboard tự host.** Norma là tầng chuẩn do-code-sở-hữu, thân-thiện-agent,
+  chạy *bên trong* các công cụ team đã dùng (ESLint / Stylelint, GitHub code scanning). Một nền tảng thiết
+  kế nặng nề là bài học Backlight — không khác biệt, không phải lợi thế.
+- **Style Dictionary để biên dịch token.** Cây dependency của nó chọi với tinh thần gần-zero-dep, và tên
+  biến nó sinh xung đột với biến viết tay của site. Thay vào đó, `scripts/gen-tokens-css.ts` (~50 dòng,
+  zero-dep) biên dịch `standard/tokens.css`.
+- **API/server rule có version.** Không consumer nào cần — `version` + `--rules` / `NORMA_RULES` đã ghim
+  catalog; một dịch vụ rule tự host lại rơi vào bẫy nền tảng.
+- **Một `tokens.schema.json`.** Sẽ trùng lặp `validateTokens` viết tay (vốn còn kiểm những thứ JSON Schema
+  không diễn tả nổi — toàn vẹn tham chiếu alias, "hồ sơ Norma" oklch), và khóa `$schema` trong file lại
+  kích cảnh báo khóa-`$`-lạ của chính Norma.
+- **Lint bao phủ trạng thái component (loading / empty / error).** Tĩnh ~không quyết định được — cỗ máy
+  dương tính giả. Để cho lượt kiểm thủ công + agent thiết kế.
+- **Bộ trích xuất JSX / Vue / Svelte dựa trên AST sâu hơn.** Ba parser + deps nặng chọi với tinh thần
+  zero-dep; lượt quét theo dòng đã bắt các "tell" component chuyển được, còn CSS-in-JS / ngữ nghĩa Tailwind
+  sâu thuộc về tầng agent theo thiết kế.
+
+Xuyên suốt: **điều phối, đừng phát minh lại** — và giữ cây dependency thật nhỏ.
+
 ## Chính sách ngôn ngữ
 
 **Tiếng Anh là ngôn ngữ chuẩn.** Mỗi tài liệu hướng tới người dùng có một bản tiếng Anh ở đường dẫn gốc

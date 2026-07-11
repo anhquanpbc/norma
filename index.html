@@ -565,6 +565,39 @@ footer .fine{ margin-top:var(--space-6); font-size:12px; color:oklch(0.62 0.01 2
   </div>
 </section>
 
+<!-- ============ THE SIX PILLARS (overview) ============ -->
+<!-- The heading is <h2 class="ovh"> on purpose: check:drift item 5 syncs the numbered §N sections by
+     matching bare `<h2><span class="en">`, and this overview isn't one of them (mirrors REFERENCE's
+     non-numbered "The six pillars" heading). -->
+<section id="pillars" tabindex="-1">
+  <div class="sec-head">
+    <div class="sec-tick" style="background:var(--color-brand-azure)"></div>
+    <div class="titles">
+      <h2 class="ovh"><span class="en">The six pillars</span><span class="vi">Sáu trụ cột</span></h2>
+      <div class="sec-sub"><span class="en">Norma is comprehensive <em>control</em> over design quality, not just this reference — every pillar has working code, so the numbers in the sections that follow are actually enforced.</span><span class="vi">Norma là sự <em>kiểm soát toàn diện</em> chất lượng thiết kế, không chỉ tài liệu này — mỗi trụ cột đều có code chạy được, nên các con số ở những mục sau thực sự được thực thi.</span></div>
+    </div>
+  </div>
+  <div class="tbl-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th><span class="en">Pillar</span><span class="vi">Trụ cột</span></th>
+          <th><span class="en">What it does</span><span class="vi">Làm gì</span></th>
+          <th><span class="en">How Norma ships it</span><span class="vi">Norma cung cấp qua</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><b>Define</b></td><td><span class="en">one source of truth</span><span class="vi">một nguồn sự thật</span></td><td><span class="en"><code>rules.yaml</code> + DTCG tokens</span><span class="vi"><code>rules.yaml</code> + token DTCG</span></td></tr>
+        <tr><td><b>Enforce</b></td><td><span class="en">fail the build on violations</span><span class="vi">fail build khi vi phạm</span></td><td><span class="en">the CLI + Stylelint &amp; ESLint plugins</span><span class="vi">CLI + plugin Stylelint &amp; ESLint</span></td></tr>
+        <tr><td><b>Generate</b></td><td><span class="en">derive every artifact</span><span class="vi">sinh mọi artifact</span></td><td><span class="en">agent rule files, a zero-dep MCP server, compiled CSS vars</span><span class="vi">file rule agent, MCP server zero-dep, biến CSS biên dịch</span></td></tr>
+        <tr><td><b>Govern</b></td><td><span class="en">findings where teams work</span><span class="vi">phát hiện tới nơi team làm việc</span></td><td><span class="en">SARIF 2.1.0 → GitHub code scanning</span><span class="vi">SARIF 2.1.0 → GitHub code scanning</span></td></tr>
+        <tr><td><b>Sync</b></td><td><span class="en">adopt &amp; stay in step</span><span class="vi">áp dụng &amp; đồng bộ</span></td><td><span class="en"><code>--baseline</code> ratchet, DTCG token validator, anti-drift guards</span><span class="vi">ratchet <code>--baseline</code>, validator token DTCG, guard chống-lệch</span></td></tr>
+        <tr><td><b>Measure</b></td><td><span class="en">see each run's state</span><span class="vi">thấy trạng thái mỗi lần chạy</span></td><td><span class="en"><code>--format markdown</code> summary + code-scanning trends</span><span class="vi">tóm tắt <code>--format markdown</code> + xu hướng code scanning</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
 <!-- ============ 1. DESIGN TOKENS ============ -->
 <section id="s1">
   <div class="sec-head">
