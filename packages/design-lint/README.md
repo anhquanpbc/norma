@@ -198,6 +198,25 @@ Exit code is 0 when valid, 1 on any structural error. A bad `$type`, a malformed
 dangling/cyclic alias is an error; an unknown `$`-prefixed key is a warning (forward-compatible with future
 spec revisions).
 
+## Enforce a DESIGN.md against your source (Google Stitch interop)
+
+[DESIGN.md](https://github.com/google-labs-code/design.md) — Google Stitch's open format — declares a
+design system's tokens, and its own CLI validates and exports the **spec file**. What it can't do is check
+whether your **shipped** HTML/CSS actually *uses* those tokens. Norma is that missing layer: export the
+DESIGN.md to W3C DTCG, then feed it to `--tokens` so **token-binding** flags any raw color that hard-codes a
+DESIGN.md-declared value instead of referencing it.
+
+```bash
+# 1. export the design system's tokens with DESIGN.md's own CLI
+npx @google/design.md export --format dtcg DESIGN.md > design.tokens.json
+# 2. enforce them against your real source — the check DESIGN.md's validator never runs
+npx norma-design-lint "src/**/*.{html,css,jsx,tsx,vue,svelte}" --tokens design.tokens.json
+```
+
+Norma reads DESIGN.md's DTCG **structured color objects** (`{ colorSpace, components, hex }`) directly, so a
+`color: #1a1c1e` in your source is flagged against `color.primary`. Norma consumes the DTCG **export**, not
+the `.md` file — it stays a single-purpose linter, not a second DESIGN.md parser.
+
 ## AI-agent rule files
 
 **Fastest start:** `npx norma-design-lint init` scaffolds a `.normarc.json`, a CI workflow, and `AGENTS.md`

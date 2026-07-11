@@ -22,6 +22,10 @@ inputs:
     description: "Path to a .normarc.json config (optional)."
     required: false
     default: ""
+  tokens:
+    description: "Path to a DTCG token file (e.g. a DESIGN.md `export --format dtcg`) → enable token-binding: flag raw colors that hard-code a declared token."
+    required: false
+    default: ""
   working-directory:
     description: "Directory to lint from (globs resolve relative to it)."
     required: false
@@ -47,8 +51,10 @@ runs:
         NORMA_LANG: ${{ inputs.lang }}
         NORMA_FORMAT: ${{ inputs.format }}
         NORMA_CONFIG: ${{ inputs.config }}
+        NORMA_TOKENS: ${{ inputs.tokens }}
         NORMA_CLI: ${{ github.action_path }}/packages/design-lint/dist/cli.js
       run: |
         args=( $NORMA_GLOBS --lang "$NORMA_LANG" --format "$NORMA_FORMAT" )
         if [ -n "$NORMA_CONFIG" ]; then args+=( --config "$NORMA_CONFIG" ); fi
+        if [ -n "$NORMA_TOKENS" ]; then args+=( --tokens "$NORMA_TOKENS" ); fi
         node "$NORMA_CLI" "${args[@]}"

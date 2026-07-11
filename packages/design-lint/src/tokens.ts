@@ -77,7 +77,11 @@ export function validateTokens(doc: unknown): TokenValidationResult {
     // Unknown $-prefixed keys → warn (the $-namespace is reserved for future spec use; a hard fail could
     // break on a future minor revision, but this still catches typos like $val/$typ).
     for (const key of Object.keys(node)) {
-      if (key.startsWith("$") && !RESERVED_KEYS.has(key)) warn(join(path, key), `unknown reserved ($-prefixed) property "${key}"`);
+      // `$schema` (a JSON-Schema pointer) is allowed ONLY at the root — DTCG 2025.10 files / DESIGN.md's
+      // `export --format dtcg` carry one there; a `$schema` deeper in the tree is still a typo worth flagging.
+      if (key.startsWith("$") && !RESERVED_KEYS.has(key) && !(key === "$schema" && path === "")) {
+        warn(join(path, key), `unknown reserved ($-prefixed) property "${key}"`);
+      }
     }
     if ("$deprecated" in node && !(typeof node.$deprecated === "boolean" || typeof node.$deprecated === "string")) {
       err(join(path, "$deprecated"), "$deprecated must be a boolean or a string message");
@@ -212,6 +216,29 @@ export const normColor = (s: string): string =>
   s.toLowerCase().replace(/\s+/g, " ").replace(/\s*([(),/])\s*/g, "$1").trim();
 
 /**
+ * Reduce a DTCG color `$value` to a normalized CSS string for token-binding comparison. Handles Norma's own
+ * hex/oklch STRING colors, and — for interop with DESIGN.md's `export --format dtcg` and other strict-DTCG
+ * files — the structured color object `{ colorSpace, components, hex }`, via its `hex` fallback (preferred,
+ * exact) or its sRGB components. Returns null for an alias (it references another token, not a raw value) or
+ * a shape it can't reduce to a solid color (e.g. a non-sRGB object with no `hex`).
+ */
+function colorValueKey(value: unknown): string | null {
+  if (typeof value === "string") return isAlias(value) ? null : normColor(value);
+  if (isObject(value)) {
+    if (typeof value.hex === "string") return normColor(value.hex);
+    const comp = value.components;
+    // Explicit index checks (not `.slice().every()`, which vacuously passes on a sparse array) so `as
+    // number[]` is sound — components 0..2 must each be a real number.
+    if (value.colorSpace === "srgb" && Array.isArray(comp) && [0, 1, 2].every((i) => typeof (comp as unknown[])[i] === "number")) {
+      const c = comp as number[];
+      const ch = (x: number): string => Math.round(Math.min(1, Math.max(0, x)) * 255).toString(16).padStart(2, "0");
+      return normColor(`#${ch(c[0])}${ch(c[1])}${ch(c[2])}`);
+    }
+  }
+  return null;
+}
+
+/**
  * Map each CONCRETE (non-alias) color token's normalized value → its dotted path, for the token-binding
  * check (which flags a raw CSS color that literally duplicates a defined token). Aliases are skipped —
  * they reference another token, not a raw value. Depth-capped for the same reason validateTokens is.
@@ -223,9 +250,9 @@ export function colorTokenIndex(doc: unknown): Map<string, string> {
     if (depth > MAX_DEPTH) return;
     const type = typeof node.$type === "string" ? node.$type : inheritedType;
     if ("$value" in node) {
-      if (type === "color" && typeof node.$value === "string" && !isAlias(node.$value)) {
-        const key = normColor(node.$value);
-        if (!index.has(key)) index.set(key, path.join("."));
+      if (type === "color") {
+        const key = colorValueKey(node.$value);
+        if (key && !index.has(key)) index.set(key, path.join("."));
       }
       return;
     }
