@@ -28,13 +28,14 @@ per-run snapshot in the Actions UI (see [`examples/ci-recipe.yml`](https://githu
 
 | Option | Description |
 |---|---|
-| `--format <stylish\|json\|sarif\|markdown>` | Output format (default `stylish`). `markdown` = a by-domain / by-rule summary for a GitHub Step Summary or PR comment. |
+| `--format <stylish\|json\|sarif\|markdown>` | Output format (default `stylish`). `json` = a slim machine report (repo-relative paths, single-`--lang` messages). `markdown` = a by-domain / by-rule summary for a GitHub Step Summary or PR comment. |
 | `--lang <en\|vi>` | Message language (default `en`, or `NORMA_LANG`). |
 | `--config <path>` | Config file (default `.normarc.json` if present). |
 | `--rules <path>` | Rule catalog path (default: bundled `standard/rules.json`). |
 | `--tokens <path>` | DTCG token file → enable **token-binding**: flag a raw CSS value that literally duplicates a defined token (e.g. a hard-coded `oklch(…)` equal to `color.brand.azure`) and point at the token. Color-only for now; inert without this flag. |
 | `--quiet` | Only report errors. |
 | `--max-warnings <n>` | Exit non-zero if warnings exceed `n` (so CI can gate warn-severity rules, not just errors). |
+| `--max-per-rule <n>` | Cap how many findings each rule LISTS in `stylish`/`json`, so one rule firing thousands of times can't flood an agent's context or a CI log. Counts + exit code stay the true totals; `json` adds a per-rule `truncated` map of what was hidden. The listing is a per-rule sample (it can omit whole files) — re-run without the cap for the exhaustive list. |
 | `--fix` | Auto-fix the deterministic rules in place, then lint the rest. |
 | `--baseline <path>` | Suppress findings already in the baseline; fail only on NEW ones (adopt on legacy code). |
 | `--update-baseline` | (Re)write the baseline from the current findings (path from `--baseline`, else `.norma-baseline.json`). |
