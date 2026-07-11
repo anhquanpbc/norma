@@ -1,10 +1,14 @@
 name: Publish CLI
 
-# Push a tag (e.g. `git tag v1.0.1 && git push --tags`) to publish norma-design-lint.
+# Push a full-semver tag (e.g. `git tag v1.0.1 && git push origin v1.0.1`) to publish norma-design-lint.
 # One-time setup by the maintainer: add an npm automation token as the NPM_TOKEN repo secret.
 on:
   push:
-    tags: ["v*"]
+    # Full-semver tags only (`vX.Y.Z`). Deliberately NOT `v*`: that also matches the moving major
+    # tag `vN` (e.g. `v1`), so manually moving `vN` re-triggers this workflow only for the version
+    # guard below to refuse it (`vN` != the CLI version) — leaving a spurious red "Publish CLI" run.
+    # Requiring two dots (`v*.*.*`) excludes the bare `vN` tag entirely.
+    tags: ["v*.*.*"]
   workflow_dispatch:
 
 permissions:
