@@ -35,7 +35,7 @@ per-run snapshot in the Actions UI (see [`examples/ci-recipe.yml`](https://githu
 | `--tokens <path>` | DTCG token file → enable **token-binding**: flag a raw CSS value that literally duplicates a defined token (e.g. a hard-coded `oklch(…)` equal to `color.brand.azure`) and point at the token. Color-only for now; inert without this flag. |
 | `--quiet` | Only report errors. |
 | `--max-warnings <n>` | Exit non-zero if warnings exceed `n` (so CI can gate warn-severity rules, not just errors). |
-| `--max-per-rule <n>` | Cap how many findings each rule LISTS in `stylish`/`json`, so one rule firing thousands of times can't flood an agent's context or a CI log. Counts + exit code stay the true totals; `json` adds a `truncated` count. |
+| `--max-per-rule <n>` | Cap how many findings each rule LISTS in `stylish`/`json`, so one rule firing thousands of times can't flood an agent's context or a CI log. Counts + exit code stay the true totals; `json` adds a per-rule `truncated` map of what was hidden. The listing is a per-rule sample (it can omit whole files) — re-run without the cap for the exhaustive list. |
 | `--fix` | Auto-fix the deterministic rules in place, then lint the rest. |
 | `--baseline <path>` | Suppress findings already in the baseline; fail only on NEW ones (adopt on legacy code). |
 | `--update-baseline` | (Re)write the baseline from the current findings (path from `--baseline`, else `.norma-baseline.json`). |

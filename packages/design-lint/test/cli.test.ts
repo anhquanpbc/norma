@@ -132,7 +132,8 @@ describe("cli", () => {
       const full = JSON.parse(run(["--format", "json", html]).out);
       const capped = JSON.parse(run(["--format", "json", "--max-per-rule", "1", html]).out);
       expect(full.findings.length).toBeGreaterThan(capped.findings.length);
-      expect(capped.truncated).toBe(full.findings.length - capped.findings.length);
+      const totalHidden = Object.values(capped.truncated as Record<string, number>).reduce((a, b) => a + b, 0);
+      expect(totalHidden).toBe(full.findings.length - capped.findings.length); // per-rule map sums to what was hidden
       expect(capped.errorCount).toBe(full.errorCount); // the display cap does not change counts…
       expect(capped.warnCount).toBe(full.warnCount);
     } finally { rmSync(dir, { recursive: true, force: true }); }

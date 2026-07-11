@@ -9,19 +9,23 @@ export type Lang = "en" | "vi";
  * Cap the findings LISTED per ruleId to `max` (a global cap across all files, order preserved), so one rule
  * firing hundreds of times can't flood the per-finding output on a large repo. Only stylish/json list
  * findings, so only they cap; the true counts + exit code always come from the full set. Returns the kept
- * findings + how many were dropped.
+ * findings, the total hidden, and a per-rule breakdown of what was hidden — so the dropped tail is
+ * attributable (which rules were sampled, and by how much), never an anonymous "N more".
  */
-export function capByRule(findings: Finding[], max: number): { shown: Finding[]; hidden: number } {
+export function capByRule(findings: Finding[], max: number): { shown: Finding[]; hidden: number; hiddenByRule: Record<string, number> } {
   const count = new Map<string, number>();
   const shown: Finding[] = [];
+  const hiddenByRule: Record<string, number> = {};
   let hidden = 0;
   for (const f of findings) {
     const n = count.get(f.ruleId) ?? 0;
     if (n < max) { count.set(f.ruleId, n + 1); shown.push(f); }
-    else hidden++;
+    else { hidden++; hiddenByRule[f.ruleId] = (hiddenByRule[f.ruleId] ?? 0) + 1; }
   }
-  return { shown, hidden };
+  return { shown, hidden, hiddenByRule };
 }
+
+const NO_CAP = { hidden: 0, hiddenByRule: {} as Record<string, number> };
 
 /** Human-readable, grouped by file. `maxPerRule` caps how many findings each rule lists (counts stay true). */
 export function stylish(res: LintResult, lang: Lang, maxPerRule?: number | null): string {
@@ -31,7 +35,7 @@ export function stylish(res: LintResult, lang: Lang, maxPerRule?: number | null)
       ? `✓ Không có vi phạm (${res.fileCount} file${skip}, chuẩn v${res.version}).`
       : `✓ No violations (${res.fileCount} files${skip}, standard v${res.version}).`;
   }
-  const { shown, hidden } = maxPerRule && maxPerRule > 0 ? capByRule(res.findings, maxPerRule) : { shown: res.findings, hidden: 0 };
+  const { shown, hidden } = maxPerRule && maxPerRule > 0 ? capByRule(res.findings, maxPerRule) : { shown: res.findings, ...NO_CAP };
   const byFile = new Map<string, Finding[]>();
   for (const f of shown) (byFile.get(f.file) ?? byFile.set(f.file, []).get(f.file)!).push(f);
   const lines: string[] = [];
@@ -43,10 +47,12 @@ export function stylish(res: LintResult, lang: Lang, maxPerRule?: number | null)
       lines.push(`  ${String(f.line).padStart(4)}:  ${tag}  ${msg}  ${f.ruleId}`);
     }
   }
+  // A cap shows a per-rule SAMPLE, so the listing above may omit whole files; the summary counts below are
+  // authoritative. Re-run without --max-per-rule for the exhaustive list.
   const note = hidden
     ? "\n" + (lang === "vi"
-        ? `  … ẩn ${hidden} phát hiện khác (--max-per-rule ${maxPerRule}); số liệu dưới là tổng thật`
-        : `  … ${hidden} more finding(s) hidden (--max-per-rule ${maxPerRule}); the counts below are the true totals`)
+        ? `  … ẩn ${hidden} phát hiện khác (mẫu theo --max-per-rule ${maxPerRule}); số liệu dưới là tổng thật`
+        : `  … ${hidden} more finding(s) hidden (a per-rule sample, --max-per-rule ${maxPerRule}); the counts below are the true totals`)
     : "";
   const summary = lang === "vi"
     ? `\n✗ ${res.errorCount} lỗi, ${res.warnCount} cảnh báo${skip} (chuẩn v${res.version}).`
@@ -57,11 +63,12 @@ export function stylish(res: LintResult, lang: Lang, maxPerRule?: number | null)
 /**
  * Machine-readable JSON. Slimmed for agents/large repos: `file` is repo-relative (forward-slashed), and
  * `message` is the single `lang` string (matching the MCP lint_source shape) instead of the `{en,vi}` object.
- * `maxPerRule` caps the listed findings per rule; `truncated` reports how many were hidden. The top-level
- * counts are always the true totals.
+ * `maxPerRule` caps the listed findings per rule; `truncated` is a per-rule map of how many were hidden
+ * (`{}` when nothing was), so the sampled-away tail stays attributable. The top-level counts are always the
+ * true totals — the cap only trims the `findings` list.
  */
 export function json(res: LintResult, lang: Lang = "en", maxPerRule?: number | null): string {
-  const { shown, hidden } = maxPerRule && maxPerRule > 0 ? capByRule(res.findings, maxPerRule) : { shown: res.findings, hidden: 0 };
+  const { shown, hiddenByRule } = maxPerRule && maxPerRule > 0 ? capByRule(res.findings, maxPerRule) : { shown: res.findings, ...NO_CAP };
   return JSON.stringify({
     version: res.version,
     errorCount: res.errorCount,
@@ -76,7 +83,7 @@ export function json(res: LintResult, lang: Lang = "en", maxPerRule?: number | n
       ...(f.column != null ? { column: f.column } : {}),
       message: f.message[lang],
     })),
-    truncated: hidden,
+    truncated: hiddenByRule,
   }, null, 2);
 }
 

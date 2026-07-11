@@ -226,6 +226,11 @@ function main(argv: string[]): number {
     res = { ...res, findings: res.findings.filter((f) => f.severity === "error"), warnCount: 0 };
   }
 
+  // --max-per-rule only trims the per-finding formats; say so rather than silently no-op on the others.
+  if (maxPerRule != null && (format === "sarif" || format === "markdown")) {
+    console.error(`Note: --max-per-rule has no effect on --format ${format} (sarif stays complete for code scanning; markdown is already aggregated by rule).`);
+  }
+
   if (format === "json") console.log(json(res, lang, maxPerRule));
   else if (format === "sarif") console.log(sarif(res, loadRules({ path: rulesPath, overrides: config.rules }).rules));
   else if (format === "markdown") console.log(markdown(res, loadRules({ path: rulesPath, overrides: config.rules }).rules, suppressedCount, freshCount));

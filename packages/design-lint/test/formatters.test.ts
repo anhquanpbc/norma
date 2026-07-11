@@ -85,7 +85,7 @@ describe("formatters", () => {
     expect(p.findings[0].file).toBe("a.html"); // repo-relative + forward-slashed, not absolute
     expect(p.findings[0].message).toBe("low contrast"); // the en string, not the { en, vi } object
     expect(JSON.parse(json(res, "vi")).findings[0].message).toBe("tương phản thấp");
-    expect(p.truncated).toBe(0);
+    expect(p.truncated).toEqual({}); // nothing capped → empty per-rule map
   });
 
   it("capByRule + --max-per-rule cap the LISTED findings while counts stay true", () => {
@@ -96,12 +96,12 @@ describe("formatters", () => {
         file: process.cwd() + "/a.html", line: i + 1, message: { en: "div onclick", vi: "div onclick" },
       })),
     };
-    expect(capByRule(many.findings, 2)).toMatchObject({ hidden: 3 });
+    expect(capByRule(many.findings, 2)).toMatchObject({ hidden: 3, hiddenByRule: { "a11y.semantic-control": 3 } });
     expect(capByRule(many.findings, 2).shown.length).toBe(2);
 
     const p = JSON.parse(json(many, "en", 2));
     expect(p.findings.length).toBe(2); // only 2 of the 5 same-rule findings are listed
-    expect(p.truncated).toBe(3);
+    expect(p.truncated).toEqual({ "a11y.semantic-control": 3 }); // hidden tail is attributed per rule
     expect(p.errorCount).toBe(5); // …but the count is the true total
 
     const s = stylish(many, "en", 2);

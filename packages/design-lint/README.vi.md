@@ -35,7 +35,7 @@ Actions UI (xem [`examples/ci-recipe.yml`](https://github.com/anhquanpbc/norma/b
 | `--tokens <path>` | File token DTCG → bật **token-binding**: cờ một giá trị CSS thô trùng khít token đã định nghĩa (ví dụ `oklch(…)` hard-code bằng `color.brand.azure`) và trỏ tới token. Bản này chỉ xét màu; vô hiệu nếu không có cờ này. |
 | `--quiet` | Chỉ báo lỗi. |
 | `--max-warnings <n>` | Exit khác 0 nếu số cảnh báo vượt `n` (để CI gate cả rule mức warn, không chỉ error). |
-| `--max-per-rule <n>` | Giới hạn số phát hiện mỗi rule LIỆT KÊ trong `stylish`/`json`, để một rule nổ hàng nghìn lần không làm ngập context của agent hay log CI. Số liệu đếm + exit code vẫn là tổng thật; `json` thêm trường `truncated`. |
+| `--max-per-rule <n>` | Giới hạn số phát hiện mỗi rule LIỆT KÊ trong `stylish`/`json`, để một rule nổ hàng nghìn lần không làm ngập context của agent hay log CI. Số liệu đếm + exit code vẫn là tổng thật; `json` thêm map `truncated` theo rule cho phần bị ẩn. Danh sách là mẫu theo rule (có thể bỏ sót cả file) — chạy lại không cap để xem đầy đủ. |
 | `--fix` | Tự sửa các rule xác định ngay tại chỗ, rồi lint phần còn lại. |
 | `--baseline <path>` | Ẩn các phát hiện đã có trong baseline; chỉ fail trên phát hiện MỚI (áp dụng lên code cũ). |
 | `--update-baseline` | (Ghi lại) baseline từ các phát hiện hiện tại (đường dẫn từ `--baseline`, else `.norma-baseline.json`). |

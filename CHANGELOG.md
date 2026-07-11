@@ -35,7 +35,10 @@ All notable changes to this project are documented here. The format is based on
   --max-per-rule 3` cut the payload **94%** (17.3 KB → 1.0 KB). The cap is display-only — the summary
   counts, the exit code, the `--baseline` file, and the SARIF upload are always computed from the **full**
   set, so nothing is silently gated away. `markdown` (already aggregated by rule) and `sarif` (kept complete
-  for GitHub code scanning) are unaffected; `json` gains a `truncated` count of what was hidden.
+  for GitHub code scanning) are unaffected (a stderr note says so if combined). `json` gains a `truncated`
+  **per-rule map** (`{ ruleId: hiddenCount }`, `{}` when nothing was) so the sampled-away tail stays
+  attributable, and stylish prints an `… N more (a per-rule sample)` note. The listing is a per-rule sample,
+  so it can omit whole files — the summary counts are authoritative; re-run without the cap for the full list.
 
 ### Changed
 
