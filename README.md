@@ -11,13 +11,14 @@
 
 Norma is an **enforceable, bilingual (EN/VI) web design standard** for humans and AI coding agents — the
 concrete WCAG 2.2, Core Web Vitals, and design-token numbers you can drop straight into an acceptance
-ticket. It ships the machinery to make them stick: a **linter** that fails CI on real violations, and
-**rule files** that make AI agents build to the same standard.
+ticket. It ships the tooling to make them stick: a **linter** that fails CI on real violations, plus
+**rule files and an MCP server** that make AI coding agents (Claude Code, Cursor, Copilot…) build to the
+same standard.
 
 **[Open the live reference site →](https://anhquanpbc.github.io/norma/)** — one self-contained,
 zero-network page that dogfoods every rule it documents (light/dark, EN/VI).
 
-## Try it
+## Quick start
 
 ```bash
 npx norma-design-lint "**/*.{html,css}"   # add --lang vi for Vietnamese
