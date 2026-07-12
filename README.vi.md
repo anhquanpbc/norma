@@ -11,13 +11,13 @@
 
 Norma là một **chuẩn thiết kế web thực thi được, song ngữ (EN/VI)** cho con người và agent code AI —
 những con số cụ thể về WCAG 2.2, Core Web Vitals và design token mà bạn có thể đưa thẳng vào tiêu chí
-nghiệm thu. Kèm bộ máy để chúng có hiệu lực: một **linter** fail CI khi có vi phạm thật, và các **file
-luật** giúp agent AI xây theo đúng chuẩn đó.
+nghiệm thu. Kèm bộ công cụ để chúng có hiệu lực: một **linter** fail CI khi có vi phạm thật, cùng **file
+luật và một MCP server** giúp agent code AI (Claude Code, Cursor, Copilot…) xây theo đúng chuẩn đó.
 
 **[Mở trang tham chiếu trực tiếp →](https://anhquanpbc.github.io/norma/)** — một trang tự chứa, không
 request mạng, tự tuân thủ mọi rule nó ghi (sáng/tối, EN/VI).
 
-## Thử ngay
+## Bắt đầu nhanh
 
 ```bash
 npx norma-design-lint "**/*.{html,css}"   # thêm --lang vi cho thông báo tiếng Việt
