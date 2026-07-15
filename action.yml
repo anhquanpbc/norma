@@ -36,7 +36,7 @@ runs:
   steps:
     # Builds the linter from THIS action's checkout, so the action works even before
     # norma-design-lint is published to npm. No design tokens/rules leave the repo.
-    - uses: actions/setup-node@v6
+    - uses: actions/setup-node@v7
       with:
         node-version: "22"
     - name: Build the Norma linter
