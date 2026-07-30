@@ -24,6 +24,23 @@ All notable changes to this project are documented here. The format is based on
   `check:drift` guard (item 10) asserts every token-derived `:root` value equals `standard/tokens.css`, so
   the site's tokens can no longer drift from the standard. Closes the deferred GEN1 site-rewire.
 
+## [1.24.1] — 2026-07-30 · CLI
+
+### Fixed
+
+- **`theme.color-scheme` no longer fires when a local `@import` may carry the declaration** ([#90]). Splitting
+  theme tokens into their own stylesheet (`:root { color-scheme: light }` next to `[data-theme="dark"]`) and
+  `@import`-ing it from the entry stylesheet is a valid, common arrangement — the declaration does reach the
+  document root at runtime. The check is per-file and pure (no filesystem access, so it also runs identically
+  over MCP on strings), so it cannot resolve the import; it now treats a project-local `@import` the way it
+  already treats a file with no `:root`/`html` block at all — as "this file isn't the whole root cascade" — and
+  fails quiet instead of loud. Remote imports (`@import url("https://fonts.googleapis.com/…")`) are not project
+  token sheets and do **not** silence the rule, so the very common font-import-at-the-top entry stylesheet is
+  still checked. Previously the only workaround was `"theme.color-scheme": "off"`, which disabled the rule
+  globally and hid stylesheets that genuinely forget it.
+
+[#90]: https://github.com/anhquanpbc/norma/issues/90
+
 ## [1.24.0] — 2026-07-12 · CLI
 
 ### Added
