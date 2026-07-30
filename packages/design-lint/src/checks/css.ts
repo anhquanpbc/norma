@@ -161,17 +161,39 @@ export const viewportUnits: Check = (ctx, rules) => {
   return out;
 };
 
+/** The imported stylesheet's URL, from either `@import "a.css"` or `@import url(a.css)` — trailing
+ *  layer()/supports()/media clauses are ignored. Null when the params don't parse. */
+function importTarget(params: string): string | null {
+  const s = params.trim();
+  const url = s.match(/^url\(\s*(['"]?)([^'")]*)\1\s*\)/i);
+  if (url) return url[2].trim();
+  const quoted = s.match(/^(['"])(.*?)\1/);
+  return quoted ? quoted[2].trim() : null;
+}
+/** A project-local import — a relative or root-relative path, not a scheme/protocol-relative URL. */
+function isLocalImport(params: string): boolean {
+  const target = importTarget(params);
+  return !!target && !/^(?:[a-z][a-z0-9+.-]*:|\/\/)/i.test(target);
+}
+
 export const colorScheme: Check = (ctx, rules) => {
   const r = rules[0];
   if (!ctx.css.length) return [];
   if (ctx.dom && ctx.dom.querySelectorAll("meta").some((m) => (m.getAttribute("name") ?? "").toLowerCase() === "color-scheme")) return [];
   let declared = false;
   let rootLine = 0;
+  let localImport = false;
   for (const block of ctx.css) {
     block.root.walkDecls((d) => { if (d.prop.toLowerCase() === "color-scheme") declared = true; });
+    block.root.walkAtRules(/^import$/i, (at) => { if (isLocalImport(at.params)) localImport = true; });
     block.root.walkRules((rule) => { if (!rootLine && /(^|,)\s*(:root|html)\b/.test(rule.selector)) rootLine = cssLine(block, rule); });
   }
-  if (declared || !rootLine) return []; // no :root/html block => a snippet, don't require it
+  // A local @import means this file is not the whole root cascade — the imported sheet may declare
+  // color-scheme (splitting theme tokens into their own file is the arrangement that keeps the
+  // declaration beside its theme). Checks are per-file and pure, so the import can't be resolved;
+  // fail quiet rather than fail loud. Remote imports (web fonts) aren't project token sheets, so the
+  // rule stays live for the very common "font import at the top of the entry stylesheet".
+  if (declared || !rootLine || localImport) return []; // no :root/html block => a snippet, don't require it
   return [mk(ctx, r, rootLine,
     "No color-scheme declared — UA-rendered widgets (form controls, scrollbars) won't match the theme.",
     "Chưa khai báo color-scheme — widget do trình duyệt vẽ (form control, thanh cuộn) sẽ không khớp theme.")];

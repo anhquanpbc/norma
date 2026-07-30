@@ -224,6 +224,18 @@ describe("theme.color-scheme", () => {
     const f = lint(`:root{ color-scheme:light; --x:1px }`, "css");
     expect(ids(f)).not.toContain("theme.color-scheme");
   });
+  it("stays quiet when a local @import may carry the declaration", () => {
+    const f = lint(`@import "../styles/tokens.css";\nhtml{ margin:0 }`, "css");
+    expect(ids(f)).not.toContain("theme.color-scheme");
+  });
+  it("stays quiet for url()/layer() and root-relative import forms", () => {
+    const f = lint(`@import url(./tokens.css) layer(theme);\n:root{ --x:1px }`, "css");
+    expect(ids(f)).not.toContain("theme.color-scheme");
+  });
+  it("still flags when the only import is a remote font sheet", () => {
+    const f = lint(`@import url("https://fonts.googleapis.com/css2?family=Inter");\nhtml{ margin:0 }`, "css");
+    expect(ids(f)).toContain("theme.color-scheme");
+  });
 });
 
 describe("tokens.color-only", () => {
