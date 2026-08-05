@@ -61,8 +61,8 @@
   },
   "dependencies": {
     "culori": "^4.0.1",
-    "node-html-parser": "^9.0.0",
-    "postcss": "^8.5.24"
+    "node-html-parser": "^9.0.1",
+    "postcss": "^8.5.25"
   },
   "peerDependencies": {
     "eslint": ">=8.57.0",
